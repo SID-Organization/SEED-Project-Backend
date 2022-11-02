@@ -47,9 +47,11 @@ public class Demanda {
 
     @JoinColumn(name = "id_bu_solicitante")
     @OneToOne
-    private Bu buSolicitante;
+    private BusinessUnity businessUnitySolicitante;
 
     @JoinColumn(name = "id_usuario_solicitante")
     @OneToOne
     private Usuario usuarioSolicitante;
+
+
 }

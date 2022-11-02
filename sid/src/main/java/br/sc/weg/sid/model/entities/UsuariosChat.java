@@ -13,6 +13,11 @@ import javax.persistence.*;
 @EqualsAndHashCode
 public class UsuariosChat {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idUsuariosNoChat", nullable = false, unique = true)
+    private Integer idUsuariosNoChat;
+
     @ManyToOne
     @JoinColumn(name = "idChat", nullable = false)
     private Chat idChat;

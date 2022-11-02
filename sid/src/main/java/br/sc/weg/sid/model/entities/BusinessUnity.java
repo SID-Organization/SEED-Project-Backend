@@ -11,13 +11,13 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class Bu {
+public class BusinessUnity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "IdBu", nullable = false, unique = true)
-    private Integer idBu;
+    @Column(name = "IdBusinessUnity", nullable = false, unique = true)
+    private Integer idBusinessUnity;
 
-    @Column(name = "NomeBu", nullable = false)
-    private String nomeBu;
+    @Column(name = "NomeBusinessUnity", nullable = false)
+    private String nomeBusinessUnity;
 }
