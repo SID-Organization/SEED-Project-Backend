@@ -11,6 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class Beneficio {
     @Id
     @JoinColumn(name = "idBeneficio", nullable = false)

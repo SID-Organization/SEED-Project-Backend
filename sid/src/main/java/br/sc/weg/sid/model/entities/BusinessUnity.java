@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class BusinessUnity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdBusinessUnity", nullable = false, unique = true)
     private Integer idBusinessUnity;
 

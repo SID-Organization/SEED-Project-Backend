@@ -1,29 +1,29 @@
 package br.sc.weg.sid.model.entities;
 
+
 import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USUARIOS_NO_CHAT")
+@Table(name = "NOTIFICACOES_USUARIO")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class UsuariosChat {
+public class NotificacoesUsuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idUsuariosNoChat", nullable = false, unique = true)
-    private Integer idUsuariosNoChat;
+    @Column(name = "idNotificacoesUsuario", nullable = false, unique = true)
+    private Integer idNotificacoesUsuario;
 
     @ManyToOne
-    @JoinColumn(name = "idChat", nullable = false)
-    private Chat idChat;
+    @JoinColumn(name = "idNotificacao", nullable = false)
+    private Notificacao idNotificacoes;
 
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario idUsuario;
-
 }

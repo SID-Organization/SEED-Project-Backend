@@ -41,8 +41,4 @@ public class Proposta {
 
     @Column(name = "MotivoRecusaProposta", nullable = false)
     private String motivoRecusaProposta;
-
-    @JoinColumn(name = "idDemanda", nullable = false)
-    @OneToOne
-    private Demanda idDemanda;
 }

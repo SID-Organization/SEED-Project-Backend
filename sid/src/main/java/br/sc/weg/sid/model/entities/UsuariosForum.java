@@ -5,24 +5,24 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USUARIOS_COMISSAO")
+@Table(name = "USUARIOS_FORUM")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class UsuariosComissao {
+public class UsuariosForum {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idUsuariosComissao", nullable = false, unique = true)
-    private Integer idUsuariosComissao;
+    @Column(name = "idUsuariosForum", nullable = false, unique = true)
+    private Integer idUsuariosForum;
 
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario idUsuario;
 
     @ManyToOne
-    @JoinColumn(name = "idComissao", nullable = false)
-    private Comissao idComissao;
+    @JoinColumn(name = "idForum", nullable = false)
+    private Forum idForum;
 }

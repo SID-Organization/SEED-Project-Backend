@@ -20,8 +20,7 @@ public class Chat {
     @Column(name = "AtivoChat", nullable = false)
     private Integer ativoChat;
 
-    @JoinColumn(name = "idDemanda", nullable = false)
     @OneToOne
+    @JoinColumn(name = "idDemanda", nullable = false)
     private Demanda idDemanda;
-
 }

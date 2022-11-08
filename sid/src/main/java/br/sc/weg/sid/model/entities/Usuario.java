@@ -3,6 +3,7 @@ package br.sc.weg.sid.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "USUARIO")
@@ -31,6 +32,9 @@ public class Usuario {
 
     @Column(name = "DepartamentoUsuario", nullable = false)
     private String departamentoUsuario;
+
+    @Column(name = "CargoUsuario", nullable = false)
+    private Cargo cargoUsuario;
 
     @Column(name = "FotoUsuario", nullable = false)
     @Lob

@@ -8,18 +8,18 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "COMISSAO")
+@Table(name = "FORUM")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class Comissao {
+public class Forum {
 
     @Id
-    @Column(name = "IdComissao", nullable = false, unique = true)
-    private Integer idComissao;
+    @Column(name = "idForum", nullable = false, unique = true)
+    private Integer idForum;
 
-    @Column(name = "NomeComissao", nullable = false)
-    private String nomeComissao;
+    @Column(name = "nomeForum", nullable = false)
+    private String nomeForum;
 }

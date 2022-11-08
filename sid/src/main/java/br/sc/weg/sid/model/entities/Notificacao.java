@@ -3,6 +3,7 @@ package br.sc.weg.sid.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "NOTIFICACAO")
@@ -22,8 +23,4 @@ public class Notificacao {
 
     @Column(name = "LinkNotificacao", nullable = false, length = 255)
     private String linkNotificacao;
-
-    @JoinColumn(name = "idUsuario", nullable = false)
-    @ManyToOne
-    private Usuario idUsuario;
 }
