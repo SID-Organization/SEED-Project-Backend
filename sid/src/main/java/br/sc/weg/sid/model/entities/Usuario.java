@@ -14,7 +14,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class Usuario {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdUsuario", nullable = false, unique = true)
     private Integer idUsuario;
 
@@ -33,6 +33,7 @@ public class Usuario {
     @Column(name = "DepartamentoUsuario", nullable = false)
     private String departamentoUsuario;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "CargoUsuario", nullable = false)
     private Cargo cargoUsuario;
 

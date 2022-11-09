@@ -1,6 +1,6 @@
 package br.sc.weg.sid.model.service;
 
-import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.repository.DemandaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,4 +33,25 @@ public class DemandaService {
     public void deleteById(Integer integer) {
         demandaRepository.deleteById(integer);
     }
+
+    public Optional<Demanda> findByTamanhoDemanda(Tamanho tamanhoDemanda) {
+        return demandaRepository.findByTamanhoDemanda(tamanhoDemanda);
+    }
+
+    public Optional<Demanda> findBySecaoTIResponsavel(Secao secaoTIResponsavelDemanda) {
+        return demandaRepository.findBySecaoTIResponsavel(secaoTIResponsavelDemanda);
+    }
+
+    public Optional<Demanda> findByStatusDemanda(Status statusDemanda) {
+        return demandaRepository.findByStatusDemanda(statusDemanda);
+    }
+
+    public Optional<Demanda> findByScoreDemanda(Integer scoreDemanda) {
+        return demandaRepository.findByScoreDemanda(scoreDemanda);
+    }
+
+    public Optional<Demanda> findBySolicitanteDemanda(Usuario solicitanteDemanda) {
+        return demandaRepository.findBySolicitanteDemanda(solicitanteDemanda);
+    }
+
 }

@@ -17,9 +17,9 @@ public class CadastroDemandaDTO {
 
     private String tituloDemanda;
 
-    private String objetivoDemanda;
+    private String propostaDemanda;
 
-//    private String sessaoTIResponsavel;
+    private String objetivoDemanda;
 
     private String situacaoAtualDemanda;
 
@@ -35,8 +35,6 @@ public class CadastroDemandaDTO {
     private Usuario idUsuario;
 
     private Chat idChat;
-
-//    private Proposta idProposta;
 
     private List<BusinessUnity> busBeneficiadas;
 

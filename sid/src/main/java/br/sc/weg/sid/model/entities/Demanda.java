@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 
@@ -16,27 +17,37 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Demanda {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(length = 50, nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer idDemanda;
 
     @Column(length = 100, nullable = false)
     private String tituloDemanda;
 
-    @Column()
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status statusDemanda;
 
-    @Column()
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Tamanho tamanhoDemanda;
+
+    @Column()
+    private Double scoreDemanda;
+
+    @Column(length = 4000)
+    private String propostaDemanda;
 
     @Column(length = 4000)
     private String objetivoDemanda;
 
-    @Column(length = 60)
-    private String sessaoTIResponsavel;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Secao secaoTIResponsavel;
 
-    @Column()
+    @Column(length = 6000)
     private String situacaoAtualDemanda;
 
     @Column()
@@ -48,13 +59,13 @@ public class Demanda {
     @Column()
     private Date prazoElaboracaoDemanda;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_bu_solicitante")
-    private BusinessUnity idBuSolicitante;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "id_bu_solicitante")
+//    private BusinessUnity idBuSolicitante;
 
     @JoinColumn(name = "id_usuario")
     @ManyToOne(cascade = CascadeType.ALL)
-    private Usuario idUsuario;
+    private Usuario solicitanteDemanda;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "idChat")
@@ -63,9 +74,5 @@ public class Demanda {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "idProposta")
     private Proposta idProposta;
-
-//    @OneToMany(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "bus_beneficiadas")
-//    private List<BusinessUnity> bus_beneficiadas;
 
 }
