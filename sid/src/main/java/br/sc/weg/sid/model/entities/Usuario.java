@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,6 +34,7 @@ public class Usuario {
     @Column(name = "DepartamentoUsuario", nullable = false)
     private String departamentoUsuario;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "CargoUsuario", nullable = false)
     private Cargo cargoUsuario;
 

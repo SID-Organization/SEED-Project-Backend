@@ -3,6 +3,7 @@ package br.sc.weg.sid.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.FutureOrPresent;
 import java.util.Date;
 
 @Entity
@@ -27,9 +28,11 @@ public class Proposta {
     @Column(name = "PaybackProposta", nullable = false)
     private Double paybackProposta;
 
+    @FutureOrPresent
     @Column(name = "PeriodoExecucaoInicioProposta", nullable = false)
     private Date periodoExecucaoInicio;
 
+    @FutureOrPresent
     @Column(name = "PeriodoExecucaoFimProposta", nullable = false)
     private Date periodoExecucaoFim;
 

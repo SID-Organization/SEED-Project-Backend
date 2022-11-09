@@ -1,8 +1,15 @@
 package br.sc.weg.sid.model.service;
 
+import br.sc.weg.sid.model.entities.Usuario;
+import br.sc.weg.sid.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
 public class UsuarioService {
-<<<<<<< Updated upstream
-=======
     @Autowired
     UsuarioRepository usuarioRepository;
 
@@ -37,5 +44,4 @@ public class UsuarioService {
     public List<Usuario> findAllByDepartamentoUsuario(String departamentoUsuario) {
         return usuarioRepository.findAllByDepartamentoUsuario(departamentoUsuario);
     }
->>>>>>> Stashed changes
 }
