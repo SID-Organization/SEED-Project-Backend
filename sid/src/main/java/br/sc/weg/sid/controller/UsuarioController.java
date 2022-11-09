@@ -69,4 +69,30 @@ public class UsuarioController {
     }
 
     @GetMapping
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping
+    public ResponseEntity<Object> findAll() {
+        if (usuarioService.findAll().isEmpty()) {
+            return ResponseEntity.status(404).body("Nenhum usuário encontrado!");
+        }
+        return ResponseEntity.ok(usuarioService.findAll());
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/{numeroCadastro}")
+    public ResponseEntity<Object> findByNumeroCadastro(@PathVariable("numeroCadastro") Integer numeroCadastro) {
+        if (usuarioService.findByNumeroCadastroUsuario(numeroCadastro) == null) {
+            return ResponseEntity.status(404).body("Usuário não encontrado!");
+        }
+        return ResponseEntity.ok(usuarioService.findByNumeroCadastroUsuario(numeroCadastro));
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/departamento/{departamento}")
+    public ResponseEntity<Object> findByDepartamento(@PathVariable("departamento") String departamento) {
+        if (usuarioService.findAllByDepartamentoUsuario(departamento).isEmpty()) {
+            return ResponseEntity.status(404).body("Nenhum usuário encontrado!");
+        }
+        return ResponseEntity.ok(usuarioService.findAllByDepartamentoUsuario(departamento));
+    }
 }

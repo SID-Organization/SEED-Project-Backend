@@ -36,4 +36,12 @@ public class UsuarioService {
     public void deleteById(Integer integer) {
         usuarioRepository.deleteById(integer);
     }
+
+    public Optional<Usuario> findByNumeroCadastroUsuario(Integer numeroCadastroUsuario) {
+        return usuarioRepository.findByNumeroCadastroUsuario(numeroCadastroUsuario);
+    }
+
+    public List<Usuario> findAllByDepartamentoUsuario(String departamentoUsuario) {
+        return usuarioRepository.findAllByDepartamentoUsuario(departamentoUsuario);
+    }
 }
