@@ -14,6 +14,7 @@ import javax.persistence.*;
 @ToString
 public class Beneficio {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "idBeneficio", nullable = false)
     private Integer idBeneficio;
 

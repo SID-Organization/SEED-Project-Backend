@@ -33,4 +33,9 @@ public class BusinessUnityService {
     public void deleteById(Integer integer) {
         repository.deleteById(integer);
     }
+
+    public Optional<BusinessUnity> findByNomeBusinessUnity(String nomeBusinessUnity) {
+        return repository.findByNomeBusinessUnity(nomeBusinessUnity);
+    }
+
 }

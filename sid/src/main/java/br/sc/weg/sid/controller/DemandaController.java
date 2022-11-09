@@ -4,10 +4,7 @@ import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.exceptions.ErroCadastrarBusBeneficiadas;
 import br.sc.weg.sid.exceptions.ErroSalvarChatException;
 import br.sc.weg.sid.model.entities.*;
-import br.sc.weg.sid.model.service.BeneficioService;
-import br.sc.weg.sid.model.service.BusinessUnityService;
-import br.sc.weg.sid.model.service.ChatService;
-import br.sc.weg.sid.model.service.DemandaService;
+import br.sc.weg.sid.model.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +27,13 @@ public class DemandaController {
     DemandaService demandaService;
 
     @Autowired
+    UsuarioService usuarioService;
+
+    @Autowired
     BusinessUnityService businessUnityService;
+
+    @Autowired
+    BusBeneficiadasService busBeneficiadasService;
 
     @Autowired
     BeneficioService beneficioService;
@@ -53,32 +56,38 @@ public class DemandaController {
     ) {
 
         List<BusinessUnity> businessUnities = businessUnityService.findAll();
-        System.out.println("Tamanho da lista de unidades: " + businessUnities.get(0).getNomeBusinessUnity());
 
         Demanda demanda = new Demanda();
         demanda.setSecaoTIResponsavel(Secao.TI);
         demanda.setStatusDemanda(Status.BACKLOG);
         demanda.setTamanhoDemanda(Tamanho.GRANDE);
         demanda.setSecaoTIResponsavel(Secao.TI);
-        BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
+        usuarioService.findById(cadastroDemandaDTO.getIdUsuario());
 
+        demanda.setSolicitanteDemanda(cadastroDemandaDTO.getIdUsuario());
+        BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         Demanda demandaSalva = demandaService.save(demanda);
 
         for (BusinessUnity bus : cadastroDemandaDTO.getBusBeneficiadas()) {
-            System.out.println("Entrou: " + bus.getNomeBusinessUnity());
-            if (!businessUnities.contains(bus)) {
-                throw new ErroCadastrarBusBeneficiadas("ERROR 0004: A BusinessUnity "+ bus.getIdBusinessUnity() +" não existe no banco de dados!");
-            }else {
-                BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
-                busBeneficiadas.setIdBusinessUnity(bus);
-                busBeneficiadas.setIdDemanda(demandaSalva);
-            }
+
+            businessUnityService.findByNomeBusinessUnity(bus.getNomeBusinessUnity()).ifPresentOrElse(
+                    (busSalva) -> {
+                        System.out.println("Id: " + busSalva.getIdBusinessUnity());
+                        BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
+                        busBeneficiadas.setIdDemanda(demandaSalva);
+                        busBeneficiadas.setIdBusinessUnity(busSalva);
+                        busBeneficiadasService.save(busBeneficiadas);
+                    },
+                    () -> {
+                        throw new ErroCadastrarBusBeneficiadas("Erro ao cadastrar as business beneficiadas");
+                    }
+            );
         }
 
 
-        if (!businessUnities.contains(cadastroDemandaDTO.getIdBuSolicitante())) {
-            throw new ErroCadastrarBusBeneficiadas("ERROR 0004: A Bu do solicitante não existe no banco de dados!");
-        }
+//        if (!businessUnities.contains(cadastroDemandaDTO.getIdBuSolicitante())) {
+//            throw new ErroCadastrarBusBeneficiadas("ERROR 0004: A Bu do solicitante não existe no banco de dados!");
+//        }
 
 //        try {
 //            Chat chat = cadastroDemandaDTO.getIdChat();
@@ -90,8 +99,8 @@ public class DemandaController {
 
 
         for (Beneficio beneficio : cadastroDemandaDTO.getBeneficios()) {
-            Beneficio beneficioSalvo = beneficioService.save(beneficio);
-            System.out.println(beneficioSalvo.toString());
+            beneficio.setIdDemanda(demandaSalva);
+            beneficioService.save(beneficio);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
