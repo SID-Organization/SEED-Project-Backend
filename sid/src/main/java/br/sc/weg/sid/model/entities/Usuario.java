@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

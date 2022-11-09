@@ -5,7 +5,6 @@ import br.sc.weg.sid.model.entities.Usuario;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 import java.util.Date;
 import java.util.List;
 
