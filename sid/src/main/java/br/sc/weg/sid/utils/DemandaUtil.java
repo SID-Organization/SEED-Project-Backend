@@ -39,7 +39,7 @@ public class DemandaUtil {
         try{
             return this.mapper.readValue(demandaJson, CadastroDemandaDTO.class);
         } catch (Exception e){
-            throw  new RuntimeException("Erro ao converter o demandaJson para objeto Demanda! \n" + e.getMessage());
+            throw  new RuntimeException("Erro ao converter o demandaJson para objeto CadastroDemandaDTO! \n" + e.getMessage());
         }
     }
 }

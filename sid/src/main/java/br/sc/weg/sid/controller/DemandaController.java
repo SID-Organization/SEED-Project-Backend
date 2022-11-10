@@ -65,14 +65,14 @@ public class DemandaController {
         DemandaUtil demandaUtil = new DemandaUtil();
         CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
 
-        System.out.println("user: " + usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda()).get());
+        System.out.println("user: " + usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get().getNomeUsuario());
 
         Demanda demanda = demandaUtil.convertJsonToModel(demandaJson);
         demanda.setSecaoTIResponsavel(Secao.TI);
         demanda.setStatusDemanda(Status.BACKLOG);
         demanda.setTamanhoDemanda(Tamanho.GRANDE);
         demanda.setSecaoTIResponsavel(Secao.TI);
-        demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda()).get());
+        demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
 
         Demanda demandaSalva = demandaService.save(demanda);
 
@@ -93,13 +93,11 @@ public class DemandaController {
         }
 
 
-        for (BusinessUnity bus : cadastroDemandaDTO.getBusBeneficiadas()) {
-            businessUnityService.findByNomeBusinessUnity(bus.getNomeBusinessUnity()).ifPresentOrElse(
+        for (BusBeneficiadas bus : cadastroDemandaDTO.getBusBeneficiadas()) {
+            businessUnityService.findById(bus.getIdBusinessUnity().getIdBusinessUnity()).ifPresentOrElse(
                     (busSalva) -> {
-                        System.out.println("Id: " + busSalva.getIdBusinessUnity());
                         BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
                         busBeneficiadas.setIdDemanda(demandaSalva);
-                        busBeneficiadas.setIdBusinessUnity(busSalva);
                         busBeneficiadasService.save(busBeneficiadas);
                     },
                     () -> {

@@ -30,11 +30,11 @@ public class CadastroDemandaDTO {
     @FutureOrPresent
     private Date prazoElaboracaoDemanda;
 
-    private Integer solicitanteDemanda;
+    private Usuario solicitanteDemanda;
 
     private Chat idChat;
 
-    private List<BusinessUnity> busBeneficiadas;
+    private List<BusBeneficiadas> busBeneficiadas;
 
     private List<Beneficio> beneficios;
 }

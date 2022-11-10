@@ -63,7 +63,7 @@ public class Demanda {
 //    @JoinColumn(name = "id_bu_solicitante")
 //    private BusinessUnity idBuSolicitante;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "numero_cadastro_usuario")
     private Usuario solicitanteDemanda;
 
@@ -74,5 +74,8 @@ public class Demanda {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "idProposta")
     private Proposta idProposta;
+
+    @OneToMany(mappedBy = "idDemanda")
+    private List<BusBeneficiadas> busBeneficiadas;
 
 }

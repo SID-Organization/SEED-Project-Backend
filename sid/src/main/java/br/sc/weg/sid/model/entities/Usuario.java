@@ -3,6 +3,7 @@ package br.sc.weg.sid.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -35,8 +36,8 @@ public class Usuario {
     @Column(name = "CargoUsuario", nullable = false)
     private Cargo cargoUsuario;
 
-    @Column(name = "FotoUsuario", nullable = false)
+    @Column(name = "FotoUsuario")
     @Lob
-    @NonNull
+    @NotNull
     private byte[] fotoUsuario;
 }
