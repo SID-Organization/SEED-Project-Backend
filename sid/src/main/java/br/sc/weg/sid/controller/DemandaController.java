@@ -70,7 +70,11 @@ public class DemandaController {
         demanda.setStatusDemanda(Status.BACKLOG);
         demanda.setTamanhoDemanda(Tamanho.GRANDE);
         demanda.setSecaoTIResponsavel(Secao.TI);
-        demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+        try{
+            demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
+        }
 
         Demanda demandaSalva = demandaService.save(demanda);
 
