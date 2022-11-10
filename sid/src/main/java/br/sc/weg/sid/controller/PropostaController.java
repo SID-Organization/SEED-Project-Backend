@@ -12,10 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 
 @Controller
+@RequestMapping("/sid/api/proposta")
 public class PropostaController {
     @Autowired
     PropostaService propostaService;
@@ -24,8 +26,9 @@ public class PropostaController {
     ResponsaveisNegocioService responsaveisNegocioService;
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/sid/api/proposta")
+    @PostMapping()
     ResponseEntity<Object> cadastrarProsposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
+        System.out.println("passou aqui");
         try {
             Proposta proposta = new Proposta();
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);

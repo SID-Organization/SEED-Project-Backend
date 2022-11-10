@@ -42,6 +42,6 @@ public class Proposta {
     @Column(name = "AprovadoWorkflowProposta", nullable = false)
     private Integer aprovadoWorkflowProposta;
 
-    @Column(name = "MotivoRecusaProposta", nullable = false)
+    @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaProposta;
 }

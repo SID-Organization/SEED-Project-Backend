@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 public class Usuario {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdUsuario", nullable = false, unique = true)
     private Integer idUsuario;
 

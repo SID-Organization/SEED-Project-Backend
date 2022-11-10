@@ -68,7 +68,6 @@ public class UsuarioController {
         return ResponseEntity.ok("Usuário atualizado com sucesso! \n" + usuarioSalvo);
     }
 
-    @GetMapping
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     public ResponseEntity<Object> findAll() {
