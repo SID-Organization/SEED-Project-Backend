@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.service;
 
+import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.ResponsaveisNegocio;
 import br.sc.weg.sid.repository.ResponsaveisNegocioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,9 @@ public class ResponsaveisNegocioService {
 
     public void deleteById(Integer integer) {
         responsaveisNegocioRepository.deleteById(integer);
+    }
+
+    public List<ResponsaveisNegocio> findAllByIdProposta(Proposta idProposta) {
+        return responsaveisNegocioRepository.findAllByIdProposta(idProposta);
     }
 }

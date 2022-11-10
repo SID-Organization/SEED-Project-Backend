@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.service;
 
+import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.repository.PropostaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,17 @@ public class PropostaService {
 
     public void deleteById(Integer integer) {
         propostaRepository.deleteById(integer);
+    }
+
+    public List<Proposta> findAllByAprovadoWorkflowProposta(Integer aprovadoWorkflowProposta) {
+        return propostaRepository.findAllByAprovadoWorkflowProposta(aprovadoWorkflowProposta);
+    }
+
+    public List<Proposta> findByIdDemanda(Demanda idDemanda) {
+        return propostaRepository.findByIdDemanda(idDemanda);
+    }
+
+    public List<Proposta> findAllByPaybackProposta(Double paybackProposta) {
+        return propostaRepository.findAllByPaybackProposta(paybackProposta);
     }
 }

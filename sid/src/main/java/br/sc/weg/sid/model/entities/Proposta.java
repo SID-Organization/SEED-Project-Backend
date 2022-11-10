@@ -42,6 +42,10 @@ public class Proposta {
     @Column(name = "AprovadoWorkflowProposta", nullable = false)
     private Integer aprovadoWorkflowProposta;
 
-    @Column(name = "MotivoRecusaProposta", nullable = false)
+    @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaProposta;
+
+    @JoinColumn(name = "IdDemanda", referencedColumnName = "IdDemanda")
+    @ManyToOne(optional = false)
+    private Demanda idDemanda;
 }

@@ -1,21 +1,24 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
+import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.ResponsaveisNegocio;
+import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.model.service.ResponsaveisNegocioService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
+@RequestMapping("/sid/api/proposta")
 public class PropostaController {
     @Autowired
     PropostaService propostaService;
@@ -23,9 +26,13 @@ public class PropostaController {
     @Autowired
     ResponsaveisNegocioService responsaveisNegocioService;
 
+    @Autowired
+    DemandaService demandaService;
+
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/sid/api/proposta")
+    @PostMapping()
     ResponseEntity<Object> cadastrarProsposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
+        System.out.println("passou aqui");
         try {
             Proposta proposta = new Proposta();
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);
@@ -33,6 +40,7 @@ public class PropostaController {
 
             for (ResponsaveisNegocio responsaveisNegocio : cadastroPropostaDTO.getResponsaveisNegocio()) {
                 try {
+                    responsaveisNegocio.setIdProposta(propostaSalva);
                     responsaveisNegocioService.save(responsaveisNegocio);
                 } catch (Exception e) {
                     propostaService.deleteById(propostaSalva.getIdProposta());
@@ -40,10 +48,70 @@ public class PropostaController {
                 }
             }
 
-            
+
             return ResponseEntity.ok(propostaSalva);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0001: Erro ao cadastrar proposta!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @DeleteMapping("/{id}")
+    ResponseEntity<Object> deletarProposta(@PathVariable("id") Integer id) {
+        List<ResponsaveisNegocio> responsaveisNegocio = responsaveisNegocioService.findAllByIdProposta(propostaService.findById(id).get());
+        try {
+            for (ResponsaveisNegocio responsaveisNegocio1 : responsaveisNegocio) {
+                try {
+                    responsaveisNegocioService.deleteById(responsaveisNegocio1.getIdResponsaveisNegocio());
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("ERROR 0005: Erro ao deletar responsável pelo negócio, a proposta não foi deletada!" + "\nMessage: " + e.getMessage());
+                }
+            }
+            propostaService.deleteById(id);
+            return ResponseEntity.ok("Proposta deletada com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("ERROR 0002: Erro ao deletar proposta!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping
+    ResponseEntity<Object> listarPropostas() {
+        try {
+            return ResponseEntity.ok(propostaService.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping("/{id}")
+    ResponseEntity<Object> listarPropostaPorId(@PathVariable("id") Integer id) {
+        try {
+            return ResponseEntity.ok(propostaService.findById(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/demanda/{id}")
+    ResponseEntity<Object> listarPropostaPorIdDemanda(@PathVariable("id") Integer id) {
+        try {
+            Optional<Demanda> demanda = demandaService.findById(id);
+            return ResponseEntity.ok(propostaService.findByIdDemanda(demanda.get()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/payback/{value}")
+    ResponseEntity<Object> listarPropostaPorPayback(@PathVariable("value") Double value) {
+        try {
+            return ResponseEntity.ok(propostaService.findAllByPaybackProposta(value));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
     }
 }
