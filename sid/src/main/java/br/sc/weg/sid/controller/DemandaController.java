@@ -84,6 +84,7 @@ public class DemandaController {
                     arquivoDemanda.setTipoArquivo(additionalImage.getContentType());
                     arquivoDemanda.setArquivo(additionalImage.getBytes());
                     arquivoDemanda.setIdDemanda(demandaSalva);
+                    arquivoDemanda.setIdUsuario(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
 
                     arquivoDemandaService.save(arquivoDemanda);
                 }
@@ -93,18 +94,6 @@ public class DemandaController {
         }
 
 
-        for (BusBeneficiadas bus : cadastroDemandaDTO.getBusBeneficiadas()) {
-            businessUnityService.findById(bus.getIdBusinessUnity().getIdBusinessUnity()).ifPresentOrElse(
-                    (busSalva) -> {
-                        BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
-                        busBeneficiadas.setIdDemanda(demandaSalva);
-                        busBeneficiadasService.save(busBeneficiadas);
-                    },
-                    () -> {
-                        throw new ErroCadastrarBusBeneficiadas("Erro ao cadastrar as business beneficiadas");
-                    }
-            );
-        }
 
 
 //        if (!businessUnities.contains(cadastroDemandaDTO.getIdBuSolicitante())) {
