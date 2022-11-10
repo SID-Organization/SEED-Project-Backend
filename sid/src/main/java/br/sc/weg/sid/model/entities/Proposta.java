@@ -44,4 +44,8 @@ public class Proposta {
 
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaProposta;
+
+    @JoinColumn(name = "IdDemanda", referencedColumnName = "IdDemanda")
+    @ManyToOne(optional = false)
+    private Demanda idDemanda;
 }

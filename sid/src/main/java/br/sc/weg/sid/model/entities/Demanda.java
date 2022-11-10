@@ -56,13 +56,13 @@ public class Demanda {
     @ManyToOne(cascade = CascadeType.ALL)
     private Usuario idUsuario;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "idChat")
-    private Chat idChat;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "idChat")
+//    private Chat idChat;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "idProposta")
-    private Proposta idProposta;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "idProposta")
+//    private Proposta idProposta;
 
 //    @OneToMany(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "bus_beneficiadas")

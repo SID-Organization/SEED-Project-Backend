@@ -1,5 +1,6 @@
 package br.sc.weg.sid.DTO;
 
+import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.ResponsaveisNegocio;
 import br.sc.weg.sid.model.entities.Usuario;
 import lombok.Getter;
@@ -17,5 +18,6 @@ public class CadastroPropostaDTO {
     private Date periodoExecucaoFim;
     private String linkJira;
     private Integer aprovadoWorkflowProposta;
+    private Demanda idDemanda;
     private List<ResponsaveisNegocio> responsaveisNegocio;
 }
