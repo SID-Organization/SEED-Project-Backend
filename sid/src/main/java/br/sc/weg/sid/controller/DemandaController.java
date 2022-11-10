@@ -5,12 +5,14 @@ import br.sc.weg.sid.exceptions.ErroCadastrarBusBeneficiadas;
 import br.sc.weg.sid.exceptions.ErroSalvarChatException;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.*;
+import br.sc.weg.sid.utils.DemandaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -36,6 +38,9 @@ public class DemandaController {
     BusBeneficiadasService busBeneficiadasService;
 
     @Autowired
+    ArquivoDemandaService arquivoDemandaService;
+
+    @Autowired
     BeneficioService beneficioService;
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -52,24 +57,43 @@ public class DemandaController {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> cadastroDemandas(
-            @RequestBody @Valid CadastroDemandaDTO cadastroDemandaDTO
+
+            @RequestParam("demandaForm") @Valid String demandaJson,
+            @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalImages
     ) {
 
-        List<BusinessUnity> businessUnities = businessUnityService.findAll();
+        DemandaUtil demandaUtil = new DemandaUtil();
+        CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
 
-        Demanda demanda = new Demanda();
+        System.out.println("user: " + usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda()).get());
+
+        Demanda demanda = demandaUtil.convertJsonToModel(demandaJson);
         demanda.setSecaoTIResponsavel(Secao.TI);
         demanda.setStatusDemanda(Status.BACKLOG);
         demanda.setTamanhoDemanda(Tamanho.GRANDE);
         demanda.setSecaoTIResponsavel(Secao.TI);
-        usuarioService.findById(cadastroDemandaDTO.getIdUsuario());
+        demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda()).get());
 
-        demanda.setSolicitanteDemanda(cadastroDemandaDTO.getIdUsuario());
-        BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         Demanda demandaSalva = demandaService.save(demanda);
 
-        for (BusinessUnity bus : cadastroDemandaDTO.getBusBeneficiadas()) {
+        if (additionalImages != null) {
+            try {
+                for (MultipartFile additionalImage : additionalImages) {
+                    ArquivoDemanda arquivoDemanda = new ArquivoDemanda();
+                    arquivoDemanda.setNomeArquivo(additionalImage.getOriginalFilename());
+                    arquivoDemanda.setTipoArquivo(additionalImage.getContentType());
+                    arquivoDemanda.setArquivo(additionalImage.getBytes());
+                    arquivoDemanda.setIdDemanda(demandaSalva);
 
+                    arquivoDemandaService.save(arquivoDemanda);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao converter a imagem");
+            }
+        }
+
+
+        for (BusinessUnity bus : cadastroDemandaDTO.getBusBeneficiadas()) {
             businessUnityService.findByNomeBusinessUnity(bus.getNomeBusinessUnity()).ifPresentOrElse(
                     (busSalva) -> {
                         System.out.println("Id: " + busSalva.getIdBusinessUnity());

@@ -14,11 +14,8 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 public class Usuario {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IdUsuario", nullable = false, unique = true)
-    private Integer idUsuario;
 
+    @Id
     @Column(name = "NumeroCadastroUsuario", nullable = false)
     private Integer numeroCadastroUsuario;
 

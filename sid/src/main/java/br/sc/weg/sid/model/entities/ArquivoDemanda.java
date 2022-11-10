@@ -19,6 +19,12 @@ public class ArquivoDemanda {
     private Integer idArquivoDemanda;
 
     @NonNull
+    private String nomeArquivo;
+
+    @NonNull
+    private String tipoArquivo;
+
+    @NonNull
     @Lob
     private byte[] arquivo;
 

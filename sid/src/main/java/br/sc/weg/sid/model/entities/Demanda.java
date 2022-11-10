@@ -63,8 +63,8 @@ public class Demanda {
 //    @JoinColumn(name = "id_bu_solicitante")
 //    private BusinessUnity idBuSolicitante;
 
-    @JoinColumn(name = "id_usuario")
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "numero_cadastro_usuario")
     private Usuario solicitanteDemanda;
 
     @OneToOne(cascade = CascadeType.ALL)
