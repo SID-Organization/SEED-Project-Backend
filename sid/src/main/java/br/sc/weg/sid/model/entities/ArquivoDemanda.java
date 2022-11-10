@@ -35,10 +35,4 @@ public class ArquivoDemanda {
     @JoinColumn(name = "idUsuario", nullable = false)
     @ManyToOne
     private Usuario idUsuario;
-
-    public ArquivoDemanda(byte[] bytes, Usuario idUsuario, Demanda idDemanda) {
-        this.arquivo = bytes;
-        this.idUsuario = idUsuario;
-        this.idDemanda = idDemanda;
-    }
 }

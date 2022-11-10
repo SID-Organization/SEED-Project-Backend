@@ -65,8 +65,6 @@ public class DemandaController {
         DemandaUtil demandaUtil = new DemandaUtil();
         CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
 
-        System.out.println("user: " + usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get().getNomeUsuario());
-
         Demanda demanda = demandaUtil.convertJsonToModel(demandaJson);
         demanda.setSecaoTIResponsavel(Secao.TI);
         demanda.setStatusDemanda(Status.BACKLOG);
@@ -89,11 +87,31 @@ public class DemandaController {
                     arquivoDemandaService.save(arquivoDemanda);
                 }
             } catch (Exception e) {
+                demandaService.deleteById(demandaSalva.getIdDemanda());
                 throw new RuntimeException("Erro ao converter a imagem");
             }
         }
 
+        for (BusBeneficiadas bus : cadastroDemandaDTO.getBusBeneficiadas()) {
+            BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
+            BeanUtils.copyProperties(bus, busBeneficiadas);
+            busBeneficiadas.setIdDemanda(demandaSalva);
+            busBeneficiadasService.save(busBeneficiadas);
+        }
 
+//        for (BusBeneficiadas bus : cadastroDemandaDTO.getBusBeneficiadas()) {
+//            businessUnityService.findById(bus.getIdBusinessUnity().getIdBusinessUnity()).ifPresentOrElse(
+//                    (busSalva) -> {
+//                        BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
+//                        busBeneficiadas.setIdDemanda(demandaSalva);
+//                        busBeneficiadasService.save(busBeneficiadas);
+//                    },
+//                    () -> {
+//                        demandaService.deleteById(demandaSalva.getIdDemanda());
+//                        throw new ErroCadastrarBusBeneficiadas("Erro ao cadastrar as business beneficiadas");
+//                    }
+//            );
+//        }
 
 
 //        if (!businessUnities.contains(cadastroDemandaDTO.getIdBuSolicitante())) {
