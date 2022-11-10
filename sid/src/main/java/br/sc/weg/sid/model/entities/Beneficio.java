@@ -29,6 +29,6 @@ public class Beneficio {
     private String descricaoBeneficio;
 
     @ManyToOne
-    @JoinColumn(name = "idDemanda", nullable = false)
+    @JoinColumn(name = "idDemanda")
     private Demanda idDemanda;
 }

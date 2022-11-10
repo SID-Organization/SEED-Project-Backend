@@ -32,8 +32,6 @@ public class CadastroDemandaDTO {
 
     private Usuario solicitanteDemanda;
 
-    private Chat idChat;
-
     private List<BusBeneficiadas> busBeneficiadas;
 
     private List<Beneficio> beneficios;
