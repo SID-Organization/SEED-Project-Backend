@@ -35,7 +35,6 @@ public class DemandaUtil {
     }
 
     public CadastroDemandaDTO convertToDto(String  demandaJson) {
-        System.out.println("Convertendo demandaJson para CadastroDemandaDTO");
         try{
             return this.mapper.readValue(demandaJson, CadastroDemandaDTO.class);
         } catch (Exception e){

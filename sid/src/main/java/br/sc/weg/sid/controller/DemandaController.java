@@ -96,11 +96,15 @@ public class DemandaController {
             }
         }
 
-        for (BusBeneficiadas bus : cadastroDemandaDTO.getBusBeneficiadas()) {
-            BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
-            BeanUtils.copyProperties(bus, busBeneficiadas);
-            busBeneficiadas.setIdDemanda(demandaSalva);
-            busBeneficiadasService.save(busBeneficiadas);
+        try{
+            for (BusBeneficiadas bus : cadastroDemandaDTO.getBusBeneficiadas()) {
+                BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
+                BeanUtils.copyProperties(bus, busBeneficiadas);
+                busBeneficiadas.setIdDemanda(demandaSalva);
+                busBeneficiadasService.save(busBeneficiadas);
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErroCadastrarBusBeneficiadas("Erro ao cadastrar as BU's beneficiadas"));
         }
 
 //        for (BusBeneficiadas bus : cadastroDemandaDTO.getBusBeneficiadas()) {

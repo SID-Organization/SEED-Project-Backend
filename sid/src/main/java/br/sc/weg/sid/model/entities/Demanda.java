@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Time;
 import java.util.Date;
 import java.util.List;
@@ -26,29 +27,22 @@ public class Demanda {
     @Column(length = 100, nullable = false)
     private String tituloDemanda;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status statusDemanda;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Tamanho tamanhoDemanda;
 
-    @Column()
-    private Double scoreDemanda;
-
     @Column(length = 4000)
     private String propostaDemanda;
-
-    @Column(length = 4000)
-    private String objetivoDemanda;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Secao secaoTIResponsavel;
-
-    @Column(length = 6000)
-    private String situacaoAtualDemanda;
 
     @Column()
     private Integer frequenciaUsoDemanda;
@@ -58,6 +52,20 @@ public class Demanda {
 
     @Column()
     private Date prazoElaboracaoDemanda;
+
+    @Column()
+    private Integer codigoPPM;
+
+    @Column
+    private String linkJira;
+
+    @Column()
+    private Double scoreDemanda;
+
+
+    @Column(length = 6000)
+    private String situacaoAtualDemanda;
+
 
 //    @OneToOne(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "id_bu_solicitante")
