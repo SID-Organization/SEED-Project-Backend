@@ -1,8 +1,6 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
-import br.sc.weg.sid.exceptions.ErroCadastrarBusBeneficiadas;
-import br.sc.weg.sid.exceptions.ErroSalvarChatException;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
@@ -15,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/sid/api/demanda")
@@ -34,8 +34,8 @@ public class DemandaController {
     @Autowired
     BusinessUnityService businessUnityService;
 
-    @Autowired
-    BusBeneficiadasService busBeneficiadasService;
+//    @Autowired
+//    BusBeneficiadasService busBeneficiadasService;
 
     @Autowired
     ArquivoDemandaService arquivoDemandaService;
@@ -61,19 +61,40 @@ public class DemandaController {
             @RequestParam("demandaForm") @Valid String demandaJson,
             @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalImages
     ) {
-
         DemandaUtil demandaUtil = new DemandaUtil();
         CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
-
-        Demanda demanda = demandaUtil.convertJsonToModel(demandaJson);
+        Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
         demanda.setSecaoTIResponsavel(Secao.TI);
         demanda.setStatusDemanda(Status.BACKLOG);
+
+        Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
+        List<Field> atributos = Arrays.asList(classe.getDeclaredFields());
+        atributos.forEach(atributo -> {
+            try {
+                Object valor = atributo.get(cadastroDemandaDTO);
+                if (valor == null){
+                    demanda.setStatusDemanda(Status.RASCUNHO);
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
         demanda.setTamanhoDemanda(Tamanho.GRANDE);
         demanda.setSecaoTIResponsavel(Secao.TI);
-        demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+        try{
+            demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
+        }
+
+        List<Beneficio> beneficios = cadastroDemandaDTO.getBeneficios();
+
+
+        demanda.setBusBeneficiadas(null);
 
         Demanda demandaSalva = demandaService.save(demanda);
-
+        ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
         if (additionalImages != null) {
             try {
                 for (MultipartFile additionalImage : additionalImages) {
@@ -84,34 +105,14 @@ public class DemandaController {
                     arquivoDemanda.setIdDemanda(demandaSalva);
                     arquivoDemanda.setIdUsuario(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
 
-                    arquivoDemandaService.save(arquivoDemanda);
+                    arquivoDemandaSalvo =  arquivoDemandaService.save(arquivoDemanda);
                 }
             } catch (Exception e) {
+                arquivoDemandaService.deleteById(arquivoDemandaSalvo.getIdArquivoDemanda());
                 demandaService.deleteById(demandaSalva.getIdDemanda());
-                throw new RuntimeException("Erro ao converter a imagem");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos");
             }
         }
-
-        for (BusBeneficiadas bus : cadastroDemandaDTO.getBusBeneficiadas()) {
-            BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
-            BeanUtils.copyProperties(bus, busBeneficiadas);
-            busBeneficiadas.setIdDemanda(demandaSalva);
-            busBeneficiadasService.save(busBeneficiadas);
-        }
-
-//        for (BusBeneficiadas bus : cadastroDemandaDTO.getBusBeneficiadas()) {
-//            businessUnityService.findById(bus.getIdBusinessUnity().getIdBusinessUnity()).ifPresentOrElse(
-//                    (busSalva) -> {
-//                        BusBeneficiadas busBeneficiadas = new BusBeneficiadas();
-//                        busBeneficiadas.setIdDemanda(demandaSalva);
-//                        busBeneficiadasService.save(busBeneficiadas);
-//                    },
-//                    () -> {
-//                        demandaService.deleteById(demandaSalva.getIdDemanda());
-//                        throw new ErroCadastrarBusBeneficiadas("Erro ao cadastrar as business beneficiadas");
-//                    }
-//            );
-//        }
 
 
 //        if (!businessUnities.contains(cadastroDemandaDTO.getIdBuSolicitante())) {
@@ -127,11 +128,48 @@ public class DemandaController {
 //        }
 
 
-        for (Beneficio beneficio : cadastroDemandaDTO.getBeneficios()) {
-            beneficio.setIdDemanda(demandaSalva);
-            beneficioService.save(beneficio);
+        try{
+            for (Beneficio beneficio : beneficios) {
+                beneficio.setIdDemanda(demandaSalva);
+                beneficioService.save(beneficio);
+            }
+        } catch (Exception e) {
+            demandaService.deleteById(demandaSalva.getIdDemanda());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao cadastrar os benefícios");
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
     }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> atualizarDemanda(
+            @PathVariable("id") Integer id,
+            @RequestParam("demandaForm") @Valid String demandaJson
+    ) {
+        DemandaUtil demandaUtil = new DemandaUtil();
+        CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
+        if (!demandaService.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não foi encontrado a demanda com o id " + id);
+        }
+        Demanda demanda = demandaService.findById(id).get();
+        BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
+        demandaService.save(demanda);
+        return ResponseEntity.status(HttpStatus.OK).body(demanda);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer id) {
+        if (!demandaService.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não foi encontrado a demanda com o id " + id);
+        }
+        if (demandaService.findById(id).get().getStatusDemanda().equals("Rascunho")) {
+            demandaService.deleteById(id);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Demanda deletada com sucesso!");
+    }
+
 }

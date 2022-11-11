@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.ArquivoDemanda;
+import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.repository.ArquivoDemandaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
