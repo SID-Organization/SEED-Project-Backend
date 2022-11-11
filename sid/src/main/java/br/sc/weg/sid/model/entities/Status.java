@@ -8,7 +8,8 @@ public enum Status {
     BUSINESS_CASE("Business Case"),
     SUPPORT("Support"),
     DONE("Done"),
-    CANCELLED("Cancelled");
+    CANCELLED("Cancelled"),
+    RASCUNHO("Rascunho");
 
     String nome;
     Status(String nome){

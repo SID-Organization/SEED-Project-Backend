@@ -7,6 +7,7 @@ import br.sc.weg.sid.model.service.ArquivoDemandaService;
 import br.sc.weg.sid.model.service.UsuarioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,17 +22,10 @@ public class DemandaUtil {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    public Demanda convertJsonToModel(String demandaJson) {
-        try {
-            CadastroDemandaDTO cadastroDemandaDTO = convertToDto(demandaJson);
-            return convertDtoToModel(cadastroDemandaDTO);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao converter o demandaJson para objeto Demanda! \n" + e.getMessage());
-        }
-    }
-
-    private Demanda convertDtoToModel(CadastroDemandaDTO cadastroDemandaDTO) {
-        return this.mapper.convertValue(cadastroDemandaDTO, Demanda.class);
+    public Demanda convertDtoToModel(CadastroDemandaDTO cadastroDemandaDTO) {
+        Demanda demanda = new Demanda();
+        BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
+        return demanda;
     }
 
     public CadastroDemandaDTO convertToDto(String  demandaJson) {

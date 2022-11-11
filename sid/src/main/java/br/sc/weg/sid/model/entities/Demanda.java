@@ -79,9 +79,11 @@ public class Demanda {
 //    @JoinColumn(name = "idProposta")
 //    private Proposta idProposta;
 
-    @OneToMany(mappedBy = "idDemanda")
-    private List<BusBeneficiadas> busBeneficiadas;
 
-    @OneToMany(mappedBy = "idDemanda")
-    private List<Beneficio> beneficios;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "bus_beneficiadas_demanda",
+            joinColumns = @JoinColumn(name = "id_demanda", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "id_business_unity", nullable = false))
+    private List<BusinessUnity> busBeneficiadas;
+
 }

@@ -15,24 +15,24 @@ import java.util.List;
 @Setter
 public class CadastroDemandaDTO {
 
-    private String tituloDemanda;
+    public String tituloDemanda;
 
-    private String propostaDemanda;
+    public String propostaDemanda;
 
-    private String objetivoDemanda;
+    public String situacaoAtualDemanda;
 
-    private String situacaoAtualDemanda;
+    public Integer frequenciaUsoDemanda;
 
-    private Integer frequenciaUsoDemanda;
-
-    private String descricaoQualitativoDemanda;
+    public String descricaoQualitativoDemanda;
 
     @FutureOrPresent
-    private Date prazoElaboracaoDemanda;
+    public Date prazoElaboracaoDemanda;
 
-    private Usuario solicitanteDemanda;
+    public Integer codigoPPM;
 
-    private List<BusBeneficiadas> busBeneficiadas;
+    public Usuario solicitanteDemanda;
 
-    private List<Beneficio> beneficios;
+    public List<BusinessUnity> busBeneficiadas;
+
+    public List<Beneficio> beneficios;
 }
