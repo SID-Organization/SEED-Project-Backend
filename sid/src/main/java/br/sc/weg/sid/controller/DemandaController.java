@@ -34,15 +34,13 @@ public class DemandaController {
     @Autowired
     BusinessUnityService businessUnityService;
 
-//    @Autowired
-//    BusBeneficiadasService busBeneficiadasService;
-
     @Autowired
     ArquivoDemandaService arquivoDemandaService;
 
     @Autowired
     BeneficioService beneficioService;
 
+    //Get all, pega todas as demandas
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping()
     public ResponseEntity<Object> findAll() {
@@ -53,7 +51,7 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
-
+    //Cria uma demanda
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> cadastroDemandas(
@@ -141,6 +139,7 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
     }
 
+    //Atualiza uma demanda informando seu id
     @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizarDemanda(
@@ -159,6 +158,7 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
+    //Deleta uma demanda informando seu id
     @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer id) {
