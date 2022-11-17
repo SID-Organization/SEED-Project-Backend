@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.Forum;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.repository.ForumRepository;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class ForumService {
         forumRepository.deleteById(integer);
     }
 
-    public Forum findByNumeroCadastroAnalistaResponsavel(Integer numeroCadastroAnalistaResponsavel) {
+    public List<Forum> findByNumeroCadastroAnalistaResponsavel(Usuario numeroCadastroAnalistaResponsavel) {
         return forumRepository.findByNumeroCadastroAnalistaResponsavel(numeroCadastroAnalistaResponsavel);
     }
 }

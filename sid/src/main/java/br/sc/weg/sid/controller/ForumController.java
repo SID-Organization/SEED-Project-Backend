@@ -2,7 +2,9 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroForumDTO;
 import br.sc.weg.sid.model.entities.Forum;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.service.ForumService;
+import br.sc.weg.sid.model.service.UsuarioService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ public class ForumController {
 
     @Autowired
     private ForumService forumService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping
@@ -54,14 +59,15 @@ public class ForumController {
             return ResponseEntity.ok("Fórum deletado com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao deletar fórum: " + e.getMessage());
-        }
+        }-
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/analista/{id}")
     public ResponseEntity<Object> listarForumPorAnalista(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok((forumService.findByNumeroCadastroAnalistaResponsavel(id)));
+            Usuario analista = usuarioService.findById(id).get();
+            return ResponseEntity.ok((forumService.findByNumeroCadastroAnalistaResponsavel(analista)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao listar fóruns: " + e.getMessage());
         }
