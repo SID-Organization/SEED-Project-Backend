@@ -27,7 +27,7 @@ public class Forum {
     @JoinColumn(name = "numeroCadastroAnalistaResponsavel", nullable = false)
     private Usuario numeroCadastroAnalistaResponsavel;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(name = "usuarios_forum",
             joinColumns = @JoinColumn(name = "idForum"),
             inverseJoinColumns = @JoinColumn(name = "idUsuario"))

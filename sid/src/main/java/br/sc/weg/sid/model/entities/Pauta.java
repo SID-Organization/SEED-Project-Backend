@@ -13,17 +13,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class Pauta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IdPauta", nullable = false, unique = true)
+    @Column(name = "idPauta", nullable = false, unique = true)
     private Integer idPauta;
 
     @Column(name = "dataReuniaoPauta", nullable = false)
     private Date dataReuniaoPauta;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "idForum", nullable = false)
     private Forum idForum;
 
