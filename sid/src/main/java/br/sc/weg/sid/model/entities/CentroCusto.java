@@ -2,10 +2,7 @@ package br.sc.weg.sid.model.entities;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "CENTRO_CUSTO")
@@ -16,6 +13,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode
 public class CentroCusto {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdCentroCusto", nullable = false, unique = true)
     private Integer idCentroCusto;
 
