@@ -34,24 +34,32 @@ public class DemandaService {
         demandaRepository.deleteById(integer);
     }
 
-    public Optional<Demanda> findByTamanhoDemanda(Tamanho tamanhoDemanda) {
+    public List<Demanda> findByTamanhoDemanda(Tamanho tamanhoDemanda) {
         return demandaRepository.findByTamanhoDemanda(tamanhoDemanda);
     }
 
-    public Optional<Demanda> findBySecaoTIResponsavel(Secao secaoTIResponsavelDemanda) {
+    public List<Demanda> findBySecaoTIResponsavel(Secao secaoTIResponsavelDemanda) {
         return demandaRepository.findBySecaoTIResponsavel(secaoTIResponsavelDemanda);
     }
 
-    public Optional<Demanda> findByStatusDemanda(Status statusDemanda) {
+    public List<Demanda> findByStatusDemanda(Status statusDemanda) {
         return demandaRepository.findByStatusDemanda(statusDemanda);
     }
 
-    public Optional<Demanda> findByScoreDemanda(Integer scoreDemanda) {
+    public List<Demanda> findByScoreDemanda(Double scoreDemanda) {
         return demandaRepository.findByScoreDemanda(scoreDemanda);
     }
 
-    public Optional<Demanda> findBySolicitanteDemanda(Usuario solicitanteDemanda) {
+    public List<Demanda> findBySolicitanteDemanda(Usuario solicitanteDemanda) {
         return demandaRepository.findBySolicitanteDemanda(solicitanteDemanda);
+    }
+
+    public List<Demanda> findByPrazoElaboracaoDemandaAsc() {
+        return demandaRepository.findByPrazoElaboracaoDemandaAsc();
+    }
+
+    public List<Demanda> findByPrazoElaboracaoDemandaDesc() {
+        return demandaRepository.findByPrazoElaboracaoDemandaDesc();
     }
 
 }

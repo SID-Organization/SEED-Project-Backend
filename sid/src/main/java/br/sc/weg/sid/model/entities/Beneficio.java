@@ -28,7 +28,7 @@ public class Beneficio {
     @Column(length = 4000, name = "DescricaoBeneficio", nullable = false)
     private String descricaoBeneficio;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "idDemanda")
     private Demanda idDemanda;
 }

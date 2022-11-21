@@ -24,7 +24,7 @@ public class Demanda {
     @Column(length = 50, nullable = false, unique = true)
     private Integer idDemanda;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100)
     private String tituloDemanda;
 
     @NotNull
@@ -34,7 +34,7 @@ public class Demanda {
 
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column()
     private Tamanho tamanhoDemanda;
 
     @Column(length = 4000)
