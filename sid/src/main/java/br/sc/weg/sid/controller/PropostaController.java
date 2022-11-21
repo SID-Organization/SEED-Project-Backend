@@ -21,13 +21,13 @@ import java.util.Optional;
 @RequestMapping("/sid/api/proposta")
 public class PropostaController {
     @Autowired
-    PropostaService propostaService;
+    private PropostaService propostaService;
 
     @Autowired
-    ResponsaveisNegocioService responsaveisNegocioService;
+    private ResponsaveisNegocioService responsaveisNegocioService;
 
     @Autowired
-    DemandaService demandaService;
+    private DemandaService demandaService;
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()

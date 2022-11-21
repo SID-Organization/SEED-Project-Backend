@@ -13,6 +13,7 @@ import javax.persistence.*;
 @EqualsAndHashCode
 public class LinhaTabela {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdLinhaTabela", nullable = false, unique = true)
     private Integer idLinhaTabela;
 
