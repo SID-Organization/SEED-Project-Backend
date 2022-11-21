@@ -32,17 +32,23 @@ public class PropostaController {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     ResponseEntity<Object> cadastrarProsposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
-        System.out.println("passou aqui");
         try {
             Proposta proposta = new Proposta();
+
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);
+
             Proposta propostaSalva = propostaService.save(proposta);
+
 
             for (ResponsaveisNegocio responsaveisNegocio : cadastroPropostaDTO.getResponsaveisNegocio()) {
                 try {
+
+                    System.out.println("passou aqui");
                     responsaveisNegocio.setIdProposta(propostaSalva);
                     responsaveisNegocioService.save(responsaveisNegocio);
                 } catch (Exception e) {
+
+                    System.out.println("passou aquieeeeee");
                     propostaService.deleteById(propostaSalva.getIdProposta());
                     return ResponseEntity.badRequest().body("ERROR 0004: Erro ao salvar responsável pelo negócio, a proposta não foi salva!" + "\nMessage: " + e.getMessage());
                 }

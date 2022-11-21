@@ -13,7 +13,8 @@ import javax.persistence.*;
 @EqualsAndHashCode
 public class DecisaoProposta {
     @Id
-    @Column(name = "IdDecisaoProposta", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idDecisaoProposta", nullable = false, unique = true)
     private Integer idDecisaoProposta;
 
     @ManyToOne
@@ -30,16 +31,16 @@ public class DecisaoProposta {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "StatusComissaoDecisaoProposta", nullable = false)
-    private Status status;
+    private Status statusDecisaoProposta;
 
     @Column(name = "AtaPublicadaDecisaoProposta", nullable = false)
-    private Integer ataPublicada;
+    private Integer ataPublicadaDecisaoProposta;
 
     @Column(name = "ComentarioDecisaoProposta", nullable = false, length = 4000)
-    private String comentario;
+    private String comentarioDecisaoProposta;
 
     @Column(name = "NumeroSequencialDecisaoProposta", nullable = false)
-    private Integer numeroSequencial;
+    private Integer numeroSequencialDecisaoProposta;
 
 
 }
