@@ -59,7 +59,7 @@ public class ForumController {
             return ResponseEntity.ok("Fórum deletado com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao deletar fórum: " + e.getMessage());
-        }-
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

@@ -6,6 +6,8 @@ import br.sc.weg.sid.model.entities.Usuario;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import javax.validation.constraints.FutureOrPresent;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +16,9 @@ public class CadastroPropostaDTO {
     private String codigoPPM;
     private String escopoProposta;
     private Double paybackProposta;
+    @FutureOrPresent(message = "A data de inicio não pode ser no passado")
     private Date periodoExecucaoInicio;
+    @FutureOrPresent(message = "A data de fim não pode ser no passado")
     private Date periodoExecucaoFim;
     private String linkJira;
     private Integer aprovadoWorkflowProposta;
