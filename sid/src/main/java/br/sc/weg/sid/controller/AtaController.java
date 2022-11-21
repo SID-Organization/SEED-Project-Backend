@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -46,6 +43,37 @@ public class AtaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao cadastrar ata \n Message: " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+        try {
+            ataService.deleteById(id);
+            return ResponseEntity.ok().body("Ata deletada com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao deletar ata: " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping
+    public ResponseEntity<Object> findAll() {
+        try {
+            return ResponseEntity.ok(ataService.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao buscar atas: " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> findById(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(ataService.findById(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao buscar ata: " + e.getMessage());
         }
     }
 }
