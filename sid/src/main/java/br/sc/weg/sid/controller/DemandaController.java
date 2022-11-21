@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/sid/api/demanda")
@@ -50,7 +51,7 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
-    //Cria uma demanda
+    //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status em RASCUNHO) e retorna a demanda criada
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> cadastroDemandas(
@@ -63,6 +64,7 @@ public class DemandaController {
         Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
         demanda.setSecaoTIResponsavel(Secao.TI);
         demanda.setStatusDemanda(Status.BACKLOG);
+        demanda.setScoreDemanda(549.00);
 
         Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
         List<Field> atributos = Arrays.asList(classe.getDeclaredFields());
@@ -76,9 +78,6 @@ public class DemandaController {
                 throw new RuntimeException(e);
             }
         });
-
-        demanda.setTamanhoDemanda(Tamanho.GRANDE);
-        demanda.setSecaoTIResponsavel(Secao.TI);
         try{
             demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
         }catch (Exception e){
@@ -86,7 +85,6 @@ public class DemandaController {
         }
 
         List<Beneficio> beneficios = cadastroDemandaDTO.getBeneficios();
-
 
         demanda.setBusBeneficiadas(null);
 
@@ -110,8 +108,6 @@ public class DemandaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos");
             }
         }
-
-
 //        if (!businessUnities.contains(cadastroDemandaDTO.getIdBuSolicitante())) {
 //            throw new ErroCadastrarBusBeneficiadas("ERROR 0004: A Bu do solicitante não existe no banco de dados!");
 //        }
@@ -123,8 +119,6 @@ public class DemandaController {
 //        } catch (Exception e) {
 //            throw new ErroSalvarChatException("ERROR 0003: Erro ao salvar o chat da demanda!" + "\n" + e.getMessage());
 //        }
-
-
         try{
             for (Beneficio beneficio : beneficios) {
                 beneficio.setIdDemanda(demandaSalva);
@@ -134,8 +128,76 @@ public class DemandaController {
             demandaService.deleteById(demandaSalva.getIdDemanda());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao cadastrar os benefícios");
         }
-
         return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/status/{status}")
+    public ResponseEntity<Object> findByStatus(@PathVariable("status") Status status) {
+        List<Demanda> demandas = demandaService.findByStatusDemanda(status);
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com status "+ status + " encontrada!");
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/solicitante/{numeroCadastroUsuario}")
+    public ResponseEntity<Object> findBySolicitante(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
+        try{
+            Usuario solicitanteDemanda = usuarioService.findById(numeroCadastroUsuario).get();
+            List<Demanda> demandas = demandaService.findBySolicitanteDemanda(solicitanteDemanda);
+            if (demandas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O solicitante " + solicitanteDemanda.getNomeUsuario() + " não possui demandas!");
+            }
+            return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Solicitante com matrícula: " + numeroCadastroUsuario + " não encontrado!");
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/secao/{secao}")
+    public ResponseEntity<Object> findBySecao(@PathVariable("secao") Secao secao) {
+        try{
+            List<Demanda> demandas = demandaService.findBySecaoTIResponsavel(secao);
+            if (demandas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda na seção "+ secao + " encontrada!");
+            }
+            return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Seção " + secao + " não existe!");
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/data-decrescente")
+    public ResponseEntity<Object> findByDataDecrescente() {
+        List<Demanda> demandas = demandaService.findByPrazoElaboracaoDemandaDesc();
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada!");
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/data-crescente")
+    public ResponseEntity<Object> findByDataCrescente() {
+        List<Demanda> demandas = demandaService.findByPrazoElaboracaoDemandaAsc();
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada!");
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/score/{score}")
+    public ResponseEntity<Object> findByScore(@PathVariable("score") Double score) {
+        List<Demanda> demandas = demandaService.findByScoreDemanda(score);
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com score de: "+ score + " foi encontrada!");
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
     //Atualiza uma demanda informando seu id
@@ -165,7 +227,7 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id " + id);
         }
-        if (demandaService.findById(id).get().getStatusDemanda().equals("Rascunho")) {
+        if (demandaService.findById(id).get().getStatusDemanda().equals(Status.RASCUNHO)) {
             demandaService.deleteById(id);
         }
         return ResponseEntity.status(HttpStatus.OK).body("Demanda deletada com sucesso!");
