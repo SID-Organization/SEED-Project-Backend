@@ -14,7 +14,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class Notificacao {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdNotificacao", nullable = false, unique = true)
     private Integer idNotificacao;
 
@@ -23,4 +23,10 @@ public class Notificacao {
 
     @Column(name = "LinkNotificacao", nullable = false, length = 255)
     private String linkNotificacao;
+
+    @ManyToMany
+    @JoinTable(name = "NOTIFICACAO_USUARIO",
+            joinColumns = @JoinColumn(name = "IdNotificacao"),
+            inverseJoinColumns = @JoinColumn(name = "IdUsuario"))
+    private List<Usuario> usuarios;
 }
