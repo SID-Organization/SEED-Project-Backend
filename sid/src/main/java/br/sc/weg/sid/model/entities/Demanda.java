@@ -86,4 +86,6 @@ public class Demanda {
             inverseJoinColumns = @JoinColumn(name = "id_business_unity", nullable = false))
     private List<BusinessUnity> busBeneficiadas;
 
+    @OneToMany(mappedBy = "idCentroCusto")
+    private List<CentroCusto> centroCusto;
 }

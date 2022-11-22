@@ -62,4 +62,8 @@ public class DemandaService {
         return demandaRepository.findByPrazoElaboracaoDemandaDesc();
     }
 
+    public List<Demanda> findByTituloDemanda(String tituloDemanda) {
+        return demandaRepository.findByTituloDemanda(tituloDemanda);
+    }
+
 }

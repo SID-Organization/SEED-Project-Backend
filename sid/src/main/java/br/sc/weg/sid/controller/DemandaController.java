@@ -51,7 +51,7 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
-    //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status em RASCUNHO) e retorna a demanda criada
+    //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status de RASCUNHO) e retorna a demanda criada
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> cadastroDemandas(
@@ -65,6 +65,7 @@ public class DemandaController {
         demanda.setSecaoTIResponsavel(Secao.TI);
         demanda.setStatusDemanda(Status.BACKLOG);
         demanda.setScoreDemanda(549.00);
+        demanda.setTamanhoDemanda(Tamanho.GRANDE);
 
         Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
         List<Field> atributos = Arrays.asList(classe.getDeclaredFields());
@@ -131,6 +132,19 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
     }
 
+    //Busca demanda por id
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Object> findById(@PathVariable("id") Integer id) {
+        try{
+            Demanda demanda = demandaService.findById(id).get();
+            return ResponseEntity.status(HttpStatus.FOUND).body(demanda);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Demanda com id: " + id + " não encontrada!");
+        }
+    }
+
+    //Busca demandas por status
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/status/{status}")
     public ResponseEntity<Object> findByStatus(@PathVariable("status") Status status) {
@@ -141,21 +155,23 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
+    //Busca demanda por solicitante
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/solicitante/{numeroCadastroUsuario}")
-    public ResponseEntity<Object> findBySolicitante(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
+    @GetMapping("/solicitante/{numeroCadastroSoliciante}")
+    public ResponseEntity<Object> findBySolicitante(@PathVariable("numeroCadastroSoliciante") Integer numeroCadastroSoliciante) {
         try{
-            Usuario solicitanteDemanda = usuarioService.findById(numeroCadastroUsuario).get();
+            Usuario solicitanteDemanda = usuarioService.findById(numeroCadastroSoliciante).get();
             List<Demanda> demandas = demandaService.findBySolicitanteDemanda(solicitanteDemanda);
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O solicitante " + solicitanteDemanda.getNomeUsuario() + " não possui demandas!");
             }
             return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Solicitante com matrícula: " + numeroCadastroUsuario + " não encontrado!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Solicitante com matrícula: " + numeroCadastroSoliciante + " não encontrado!");
         }
     }
 
+    //Busca demandas por Seção
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/secao/{secao}")
     public ResponseEntity<Object> findBySecao(@PathVariable("secao") Secao secao) {
@@ -170,6 +186,7 @@ public class DemandaController {
         }
     }
 
+    //Busca demandas por data de criação (mais nova a mais antiga)
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/data-decrescente")
     public ResponseEntity<Object> findByDataDecrescente() {
@@ -180,6 +197,7 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
+    //Busca demanda por data de criação (mais antiga a mais nova)
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/data-crescente")
     public ResponseEntity<Object> findByDataCrescente() {
@@ -190,12 +208,35 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
+    //Busca demanda por score
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/score/{score}")
     public ResponseEntity<Object> findByScore(@PathVariable("score") Double score) {
         List<Demanda> demandas = demandaService.findByScoreDemanda(score);
         if (demandas.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com score de: "+ score + " foi encontrada!");
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+    }
+
+    //Busca demandas pelo titulo
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/titulo-demanda/{tituloDemanda}")
+    public ResponseEntity<Object> findByTituloDemanda(@PathVariable("tituloDemanda") String tituloDemanda) {
+        List<Demanda> demandas = demandaService.findByTituloDemanda(tituloDemanda);
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com o título: "+ tituloDemanda + " foi encontrada!");
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+    }
+
+    //Busca demandas pelo tamanho
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/tamanho/{tamanho}")
+    public ResponseEntity<Object> findByTamanho(@PathVariable("tamanho") Tamanho tamanho) {
+        List<Demanda> demandas = demandaService.findByTamanhoDemanda(tamanho);
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com o tamanho: "+ tamanho + " foi encontrada!");
         }
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }

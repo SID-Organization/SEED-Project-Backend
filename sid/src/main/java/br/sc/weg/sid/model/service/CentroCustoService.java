@@ -1,10 +1,8 @@
 package br.sc.weg.sid.model.service;
 
-import br.sc.weg.sid.model.entities.BusinessUnity;
 import br.sc.weg.sid.model.entities.CentroCusto;
 import br.sc.weg.sid.repository.CentroCustoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +24,10 @@ public class CentroCustoService {
 
     public Optional<CentroCusto> findById(Integer integer) {
         return centroCustoRepository.findById(integer);
+    }
+
+    public boolean existsById(Integer integer) {
+        return centroCustoRepository.existsById(integer);
     }
 
     public void deleteById(Integer integer) {

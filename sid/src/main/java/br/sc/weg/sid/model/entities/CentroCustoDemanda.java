@@ -25,4 +25,7 @@ public class CentroCustoDemanda {
     @ManyToOne
     @JoinColumn(name = "idDemanda", nullable = false)
     private Demanda idDemanda;
+
+    @Column(name = "porcentagemDespesa", nullable = false)
+    private Double porcentagemDespesa;
 }
