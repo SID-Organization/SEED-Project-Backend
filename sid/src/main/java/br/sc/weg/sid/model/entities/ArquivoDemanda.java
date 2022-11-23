@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,9 +31,11 @@ public class ArquivoDemanda {
 
     @JoinColumn(name = "idDemanda", nullable = false)
     @ManyToOne
+    @JsonIgnore
     private Demanda idDemanda;
 
     @JoinColumn(name = "idUsuario", nullable = false)
     @ManyToOne
+    @JsonIgnore
     private Usuario idUsuario;
 }

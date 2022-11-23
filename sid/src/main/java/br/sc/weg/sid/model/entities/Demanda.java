@@ -82,11 +82,8 @@ public class Demanda {
 //    private Proposta idProposta;
 
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
-    @JoinTable(name = "bus_beneficiadas_demanda",
-            joinColumns = @JoinColumn(name = "idDemanda", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "idBusinessUnity", nullable = false))
-    private List<BusinessUnity> busBeneficiadas;
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "idDemanda")
+    private List<BusBeneficiadasDemanda> busBeneficiadas;
 
     @OneToMany(mappedBy = "idDemanda",cascade = CascadeType.ALL)
     private List<ArquivoDemanda> arquivosDemandas = new ArrayList<>();
@@ -94,6 +91,6 @@ public class Demanda {
     @OneToMany(mappedBy = "idCentroCusto")
     private List<CentroCusto> centroCusto;
 
-    @OneToMany(mappedBy = "idDemanda", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "idDemanda", cascade = CascadeType.REMOVE)
     private List<Beneficio> beneficios;
 }

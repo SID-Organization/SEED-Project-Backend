@@ -59,55 +59,66 @@ public class DemandaController {
             @RequestParam("demandaForm") @Valid String demandaJson,
             @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalImages
     ) {
-        DemandaUtil demandaUtil = new DemandaUtil();
-        CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
-        Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
-        demanda.setSecaoTIResponsavel(Secao.TI);
-        demanda.setStatusDemanda(Status.BACKLOG);
-        demanda.setScoreDemanda(549.00);
-        demanda.setTamanhoDemanda(Tamanho.GRANDE);
-
-        Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
-        List<Field> atributos = Arrays.asList(classe.getDeclaredFields());
-        atributos.forEach(atributo -> {
-            try {
-                Object valor = atributo.get(cadastroDemandaDTO);
-                if (valor == null){
-                    demanda.setStatusDemanda(Status.RASCUNHO);
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        });
         try{
-            demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
-        }
 
-        Demanda demandaSalva = demandaService.save(demanda);
-        ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
-        if (additionalImages != null) {
-            try {
-                for (MultipartFile additionalImage : additionalImages) {
-                    ArquivoDemanda arquivoDemanda = new ArquivoDemanda();
-                    arquivoDemanda.setNomeArquivo(additionalImage.getOriginalFilename());
-                    arquivoDemanda.setTipoArquivo(additionalImage.getContentType());
-                    arquivoDemanda.setArquivo(additionalImage.getBytes());
-                    arquivoDemanda.setIdDemanda(demandaSalva);
-                    arquivoDemanda.setIdUsuario(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+            DemandaUtil demandaUtil = new DemandaUtil();
+            CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
+            Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
+            demanda.setSecaoTIResponsavel(Secao.TI);
+            demanda.setStatusDemanda(Status.BACKLOG);
+            demanda.setScoreDemanda(549.00);
+            demanda.setTamanhoDemanda(Tamanho.GRANDE);
 
-                    arquivoDemandaSalvo =  arquivoDemandaService.save(arquivoDemanda);
-                    demandaSalva.getArquivosDemandas().add(arquivoDemandaSalvo);
+            Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
+            List<Field> atributos = Arrays.asList(classe.getDeclaredFields());
+            atributos.forEach(atributo -> {
+                try {
+                    Object valor = atributo.get(cadastroDemandaDTO);
+                    if (valor == null){
+                        demanda.setStatusDemanda(Status.RASCUNHO);
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (Exception e) {
-                arquivoDemandaService.deleteById(arquivoDemandaSalvo.getIdArquivoDemanda());
-                demandaService.deleteById(demandaSalva.getIdDemanda());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
+            });
+            try{
+                demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+            }catch (Exception e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
             }
+
+            Demanda demandaSalva = demandaService.save(demanda);
+            ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
+            if (additionalImages != null) {
+                try {
+                    for (MultipartFile additionalImage : additionalImages) {
+                        ArquivoDemanda arquivoDemanda = new ArquivoDemanda();
+                        arquivoDemanda.setNomeArquivo(additionalImage.getOriginalFilename());
+                        arquivoDemanda.setTipoArquivo(additionalImage.getContentType());
+                        arquivoDemanda.setArquivo(additionalImage.getBytes());
+                        arquivoDemanda.setIdDemanda(demandaSalva);
+                        arquivoDemanda.setIdUsuario(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+
+                        arquivoDemandaSalvo =  arquivoDemandaService.save(arquivoDemanda);
+                        demandaSalva.getArquivosDemandas().add(arquivoDemandaSalvo);
+                    }
+                } catch (Exception e) {
+                    arquivoDemandaService.deleteById(arquivoDemandaSalvo.getIdArquivoDemanda());
+                    demandaService.deleteById(demandaSalva.getIdDemanda());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
+                }
+            }
+
+            for (Beneficio beneficio : demandaSalva.getBeneficios()){
+                beneficio.setIdDemanda(demandaSalva);
+                beneficioService.save(beneficio);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
+        return ResponseEntity.status(HttpStatus.CREATED).body("sim");
     }
 
     //Busca demanda por id
