@@ -1,12 +1,14 @@
 package br.sc.weg.sid.model.entities;
 
 import br.sc.weg.sid.utils.DemandaUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -80,12 +82,18 @@ public class Demanda {
 //    private Proposta idProposta;
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "bus_beneficiadas_demanda",
-            joinColumns = @JoinColumn(name = "id_demanda", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "id_business_unity", nullable = false))
+            joinColumns = @JoinColumn(name = "idDemanda", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "idBusinessUnity", nullable = false))
     private List<BusinessUnity> busBeneficiadas;
+
+    @OneToMany(mappedBy = "idDemanda",cascade = CascadeType.ALL)
+    private List<ArquivoDemanda> arquivosDemandas = new ArrayList<>();
 
     @OneToMany(mappedBy = "idCentroCusto")
     private List<CentroCusto> centroCusto;
+
+    @OneToMany(mappedBy = "idDemanda", cascade = CascadeType.ALL)
+    private List<Beneficio> beneficios;
 }

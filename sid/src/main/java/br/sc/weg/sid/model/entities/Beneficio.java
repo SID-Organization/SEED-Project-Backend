@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,5 +31,6 @@ public class Beneficio {
 
     @ManyToOne()
     @JoinColumn(name = "idDemanda")
+    @JsonIgnore
     private Demanda idDemanda;
 }

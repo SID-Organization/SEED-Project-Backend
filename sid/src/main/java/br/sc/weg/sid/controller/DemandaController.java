@@ -85,10 +85,6 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
         }
 
-        List<Beneficio> beneficios = cadastroDemandaDTO.getBeneficios();
-
-        demanda.setBusBeneficiadas(null);
-
         Demanda demandaSalva = demandaService.save(demanda);
         ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
         if (additionalImages != null) {
@@ -102,33 +98,15 @@ public class DemandaController {
                     arquivoDemanda.setIdUsuario(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
 
                     arquivoDemandaSalvo =  arquivoDemandaService.save(arquivoDemanda);
+                    demandaSalva.getArquivosDemandas().add(arquivoDemandaSalvo);
                 }
             } catch (Exception e) {
                 arquivoDemandaService.deleteById(arquivoDemandaSalvo.getIdArquivoDemanda());
                 demandaService.deleteById(demandaSalva.getIdDemanda());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
             }
         }
-//        if (!businessUnities.contains(cadastroDemandaDTO.getIdBuSolicitante())) {
-//            throw new ErroCadastrarBusBeneficiadas("ERROR 0004: A Bu do solicitante não existe no banco de dados!");
-//        }
 
-//        try {
-//            Chat chat = cadastroDemandaDTO.getIdChat();
-//            chatService.save(chat);
-//            demanda.setIdChat(chat); //< ---  Talvez tenha que adicionar essa função caso o chat não seja setado automáticamente pelo DTO
-//        } catch (Exception e) {
-//            throw new ErroSalvarChatException("ERROR 0003: Erro ao salvar o chat da demanda!" + "\n" + e.getMessage());
-//        }
-        try{
-            for (Beneficio beneficio : beneficios) {
-                beneficio.setIdDemanda(demandaSalva);
-                beneficioService.save(beneficio);
-            }
-        } catch (Exception e) {
-            demandaService.deleteById(demandaSalva.getIdDemanda());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao cadastrar os benefícios");
-        }
         return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
     }
 
@@ -264,14 +242,20 @@ public class DemandaController {
     @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer id) {
-        if (!demandaService.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Não foi encontrado a demanda com o id " + id);
+        try{
+            if (!demandaService.existsById(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Não foi encontrado a demanda com o id " + id);
+            }
+            if (demandaService.findById(id).get().getStatusDemanda().equals(Status.RASCUNHO)) {
+                demandaService.deleteById(id);
+                return ResponseEntity.status(HttpStatus.OK).body("Demanda com o id: " + id + " deletada com sucesso!");
+            }else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Demanda com o id: " + id + " não pode ser deletada pois não tem o status rascunho!");
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao deletar a demanda: " + e.getMessage());
         }
-        if (demandaService.findById(id).get().getStatusDemanda().equals(Status.RASCUNHO)) {
-            demandaService.deleteById(id);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body("Demanda deletada com sucesso!");
     }
 
 }
