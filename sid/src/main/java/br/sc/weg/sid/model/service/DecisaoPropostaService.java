@@ -1,6 +1,9 @@
 package br.sc.weg.sid.model.service;
 
+import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.DecisaoProposta;
+import br.sc.weg.sid.model.entities.Pauta;
+import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.repository.DecisaoPropostaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,5 +34,17 @@ public class DecisaoPropostaService {
 
     public void deleteById(Integer integer) {
         decisaoPropostaRepository.deleteById(integer);
+    }
+
+    public List<DecisaoProposta> findByIdAta(Ata idAta) {
+        return decisaoPropostaRepository.findByIdAta(idAta);
+    }
+
+    public List<DecisaoProposta> findByIdPauta(Pauta idPauta) {
+        return decisaoPropostaRepository.findByIdPauta(idPauta);
+    }
+
+    public List<DecisaoProposta> findByIdProposta(Proposta idProposta) {
+        return decisaoPropostaRepository.findByIdProposta(idProposta);
     }
 }

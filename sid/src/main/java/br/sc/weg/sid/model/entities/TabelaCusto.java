@@ -12,8 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Data
 public class TabelaCusto {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdTabelaCusto", nullable = false, unique = true)
     private Integer idTabelaCusto;
 

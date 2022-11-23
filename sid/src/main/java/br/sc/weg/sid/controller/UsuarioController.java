@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UsuarioController {
 
     @Autowired
-    UsuarioService usuarioService;
+    private UsuarioService usuarioService;
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping
