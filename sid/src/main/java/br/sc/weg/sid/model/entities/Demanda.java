@@ -89,8 +89,8 @@ public class Demanda {
     private List<ArquivoDemanda> arquivosDemandas = new ArrayList<>();
 
     @OneToMany(mappedBy = "idCentroCusto")
-    private List<CentroCusto> centroCusto;
+    private List<CentroCusto> centroCustoDemanda;
 
     @OneToMany(mappedBy = "idDemanda", cascade = CascadeType.REMOVE)
-    private List<Beneficio> beneficios;
+    private List<Beneficio> beneficiosDemanda;
 }

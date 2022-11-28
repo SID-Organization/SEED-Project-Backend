@@ -34,5 +34,5 @@ public class CadastroDemandaDTO {
 
     public List<BusinessUnity> busBeneficiadas;
 
-    public List<Beneficio> beneficios;
+    public List<Beneficio> beneficiosDemanda;
 }

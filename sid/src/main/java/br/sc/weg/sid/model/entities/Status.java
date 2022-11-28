@@ -1,7 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
 public enum Status {
-    ASSESMENT("Assesment"),
+    ASSESSMENT("Assesment"),
     BACKLOG("Backlog"),
     TODO("To-do"),
     DESIGN_AND_BUILD("Design and Build"),

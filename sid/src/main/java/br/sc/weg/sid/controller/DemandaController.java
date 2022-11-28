@@ -109,16 +109,15 @@ public class DemandaController {
                 }
             }
 
-            for (Beneficio beneficio : demandaSalva.getBeneficios()){
+            for (Beneficio beneficio : demandaSalva.getBeneficiosDemanda()){
                 beneficio.setIdDemanda(demandaSalva);
                 beneficioService.save(beneficio);
             }
-
+            return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
         }catch (Exception e){
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Erro ao cadastrar demanda: " + e.getMessage());
         }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("sim");
     }
 
     //Busca demanda por id
@@ -137,11 +136,15 @@ public class DemandaController {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/status/{status}")
     public ResponseEntity<Object> findByStatus(@PathVariable("status") Status status) {
-        List<Demanda> demandas = demandaService.findByStatusDemanda(status);
-        if (demandas.isEmpty()) {
+        try{
+            List<Demanda> demandas = demandaService.findByStatusDemanda(status);
+            if (demandas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com status "+ status + " encontrada!");
+            }
+            return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com status "+ status + " encontrada!");
         }
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
     //Busca demanda por solicitante
