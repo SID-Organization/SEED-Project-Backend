@@ -1,8 +1,8 @@
 package br.sc.weg.sid.model.entities;
 
 public enum StatusWorkflow {
-    ABERTO("Aberto"),
     EM_ANDAMENTO("Em andamento"),
+    CONCLUIDO("Concluído"),
     CANCELADO("Cancelado");
 
     private String descricao;

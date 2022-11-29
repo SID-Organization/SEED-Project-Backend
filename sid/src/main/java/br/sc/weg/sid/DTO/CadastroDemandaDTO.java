@@ -2,6 +2,7 @@ package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.*;
 import com.sun.istack.NotNull;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
@@ -11,8 +12,7 @@ import javax.validation.constraints.FutureOrPresent;
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 public class CadastroDemandaDTO {
 
     public String tituloDemanda;

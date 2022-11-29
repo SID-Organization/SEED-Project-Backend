@@ -23,7 +23,7 @@ import java.util.Optional;
 public class DemandaController {
 
     @Autowired
-    ChatService chatService;
+    HistoricoWorkflowController historicoWorkflowController;
 
     @Autowired
     DemandaService demandaService;
@@ -112,6 +112,9 @@ public class DemandaController {
             for (Beneficio beneficio : demandaSalva.getBeneficiosDemanda()){
                 beneficio.setIdDemanda(demandaSalva);
                 beneficioService.save(beneficio);
+            }
+            if(demandaSalva.getStatusDemanda().equals(Status.BACKLOG)){
+
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
         }catch (Exception e){

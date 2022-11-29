@@ -7,14 +7,12 @@ import java.util.Date;
 
 @Entity
 @Table(name = "HISTORICO_WORKFLOW")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 public class HistoricoWorkflow {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdHistoricoWorkflow", nullable = false, unique = true)
     private Integer idHistoricoWorkflow;
 
@@ -28,13 +26,17 @@ public class HistoricoWorkflow {
     private String tarefaHistorico;
 
     @Column(name = "StatusHistorico", nullable = false)
-    private String statusHistorico;
+    private StatusWorkflow statusWorkflow;
 
     @Column(name = "PdfHistorico", nullable = false)
+    @Lob
     private byte[] pdfHistorico;
 
     @Column(name = "MotivoDevolucaoHistorico")
     private String motivoDevolucaoHistorico;
+
+    @Column(name = "VersaoHistorico")
+    private Double versaoHistorico;
 
     @Column(name = "ConclusaoHistorico")
     private Date conclusaoHistorico;
@@ -48,5 +50,5 @@ public class HistoricoWorkflow {
 
     @JoinColumn(name = "idUsuario", nullable = false)
     @ManyToOne
-    private Usuario idUsuario;
+    private Usuario idResponsavel;
 }
