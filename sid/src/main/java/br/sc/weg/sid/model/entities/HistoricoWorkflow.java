@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,8 +23,8 @@ public class HistoricoWorkflow {
     @Column(name = "PrazoHistorico", nullable = false)
     private Date prazoHistorico;
 
-    @Column(name = "TarefaHistorico", nullable = false)
-    private String tarefaHistorico;
+    @Column(name = "TarefaHistoricoWorkflow", nullable = false)
+    private TarefaWorkflow tarefaHistoricoWorkflow;
 
     @Column(name = "StatusHistorico", nullable = false)
     private StatusWorkflow statusWorkflow;

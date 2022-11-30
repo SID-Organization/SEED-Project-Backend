@@ -29,6 +29,9 @@ public class Beneficio {
     @Column(length = 4000, name = "DescricaoBeneficio", nullable = false)
     private String descricaoBeneficio;
 
+    @Column(name = "TipoBeneficio", nullable = false)
+    private TipoBeneficio tipoBeneficio;
+
     @ManyToOne()
     @JoinColumn(name = "idDemanda")
     @JsonIgnore
