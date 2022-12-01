@@ -154,7 +154,7 @@ public class HistoricoWorkflowController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PutMapping("/{id}")
+    @PutMapping("/atualiza-versao/{id}")
     public ResponseEntity<Object> atualizaVersao(@PathVariable Integer idHistoricoWorkflow, @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO, Demanda demanda) {
         try {
             Optional<HistoricoWorkflow> historicoWorkflowOptional = historicoWorkflowService.findById(idHistoricoWorkflow);
@@ -176,7 +176,7 @@ public class HistoricoWorkflowController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PutMapping("/{id}")
+    @PutMapping("/atualiza-status/{id}")
     public ResponseEntity<Object> atualizaStatus(@PathVariable Integer idHistoricoWorkflow, @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO, Demanda demanda) {
         try {
             Optional<HistoricoWorkflow> historicoWorkflowOptional = historicoWorkflowService.findById(idHistoricoWorkflow);
