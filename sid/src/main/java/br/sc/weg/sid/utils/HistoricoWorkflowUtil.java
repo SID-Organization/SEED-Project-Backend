@@ -1,32 +1,25 @@
 package br.sc.weg.sid.utils;
 
-import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
-import br.sc.weg.sid.DTO.CadastroUsuarioDTO;
 import br.sc.weg.sid.model.entities.HistoricoWorkflow;
-import br.sc.weg.sid.model.entities.Usuario;
+import br.sc.weg.sid.model.entities.HistoricoWorkflowResumido;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.BeanUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistoricoWorkflowUtil {
     private ObjectMapper mapper = new ObjectMapper();
 
-    public HistoricoWorkflow convertJsonToModel(String historicoWorkflowJson) {
-        try {
-            CadastroHistoricoWorkflowDTO cadastroHistoricoWorkflowDTO = convertToDto(historicoWorkflowJson);
-            return convertDtoToModel(cadastroHistoricoWorkflowDTO);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao converter o itemJson para objeto Item! \n" + e.getMessage());
-        }
-    }
+    public static List<HistoricoWorkflowResumido> converterHistoricoWorkflowParaHistoricoWorkflowReumido(List<HistoricoWorkflow> historicoWorkflows) {
+        List<HistoricoWorkflowResumido> historicoWorkflowResumidos = new ArrayList<>();
+        historicoWorkflows.forEach(historicoWorkflow -> {
+            HistoricoWorkflowResumido historicoWorkflowResumido = new HistoricoWorkflowResumido();
+            BeanUtils.copyProperties(historicoWorkflow, historicoWorkflowResumido);
+            historicoWorkflowResumido.setNomeResponsavel(historicoWorkflow.getIdResponsavel().getNomeUsuario());
+            historicoWorkflowResumidos.add(historicoWorkflowResumido);
+        });
+        return historicoWorkflowResumidos;
+    };
 
-    private HistoricoWorkflow convertDtoToModel(CadastroHistoricoWorkflowDTO cadastroHistoricoWorkflowDTO) {
-        return this.mapper.convertValue(cadastroHistoricoWorkflowDTO, HistoricoWorkflow.class);
-    }
-
-    public CadastroHistoricoWorkflowDTO convertToDto(String historicoWorkflowJson) {
-        try{
-            return this.mapper.readValue(historicoWorkflowJson, CadastroHistoricoWorkflowDTO.class);
-        } catch (Exception e){
-            throw  new RuntimeException(e);
-        }
-    }
 }

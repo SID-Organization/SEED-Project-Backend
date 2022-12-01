@@ -15,4 +15,5 @@ public enum TipoBeneficio {
     public String getNome() {
         return nome;
     }
+
 }

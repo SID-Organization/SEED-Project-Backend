@@ -10,14 +10,10 @@ import java.util.Date;
 @Data
 public class CadastroHistoricoWorkflowDTO {
 
-    @FutureOrPresent
-    private Date prazoHistorico;
-
     private TarefaWorkflow tarefaHistoricoWorkflow;
 
-    private Demanda idDemanda;
+    private Demanda demandaHistorico;
 
     private Usuario idResponsavel;
 
-    private byte[] pdfHistorico;
 }

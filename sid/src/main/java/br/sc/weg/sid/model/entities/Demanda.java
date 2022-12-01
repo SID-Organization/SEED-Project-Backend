@@ -34,7 +34,6 @@ public class Demanda {
     @Column(nullable = false)
     private Status statusDemanda;
 
-
     @Enumerated(EnumType.STRING)
     @Column()
     private Tamanho tamanhoDemanda;
@@ -64,6 +63,9 @@ public class Demanda {
     @Column()
     private Double scoreDemanda;
 
+    @OneToOne
+    @JsonIgnore
+    HistoricoWorkflow historicoWorkflowUltimaVersao;
 
     @Column(length = 6000)
     private String situacaoAtualDemanda;

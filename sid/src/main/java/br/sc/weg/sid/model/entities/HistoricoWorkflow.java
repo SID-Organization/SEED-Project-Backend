@@ -9,6 +9,7 @@ import java.util.Date;
 @Entity
 @Table(name = "HISTORICO_WORKFLOW")
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class HistoricoWorkflow {
@@ -20,16 +21,17 @@ public class HistoricoWorkflow {
     @Column(name = "RecebimentoHistorico", nullable = false)
     private Date recebimentoHistorico;
 
-    @Column(name = "PrazoHistorico", nullable = false)
+    @Column(name = "PrazoHistorico")
     private Date prazoHistorico;
 
+    @EqualsAndHashCode.Include
     @Column(name = "TarefaHistoricoWorkflow", nullable = false)
     private TarefaWorkflow tarefaHistoricoWorkflow;
 
     @Column(name = "StatusHistorico", nullable = false)
     private StatusWorkflow statusWorkflow;
 
-    @Column(name = "PdfHistorico", nullable = false)
+    @Column(name = "PdfHistorico")
     @Lob
     private byte[] pdfHistorico;
 
@@ -42,12 +44,14 @@ public class HistoricoWorkflow {
     @Column(name = "ConclusaoHistorico")
     private Date conclusaoHistorico;
 
+    @EqualsAndHashCode.Exclude
     @Column(name = "AcaoFeitaHistorico")
     private String acaoFeitaHistorico;
 
-    @JoinColumn(name = "idDemanda", nullable = false)
+    @EqualsAndHashCode.Include
+    @JoinColumn(name = "DemandaHistorico", nullable = false)
     @ManyToOne
-    private Demanda idDemanda;
+    private Demanda demandaHistorico;
 
     @JoinColumn(name = "idUsuario", nullable = false)
     @ManyToOne
