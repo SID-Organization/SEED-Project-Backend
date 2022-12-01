@@ -266,7 +266,7 @@ public class DemandaController {
     @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer id) {
-        try{
+        try {
             if (!demandaService.existsById(id)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Não foi encontrado a demanda com o id " + id);
@@ -274,12 +274,11 @@ public class DemandaController {
             if (demandaService.findById(id).get().getStatusDemanda().equals(Status.RASCUNHO)) {
                 demandaService.deleteById(id);
                 return ResponseEntity.status(HttpStatus.OK).body("Demanda com o id: " + id + " deletada com sucesso!");
-            }else {
+            } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Demanda com o id: " + id + " não pode ser deletada pois não tem o status rascunho!");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao deletar a demanda: " + e.getMessage());
         }
     }
-
 }
