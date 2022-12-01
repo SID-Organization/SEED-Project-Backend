@@ -4,6 +4,7 @@ import br.sc.weg.sid.DTO.CadastroPropostaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.ResponsaveisNegocio;
+import br.sc.weg.sid.model.entities.Status;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.model.service.ResponsaveisNegocioService;
@@ -35,20 +36,25 @@ public class PropostaController {
         try {
             Proposta proposta = new Proposta();
 
+            Optional<Demanda> demandaOptional = demandaService.findById(cadastroPropostaDTO.getIdDemanda().getIdDemanda());
+
+            if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != Status.CANCELLED) {
+                Demanda demanda = demandaOptional.get();
+                demanda.setLinkJira(cadastroPropostaDTO.getLinkJira());
+                demandaService.save(demanda);
+            } else {
+                return ResponseEntity.badRequest().body("ERROR 0006: A demanda inserida não existe ou foi reprovada! ID DEMANDA: " + cadastroPropostaDTO.getIdDemanda().getIdDemanda());
+            }
+
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);
 
             Proposta propostaSalva = propostaService.save(proposta);
 
-
             for (ResponsaveisNegocio responsaveisNegocio : cadastroPropostaDTO.getResponsaveisNegocio()) {
                 try {
-
-                    System.out.println("passou aqui");
                     responsaveisNegocio.setIdProposta(propostaSalva);
                     responsaveisNegocioService.save(responsaveisNegocio);
                 } catch (Exception e) {
-
-                    System.out.println("passou aquieeeeee");
                     propostaService.deleteById(propostaSalva.getIdProposta());
                     return ResponseEntity.badRequest().body("ERROR 0004: Erro ao salvar responsável pelo negócio, a proposta não foi salva!" + "\nMessage: " + e.getMessage());
                 }
