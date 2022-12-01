@@ -21,7 +21,7 @@ public class CadastroDemandaDTO {
 
     public String situacaoAtualDemanda;
 
-    public Integer frequenciaUsoDemanda;
+    public String frequenciaUsoDemanda;
 
     public String descricaoQualitativoDemanda;
 

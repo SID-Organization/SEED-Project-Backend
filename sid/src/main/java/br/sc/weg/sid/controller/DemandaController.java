@@ -1,6 +1,7 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
+import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
@@ -14,9 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/sid/api/demanda")
@@ -60,7 +59,6 @@ public class DemandaController {
             @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalImages
     ) {
         try{
-
             DemandaUtil demandaUtil = new DemandaUtil();
             CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
             Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
@@ -114,7 +112,16 @@ public class DemandaController {
                 beneficioService.save(beneficio);
             }
             if(demandaSalva.getStatusDemanda().equals(Status.BACKLOG)){
-
+                CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
+                historicoWorkflowDTO.setDemandaHistorico(demandaSalva);
+                historicoWorkflowDTO.setIdResponsavel(demandaSalva.getSolicitanteDemanda());
+                historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
+                try{
+                    historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+                }catch (Exception e){
+                    demandaService.deleteById(demandaSalva.getIdDemanda());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
+                }
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
         }catch (Exception e){

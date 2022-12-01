@@ -34,7 +34,6 @@ public class Demanda {
     @Column(nullable = false)
     private Status statusDemanda;
 
-
     @Enumerated(EnumType.STRING)
     @Column()
     private Tamanho tamanhoDemanda;
@@ -47,7 +46,7 @@ public class Demanda {
     private Secao secaoTIResponsavel;
 
     @Column()
-    private Integer frequenciaUsoDemanda;
+    private String frequenciaUsoDemanda;
 
     @Column(length = 400)
     private String descricaoQualitativoDemanda;
@@ -64,6 +63,8 @@ public class Demanda {
     @Column()
     private Double scoreDemanda;
 
+    @OneToOne
+    HistoricoWorkflow historicoWorkflowUltimaVersao;
 
     @Column(length = 6000)
     private String situacaoAtualDemanda;
