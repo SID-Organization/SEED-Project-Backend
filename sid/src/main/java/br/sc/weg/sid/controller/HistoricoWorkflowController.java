@@ -37,7 +37,7 @@ public class HistoricoWorkflowController {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping()
     public ResponseEntity<Object> findAll() {
-        try {
+//        try {
 
             List<HistoricoWorkflow> historicoWorkflows = historicoWorkflowService.findAll();
             List<HistoricoWorkflowResumido> historicoWorkflowResumidos = HistoricoWorkflowUtil.converterHistoricoWorkflowParaHistoricoWorkflowReumido(historicoWorkflows);
@@ -45,9 +45,9 @@ public class HistoricoWorkflowController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado!");
             }
             return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflowResumidos);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
-        }
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
+//        }
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -60,11 +60,13 @@ public class HistoricoWorkflowController {
         BeanUtils.copyProperties(historicoWorkflowDTO, historicoWorkflow);
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
-            historicoWorkflow.setVersaoHistorico(0.1);
             historicoWorkflow.setAcaoFeitaHistorico("Enviar");
+            historicoWorkflow.setVersaoHistorico(0.1);
         } else {
             Demanda demanda = demandaService.findById(historicoWorkflow.getDemandaHistorico().getIdDemanda()).get();
             HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
+            historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
+            historicoWorkflow.setVersaoHistorico(0.1);
             if(historicoWorkflow.equals(historicoWorkflowAnterior)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Não houveram alterações!");
             }
