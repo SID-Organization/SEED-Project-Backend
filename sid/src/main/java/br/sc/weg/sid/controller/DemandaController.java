@@ -258,6 +258,8 @@ public class DemandaController {
         }
         Demanda demanda = demandaService.findById(id).get();
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
+        historicoWorkflowController.atualizaVersao(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
+                demanda.getHistoricoWorkflowUltimaVersao(), demanda);
         demandaService.save(demanda);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }

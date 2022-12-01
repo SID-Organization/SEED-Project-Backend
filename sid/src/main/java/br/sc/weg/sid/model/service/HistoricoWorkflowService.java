@@ -53,10 +53,6 @@ public class HistoricoWorkflowService {
         return historicoWorkflowRepository.findByDemandaHistorico(demandaHistorico);
     }
 
-    public List<HistoricoWorkflow> findByRecebimentoHistorico(Date recebimentoHistorico) {
-        return historicoWorkflowRepository.findByRecebimentoHistorico(recebimentoHistorico);
-    }
-
     public List<HistoricoWorkflow> findByStatusWorkflow(StatusWorkflow statusWorkflow){
         return historicoWorkflowRepository.findByStatusWorkflow(statusWorkflow);
     }

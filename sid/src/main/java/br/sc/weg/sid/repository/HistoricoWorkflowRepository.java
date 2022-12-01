@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface HistoricoWorkflowRepository extends JpaRepository<HistoricoWorkflow, Integer> {
     List<HistoricoWorkflow> findByDemandaHistorico(Demanda demanda);
-    List<HistoricoWorkflow> findByRecebimentoHistorico(Date recebimentoHistorico);
     List<HistoricoWorkflow> findByStatusWorkflow(StatusWorkflow statusWorkflow);
     List<HistoricoWorkflow> findByIdResponsavel(Usuario numeroCadastroResponsavel);
 }
