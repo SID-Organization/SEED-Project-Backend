@@ -16,8 +16,8 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping
-    public ResponseEntity<Object> save(@RequestBody CadastroChatDTO cadastroChatDTO) {}
+//    @CrossOrigin(origins = "http://localhost:3000")
+//    @PostMapping
+//    public ResponseEntity<Object> save(@RequestBody CadastroChatDTO cadastroChatDTO) {}
 
 }

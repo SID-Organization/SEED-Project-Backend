@@ -112,12 +112,16 @@ public class DemandaController {
                 beneficioService.save(beneficio);
             }
             if(demandaSalva.getStatusDemanda().equals(Status.BACKLOG)){
-                System.out.println("Entrou no if");
                 CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
                 historicoWorkflowDTO.setDemandaHistorico(demandaSalva);
                 historicoWorkflowDTO.setIdResponsavel(demandaSalva.getSolicitanteDemanda());
                 historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
-                historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+                try{
+                    historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+                }catch (Exception e){
+                    demandaService.deleteById(demandaSalva.getIdDemanda());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
+                }
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
         }catch (Exception e){

@@ -57,17 +57,18 @@ public class HistoricoWorkflowController {
         HistoricoWorkflowUtil historicoWorkflowUtil = new HistoricoWorkflowUtil();
         HistoricoWorkflow historicoWorkflow = new HistoricoWorkflow();
         BeanUtils.copyProperties(historicoWorkflowDTO, historicoWorkflow);
-        System.out.println(historicoWorkflow);
-
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
             historicoWorkflow.setVersaoHistorico(0.1);
             historicoWorkflow.setAcaoFeitaHistorico("Enviar");
         } else {
-            HistoricoWorkflow historicoWorkflowAnterior = historicoWorkflow.getDemandaHistorico().getHistoricoWorkflowUltimaVersao();
+            Demanda demanda = demandaService.findById(historicoWorkflow.getDemandaHistorico().getIdDemanda()).get();
+            HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
             if(historicoWorkflow.equals(historicoWorkflowAnterior)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Não houveram alterações!");
             }
+            System.out.println("Anterior: " + historicoWorkflowAnterior.getDemandaHistorico());
+            System.out.println("Atual: " + historicoWorkflow.getDemandaHistorico());
             if (historicoWorkflow.getDemandaHistorico().equals(historicoWorkflowAnterior.getDemandaHistorico())) {
                 historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
             } else {
@@ -78,9 +79,10 @@ public class HistoricoWorkflowController {
         LocalDate localDate = LocalDate.now();
         Date data = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         historicoWorkflow.setRecebimentoHistorico(data);
-
+        System.out.println("Demanda: " + historicoWorkflow.getDemandaHistorico().getIdDemanda());
         HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
-        demandaService.findById(historicoWorkflowSalvo.getDemandaHistorico().getIdDemanda()).get().setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
+        Demanda demandaHistorico = demandaService.findById(historicoWorkflowSalvo.getDemandaHistorico().getIdDemanda()).get();
+        demandaHistorico.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
         return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvo);
     }
 

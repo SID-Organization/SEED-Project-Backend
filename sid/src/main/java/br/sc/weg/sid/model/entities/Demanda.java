@@ -46,7 +46,7 @@ public class Demanda {
     private Secao secaoTIResponsavel;
 
     @Column()
-    private Integer frequenciaUsoDemanda;
+    private String frequenciaUsoDemanda;
 
     @Column(length = 400)
     private String descricaoQualitativoDemanda;
@@ -64,7 +64,6 @@ public class Demanda {
     private Double scoreDemanda;
 
     @OneToOne
-    @JsonIgnore
     HistoricoWorkflow historicoWorkflowUltimaVersao;
 
     @Column(length = 6000)
