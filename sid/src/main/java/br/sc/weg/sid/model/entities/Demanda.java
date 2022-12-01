@@ -18,10 +18,11 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Demanda {
 
     @Id
+    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(length = 50, nullable = false, unique = true)
     private Integer idDemanda;
@@ -64,6 +65,7 @@ public class Demanda {
     private Double scoreDemanda;
 
     @OneToOne
+    @JsonIgnore
     HistoricoWorkflow historicoWorkflowUltimaVersao;
 
     @Column(length = 6000)

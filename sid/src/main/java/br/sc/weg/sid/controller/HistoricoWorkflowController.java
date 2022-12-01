@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -67,13 +68,6 @@ public class HistoricoWorkflowController {
             if(historicoWorkflow.equals(historicoWorkflowAnterior)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Não houveram alterações!");
             }
-            System.out.println("Anterior: " + historicoWorkflowAnterior.getDemandaHistorico());
-            System.out.println("Atual: " + historicoWorkflow.getDemandaHistorico());
-            if (historicoWorkflow.getDemandaHistorico().equals(historicoWorkflowAnterior.getDemandaHistorico())) {
-                historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
-            } else {
-                historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico() + 0.1);
-            }
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
         }
         LocalDate localDate = LocalDate.now();
@@ -81,8 +75,13 @@ public class HistoricoWorkflowController {
         historicoWorkflow.setRecebimentoHistorico(data);
         System.out.println("Demanda: " + historicoWorkflow.getDemandaHistorico().getIdDemanda());
         HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
-        Demanda demandaHistorico = demandaService.findById(historicoWorkflowSalvo.getDemandaHistorico().getIdDemanda()).get();
-        demandaHistorico.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
+        try{
+            Demanda demandaHistorico = demandaService.findById(historicoWorkflowSalvo.getDemandaHistorico().getIdDemanda()).get();
+            demandaHistorico.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
+            demandaService.save(demandaHistorico);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Erro ao setar último histórico de workflow da demanda: " + e.getMessage());
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvo);
     }
 
@@ -94,6 +93,15 @@ public class HistoricoWorkflowController {
             if (historicoWorkflows.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow de demanda com id: " + demandaHistorico + " encontrado!");
             }
+            LocalDateTime localDateTime = LocalDateTime.now();
+            Date verificaData = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                historicoWorkflows.forEach(historicoWorkflow -> {
+                if(historicoWorkflow.getConclusaoHistorico() != null){
+                    if(historicoWorkflow.getConclusaoHistorico().before(verificaData)){
+                        historicoWorkflow.setStatusWorkflow(StatusWorkflow.ATRASADO);
+                    }
+                }
+            });
             return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflows);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
@@ -147,7 +155,7 @@ public class HistoricoWorkflowController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer idHistoricoWorkflow, @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO) {
+    public ResponseEntity<Object> atualizaVersao(@PathVariable Integer idHistoricoWorkflow, @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO, Demanda demanda) {
         try {
             Optional<HistoricoWorkflow> historicoWorkflowOptional = historicoWorkflowService.findById(idHistoricoWorkflow);
             if (historicoWorkflowOptional.isEmpty()) {
@@ -155,6 +163,29 @@ public class HistoricoWorkflowController {
             }
             HistoricoWorkflow historicoWorkflow = historicoWorkflowOptional.get();
             BeanUtils.copyProperties(historicoWorkflowDTO, historicoWorkflow);
+            HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
+            if (historicoWorkflow.getDemandaHistorico().equals(historicoWorkflowAnterior.getDemandaHistorico())) {
+                historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
+            } else {
+                historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico() + 0.1);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflowService.save(historicoWorkflow));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao atualizar histórico de workflow: " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> atualizaStatus(@PathVariable Integer idHistoricoWorkflow, @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO, Demanda demanda) {
+        try {
+            Optional<HistoricoWorkflow> historicoWorkflowOptional = historicoWorkflowService.findById(idHistoricoWorkflow);
+            if (historicoWorkflowOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado com o id: " + idHistoricoWorkflow);
+            }
+            HistoricoWorkflow historicoWorkflow = historicoWorkflowOptional.get();
+            BeanUtils.copyProperties(historicoWorkflowDTO, historicoWorkflow);
+            historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
             return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflowService.save(historicoWorkflow));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao atualizar histórico de workflow: " + e.getMessage());
