@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,22 +35,23 @@ public class HistoricoWorkflowController {
         historicoWorkflowService.teste();
     }
 
+    //Retorna TODOS os históricos de workflow
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping()
     public ResponseEntity<Object> findAll() {
-//        try {
-
+        try {
             List<HistoricoWorkflow> historicoWorkflows = historicoWorkflowService.findAll();
             List<HistoricoWorkflowResumido> historicoWorkflowResumidos = HistoricoWorkflowUtil.converterHistoricoWorkflowParaHistoricoWorkflowReumido(historicoWorkflows);
             if (historicoWorkflows.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado!");
             }
             return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflowResumidos);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
-//        }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
+        }
     }
 
+    //Insere um novo histórico de workflow no banco de dados
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> cadastroHistoricoWorkflow(
@@ -73,9 +75,16 @@ public class HistoricoWorkflowController {
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
         }
         LocalDate localDate = LocalDate.now();
-        Date data = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        historicoWorkflow.setRecebimentoHistorico(data);
-        System.out.println("Demanda: " + historicoWorkflow.getDemandaHistorico().getIdDemanda());
+        Date dataRecebimento = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        historicoWorkflow.setRecebimentoHistorico(dataRecebimento);
+        //Workflow's com status Preencher demanda não tem prazo de conclusão
+        if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
+            historicoWorkflow.setConclusaoHistorico(dataRecebimento);
+        }else {
+            localDate = localDate.plusDays(31);
+            Date dataPrazo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            historicoWorkflow.setPrazoHistorico(dataPrazo);
+        }
         HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
         try{
             Demanda demandaHistorico = demandaService.findById(historicoWorkflowSalvo.getDemandaHistorico().getIdDemanda()).get();
@@ -87,6 +96,7 @@ public class HistoricoWorkflowController {
         return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvo);
     }
 
+    //Busca um histórico de workflow pelo id de uma demanda
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/demanda/{id}")
     public ResponseEntity<Object> findByIdDemanda(@PathVariable("id") Demanda demandaHistorico) {
@@ -110,6 +120,7 @@ public class HistoricoWorkflowController {
         }
     }
 
+    //Busca um histórico de workflow pelo número de cadastro de um responsável
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/responsavel/{numeroCadastroResponsavel}")
     public ResponseEntity<Object> findByIdUsuario(@PathVariable("numeroCadastroResponsavel") Usuario numeroCadastroResponsavel) {
@@ -124,6 +135,7 @@ public class HistoricoWorkflowController {
         }
     }
 
+    //Busca um histórico de workflow pelo status
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/status-workflow/{statusWorkflow}")
     public ResponseEntity<Object> findByIdUsuario(@PathVariable("statusWorkflow") StatusWorkflow statusWorkflow) {
@@ -138,6 +150,7 @@ public class HistoricoWorkflowController {
         }
     }
 
+    //Atualiza a versão da demanda de um histórico de workflow
     @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/atualiza-versao/{id}")
     public ResponseEntity<Object> atualizaVersao(@PathVariable Integer idHistoricoWorkflow, @RequestBody HistoricoWorkflow historicoWorkflow, Demanda demanda) {
@@ -153,6 +166,7 @@ public class HistoricoWorkflowController {
         }
     }
 
+    //Atualiza o status de um histórico de workflow
     @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/atualiza-status/{id}")
     public ResponseEntity<Object> atualizaStatus(@PathVariable Integer idHistoricoWorkflow, @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO, Demanda demanda) {
@@ -170,7 +184,7 @@ public class HistoricoWorkflowController {
         }
     }
 
-
+    //Deleta um histórico de workflow pelo id
     @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{idHistoricoWorkflow}")
     public ResponseEntity<Object> delete(@PathVariable Integer idHistoricoWorkflow) {
