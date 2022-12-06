@@ -131,7 +131,6 @@ public class DemandaController {
     }
 
     //Busca demanda por id
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/id/{id}")
     public ResponseEntity<Object> findById(@PathVariable("id") Integer id) {
         try{
