@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/demanda")
 public class DemandaController {
 
@@ -40,7 +41,6 @@ public class DemandaController {
     BeneficioService beneficioService;
 
     //Get all, pega todas as demandas
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping()
     public ResponseEntity<Object> findAll() {
         List<Demanda> demandas = demandaService.findAll();
@@ -51,7 +51,6 @@ public class DemandaController {
     }
 
     //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status de RASCUNHO) e retorna a demanda criada
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> cadastroDemandas(
 
