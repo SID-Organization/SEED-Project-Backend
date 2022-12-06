@@ -63,7 +63,7 @@ public class DemandaController {
             CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
             Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
             demanda.setSecaoTIResponsavel(Secao.TI);
-            demanda.setStatusDemanda(Status.BACKLOG);
+            demanda.setStatusDemanda(Status.ABERTA);
             demanda.setScoreDemanda(549.00);
             demanda.setTamanhoDemanda(Tamanho.GRANDE);
 
@@ -87,6 +87,7 @@ public class DemandaController {
 
             Demanda demandaSalva = demandaService.save(demanda);
             ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
+            System.out.println(additionalImages);
             if (additionalImages != null) {
                 try {
                     for (MultipartFile additionalImage : additionalImages) {
@@ -111,7 +112,7 @@ public class DemandaController {
                 beneficio.setIdDemanda(demandaSalva);
                 beneficioService.save(beneficio);
             }
-            if(demandaSalva.getStatusDemanda().equals(Status.BACKLOG)){
+            if(demandaSalva.getStatusDemanda().equals(Status.ABERTA)){
                 CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
                 historicoWorkflowDTO.setDemandaHistorico(demandaSalva);
                 historicoWorkflowDTO.setIdResponsavel(demandaSalva.getSolicitanteDemanda());

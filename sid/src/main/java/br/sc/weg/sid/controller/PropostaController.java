@@ -38,7 +38,7 @@ public class PropostaController {
 
             Optional<Demanda> demandaOptional = demandaService.findById(cadastroPropostaDTO.getIdDemanda().getIdDemanda());
 
-            if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != Status.CANCELLED) {
+            if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != Status.CANCELADA) {
                 Demanda demanda = demandaOptional.get();
                 demanda.setLinkJira(cadastroPropostaDTO.getLinkJira());
                 demandaService.save(demanda);

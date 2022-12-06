@@ -1,14 +1,16 @@
 package br.sc.weg.sid.model.entities;
 
 public enum Status {
-    ASSESSMENT("Assesment"),
-    BACKLOG("Backlog"),
-    TODO("To-do"),
-    DESIGN_AND_BUILD("Design and Build"),
+    CLASSIFICADO_PELO_ANALISTA("Classificado pelo analista"),
+    ABERTA("Aberta"),
+    APROVADO_PELO_GERENTE_DA_AREA("Aprovado pelo gerente da área"),
+    DEMANDA_PROPOSTAS_PRONTAS("Demanda e propostas prontas"),
+    APROVADA_PELA_COMISSAO("Aprovada pela comissão"),
+    PROPOSTA_EM_EXECUCAO("Proposta em execução"),
     BUSINESS_CASE("Business Case"),
-    SUPPORT("Support"),
-    DONE("Done"),
-    CANCELLED("Cancelled"),
+    PROPOSTA_EM_SUPORTE("Proposta em suporte"),
+    PROPOSTA_FINALIZADA("Proposta finalizada"),
+    CANCELADA("Cancelada"),
     RASCUNHO("Rascunho");
 
     String nome;
