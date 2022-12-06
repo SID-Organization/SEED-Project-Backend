@@ -102,6 +102,7 @@ public class HistoricoWorkflowController {
     public ResponseEntity<Object> findByIdDemanda(@PathVariable("id") Demanda demandaHistorico) {
         try {
             List<HistoricoWorkflow> historicoWorkflows = historicoWorkflowService.findByDemandaHistorico(demandaHistorico);
+            List<HistoricoWorkflowResumido> historicoWorkflowResumidos = HistoricoWorkflowUtil.converterHistoricoWorkflowParaHistoricoWorkflowReumido(historicoWorkflows);
             if (historicoWorkflows.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow de demanda com id: " + demandaHistorico + " encontrado!");
             }
@@ -114,7 +115,7 @@ public class HistoricoWorkflowController {
                     }
                 }
             });
-            return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflows);
+            return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflowResumidos);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
         }
