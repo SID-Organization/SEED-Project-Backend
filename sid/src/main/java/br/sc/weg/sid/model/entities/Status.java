@@ -4,7 +4,7 @@ public enum Status {
     CLASSIFICADO_PELO_ANALISTA("Classificado pelo analista"),
     ABERTA("Aberta"),
     APROVADO_PELO_GERENTE_DA_AREA("Aprovado pelo gerente da área"),
-    DEMANDA_PROPOSTAS_PRONTAS("Demanda e propostas prontas"),
+    PROPOSTA_PRONTA("Proposta pronta"),
     APROVADA_PELA_COMISSAO("Aprovada pela comissão"),
     PROPOSTA_EM_EXECUCAO("Proposta em execução"),
     BUSINESS_CASE("Business Case"),
