@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "ARQUIVO_DEMANDA")
@@ -28,6 +29,9 @@ public class ArquivoDemanda {
     @NonNull
     @Lob
     private byte[] arquivo;
+
+    @JoinColumn(name = "DataRegistroArquivo", nullable = false)
+    private Date dataRegistroArquivo;
 
     @JoinColumn(name = "idDemanda", nullable = false)
     @ManyToOne
