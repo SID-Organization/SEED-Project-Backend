@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/historico-workflow")
 public class HistoricoWorkflowController {
 
@@ -36,7 +37,6 @@ public class HistoricoWorkflowController {
     }
 
     //Retorna TODOS os históricos de workflow
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping()
     public ResponseEntity<Object> findAll() {
         try {
@@ -51,8 +51,9 @@ public class HistoricoWorkflowController {
         }
     }
 
+
     //Insere um novo histórico de workflow no banco de dados
-    @CrossOrigin(origins = "http://localhost:3000")
+
     @PostMapping()
     public ResponseEntity<Object> cadastroHistoricoWorkflow(
             @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO
@@ -96,8 +97,9 @@ public class HistoricoWorkflowController {
         return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvo);
     }
 
+
     //Busca um histórico de workflow pelo id de uma demanda
-    @CrossOrigin(origins = "http://localhost:3000")
+
     @GetMapping("/demanda/{id}")
     public ResponseEntity<Object> findByIdDemanda(@PathVariable("id") Demanda demandaHistorico) {
         try {
@@ -121,8 +123,9 @@ public class HistoricoWorkflowController {
         }
     }
 
+
     //Busca um histórico de workflow pelo número de cadastro de um responsável
-    @CrossOrigin(origins = "http://localhost:3000")
+
     @GetMapping("/responsavel/{numeroCadastroResponsavel}")
     public ResponseEntity<Object> findByIdUsuario(@PathVariable("numeroCadastroResponsavel") Usuario numeroCadastroResponsavel) {
         try {
@@ -136,8 +139,9 @@ public class HistoricoWorkflowController {
         }
     }
 
+
     //Busca um histórico de workflow pelo status
-    @CrossOrigin(origins = "http://localhost:3000")
+
     @GetMapping("/status-workflow/{statusWorkflow}")
     public ResponseEntity<Object> findByIdUsuario(@PathVariable("statusWorkflow") StatusWorkflow statusWorkflow) {
         try {
@@ -151,8 +155,9 @@ public class HistoricoWorkflowController {
         }
     }
 
+
     //Atualiza a versão da demanda de um histórico de workflow
-    @CrossOrigin(origins = "http://localhost:3000")
+
     @PutMapping("/atualiza-versao/{id}")
     public ResponseEntity<Object> atualizaVersao(@PathVariable Integer idHistoricoWorkflow, @RequestBody HistoricoWorkflow historicoWorkflow, Demanda demanda) {
         try {
@@ -167,8 +172,9 @@ public class HistoricoWorkflowController {
         }
     }
 
+
     //Atualiza o status de um histórico de workflow
-    @CrossOrigin(origins = "http://localhost:3000")
+
     @PutMapping("/atualiza-status/{id}")
     public ResponseEntity<Object> atualizaStatus(@PathVariable Integer idHistoricoWorkflow, @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO, Demanda demanda) {
         try {
@@ -185,8 +191,9 @@ public class HistoricoWorkflowController {
         }
     }
 
+
     //Deleta um histórico de workflow pelo id
-    @CrossOrigin(origins = "http://localhost:3000")
+
     @DeleteMapping("/{idHistoricoWorkflow}")
     public ResponseEntity<Object> delete(@PathVariable Integer idHistoricoWorkflow) {
         try {

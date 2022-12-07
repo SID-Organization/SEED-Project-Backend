@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/proposta")
 public class PropostaController {
     @Autowired
@@ -30,7 +31,6 @@ public class PropostaController {
     @Autowired
     private DemandaService demandaService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     ResponseEntity<Object> cadastrarProsposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
         try {
@@ -67,7 +67,6 @@ public class PropostaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     ResponseEntity<Object> deletarProposta(@PathVariable("id") Integer id) {
         List<ResponsaveisNegocio> responsaveisNegocio = responsaveisNegocioService.findAllByIdProposta(propostaService.findById(id).get());
@@ -86,7 +85,6 @@ public class PropostaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     ResponseEntity<Object> listarPropostas() {
         try {
@@ -96,7 +94,6 @@ public class PropostaController {
         }
     }
 
-    @CrossOrigin
     @GetMapping("/{id}")
     ResponseEntity<Object> listarPropostaPorId(@PathVariable("id") Integer id) {
         try {
@@ -106,7 +103,6 @@ public class PropostaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/demanda/{id}")
     ResponseEntity<Object> listarPropostaPorIdDemanda(@PathVariable("id") Integer id) {
         try {
@@ -117,7 +113,6 @@ public class PropostaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/payback/{value}")
     ResponseEntity<Object> listarPropostaPorPayback(@PathVariable("value") Double value) {
         try {

@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/notificacao")
 public class NotificacaoController {
 
     @Autowired
     private NotificacaoService notificacaoService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody @Valid CadastroNotificaoDTO cadastroNotificaoDTO) {
         Notificacao notificacao = new Notificacao();
@@ -33,7 +33,6 @@ public class NotificacaoController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     public ResponseEntity<Object> findAll() {
         try {
@@ -43,7 +42,6 @@ public class NotificacaoController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
@@ -53,7 +51,6 @@ public class NotificacaoController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(@PathVariable Integer id) {
         try {

@@ -3,6 +3,7 @@ package br.sc.weg.sid.model.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "CHAT")
@@ -23,4 +24,10 @@ public class Chat {
     @OneToOne
     @JoinColumn(name = "idDemanda", nullable = false)
     private Demanda idDemanda;
+
+    @ManyToMany
+    @JoinTable(name = "USUARIO_CHAT",
+            joinColumns = @JoinColumn(name = "idChat"),
+            inverseJoinColumns = @JoinColumn(name = "idUsuario"))
+    private List<Usuario> usuarios;
 }
