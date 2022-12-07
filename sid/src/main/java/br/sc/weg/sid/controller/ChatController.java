@@ -40,4 +40,9 @@ public class ChatController {
         }
         return ResponseEntity.ok().body(chatOptional.get());
     }
+
+    @GetMapping
+    public ResponseEntity<Object> findAll(){
+        return ResponseEntity.ok().body(chatService.findAll());
+    }
 }
