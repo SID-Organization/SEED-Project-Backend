@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/pauta")
 public class PautaController {
 
     @Autowired
     PautaService pautaService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping
     public ResponseEntity<Object> cadastroPauta(@RequestBody @Valid CadastroPautaDTO cadastroPautaDTO) {
         Pauta pauta = new Pauta();
@@ -28,7 +28,6 @@ public class PautaController {
         return ResponseEntity.ok("Pauta cadastrada com sucesso! \n" + pautaSalva);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     public ResponseEntity<Object> listarPautas() {
         try {
@@ -38,7 +37,6 @@ public class PautaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/{id}")
     public ResponseEntity<Object> listarPautaPorId(@PathVariable Integer id) {
         try {
@@ -48,7 +46,6 @@ public class PautaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPauta(@PathVariable Integer id) {
         try {

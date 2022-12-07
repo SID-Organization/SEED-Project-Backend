@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/decisao-proposta")
 public class DecisaoPropostaController {
 
@@ -35,7 +36,6 @@ public class DecisaoPropostaController {
     @Autowired
     private PautaService pautaService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody @Valid CadastroDecisaoPropostaDTO cadastroDecisaoPropostaDTO) {
         DecisaoProposta decisaoProposta = new DecisaoProposta();
@@ -48,7 +48,6 @@ public class DecisaoPropostaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     public ResponseEntity<Object> findAll() {
         try {
@@ -58,7 +57,6 @@ public class DecisaoPropostaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         try {
@@ -69,7 +67,6 @@ public class DecisaoPropostaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/pauta/{id}")
     public ResponseEntity<Object> findByIdPauta(@PathVariable Integer id) {
         try {
@@ -84,7 +81,6 @@ public class DecisaoPropostaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/proposta/{id}")
     public ResponseEntity<Object> findByIdProposta(@PathVariable Integer id) {
         try {
