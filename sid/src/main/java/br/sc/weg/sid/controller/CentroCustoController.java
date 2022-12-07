@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/centro-custo")
 public class CentroCustoController {
 
     @Autowired
     private CentroCustoService centroCustoService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> save(@RequestBody CentroCusto centroCusto) {
         try {
@@ -31,7 +31,6 @@ public class CentroCustoController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping()
     public ResponseEntity<Object> findAll() {
         List<CentroCusto> centroCustos = centroCustoService.findAll();
@@ -41,7 +40,6 @@ public class CentroCustoController {
         return ResponseEntity.status(HttpStatus.FOUND).body(centroCustos);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/nome/{nomeCentroCusto}")
     public ResponseEntity<Object> findByNomeCentroCusto(@PathVariable String nomeCentroCusto) {
         try {
@@ -52,7 +50,6 @@ public class CentroCustoController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/id/{idCentroCusto}")
     public ResponseEntity<Object> findByIdCentroCusto(@PathVariable Integer idCentroCusto) {
         if(!centroCustoService.existsById(idCentroCusto)) {
@@ -66,7 +63,6 @@ public class CentroCustoController {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/{idCentroCusto}")
     public ResponseEntity<Object> update(@PathVariable Integer idCentroCusto,@RequestBody CadastroCentroCustoDTO centroCustoDTO) {
         if (!centroCustoService.existsById(idCentroCusto)) {
@@ -78,7 +74,6 @@ public class CentroCustoController {
         return ResponseEntity.status(HttpStatus.OK).body(centroCustoService.save(centroCusto));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{idCentroCusto}")
     public ResponseEntity<Object> delete(@PathVariable Integer idCentroCusto) {
         if (!centroCustoService.existsById(idCentroCusto)) {

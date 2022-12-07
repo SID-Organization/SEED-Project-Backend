@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
+@CrossOrigin
 public class MensagemController {
 
     @Autowired
@@ -24,15 +25,15 @@ public class MensagemController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @MessageMapping("/sid/api/mensagem")
     public ResponseEntity<Object> receiveMessage(@RequestBody Mensagem mensagem) {
-        simpMessagingTemplate.convertAndSendToUser(mensagem.getIdChat().getIdDemanda().getIdDemanda().toString(), mensagem.getIdChat().getIdChat().toString(), mensagem);
+        // /demanda/{idDemanda}/{idChat}
+        simpMessagingTemplate.convertAndSendToUser( /*id da demanda*/ mensagem.getIdChat().getIdDemanda().getIdDemanda().toString(), /*id do chat*/ mensagem.getIdChat().getIdChat().toString(), mensagem);
         System.out.println(mensagem.toString());
         try {
             mensagemService.save(mensagem);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Mensagem não enviada! Message: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Mensagem não salva! Message: " + e.getMessage());
         }
         return ResponseEntity.ok().body("Mensagem enviada com sucesso!");
     }

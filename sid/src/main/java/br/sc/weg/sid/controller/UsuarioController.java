@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/usuario")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping
     public ResponseEntity<Object> cadastroUsuario(
             @RequestParam(value = "fotoUsuario", required = false) MultipartFile fotoUsuario,
@@ -36,7 +36,6 @@ public class UsuarioController {
         return ResponseEntity.ok("Usuário cadastrado com sucesso! \n" + usuarioSalvo);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable("id") Integer id) {
         try {
@@ -47,7 +46,6 @@ public class UsuarioController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(
             @PathVariable("id") Integer id,
@@ -68,7 +66,6 @@ public class UsuarioController {
         return ResponseEntity.ok("Usuário atualizado com sucesso! \n" + usuarioSalvo);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     public ResponseEntity<Object> findAll() {
         if (usuarioService.findAll().isEmpty()) {
@@ -77,7 +74,6 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/{numeroCadastro}")
     public ResponseEntity<Object> findByNumeroCadastro(@PathVariable("numeroCadastro") Integer numeroCadastro) {
         if (usuarioService.findByNumeroCadastroUsuario(numeroCadastro) == null) {
@@ -85,8 +81,7 @@ public class UsuarioController {
         }
         return ResponseEntity.ok(usuarioService.findByNumeroCadastroUsuario(numeroCadastro));
     }
-
-    @CrossOrigin(origins = "http://localhost:3000")
+    
     @GetMapping("/departamento/{departamento}")
     public ResponseEntity<Object> findByDepartamento(@PathVariable("departamento") String departamento) {
         if (usuarioService.findAllByDepartamentoUsuario(departamento).isEmpty()) {

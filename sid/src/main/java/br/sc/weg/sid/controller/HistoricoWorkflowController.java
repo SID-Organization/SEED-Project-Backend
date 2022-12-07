@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/historico-workflow")
 public class HistoricoWorkflowController {
 
@@ -34,7 +35,6 @@ public class HistoricoWorkflowController {
         historicoWorkflowService.teste();
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping()
     public ResponseEntity<Object> findAll() {
 //        try {
@@ -50,7 +50,6 @@ public class HistoricoWorkflowController {
 //        }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> cadastroHistoricoWorkflow(
             @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO
@@ -87,7 +86,6 @@ public class HistoricoWorkflowController {
         return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvo);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/demanda/{id}")
     public ResponseEntity<Object> findByIdDemanda(@PathVariable("id") Demanda demandaHistorico) {
         try {
@@ -110,7 +108,6 @@ public class HistoricoWorkflowController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/responsavel/{numeroCadastroResponsavel}")
     public ResponseEntity<Object> findByIdUsuario(@PathVariable("numeroCadastroResponsavel") Usuario numeroCadastroResponsavel) {
         try {
@@ -124,7 +121,6 @@ public class HistoricoWorkflowController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/status-workflow/{statusWorkflow}")
     public ResponseEntity<Object> findByIdUsuario(@PathVariable("statusWorkflow") StatusWorkflow statusWorkflow) {
         try {
@@ -138,7 +134,6 @@ public class HistoricoWorkflowController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/atualiza-versao/{id}")
     public ResponseEntity<Object> atualizaVersao(@PathVariable Integer idHistoricoWorkflow, @RequestBody HistoricoWorkflow historicoWorkflow, Demanda demanda) {
         try {
@@ -153,7 +148,6 @@ public class HistoricoWorkflowController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/atualiza-status/{id}")
     public ResponseEntity<Object> atualizaStatus(@PathVariable Integer idHistoricoWorkflow, @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO, Demanda demanda) {
         try {
@@ -170,8 +164,6 @@ public class HistoricoWorkflowController {
         }
     }
 
-
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{idHistoricoWorkflow}")
     public ResponseEntity<Object> delete(@PathVariable Integer idHistoricoWorkflow) {
         try {

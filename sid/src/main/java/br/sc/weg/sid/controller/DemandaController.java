@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/demanda")
 public class DemandaController {
 
@@ -40,7 +41,6 @@ public class DemandaController {
     BeneficioService beneficioService;
 
     //Get all, pega todas as demandas
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping()
     public ResponseEntity<Object> findAll() {
         List<Demanda> demandas = demandaService.findAll();
@@ -51,7 +51,6 @@ public class DemandaController {
     }
 
     //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status de RASCUNHO) e retorna a demanda criada
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> cadastroDemandas(
 
@@ -131,7 +130,6 @@ public class DemandaController {
     }
 
     //Busca demanda por id
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/id/{id}")
     public ResponseEntity<Object> findById(@PathVariable("id") Integer id) {
         try{
@@ -143,7 +141,6 @@ public class DemandaController {
     }
 
     //Busca demandas por status
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/status/{status}")
     public ResponseEntity<Object> findByStatus(@PathVariable("status") Status status) {
         try{
@@ -158,7 +155,6 @@ public class DemandaController {
     }
 
     //Busca demanda por solicitante
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/solicitante/{numeroCadastroSoliciante}")
     public ResponseEntity<Object> findBySolicitante(@PathVariable("numeroCadastroSoliciante") Integer numeroCadastroSoliciante) {
         try{
@@ -174,7 +170,6 @@ public class DemandaController {
     }
 
     //Busca demandas por Seção
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/secao/{secao}")
     public ResponseEntity<Object> findBySecao(@PathVariable("secao") Secao secao) {
         try{
@@ -189,7 +184,6 @@ public class DemandaController {
     }
 
     //Busca demandas por data de criação (mais nova a mais antiga)
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/data-decrescente")
     public ResponseEntity<Object> findByDataDecrescente() {
         List<Demanda> demandas = demandaService.findByPrazoElaboracaoDemandaDesc();
@@ -200,7 +194,6 @@ public class DemandaController {
     }
 
     //Busca demanda por data de criação (mais antiga a mais nova)
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/data-crescente")
     public ResponseEntity<Object> findByDataCrescente() {
         List<Demanda> demandas = demandaService.findByPrazoElaboracaoDemandaAsc();
@@ -211,7 +204,6 @@ public class DemandaController {
     }
 
     //Busca demanda por score
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/score/{score}")
     public ResponseEntity<Object> findByScore(@PathVariable("score") Double score) {
         List<Demanda> demandas = demandaService.findByScoreDemanda(score);
@@ -222,7 +214,6 @@ public class DemandaController {
     }
 
     //Busca demandas pelo titulo
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/titulo-demanda/{tituloDemanda}")
     public ResponseEntity<Object> findByTituloDemanda(@PathVariable("tituloDemanda") String tituloDemanda) {
         List<Demanda> demandas = demandaService.findByTituloDemanda(tituloDemanda);
@@ -233,7 +224,6 @@ public class DemandaController {
     }
 
     //Busca demandas pelo tamanho
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/tamanho/{tamanho}")
     public ResponseEntity<Object> findByTamanho(@PathVariable("tamanho") Tamanho tamanho) {
         List<Demanda> demandas = demandaService.findByTamanhoDemanda(tamanho);
@@ -244,7 +234,6 @@ public class DemandaController {
     }
 
     //Atualiza uma demanda informando seu id
-    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizarDemanda(
             @PathVariable("id") Integer id,
@@ -265,7 +254,6 @@ public class DemandaController {
     }
 
     //Deleta uma demanda informando seu id
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer id) {
         try {
