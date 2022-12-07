@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HistoricoWorkflow {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdHistoricoWorkflow", nullable = false, unique = true)
@@ -24,12 +25,12 @@ public class HistoricoWorkflow {
     @Column(name = "PrazoHistorico")
     private Date prazoHistorico;
 
+    @Column(name = "StatusHistorico", nullable = false)
+    private StatusWorkflow statusWorkflow;
+
     @EqualsAndHashCode.Include
     @Column(name = "TarefaHistoricoWorkflow", nullable = false)
     private TarefaWorkflow tarefaHistoricoWorkflow;
-
-    @Column(name = "StatusHistorico", nullable = false)
-    private StatusWorkflow statusWorkflow;
 
     @Column(name = "PdfHistorico")
     @Lob

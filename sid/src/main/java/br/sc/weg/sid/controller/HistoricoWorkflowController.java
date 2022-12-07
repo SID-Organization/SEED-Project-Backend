@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -35,20 +36,23 @@ public class HistoricoWorkflowController {
         historicoWorkflowService.teste();
     }
 
+    //Retorna TODOS os históricos de workflow
     @GetMapping()
     public ResponseEntity<Object> findAll() {
-//        try {
-
+        try {
             List<HistoricoWorkflow> historicoWorkflows = historicoWorkflowService.findAll();
             List<HistoricoWorkflowResumido> historicoWorkflowResumidos = HistoricoWorkflowUtil.converterHistoricoWorkflowParaHistoricoWorkflowReumido(historicoWorkflows);
             if (historicoWorkflows.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado!");
             }
             return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflowResumidos);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
-//        }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
+        }
     }
+
+
+    //Insere um novo histórico de workflow no banco de dados
 
     @PostMapping()
     public ResponseEntity<Object> cadastroHistoricoWorkflow(
@@ -72,9 +76,16 @@ public class HistoricoWorkflowController {
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
         }
         LocalDate localDate = LocalDate.now();
-        Date data = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        historicoWorkflow.setRecebimentoHistorico(data);
-        System.out.println("Demanda: " + historicoWorkflow.getDemandaHistorico().getIdDemanda());
+        Date dataRecebimento = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        historicoWorkflow.setRecebimentoHistorico(dataRecebimento);
+        //Workflow's com status Preencher demanda não tem prazo de conclusão
+        if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
+            historicoWorkflow.setConclusaoHistorico(dataRecebimento);
+        }else {
+            localDate = localDate.plusDays(31);
+            Date dataPrazo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            historicoWorkflow.setPrazoHistorico(dataPrazo);
+        }
         HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
         try{
             Demanda demandaHistorico = demandaService.findById(historicoWorkflowSalvo.getDemandaHistorico().getIdDemanda()).get();
@@ -86,10 +97,14 @@ public class HistoricoWorkflowController {
         return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvo);
     }
 
+
+    //Busca um histórico de workflow pelo id de uma demanda
+
     @GetMapping("/demanda/{id}")
     public ResponseEntity<Object> findByIdDemanda(@PathVariable("id") Demanda demandaHistorico) {
         try {
             List<HistoricoWorkflow> historicoWorkflows = historicoWorkflowService.findByDemandaHistorico(demandaHistorico);
+            List<HistoricoWorkflowResumido> historicoWorkflowResumidos = HistoricoWorkflowUtil.converterHistoricoWorkflowParaHistoricoWorkflowReumido(historicoWorkflows);
             if (historicoWorkflows.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow de demanda com id: " + demandaHistorico + " encontrado!");
             }
@@ -102,11 +117,14 @@ public class HistoricoWorkflowController {
                     }
                 }
             });
-            return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflows);
+            return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflowResumidos);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
         }
     }
+
+
+    //Busca um histórico de workflow pelo número de cadastro de um responsável
 
     @GetMapping("/responsavel/{numeroCadastroResponsavel}")
     public ResponseEntity<Object> findByIdUsuario(@PathVariable("numeroCadastroResponsavel") Usuario numeroCadastroResponsavel) {
@@ -121,6 +139,9 @@ public class HistoricoWorkflowController {
         }
     }
 
+
+    //Busca um histórico de workflow pelo status
+
     @GetMapping("/status-workflow/{statusWorkflow}")
     public ResponseEntity<Object> findByIdUsuario(@PathVariable("statusWorkflow") StatusWorkflow statusWorkflow) {
         try {
@@ -133,6 +154,9 @@ public class HistoricoWorkflowController {
             return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
         }
     }
+
+
+    //Atualiza a versão da demanda de um histórico de workflow
 
     @PutMapping("/atualiza-versao/{id}")
     public ResponseEntity<Object> atualizaVersao(@PathVariable Integer idHistoricoWorkflow, @RequestBody HistoricoWorkflow historicoWorkflow, Demanda demanda) {
@@ -147,6 +171,9 @@ public class HistoricoWorkflowController {
             return ResponseEntity.badRequest().body("Erro ao atualizar versão do histórico de workflow: " + e.getMessage());
         }
     }
+
+
+    //Atualiza o status de um histórico de workflow
 
     @PutMapping("/atualiza-status/{id}")
     public ResponseEntity<Object> atualizaStatus(@PathVariable Integer idHistoricoWorkflow, @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO, Demanda demanda) {
@@ -163,6 +190,9 @@ public class HistoricoWorkflowController {
             return ResponseEntity.badRequest().body("Erro ao atualizar histórico de workflow: " + e.getMessage());
         }
     }
+
+
+    //Deleta um histórico de workflow pelo id
 
     @DeleteMapping("/{idHistoricoWorkflow}")
     public ResponseEntity<Object> delete(@PathVariable Integer idHistoricoWorkflow) {
