@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/ata")
 public class AtaController {
     @Autowired
     private AtaService ataService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping
     public ResponseEntity<Object> save(
             @RequestParam("pdfAta") MultipartFile pdfAta,
@@ -46,7 +46,6 @@ public class AtaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         try {
@@ -57,7 +56,6 @@ public class AtaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     public ResponseEntity<Object> findAll() {
         try {
@@ -67,7 +65,6 @@ public class AtaController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {

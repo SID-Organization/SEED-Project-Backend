@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/business-unity")
 public class BusinessUnityController {
 
     @Autowired
     private BusinessUnityService businessUnityService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping()
     public ResponseEntity<Object> findAll() {
         List<BusinessUnity> businessUnities = businessUnityService.findAll();
@@ -32,7 +32,6 @@ public class BusinessUnityController {
         return ResponseEntity.status(HttpStatus.FOUND).body(businessUnities);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping()
     public ResponseEntity<Object> save(@RequestBody CadastroBusinessUnityDTO businessUnityDTO) {
         try {
@@ -44,7 +43,6 @@ public class BusinessUnityController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/id/{idBusinessUnity}")
     public ResponseEntity<Object> findByIdBusinessUnity(@PathVariable Integer idBusinessUnity) {
         if(!businessUnityService.existsById(idBusinessUnity)) {
@@ -53,7 +51,6 @@ public class BusinessUnityController {
         return ResponseEntity.status(HttpStatus.FOUND).body(businessUnityService.findById(idBusinessUnity).get());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/nome/{nameBusinessUnity}")
     public ResponseEntity<Object> findByNameBusinessUnity(@PathVariable String nameBusinessUnity) {
         Optional<BusinessUnity> businessUnity = businessUnityService.findByNomeBusinessUnity(nameBusinessUnity);
@@ -63,7 +60,6 @@ public class BusinessUnityController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Business Unity com o nome: " + nameBusinessUnity + " não existe!");
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/{idBusinessUnity}")
     public ResponseEntity<Object> update(@PathVariable Integer idBusinessUnity, @RequestBody CadastroBusinessUnityDTO businessUnityDTO) {
         if(!businessUnityService.existsById(idBusinessUnity)) {
@@ -75,7 +71,6 @@ public class BusinessUnityController {
         return ResponseEntity.status(HttpStatus.OK).body(businessUnityService.save(businessUnity));
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{idBusinessUnity}")
     public ResponseEntity<Object> delete(@PathVariable Integer idBusinessUnity) {
         if(!businessUnityService.existsById(idBusinessUnity)) {

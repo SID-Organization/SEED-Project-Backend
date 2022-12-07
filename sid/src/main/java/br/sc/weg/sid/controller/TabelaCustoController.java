@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.validation.Valid;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/tabela-custo")
 public class TabelaCustoController {
 
     @Autowired
     private TabelaCustoService tabelaCustoService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody @Valid CadastroTabelaCustoDTO cadastroTabelaCustoDTO) {
         TabelaCusto tabelaCusto = new TabelaCusto();

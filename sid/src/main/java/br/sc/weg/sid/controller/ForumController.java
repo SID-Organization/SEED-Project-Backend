@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/sid/api/forum")
 public class ForumController {
 
@@ -21,7 +22,6 @@ public class ForumController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping
     public ResponseEntity<Object> cadastroForum(@RequestBody CadastroForumDTO cadadastroForumDTO) {
         Forum forum = new Forum();
@@ -31,7 +31,6 @@ public class ForumController {
         return ResponseEntity.ok("Fórum cadastrado com sucesso! \n" + forumSalvo);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping
     public ResponseEntity<Object> listarForuns() {
         try {
@@ -41,7 +40,6 @@ public class ForumController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/{id}")
     public ResponseEntity<Object> listarForumPorId(@PathVariable Integer id) {
         try {
@@ -51,7 +49,6 @@ public class ForumController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarForum(@PathVariable Integer id) {
         try {
@@ -62,7 +59,6 @@ public class ForumController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/analista/{id}")
     public ResponseEntity<Object> listarForumPorAnalista(@PathVariable Integer id) {
         try {
