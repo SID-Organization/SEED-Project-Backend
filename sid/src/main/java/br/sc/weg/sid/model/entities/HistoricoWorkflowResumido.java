@@ -7,13 +7,19 @@ import java.util.Date;
 @Data
 public class HistoricoWorkflowResumido {
 
-    private TarefaWorkflow tarefaHistoricoWorkflow;
+    private Date recebimentoHistorico;
 
-    private StatusWorkflow statusWorkflow;
+    private Date conclusaoHistorico;
+
+    private Date prazoHistorico;
+
+    private TarefaWorkflow tarefaHistoricoWorkflow;
 
     private String nomeResponsavel;
 
     private String acaoFeitaHistorico;
+
+    private StatusWorkflow statusWorkflow;
 
     private Double versaoHistorico;
 
