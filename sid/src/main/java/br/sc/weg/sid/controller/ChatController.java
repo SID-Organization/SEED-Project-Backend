@@ -8,10 +8,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 @CrossOrigin
@@ -31,5 +30,19 @@ public class ChatController {
             return ResponseEntity.badRequest().body("Chat não salvo! Message: " + e.getMessage());
         }
         return ResponseEntity.ok().body("Chat salvo com sucesso! \n" + chat.toString());
+    }
+
+    @GetMapping("/{idChat}")
+    public ResponseEntity<Object> findById(@PathVariable Integer idChat){
+        Optional<Chat> chatOptional = chatService.findById(idChat);
+        if(chatOptional == null){
+            return ResponseEntity.badRequest().body("Chat não encontrado!");
+        }
+        return ResponseEntity.ok().body(chatOptional.get());
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> findAll(){
+        return ResponseEntity.ok().body(chatService.findAll());
     }
 }
