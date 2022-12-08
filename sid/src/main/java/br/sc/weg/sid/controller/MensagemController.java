@@ -1,10 +1,14 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.MensagemDTO;
+import br.sc.weg.sid.model.entities.Chat;
 import br.sc.weg.sid.model.entities.Mensagem;
 import br.sc.weg.sid.model.service.ChatService;
 import br.sc.weg.sid.model.service.MensagemService;
 import org.apache.coyote.Response;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -26,10 +30,15 @@ public class MensagemController {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @MessageMapping("/sid/api/mensagem")
-    public ResponseEntity<Object> receiveMessage(@RequestBody Mensagem mensagem) {
+    public ResponseEntity<Object> receiveMessage(@RequestBody MensagemDTO mensagemDTO){
+
+        System.out.println("Mensagem recebida: " + mensagemDTO.toString());
+        Mensagem mensagem = new Mensagem();
+        BeanUtils.copyProperties(mensagemDTO, mensagem);
         // /demanda/{idDemanda}/{idChat}
-        simpMessagingTemplate.convertAndSendToUser( /*id da demanda*/ mensagem.getIdChat().getIdDemanda().getIdDemanda().toString(), /*id do chat*/ mensagem.getIdChat().getIdChat().toString(), mensagem);
-        System.out.println(mensagem.toString());
+        Chat chat = chatService.findById(mensagemDTO.getIdChat().getIdChat()).get();
+        simpMessagingTemplate.convertAndSendToUser( /*id da demanda*/ chat.getIdDemanda().getIdDemanda().toString(), /*id do chat*/ mensagem.getIdChat().getIdChat().toString(), mensagem);
+        System.out.println(chat.getIdDemanda().getIdDemanda().toString() + " " + mensagem.getIdChat().getIdChat().toString());
         try {
             mensagemService.save(mensagem);
         } catch (Exception e) {
