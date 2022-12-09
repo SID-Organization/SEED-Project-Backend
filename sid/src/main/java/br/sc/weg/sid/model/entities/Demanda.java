@@ -1,13 +1,11 @@
 package br.sc.weg.sid.model.entities;
 
-import br.sc.weg.sid.utils.DemandaUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,14 +35,13 @@ public class Demanda {
 
     @Enumerated(EnumType.STRING)
     @Column()
-    private Tamanho tamanhoDemanda;
+    private TamanhoDemanda tamanhoDemanda;
 
     @Column(length = 4000)
     private String propostaDemanda;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Secao secaoTIResponsavel;
+    @Column()
+    private String secaoTIResponsavel;
 
     @Column()
     private String frequenciaUsoDemanda;
@@ -71,21 +68,18 @@ public class Demanda {
     @Column(length = 6000)
     private String situacaoAtualDemanda;
 
-
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "id_bu_solicitante")
-//    private BusinessUnity idBuSolicitante;
+    @JoinColumn(name = "idBuSolicitante")
+    private String buSolicitanteDemanda;
 
     @ManyToOne()
     @JoinColumn(name = "numero_cadastro_usuario")
     private Usuario solicitanteDemanda;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "idProposta")
-//    private Proposta idProposta;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "idProposta")
+    private Proposta propostaElaboradaDemanda;
 
-
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "idDemanda")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "demandaBusBeneficiadas")
     private List<BusBeneficiadasDemanda> busBeneficiadas;
 
     @OneToMany(mappedBy = "idDemanda",cascade = CascadeType.ALL)
