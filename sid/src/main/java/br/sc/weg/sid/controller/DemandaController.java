@@ -294,6 +294,7 @@ public class DemandaController {
         demanda.setBuSolicitanteDemanda(cadastroBusBeneficiadasDemanda.getBuSolicitante());
         demanda.setBusBeneficiadasDemanda(cadastroBusBeneficiadasDemanda.getBusBeneficiadasDemanda());
         demanda.setTamanhoDemanda(cadastroBusBeneficiadasDemanda.getTamanhoDemanda());
+        demanda.setStatusDemanda(StatusDemanda.CLASSIFICADO_PELO_ANALISTA);
         demandaService.save(demanda);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
