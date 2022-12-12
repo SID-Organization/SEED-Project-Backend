@@ -5,7 +5,6 @@ import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
-import net.bytebuddy.asm.Advice;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,7 +63,15 @@ public class DemandaController {
             DemandaUtil demandaUtil = new DemandaUtil();
             CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
             Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
+            try {
+                demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
+            }
+            Usuario usuarioBusinesUnity = usuarioService.findById(demanda.getSolicitanteDemanda().getNumeroCadastroUsuario()).get();
+            demanda.setBuSolicitanteDemanda(usuarioBusinesUnity.getBusinessUnity());
             demanda.setScoreDemanda(549.00);
+            demanda.setStatusDemanda(StatusDemanda.ABERTA);
 
             //Verifica se a demanda possui todos os campos preenchidos, se não possuir, o status será RASCUNHO
             Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
@@ -73,35 +80,30 @@ public class DemandaController {
                 try {
                     Object valor = atributo.get(cadastroDemandaDTO);
                     if (valor == null) {
-                        demanda.setStatusDemanda(Status.RASCUNHO);
+                        demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
                     }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             });
-            try {
-                demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
-            }
             Demanda demandaSalva = demandaService.save(demanda);
 
             //Cadastra BU's beneficiadas e verifica se elas existem
-            List<BusBeneficiadasDemanda> busBeneficiadasDemandasList = new ArrayList<>();
-            for (int i =0; i < cadastroDemandaDTO.getBusBeneficiadas().size(); i++){
-                BusBeneficiadasDemanda busBeneficiadasDemanda = new BusBeneficiadasDemanda();
-                try {
-                    busBeneficiadasDemanda.setBusinessUnityBeneficiada(businessUnityService.findById(
-                            cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()).get());
-                } catch (Exception e) {
-                    demandaService.deleteById(demandaSalva.getIdDemanda());
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BU com id: " + cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()
-                            + " não encontrada!");
-                }
-                busBeneficiadasDemanda.setDemandaBusBeneficiadas(demandaSalva);
-                busBeneficiadasDemandasList.add(busBeneficiadasDemanda);
-            }
-            demandaSalva.setBusBeneficiadas(busBeneficiadasDemandasList);
+//            List<BusBeneficiadasDemanda> busBeneficiadasDemandasList = new ArrayList<>();
+//            for (int i =0; i < cadastroDemandaDTO.getBusBeneficiadas().size(); i++){
+//                BusBeneficiadasDemanda busBeneficiadasDemanda = new BusBeneficiadasDemanda();
+//                try {
+//                    busBeneficiadasDemanda.setBusinessUnityBeneficiada(businessUnityService.findById(
+//                            cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()).get());
+//                } catch (Exception e) {
+//                    demandaService.deleteById(demandaSalva.getIdDemanda());
+//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BU com id: " + cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()
+//                            + " não encontrada!");
+//                }
+//                busBeneficiadasDemanda.setDemandaBusBeneficiadas(demandaSalva);
+//                busBeneficiadasDemandasList.add(busBeneficiadasDemanda);
+//            }
+//            demandaSalva.setBusBeneficiadas(busBeneficiadasDemandasList);
 //            demandaService.updateBusBeneficiadasDemanda(demandaSalva.getIdDemanda(), bu);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
@@ -135,7 +137,7 @@ public class DemandaController {
             }
 
             //Se a demanda tiver em status Aberta(Backlog) um historico de workflow é criado
-            if (demandaSalva.getStatusDemanda().equals(Status.ABERTA)) {
+            if (demandaSalva.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
                 CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
                 historicoWorkflowDTO.setDemandaHistorico(demandaSalva);
                 historicoWorkflowDTO.setIdResponsavel(demandaSalva.getSolicitanteDemanda());
@@ -165,17 +167,17 @@ public class DemandaController {
         }
     }
 
-    //Busca demandas por status
-    @GetMapping("/status/{status}")
-    public ResponseEntity<Object> findByStatus(@PathVariable("status") Status status) {
+    //Busca demandas por statusDemanda
+    @GetMapping("/statusDemanda/{statusDemanda}")
+    public ResponseEntity<Object> findByStatus(@PathVariable("statusDemanda") StatusDemanda statusDemanda) {
         try {
-            List<Demanda> demandas = demandaService.findByStatusDemanda(status);
+            List<Demanda> demandas = demandaService.findByStatusDemanda(statusDemanda);
             if (demandas.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com status " + status + " encontrada!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com statusDemanda " + statusDemanda + " encontrada!");
             }
             return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com status " + status + " encontrada!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com statusDemanda " + statusDemanda + " encontrada!");
         }
     }
 
@@ -286,7 +288,7 @@ public class DemandaController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Não foi encontrado a demanda com o id " + id);
             }
-            if (demandaService.findById(id).get().getStatusDemanda().equals(Status.RASCUNHO)) {
+            if (demandaService.findById(id).get().getStatusDemanda().equals(StatusDemanda.RASCUNHO)) {
                 demandaService.deleteById(id);
                 return ResponseEntity.status(HttpStatus.OK).body("Demanda com o id: " + id + " deletada com sucesso!");
             } else {

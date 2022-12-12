@@ -42,7 +42,7 @@ public class DemandaService {
         return demandaRepository.findBySecaoTIResponsavel(secaoTIResponsavelDemanda);
     }
 
-    public List<Demanda> findByStatusDemanda(Status statusDemanda) {
+    public List<Demanda> findByStatusDemanda(StatusDemanda statusDemanda) {
         return demandaRepository.findByStatusDemanda(statusDemanda);
     }
 
@@ -66,8 +66,8 @@ public class DemandaService {
         return demandaRepository.findByTituloDemanda(tituloDemanda);
     }
 
-    public void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda) {
-        demandaRepository.updateBusBeneficiadasDemanda(idDemanda, idBusBeneficiadasDemanda);
-    }
+//    public void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda) {
+//        demandaRepository.updateBusBeneficiadasDemanda(idDemanda, idBusBeneficiadasDemanda);
+//    }
 
 }

@@ -2,7 +2,6 @@ package br.sc.weg.sid.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,14 +30,14 @@ public class Demanda {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status statusDemanda;
+    private StatusDemanda statusDemanda;
 
     @Enumerated(EnumType.STRING)
     @Column()
     private TamanhoDemanda tamanhoDemanda;
 
     @Column(length = 4000)
-    private String propostaDemanda;
+    private String propostaMelhoriaDemanda;
 
     @Column()
     private String secaoTIResponsavel;

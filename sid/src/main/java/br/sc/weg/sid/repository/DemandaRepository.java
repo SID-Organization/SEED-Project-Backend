@@ -12,13 +12,13 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
 
     List<Demanda> findByTamanhoDemanda(TamanhoDemanda tamanhoDemanda);
     List<Demanda> findBySecaoTIResponsavel(String secaoTIResponsavelDemanda);
-    List<Demanda> findByStatusDemanda(Status statusDemanda);
+    List<Demanda> findByStatusDemanda(StatusDemanda statusDemanda);
     List<Demanda> findByScoreDemanda(Double scoreDemanda);
     List<Demanda> findBySolicitanteDemanda(Usuario solicitanteDemanda);
     List<Demanda> findByTituloDemanda(String tituloDemanda);
 
-    @Query(value = "update bus_beneficiadas_demanda set id_demanda = ?1 where ?2")
-    void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda);
+//    @Query(value = "update bus_beneficiadas_demanda set id_demanda = ?1 where ?2")
+//    void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda);
 
     @Query(value = "select * from demanda order by prazo_elaboracao_demanda ASC;", nativeQuery = true)
     List<Demanda> findByPrazoElaboracaoDemandaAsc();

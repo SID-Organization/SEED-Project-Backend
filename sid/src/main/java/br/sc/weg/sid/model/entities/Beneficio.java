@@ -20,10 +20,13 @@ public class Beneficio {
     private Integer idBeneficio;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "MoedaBeneficio", nullable = false)
+    @Column(name = "MoedaBeneficio")
     private Moeda moedaBeneficio;
 
-    @Column(name = "MemoriaCalculoBeneficio", nullable = false)
+    @Column(name = "valorBeneficio")
+    private Double valorBeneficio;
+
+    @Column(name = "MemoriaCalculoBeneficio")
     private Double memoriaCalculoBeneficio;
 
     @Column(length = 4000, name = "DescricaoBeneficio", nullable = false)

@@ -11,6 +11,7 @@ public class CadastroUsuarioDTO {
     private Integer numeroCadastroUsuario;
     private String nomeUsuario;
     private String departamentoUsuario;
+    private String businessUnity;
     private Cargo cargoUsuario;
     private String emailUsuario;
     private String senhaUsuario;

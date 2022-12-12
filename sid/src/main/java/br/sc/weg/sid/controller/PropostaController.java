@@ -4,7 +4,7 @@ import br.sc.weg.sid.DTO.CadastroPropostaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.ResponsaveisNegocio;
-import br.sc.weg.sid.model.entities.Status;
+import br.sc.weg.sid.model.entities.StatusDemanda;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.model.service.ResponsaveisNegocioService;
@@ -38,7 +38,7 @@ public class PropostaController {
 
             Optional<Demanda> demandaOptional = demandaService.findById(cadastroPropostaDTO.getIdDemanda().getIdDemanda());
 
-            if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != Status.CANCELADA) {
+            if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != StatusDemanda.CANCELADA) {
                 Demanda demanda = demandaOptional.get();
                 demanda.setLinkJira(cadastroPropostaDTO.getLinkJira());
                 demandaService.save(demanda);
