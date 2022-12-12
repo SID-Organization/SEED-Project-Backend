@@ -31,7 +31,7 @@ public class DecisaoProposta {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "StatusComissaoDecisaoProposta", nullable = false)
-    private Status statusDecisaoProposta;
+    private StatusDemanda statusDemandaDecisaoProposta;
 
     @Column(name = "AtaPublicadaDecisaoProposta", nullable = false)
     private Integer ataPublicadaDecisaoProposta;

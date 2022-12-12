@@ -1,6 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
-public enum Status {
+public enum StatusDemanda {
     CLASSIFICADO_PELO_ANALISTA("Classificado pelo analista"),
     ABERTA("Aberta"),
     APROVADO_PELO_GERENTE_DA_AREA("Aprovado pelo gerente da área"),
@@ -14,7 +14,7 @@ public enum Status {
     RASCUNHO("Rascunho");
 
     String nome;
-    Status(String nome){
+    StatusDemanda(String nome){
         this.nome = nome;
     }
 

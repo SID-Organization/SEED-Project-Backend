@@ -34,15 +34,15 @@ public class DemandaService {
         demandaRepository.deleteById(integer);
     }
 
-    public List<Demanda> findByTamanhoDemanda(Tamanho tamanhoDemanda) {
+    public List<Demanda> findByTamanhoDemanda(TamanhoDemanda tamanhoDemanda) {
         return demandaRepository.findByTamanhoDemanda(tamanhoDemanda);
     }
 
-    public List<Demanda> findBySecaoTIResponsavel(Secao secaoTIResponsavelDemanda) {
+    public List<Demanda> findBySecaoTIResponsavel(String secaoTIResponsavelDemanda) {
         return demandaRepository.findBySecaoTIResponsavel(secaoTIResponsavelDemanda);
     }
 
-    public List<Demanda> findByStatusDemanda(Status statusDemanda) {
+    public List<Demanda> findByStatusDemanda(StatusDemanda statusDemanda) {
         return demandaRepository.findByStatusDemanda(statusDemanda);
     }
 
@@ -66,6 +66,8 @@ public class DemandaService {
         return demandaRepository.findByTituloDemanda(tituloDemanda);
     }
 
-
+//    public void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda) {
+//        demandaRepository.updateBusBeneficiadasDemanda(idDemanda, idBusBeneficiadasDemanda);
+//    }
 
 }

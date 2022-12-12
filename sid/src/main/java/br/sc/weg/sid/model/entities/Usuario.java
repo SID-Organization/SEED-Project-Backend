@@ -8,12 +8,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "USUARIO")
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
-@ToString
+@Data
+@AllArgsConstructor @NoArgsConstructor
 public class Usuario {
 
     @Id
@@ -35,6 +31,9 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     @Column(name = "CargoUsuario", nullable = false)
     private Cargo cargoUsuario;
+
+    @Column(name = "BusinessUnity", nullable = false)
+    private String businessUnity;
 
     @Column(name = "FotoUsuario")
     @Lob

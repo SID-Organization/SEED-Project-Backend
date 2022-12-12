@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,13 +16,13 @@ public class BusBeneficiadasDemanda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idBusBeneficiadasDemanda;
 
-    @JoinColumn
+    @JsonIgnore
+    @JoinColumn(name = "idDemanda")
     @ManyToOne()
-    private Demanda idDemanda;
+    private Demanda demandaBusBeneficiadas;
 
-
-    @JoinColumn()
+    @JoinColumn(name = "idBusinessUnity")
     @ManyToOne()
-    private BusinessUnity idBusinessUnity;
+    private BusinessUnity businessUnityBeneficiada;
 
 }

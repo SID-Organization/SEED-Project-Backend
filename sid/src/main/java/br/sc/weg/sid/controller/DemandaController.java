@@ -1,5 +1,6 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemanda;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.model.entities.*;
@@ -15,9 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -65,33 +64,53 @@ public class DemandaController {
             DemandaUtil demandaUtil = new DemandaUtil();
             CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
             Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
-            demanda.setSecaoTIResponsavel(Secao.TI);
-            demanda.setStatusDemanda(Status.ABERTA);
+            try {
+                demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
+            }
+            Usuario usuarioBusinesUnity = usuarioService.findById(demanda.getSolicitanteDemanda().getNumeroCadastroUsuario()).get();
             demanda.setScoreDemanda(549.00);
-            demanda.setTamanhoDemanda(Tamanho.GRANDE);
+            demanda.setStatusDemanda(StatusDemanda.ABERTA);
 
+            //Verifica se a demanda possui todos os campos preenchidos, se não possuir, o status será RASCUNHO
             Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
             List<Field> atributos = Arrays.asList(classe.getDeclaredFields());
             atributos.forEach(atributo -> {
                 try {
                     Object valor = atributo.get(cadastroDemandaDTO);
                     if (valor == null) {
-                        demanda.setStatusDemanda(Status.RASCUNHO);
+                        demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
                     }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             });
-            try {
-                demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
-            }
-
             Demanda demandaSalva = demandaService.save(demanda);
-            ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
+
+            //Cadastra BU's beneficiadas e verifica se elas existem
+//            List<BusBeneficiadasDemanda> busBeneficiadasDemandasList = new ArrayList<>();
+//            for (int i =0; i < cadastroDemandaDTO.getBusBeneficiadas().size(); i++){
+//                BusBeneficiadasDemanda busBeneficiadasDemanda = new BusBeneficiadasDemanda();
+//                try {
+//                    busBeneficiadasDemanda.setBusinessUnityBeneficiada(businessUnityService.findById(
+//                            cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()).get());
+//                } catch (Exception e) {
+//                    demandaService.deleteById(demandaSalva.getIdDemanda());
+//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BU com id: " + cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()
+//                            + " não encontrada!");
+//                }
+//                busBeneficiadasDemanda.setDemandaBusBeneficiadas(demandaSalva);
+//                busBeneficiadasDemandasList.add(busBeneficiadasDemanda);
+//            }
+//            demandaSalva.setBusBeneficiadas(busBeneficiadasDemandasList);
+//            demandaService.updateBusBeneficiadasDemanda(demandaSalva.getIdDemanda(), bu);
+
+            //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
             LocalDate localDate = LocalDate.now();
             Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
+            //Cadastra os arquivos da demanda
             if (additionalImages != null) {
                 try {
                     for (MultipartFile additionalImage : additionalImages) {
@@ -111,12 +130,14 @@ public class DemandaController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
                 }
             }
-
+            //Cadastra os benefícios da demanda
             for (Beneficio beneficio : demandaSalva.getBeneficiosDemanda()) {
                 beneficio.setIdDemanda(demandaSalva);
                 beneficioService.save(beneficio);
             }
-            if (demandaSalva.getStatusDemanda().equals(Status.ABERTA)) {
+
+            //Se a demanda tiver em status Aberta(Backlog) um historico de workflow é criado
+            if (demandaSalva.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
                 CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
                 historicoWorkflowDTO.setDemandaHistorico(demandaSalva);
                 historicoWorkflowDTO.setIdResponsavel(demandaSalva.getSolicitanteDemanda());
@@ -146,17 +167,17 @@ public class DemandaController {
         }
     }
 
-    //Busca demandas por status
-    @GetMapping("/status/{status}")
-    public ResponseEntity<Object> findByStatus(@PathVariable("status") Status status) {
+    //Busca demandas por statusDemanda
+    @GetMapping("/statusDemanda/{statusDemanda}")
+    public ResponseEntity<Object> findByStatus(@PathVariable("statusDemanda") StatusDemanda statusDemanda) {
         try {
-            List<Demanda> demandas = demandaService.findByStatusDemanda(status);
+            List<Demanda> demandas = demandaService.findByStatusDemanda(statusDemanda);
             if (demandas.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com status " + status + " encontrada!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com statusDemanda " + statusDemanda + " encontrada!");
             }
             return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com status " + status + " encontrada!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com statusDemanda " + statusDemanda + " encontrada!");
         }
     }
 
@@ -177,7 +198,7 @@ public class DemandaController {
 
     //Busca demandas por Seção
     @GetMapping("/secao/{secao}")
-    public ResponseEntity<Object> findBySecao(@PathVariable("secao") Secao secao) {
+    public ResponseEntity<Object> findBySecao(@PathVariable("secao") String secao) {
         try {
             List<Demanda> demandas = demandaService.findBySecaoTIResponsavel(secao);
             if (demandas.isEmpty()) {
@@ -229,12 +250,12 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
-    //Busca demandas pelo tamanho
-    @GetMapping("/tamanho/{tamanho}")
-    public ResponseEntity<Object> findByTamanho(@PathVariable("tamanho") Tamanho tamanho) {
-        List<Demanda> demandas = demandaService.findByTamanhoDemanda(tamanho);
+    //Busca demandas pelo tamanhoDemanda
+    @GetMapping("/tamanhoDemanda/{tamanhoDemanda}")
+    public ResponseEntity<Object> findByTamanho(@PathVariable("tamanhoDemanda") TamanhoDemanda tamanhoDemanda) {
+        List<Demanda> demandas = demandaService.findByTamanhoDemanda(tamanhoDemanda);
         if (demandas.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com o tamanho: " + tamanho + " foi encontrada!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com o tamanhoDemanda: " + tamanhoDemanda + " foi encontrada!");
         }
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
@@ -259,6 +280,24 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
+    @PutMapping("/atualiza-bus-beneficiadas/{id}")
+    public ResponseEntity<Object> atualizaBusBeneficiadas(
+            @PathVariable("id") Integer id,
+            @RequestBody @Valid CadastroBusBeneficiadasDemanda cadastroBusBeneficiadasDemanda
+            ) {
+        if (!demandaService.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não foi encontrado a demanda com o id " + id);
+        }
+        Demanda demanda = demandaService.findById(id).get();
+        demanda.setSecaoTIResponsavel(cadastroBusBeneficiadasDemanda.getSecaoTIResponsavel());
+        demanda.setBuSolicitanteDemanda(cadastroBusBeneficiadasDemanda.getBuSolicitante());
+        demanda.setBusBeneficiadasDemanda(cadastroBusBeneficiadasDemanda.getBusBeneficiadasDemanda());
+        demanda.setTamanhoDemanda(cadastroBusBeneficiadasDemanda.getTamanhoDemanda());
+        demandaService.save(demanda);
+        return ResponseEntity.status(HttpStatus.OK).body(demanda);
+    }
+
     //Deleta uma demanda informando seu id
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer id) {
@@ -267,7 +306,7 @@ public class DemandaController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Não foi encontrado a demanda com o id " + id);
             }
-            if (demandaService.findById(id).get().getStatusDemanda().equals(Status.RASCUNHO)) {
+            if (demandaService.findById(id).get().getStatusDemanda().equals(StatusDemanda.RASCUNHO)) {
                 demandaService.deleteById(id);
                 return ResponseEntity.status(HttpStatus.OK).body("Demanda com o id: " + id + " deletada com sucesso!");
             } else {

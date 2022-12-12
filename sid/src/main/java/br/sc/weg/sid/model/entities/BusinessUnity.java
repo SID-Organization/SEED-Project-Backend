@@ -6,12 +6,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "BU")
-@Getter
-@Setter
-@ToString
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 public class BusinessUnity {
 
     @Id
