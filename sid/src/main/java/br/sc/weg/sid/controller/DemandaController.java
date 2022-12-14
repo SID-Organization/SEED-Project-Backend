@@ -279,18 +279,18 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
-//    @PutMapping("/atualiza-bus-beneficiadas/{id}")
-//    public ResponseEntity<Object> atualizaBusBeneficiadas(
-//            @PathVariable("id") Integer id,
-//            @RequestParam("busBeneficiadasDemandaDTO") @Valid String busBeneficiadasJson
-//            ) {
-//        if (!demandaService.existsById(id)) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body("Não foi encontrado a demanda com o id " + id);
-//        }
-//
-//        return ResponseEntity.status(HttpStatus.OK).body();
-//    }
+    @PutMapping("/atualiza-bus-beneficiadas/{id}")
+    public ResponseEntity<Object> atualizaBusBeneficiadas(
+            @PathVariable("id") Integer id,
+            @RequestParam("busBeneficiadasDemandaDTO") @Valid String busBeneficiadasJson
+            ) {
+        if (!demandaService.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não foi encontrado a demanda com o id " + id);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body();
+    }
 
     //Deleta uma demanda informando seu id
     @DeleteMapping("/{id}")
