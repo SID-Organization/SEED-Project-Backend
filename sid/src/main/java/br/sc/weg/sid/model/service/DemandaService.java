@@ -38,8 +38,8 @@ public class DemandaService {
         return demandaRepository.findByTamanhoDemanda(tamanhoDemanda);
     }
 
-    public List<Demanda> findBySecaoTIResponsavel(String secaoTIResponsavelDemanda) {
-        return demandaRepository.findBySecaoTIResponsavel(secaoTIResponsavelDemanda);
+    public List<Demanda> findBySecaoTIResponsavelDemanda(String secaoTIResponsavelDemanda) {
+        return demandaRepository.findBySecaoTIResponsavelDemanda(secaoTIResponsavelDemanda);
     }
 
     public List<Demanda> findByStatusDemanda(StatusDemanda statusDemanda) {

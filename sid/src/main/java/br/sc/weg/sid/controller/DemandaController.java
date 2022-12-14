@@ -1,5 +1,6 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.model.entities.*;
@@ -202,7 +203,7 @@ public class DemandaController {
     @GetMapping("/secao/{secao}")
     public ResponseEntity<Object> findBySecao(@PathVariable("secao") String secao) {
         try {
-            List<Demanda> demandas = demandaService.findBySecaoTIResponsavel(secao);
+            List<Demanda> demandas = demandaService.findBySecaoTIResponsavelDemanda(secao);
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda na seção " + secao + " encontrada!");
             }
@@ -282,18 +283,21 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
-//    @PutMapping("/atualiza-bus-beneficiadas/{id}")
-//    public ResponseEntity<Object> atualizaBusBeneficiadas(
-//            @PathVariable("id") Integer id,
-//            @RequestParam("busBeneficiadasDemandaDTO") @Valid String busBeneficiadasJson
-//            ) {
-//        if (!demandaService.existsById(id)) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body("Não foi encontrado a demanda com o id " + id);
-//        }
-//
-//        return ResponseEntity.status(HttpStatus.OK).body();
-//    }
+    @PutMapping("/atualiza-bus-beneficiadas/{id}")
+    public ResponseEntity<Object> atualizaBusBeneficiadas(
+            @PathVariable("id") Integer id,
+            @RequestBody @Valid CadastroBusBeneficiadasDemandaDTO cadastroBusBeneficiadasDemandaDTO
+            ) {
+        System.out.println(cadastroBusBeneficiadasDemandaDTO);
+        if (!demandaService.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não foi encontrado a demanda com o id: " + id);
+        }
+        Demanda demanda = demandaService.findById(id).get();
+        BeanUtils.copyProperties(cadastroBusBeneficiadasDemandaDTO, demanda);
+        System.out.println(demanda);
+        return ResponseEntity.status(HttpStatus.OK).body(demandaService.save(demanda));
+    }
 
     //Deleta uma demanda informando seu id
     @DeleteMapping("/{id}")
