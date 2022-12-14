@@ -16,6 +16,8 @@ public class CadastroDemandaDTO {
 
     public String situacaoAtualDemanda;
 
+    public String descricaoQualitativoDemanda;
+
 //    public String secaoSolicitanteDemanda;
 
 //    public TamanhoDemanda tamanhoDemanda;
@@ -25,7 +27,7 @@ public class CadastroDemandaDTO {
 //    @FutureOrPresent
 //    public Date prazoElaboracaoDemanda;
 
-    public Integer codigoPPM;
+//    public Integer codigoPPM;
 
     public Usuario solicitanteDemanda;
 
