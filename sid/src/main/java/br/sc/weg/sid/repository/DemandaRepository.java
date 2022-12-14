@@ -16,6 +16,7 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
     List<Demanda> findByScoreDemanda(Double scoreDemanda);
     List<Demanda> findBySolicitanteDemanda(Usuario solicitanteDemanda);
     List<Demanda> findByTituloDemanda(String tituloDemanda);
+    List<Demanda> findByAnalistaResponsavelDemanda(Usuario analistaResponsavelDemanda);
 
 //    @Query(value = "update bus_beneficiadas_demanda set id_demanda = ?1 where ?2")
 //    void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda);
