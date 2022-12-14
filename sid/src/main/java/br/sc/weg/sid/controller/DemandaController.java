@@ -143,6 +143,9 @@ public class DemandaController {
                 historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
                 try {
                     historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+                    historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);
+                    historicoWorkflowDTO.setIdResponsavel(demandaSalva.getAnalistaResponsavelDemanda());
+                    historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
                 } catch (Exception e) {
                     demandaService.deleteById(demandaSalva.getIdDemanda());
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());

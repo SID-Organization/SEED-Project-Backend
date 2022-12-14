@@ -13,13 +13,13 @@ public class HistoricoWorkflowResumido {
 
     private Date prazoHistorico;
 
-    private TarefaWorkflow tarefaHistoricoWorkflow;
+    private String tarefaHistoricoWorkflow;
 
     private String nomeResponsavel;
 
     private String acaoFeitaHistorico;
 
-    private StatusWorkflow statusWorkflow;
+    private String statusWorkflow;
 
     private Double versaoHistorico;
 
