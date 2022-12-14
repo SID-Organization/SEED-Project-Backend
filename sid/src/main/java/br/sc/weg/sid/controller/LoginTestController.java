@@ -25,6 +25,7 @@ public class LoginTestController {
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody @Valid TesteLoginDTO testeLoginDTO) {
        Optional<Usuario> usuarioOptional = usuarioService.findByNumeroCadastroUsuario(testeLoginDTO.getNumeroCadastroUsuario());
+        System.out.println(usuarioOptional.get());
        if(usuarioOptional.isPresent()){
            if (usuarioOptional.get().getSenhaUsuario().equals(testeLoginDTO.getSenhaUsuario())) {
                return ResponseEntity.ok(usuarioOptional.get());

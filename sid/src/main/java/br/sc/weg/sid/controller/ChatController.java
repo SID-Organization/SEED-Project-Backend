@@ -45,4 +45,9 @@ public class ChatController {
     public ResponseEntity<Object> findAll(){
         return ResponseEntity.ok().body(chatService.findAll());
     }
+
+    @GetMapping("/usuario/{numeroCadastroUsuario}")
+    public ResponseEntity<Object> findChatByNumeroCadastroUsuario(@PathVariable Integer numeroCadastroUsuario){
+        return ResponseEntity.ok().body(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario));
+    }
 }
