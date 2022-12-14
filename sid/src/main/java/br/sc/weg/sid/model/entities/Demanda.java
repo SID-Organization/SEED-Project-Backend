@@ -61,6 +61,10 @@ public class Demanda {
     private Double scoreDemanda;
 
     @OneToOne
+    @JoinColumn(name = "analistaResponsavelDemanda")
+    private Usuario analistaResponsavelDemanda;
+
+    @OneToOne
     @JsonIgnore
     HistoricoWorkflow historicoWorkflowUltimaVersao;
 

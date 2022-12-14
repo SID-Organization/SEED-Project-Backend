@@ -31,5 +31,7 @@ public class CadastroDemandaDTO {
 
     public Usuario solicitanteDemanda;
 
+    public Usuario analistaResponsavelDemanda;
+
     public List<Beneficio> beneficiosDemanda;
 }
