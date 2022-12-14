@@ -1,5 +1,7 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemanda;
+import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.model.entities.*;
@@ -279,17 +281,37 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
+//    @PutMapping("/atualiza-bus-beneficiadas/{id}")
+//    public ResponseEntity<Object> atualizaBusBeneficiadas(
+//            @PathVariable("id") Integer id,
+//            @RequestParam("busBeneficiadasDemandaDTO") @Valid String busBeneficiadasJson
+//            ) {
+//        if (!demandaService.existsById(id)) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body("Não foi encontrado a demanda com o id " + id);
+//        }
+//
+//        return ResponseEntity.status(HttpStatus.OK).body();
+//    }
+
+
     @PutMapping("/atualiza-bus-beneficiadas/{id}")
     public ResponseEntity<Object> atualizaBusBeneficiadas(
             @PathVariable("id") Integer id,
-            @RequestParam("busBeneficiadasDemandaDTO") @Valid String busBeneficiadasJson
-            ) {
+            @RequestBody @Valid CadastroBusBeneficiadasDemanda cadastroBusBeneficiadasDemanda
+    ) {
         if (!demandaService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id " + id);
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body();
+        Demanda demanda = demandaService.findById(id).get();
+        demanda.setSecaoTIResponsavel(cadastroBusBeneficiadasDemanda.getSecaoTIResponsavel());
+        demanda.setBuSolicitanteDemanda(cadastroBusBeneficiadasDemanda.getBuSolicitante());
+        demanda.setBusBeneficiadasDemanda(cadastroBusBeneficiadasDemanda.getBusBeneficiadasDemanda());
+        demanda.setTamanhoDemanda(cadastroBusBeneficiadasDemanda.getTamanhoDemanda());
+        demanda.setStatusDemanda(StatusDemanda.CLASSIFICADO_PELO_ANALISTA);
+        demandaService.save(demanda);
+        return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
     //Deleta uma demanda informando seu id

@@ -81,6 +81,9 @@ public class Demanda {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "demandaBusBeneficiadas")
     private List<BusBeneficiadasDemanda> busBeneficiadas;
 
+    @Column()
+    private String busBeneficiadasDemanda;
+
     @OneToMany(mappedBy = "idDemanda",cascade = CascadeType.ALL)
     private List<ArquivoDemanda> arquivosDemandas = new ArrayList<>();
 
