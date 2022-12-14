@@ -1,6 +1,5 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.model.entities.*;
@@ -87,6 +86,24 @@ public class DemandaController {
                 }
             });
             Demanda demandaSalva = demandaService.save(demanda);
+
+            //Cadastra BU's beneficiadas e verifica se elas existem
+//            List<BusBeneficiadasDemanda> busBeneficiadasDemandasList = new ArrayList<>();
+//            for (int i =0; i < cadastroDemandaDTO.getBusBeneficiadas().size(); i++){
+//                BusBeneficiadasDemanda busBeneficiadasDemanda = new BusBeneficiadasDemanda();
+//                try {
+//                    busBeneficiadasDemanda.setBusinessUnityBeneficiada(businessUnityService.findById(
+//                            cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()).get());
+//                } catch (Exception e) {
+//                    demandaService.deleteById(demandaSalva.getIdDemanda());
+//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BU com id: " + cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()
+//                            + " não encontrada!");
+//                }
+//                busBeneficiadasDemanda.setDemandaBusBeneficiadas(demandaSalva);
+//                busBeneficiadasDemandasList.add(busBeneficiadasDemanda);
+//            }
+//            demandaSalva.setBusBeneficiadas(busBeneficiadasDemandasList);
+//            demandaService.updateBusBeneficiadasDemanda(demandaSalva.getIdDemanda(), bu);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
             LocalDate localDate = LocalDate.now();
