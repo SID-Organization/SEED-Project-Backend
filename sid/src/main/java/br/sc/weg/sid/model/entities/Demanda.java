@@ -43,9 +43,6 @@ public class Demanda {
     private String secaoTIResponsavel;
 
     @Column()
-    private String busBeneficiadasDemanda;
-
-    @Column()
     private String frequenciaUsoDemanda;
 
     @Column(length = 400)
@@ -81,8 +78,8 @@ public class Demanda {
     @JoinColumn(name = "idProposta")
     private Proposta propostaElaboradaDemanda;
 
-//    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "demandaBusBeneficiadas")
-//    private List<BusBeneficiadasDemanda> busBeneficiadas;
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "demandaBusBeneficiadas")
+    private List<BusBeneficiadasDemanda> busBeneficiadas;
 
     @OneToMany(mappedBy = "idDemanda",cascade = CascadeType.ALL)
     private List<ArquivoDemanda> arquivosDemandas = new ArrayList<>();

@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class CadastroBusBeneficiadasDemanda {
-    private String secaoTIResponsavel;
-    private String buSolicitante;
-    private String busBeneficiadasDemanda;
-    private TamanhoDemanda tamanhoDemanda;
+public class CadastroBusBeneficiadasDemandaDTO {
+    private List<BusinessUnity> busBeneficiadasDemanda;
 }

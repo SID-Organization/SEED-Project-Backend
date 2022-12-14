@@ -1,6 +1,6 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemanda;
+import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.model.entities.*;
@@ -87,24 +87,6 @@ public class DemandaController {
                 }
             });
             Demanda demandaSalva = demandaService.save(demanda);
-
-            //Cadastra BU's beneficiadas e verifica se elas existem
-//            List<BusBeneficiadasDemanda> busBeneficiadasDemandasList = new ArrayList<>();
-//            for (int i =0; i < cadastroDemandaDTO.getBusBeneficiadas().size(); i++){
-//                BusBeneficiadasDemanda busBeneficiadasDemanda = new BusBeneficiadasDemanda();
-//                try {
-//                    busBeneficiadasDemanda.setBusinessUnityBeneficiada(businessUnityService.findById(
-//                            cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()).get());
-//                } catch (Exception e) {
-//                    demandaService.deleteById(demandaSalva.getIdDemanda());
-//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BU com id: " + cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()
-//                            + " não encontrada!");
-//                }
-//                busBeneficiadasDemanda.setDemandaBusBeneficiadas(demandaSalva);
-//                busBeneficiadasDemandasList.add(busBeneficiadasDemanda);
-//            }
-//            demandaSalva.setBusBeneficiadas(busBeneficiadasDemandasList);
-//            demandaService.updateBusBeneficiadasDemanda(demandaSalva.getIdDemanda(), bu);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
             LocalDate localDate = LocalDate.now();
@@ -274,29 +256,24 @@ public class DemandaController {
         }
         Demanda demanda = demandaService.findById(id).get();
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
-        historicoWorkflowController.atualizaVersao(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
+        historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                 demanda.getHistoricoWorkflowUltimaVersao(), demanda);
         demandaService.save(demanda);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
-    @PutMapping("/atualiza-bus-beneficiadas/{id}")
-    public ResponseEntity<Object> atualizaBusBeneficiadas(
-            @PathVariable("id") Integer id,
-            @RequestBody @Valid CadastroBusBeneficiadasDemanda cadastroBusBeneficiadasDemanda
-            ) {
-        if (!demandaService.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Não foi encontrado a demanda com o id " + id);
-        }
-        Demanda demanda = demandaService.findById(id).get();
-        demanda.setSecaoTIResponsavel(cadastroBusBeneficiadasDemanda.getSecaoTIResponsavel());
-        demanda.setBuSolicitanteDemanda(cadastroBusBeneficiadasDemanda.getBuSolicitante());
-        demanda.setBusBeneficiadasDemanda(cadastroBusBeneficiadasDemanda.getBusBeneficiadasDemanda());
-        demanda.setTamanhoDemanda(cadastroBusBeneficiadasDemanda.getTamanhoDemanda());
-        demandaService.save(demanda);
-        return ResponseEntity.status(HttpStatus.OK).body(demanda);
-    }
+//    @PutMapping("/atualiza-bus-beneficiadas/{id}")
+//    public ResponseEntity<Object> atualizaBusBeneficiadas(
+//            @PathVariable("id") Integer id,
+//            @RequestParam("busBeneficiadasDemandaDTO") @Valid String busBeneficiadasJson
+//            ) {
+//        if (!demandaService.existsById(id)) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body("Não foi encontrado a demanda com o id " + id);
+//        }
+//
+//        return ResponseEntity.status(HttpStatus.OK).body();
+//    }
 
     //Deleta uma demanda informando seu id
     @DeleteMapping("/{id}")
