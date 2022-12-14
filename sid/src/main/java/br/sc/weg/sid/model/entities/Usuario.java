@@ -37,6 +37,5 @@ public class Usuario {
 
     @Column(name = "FotoUsuario")
     @Lob
-    @NotNull
     private byte[] fotoUsuario;
 }
