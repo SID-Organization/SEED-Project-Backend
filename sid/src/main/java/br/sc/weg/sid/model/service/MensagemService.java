@@ -1,6 +1,8 @@
 package br.sc.weg.sid.model.service;
 
+import br.sc.weg.sid.model.entities.Chat;
 import br.sc.weg.sid.model.entities.Mensagem;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.repository.MensagemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,5 +34,9 @@ public class MensagemService {
 
     public void deleteById(Integer integer) {
         mensagemRepository.deleteById(integer);
+    }
+
+    public List<Mensagem> findByIdChatAndIdUsuario(Chat idChat, Usuario idUsuario) {
+        return mensagemRepository.findByIdChatAndIdUsuario(idChat, idUsuario);
     }
 }

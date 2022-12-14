@@ -1,5 +1,6 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.model.entities.*;
@@ -57,7 +58,7 @@ public class DemandaController {
     public ResponseEntity<Object> cadastroDemandas(
 
             @RequestParam("demandaForm") @Valid String demandaJson,
-            @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalImages
+            @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalFiles
     ) {
         try {
             DemandaUtil demandaUtil = new DemandaUtil();
@@ -110,9 +111,9 @@ public class DemandaController {
             Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
             ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
             //Cadastra os arquivos da demanda
-            if (additionalImages != null) {
+            if (additionalFiles != null) {
                 try {
-                    for (MultipartFile additionalImage : additionalImages) {
+                    for (MultipartFile additionalImage : additionalFiles) {
                         ArquivoDemanda arquivoDemanda = new ArquivoDemanda();
                         arquivoDemanda.setNomeArquivo(additionalImage.getOriginalFilename());
                         arquivoDemanda.setTipoArquivo(additionalImage.getContentType());
@@ -202,7 +203,7 @@ public class DemandaController {
     @GetMapping("/secao/{secao}")
     public ResponseEntity<Object> findBySecao(@PathVariable("secao") String secao) {
         try {
-            List<Demanda> demandas = demandaService.findBySecaoTIResponsavel(secao);
+            List<Demanda> demandas = demandaService.findBySecaoTIResponsavelDemanda(secao);
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda na seção " + secao + " encontrada!");
             }
@@ -262,6 +263,21 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
+    //Busca demandas de um determinado analista responsável
+    @GetMapping("/analista/{numeroCadastroAnalista}")
+    public ResponseEntity<Object> findByAnalista(@PathVariable("numeroCadastroAnalista") Integer numeroCadastroAnalista) {
+        try {
+            Usuario analistaDemanda = usuarioService.findById(numeroCadastroAnalista).get();
+            List<Demanda> demandas = demandaService.findByAnalistaResponsavelDemanda(analistaDemanda);
+            if (demandas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O analista " + analistaDemanda.getNomeUsuario() + " não possui demandas!");
+            }
+            return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     //Atualiza uma demanda informando seu id
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizarDemanda(
@@ -282,18 +298,43 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
-//    @PutMapping("/atualiza-bus-beneficiadas/{id}")
-//    public ResponseEntity<Object> atualizaBusBeneficiadas(
-//            @PathVariable("id") Integer id,
-//            @RequestParam("busBeneficiadasDemandaDTO") @Valid String busBeneficiadasJson
-//            ) {
-//        if (!demandaService.existsById(id)) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body("Não foi encontrado a demanda com o id " + id);
-//        }
-//
-//        return ResponseEntity.status(HttpStatus.OK).body();
-//    }
+    @PutMapping("/atualiza-bus-beneficiadas/{id}")
+    public ResponseEntity<Object> atualizaBusBeneficiadas(
+            @PathVariable("id") Integer id,
+            @RequestBody @Valid CadastroBusBeneficiadasDemandaDTO cadastroBusBeneficiadasDemandaDTO,
+            @RequestBody @Valid MultipartFile[] additionalFiles
+            ) {
+        if (!demandaService.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não foi encontrado a demanda com o id: " + id);
+        }
+        Demanda demanda = demandaService.findById(id).get();
+        BeanUtils.copyProperties(cadastroBusBeneficiadasDemandaDTO, demanda);
+        Demanda demandaSalva = demandaService.save(demanda);
+        LocalDate localDate = LocalDate.now();
+        Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
+        if (additionalFiles != null) {
+            try {
+                for (MultipartFile additionalImage : additionalFiles) {
+                    ArquivoDemanda arquivoDemanda = new ArquivoDemanda();
+                    arquivoDemanda.setNomeArquivo(additionalImage.getOriginalFilename());
+                    arquivoDemanda.setTipoArquivo(additionalImage.getContentType());
+                    arquivoDemanda.setArquivo(additionalImage.getBytes());
+                    arquivoDemanda.setIdDemanda(demandaSalva);
+                    arquivoDemanda.setIdUsuario(usuarioService.findById(demandaSalva.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+                    arquivoDemanda.setDataRegistroArquivo(dataRegistroArquivo);
+                    arquivoDemandaSalvo = arquivoDemandaService.save(arquivoDemanda);
+                    demandaSalva.getArquivosDemandas().add(arquivoDemandaSalvo);
+                }
+            } catch (Exception e) {
+                arquivoDemandaService.deleteById(arquivoDemandaSalvo.getIdArquivoDemanda());
+                demandaService.deleteById(demandaSalva.getIdDemanda());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(demandaSalva);
+    }
 
     //Deleta uma demanda informando seu id
     @DeleteMapping("/{id}")
