@@ -54,6 +54,7 @@ public class ChatController {
     @GetMapping("/usuario/{numeroCadastroUsuario}")
     public ResponseEntity<Object> findChatByNumeroCadastroUsuario(@PathVariable Integer numeroCadastroUsuario) {
         ChatUtil chatUtil = new ChatUtil();
+        System.out.println(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario));
         return ResponseEntity.ok().body(chatUtil.resumirChat(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario), mensagemService));
     }
 }

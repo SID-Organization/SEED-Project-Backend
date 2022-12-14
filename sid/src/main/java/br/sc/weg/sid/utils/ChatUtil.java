@@ -42,7 +42,6 @@ public class ChatUtil {
                         chatResumido.setDataUltimaMensagem(mensagem.getDataMensagem());
                     }
                 }
-                System.out.println("ChatResumido: " + chatResumido);
                 chatResumidoList.add(chatResumido);
             }
         }
