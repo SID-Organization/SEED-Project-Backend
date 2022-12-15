@@ -39,4 +39,8 @@ public class MensagemService {
     public List<Mensagem> findByIdChatAndIdUsuario(Chat idChat, Usuario idUsuario) {
         return mensagemRepository.findByIdChatAndIdUsuario(idChat, idUsuario);
     }
+
+    public List<Mensagem> findByIdChat(Chat idChat) {
+        return mensagemRepository.findByIdChat(idChat);
+    }
 }

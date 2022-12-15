@@ -2,6 +2,7 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroChatDTO;
 import br.sc.weg.sid.model.entities.Chat;
+import br.sc.weg.sid.model.entities.ChatResumido;
 import br.sc.weg.sid.model.service.ChatService;
 import br.sc.weg.sid.model.service.MensagemService;
 import br.sc.weg.sid.utils.ChatUtil;
@@ -25,6 +26,8 @@ public class ChatController {
 
     @Autowired
     private MensagemService mensagemService;
+
+    ChatUtil chatUtil = new ChatUtil();
 
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody CadastroChatDTO cadastroChatDTO) {
@@ -54,8 +57,15 @@ public class ChatController {
 
     @GetMapping("/usuario/{numeroCadastroUsuario}")
     public ResponseEntity<Object> findChatByNumeroCadastroUsuario(@PathVariable Integer numeroCadastroUsuario) throws ParseException {
-        ChatUtil chatUtil = new ChatUtil();
         System.out.println(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario));
         return ResponseEntity.ok().body(chatUtil.resumirChat(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario), mensagemService, numeroCadastroUsuario));
+    }
+
+    @GetMapping("/mensagem/{idChat}")
+    public ResponseEntity<Object> findMensagemByIdChat(@PathVariable Integer idChat) {
+        Chat chat = new Chat();
+        ChatResumido chatResumido = new ChatResumido();
+        chatService.findById(idChat).ifPresent(chat1 -> chat.setIdChat(chat1.getIdChat()));
+        return ResponseEntity.ok().body(chatUtil.resumirMensagem(mensagemService.findByIdChat(chat)));
     }
 }

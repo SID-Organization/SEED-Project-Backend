@@ -3,6 +3,7 @@ package br.sc.weg.sid.utils;
 import br.sc.weg.sid.model.entities.Chat;
 import br.sc.weg.sid.model.entities.ChatResumido;
 import br.sc.weg.sid.model.entities.Mensagem;
+import br.sc.weg.sid.model.entities.MensagemResumida;
 import br.sc.weg.sid.model.service.MensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +20,6 @@ public class ChatUtil {
                 ChatResumido chatResumido = new ChatResumido();
                 Integer idAnalista = null;
                 List<Mensagem> mensagens = null;
-                System.out.println(chat);
                 chatResumido.setTituloDemanda(chat.getIdDemanda().getTituloDemanda());
                 for (int i = 0; i < chat.getUsuarios().size(); i++) {
                     if (!chat.getUsuarios().get(i).getNumeroCadastroUsuario().equals(numeroCadastroUsuario)) {
@@ -47,7 +47,24 @@ public class ChatUtil {
                 chatResumidoList.add(chatResumido);
             }
         }
-        System.out.println(chatResumidoList);
         return chatResumidoList;
+    }
+
+    public List<MensagemResumida> resumirMensagem(List<Mensagem> mensagemList) {
+        List<MensagemResumida> mensagemResumidaList = new ArrayList<>();
+        for (Mensagem mensagem : mensagemList) {
+            if (mensagem != null) {
+                MensagemResumida mensagemResumida = new MensagemResumida();
+                mensagemResumida.setIdMensagem(mensagem.getIdMensagem());
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                mensagemResumida.setDataMensagem(sdf.format(mensagem.getDataMensagem()));
+                mensagemResumida.setTextoMensagem(mensagem.getTextoMensagem());
+                mensagemResumida.setIdChat(mensagem.getIdChat().getIdChat());
+                mensagemResumida.setIdUsuario(mensagem.getIdUsuario().getNumeroCadastroUsuario());
+
+                mensagemResumidaList.add(mensagemResumida);
+            }
+        }
+        return mensagemResumidaList;
     }
 }

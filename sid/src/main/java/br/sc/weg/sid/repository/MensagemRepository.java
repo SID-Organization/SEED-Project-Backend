@@ -13,4 +13,6 @@ import java.util.List;
 public interface MensagemRepository extends JpaRepository<Mensagem, Integer> {
 
     List<Mensagem> findByIdChatAndIdUsuario(Chat idChat, Usuario idUsuario);
+
+    List<Mensagem> findByIdChat(Chat idChat);
 }
