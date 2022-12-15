@@ -21,7 +21,6 @@ public class ChatUtil {
                 Integer idAnalista = null;
                 List<Mensagem> mensagens = null;
                 chatResumido.setTituloDemanda(chat.getIdDemanda().getTituloDemanda());
-                chatResumido.setIdChat(chat.getIdChat());
                 for (int i = 0; i < chat.getUsuarios().size(); i++) {
                     if (!chat.getUsuarios().get(i).getNumeroCadastroUsuario().equals(numeroCadastroUsuario)) {
                         chatResumido.setFotoAnalista(chat.getUsuarios().get(i).getFotoUsuario());

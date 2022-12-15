@@ -13,5 +13,4 @@ public class ChatResumido {
     private String nomeAnalista;
     private String ultimaMensagem;
     private String dataUltimaMensagem;
-    private Integer idChat;
 }
