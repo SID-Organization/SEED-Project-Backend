@@ -310,6 +310,7 @@ public class DemandaController {
         }
         Demanda demanda = demandaService.findById(id).get();
         BeanUtils.copyProperties(cadastroBusBeneficiadasDemandaDTO, demanda);
+        demanda.setStatusDemanda(StatusDemanda.CLASSIFICADO_PELO_ANALISTA);
         Demanda demandaSalva = demandaService.save(demanda);
         LocalDate localDate = LocalDate.now();
         Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
