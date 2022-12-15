@@ -25,7 +25,6 @@ public class ChatUtil {
                     if (!chat.getUsuarios().get(i).getNumeroCadastroUsuario().equals(numeroCadastroUsuario)) {
                         chatResumido.setFotoAnalista(chat.getUsuarios().get(i).getFotoUsuario());
                         chatResumido.setNomeAnalista(chat.getUsuarios().get(i).getNomeUsuario());
-                        chatResumido.setNumeroCadastroUsuario(chat.getUsuarios().get(i).getNumeroCadastroUsuario());
                         idAnalista = chat.getUsuarios().get(i).getNumeroCadastroUsuario();
                         mensagens = mensagemService.findByIdChatAndIdUsuario(chat, chat.getUsuarios().get(i));
                     }
