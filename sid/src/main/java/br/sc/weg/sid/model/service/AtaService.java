@@ -32,4 +32,8 @@ public class AtaService {
     public void deleteById(Integer integer) {
         ataRepository.deleteById(integer);
     }
+
+    public Ata findByNumeroDgAta(Integer numeroDgAta) {
+        return ataRepository.findByNumeroDgAta(numeroDgAta);
+    }
 }

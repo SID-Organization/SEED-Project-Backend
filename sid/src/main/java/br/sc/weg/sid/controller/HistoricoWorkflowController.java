@@ -16,6 +16,7 @@ import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +59,6 @@ public class HistoricoWorkflowController {
     public ResponseEntity<Object> cadastroHistoricoWorkflow(
             @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO
     ) {
-        HistoricoWorkflowUtil historicoWorkflowUtil = new HistoricoWorkflowUtil();
         HistoricoWorkflow historicoWorkflow = new HistoricoWorkflow();
         BeanUtils.copyProperties(historicoWorkflowDTO, historicoWorkflow);
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
@@ -70,6 +70,8 @@ public class HistoricoWorkflowController {
             HistoricoWorkflow  historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
             atualizaStatusWorkflow(historicoWorkflowAnterior.getIdHistoricoWorkflow(), historicoWorkflowAnterior);
             historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
+            System.out.println("Historico: " + historicoWorkflow);
+            System.out.println("Historico Anterior: " + historicoWorkflowAnterior);
             if(historicoWorkflow.equals(historicoWorkflowAnterior)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Não houveram alterações!");
             }
@@ -94,14 +96,18 @@ public class HistoricoWorkflowController {
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Erro ao setar último histórico de workflow da demanda: " + e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvo);
+        List<HistoricoWorkflow> historicoWorkflowSalvoList = new ArrayList<>();
+        historicoWorkflowSalvoList.add(historicoWorkflowSalvo);
+        List<HistoricoWorkflowResumido> historicoWorkflowSalvoResumido = HistoricoWorkflowUtil.converterHistoricoWorkflowParaHistoricoWorkflowReumido(
+                historicoWorkflowSalvoList);
+        return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvoResumido);
     }
 
 
     //Busca um histórico de workflow pelo id de uma demanda
 
     @GetMapping("/demanda/{id}")
-    public ResponseEntity<Object> findByIdDemanda(@PathVariable("id") Demanda demandaHistorico) {
+    public ResponseEntity<Object> findByDemandaHistorico(@PathVariable("id") Demanda demandaHistorico) {
         try {
             List<HistoricoWorkflow> historicoWorkflows = historicoWorkflowService.findByDemandaHistorico(demandaHistorico);
             List<HistoricoWorkflowResumido> historicoWorkflowResumidos = HistoricoWorkflowUtil.converterHistoricoWorkflowParaHistoricoWorkflowReumido(historicoWorkflows);
@@ -127,7 +133,7 @@ public class HistoricoWorkflowController {
     //Busca um histórico de workflow pelo número de cadastro de um responsável
 
     @GetMapping("/responsavel/{numeroCadastroResponsavel}")
-    public ResponseEntity<Object> findByIdUsuario(@PathVariable("numeroCadastroResponsavel") Usuario numeroCadastroResponsavel) {
+    public ResponseEntity<Object> findByResponsavel(@PathVariable("numeroCadastroResponsavel") Usuario numeroCadastroResponsavel) {
         try {
             List<HistoricoWorkflow> historicoWorkflows = historicoWorkflowService.findByIdResponsavel(numeroCadastroResponsavel);
             if (historicoWorkflows.isEmpty()) {
@@ -143,7 +149,7 @@ public class HistoricoWorkflowController {
     //Busca um histórico de workflow pelo status
 
     @GetMapping("/status-workflow/{statusWorkflow}")
-    public ResponseEntity<Object> findByIdUsuario(@PathVariable("statusWorkflow") StatusWorkflow statusWorkflow) {
+    public ResponseEntity<Object> findByStatusWorkflow(@PathVariable("statusWorkflow") StatusWorkflow statusWorkflow) {
         try {
             List<HistoricoWorkflow> historicoWorkflows = historicoWorkflowService.findByStatusWorkflow(statusWorkflow);
             if (historicoWorkflows.isEmpty()) {
@@ -159,7 +165,7 @@ public class HistoricoWorkflowController {
     //Atualiza a versão da demanda de um histórico de workflow
 
     @PutMapping("/atualiza-versao-workflow/{id}")
-    public ResponseEntity<Object> atualizaVersaoWorkflow(@PathVariable Integer idHistoricoWorkflow, @RequestBody HistoricoWorkflow historicoWorkflow, Demanda demanda) {
+    public ResponseEntity<Object> atualizaVersaoWorkflow(@PathVariable Integer idHistoricoWorkflow, @RequestBody HistoricoWorkflow historicoWorkflow) {
         try {
             Optional<HistoricoWorkflow> historicoWorkflowOptional = historicoWorkflowService.findById(idHistoricoWorkflow);
             if (historicoWorkflowOptional.isEmpty()) {
@@ -192,9 +198,8 @@ public class HistoricoWorkflowController {
 
 
     //Deleta um histórico de workflow pelo id
-
     @DeleteMapping("/{idHistoricoWorkflow}")
-    public ResponseEntity<Object> delete(@PathVariable Integer idHistoricoWorkflow) {
+    public ResponseEntity<Object> deleteById(@PathVariable Integer idHistoricoWorkflow) {
         try {
             Optional<HistoricoWorkflow> historicoWorkflowOptional = historicoWorkflowService.findById(idHistoricoWorkflow);
             if (historicoWorkflowOptional.isEmpty()) {

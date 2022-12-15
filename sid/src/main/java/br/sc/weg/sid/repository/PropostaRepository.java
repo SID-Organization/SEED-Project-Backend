@@ -11,7 +11,7 @@ import java.util.List;
 public interface PropostaRepository extends JpaRepository<Proposta, Integer> {
     List<Proposta> findAllByAprovadoWorkflowProposta(Integer aprovadoWorkflowProposta);
 
-    List<Proposta> findByIdDemanda(Demanda idDemanda);
+    List<Proposta> findByDemandaProposta(Demanda idDemanda);
 
     List<Proposta> findAllByPaybackProposta(Double paybackProposta);
 }

@@ -73,4 +73,18 @@ public class AtaController {
             return ResponseEntity.badRequest().body("Erro ao buscar ata: " + e.getMessage());
         }
     }
+
+    @GetMapping("/numeroDgAta/{numeroDgAta}")
+    public ResponseEntity<Object> findByNumeroDgAta(@PathVariable Integer numeroDgAta) {
+        try {
+            Ata ataNumeroDG = ataService.findByNumeroDgAta(numeroDgAta);
+            if (ataNumeroDG == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ata com numero de DG: " + numeroDgAta + " não encontrada");
+            }
+            return ResponseEntity.ok(ataNumeroDG);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao buscar ata: " + e.getMessage());
+        }
+    }
+
 }

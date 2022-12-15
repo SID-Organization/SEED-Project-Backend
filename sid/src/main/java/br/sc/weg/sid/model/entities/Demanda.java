@@ -52,10 +52,10 @@ public class Demanda {
     private Date prazoElaboracaoDemanda;
 
     @Column()
-    private Integer codigoPPM;
+    private Integer codigoPPMDemanda;
 
     @Column
-    private String linkJira;
+    private String linkJiraDemanda;
 
     @Column()
     private Double scoreDemanda;

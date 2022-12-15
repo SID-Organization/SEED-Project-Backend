@@ -37,7 +37,7 @@ public class DecisaoPropostaController {
     private PautaService pautaService;
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody @Valid CadastroDecisaoPropostaDTO cadastroDecisaoPropostaDTO) {
+    public ResponseEntity<Object> cadastraDecisaoProposta(@RequestBody @Valid CadastroDecisaoPropostaDTO cadastroDecisaoPropostaDTO) {
         DecisaoProposta decisaoProposta = new DecisaoProposta();
         BeanUtils.copyProperties(cadastroDecisaoPropostaDTO, decisaoProposta);
         try {
@@ -58,7 +58,7 @@ public class DecisaoPropostaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+    public ResponseEntity<Object> deleteById(@PathVariable Integer id) {
         try {
             decisaoPropostaService.deleteById(id);
             return ResponseEntity.ok().body("Decisão da proposta excluída com sucesso");
@@ -68,11 +68,11 @@ public class DecisaoPropostaController {
     }
 
     @GetMapping("/pauta/{id}")
-    public ResponseEntity<Object> findByIdPauta(@PathVariable Integer id) {
+    public ResponseEntity<Object> findByPautaDecisaoProposta(@PathVariable Integer id) {
         try {
             Optional<Pauta> pautaOptional = pautaService.findById(id);
             if (pautaOptional.isPresent()) {
-                return ResponseEntity.ok(decisaoPropostaService.findByIdPauta(pautaOptional.get()));
+                return ResponseEntity.ok(decisaoPropostaService.findByPautaDecisaoProposta(pautaOptional.get()));
             } else {
                 return ResponseEntity.badRequest().body("Pauta não encontrada");
             }
@@ -82,11 +82,11 @@ public class DecisaoPropostaController {
     }
 
     @GetMapping("/proposta/{id}")
-    public ResponseEntity<Object> findByIdProposta(@PathVariable Integer id) {
+    public ResponseEntity<Object> findByPropostaDecisaoProposta(@PathVariable Integer id) {
         try {
             Optional<Proposta> proposta = propostaService.findById(id);
             if (proposta.isPresent()) {
-                return ResponseEntity.ok(decisaoPropostaService.findByIdProposta(proposta.get()));
+                return ResponseEntity.ok(decisaoPropostaService.findByPropostaDecisaoProposta(proposta.get()));
             } else {
                 return ResponseEntity.badRequest().body("Proposta não encontrada");
             }
@@ -96,11 +96,11 @@ public class DecisaoPropostaController {
     }
 
     @GetMapping("/ata/{id}")
-    public ResponseEntity<Object> findByIdAta(@PathVariable Integer id) {
+    public ResponseEntity<Object> findByAtaDecisaoProposta(@PathVariable Integer id) {
         try {
             Optional<Ata> ata = ataService.findById(id);
             if (ata.isPresent()) {
-                return ResponseEntity.ok(decisaoPropostaService.findByIdAta(ata.get()));
+                return ResponseEntity.ok(decisaoPropostaService.findByAtaDecisaoProposta(ata.get()));
             } else {
                 return ResponseEntity.badRequest().body("Ata não encontrada");
             }

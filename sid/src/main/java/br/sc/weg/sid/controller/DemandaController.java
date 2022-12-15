@@ -55,7 +55,7 @@ public class DemandaController {
 
     //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status de RASCUNHO) e retorna a demanda criada
     @PostMapping()
-    public ResponseEntity<Object> cadastroDemandas(
+    public ResponseEntity<Object> cadastroDemanda(
 
             @RequestParam("demandaForm") @Valid String demandaJson,
             @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalFiles
@@ -87,24 +87,6 @@ public class DemandaController {
                 }
             });
             Demanda demandaSalva = demandaService.save(demanda);
-
-            //Cadastra BU's beneficiadas e verifica se elas existem
-//            List<BusBeneficiadasDemanda> busBeneficiadasDemandasList = new ArrayList<>();
-//            for (int i =0; i < cadastroDemandaDTO.getBusBeneficiadas().size(); i++){
-//                BusBeneficiadasDemanda busBeneficiadasDemanda = new BusBeneficiadasDemanda();
-//                try {
-//                    busBeneficiadasDemanda.setBusinessUnityBeneficiada(businessUnityService.findById(
-//                            cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()).get());
-//                } catch (Exception e) {
-//                    demandaService.deleteById(demandaSalva.getIdDemanda());
-//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("BU com id: " + cadastroDemandaDTO.getBusBeneficiadas().get(i).getIdBusinessUnity()
-//                            + " não encontrada!");
-//                }
-//                busBeneficiadasDemanda.setDemandaBusBeneficiadas(demandaSalva);
-//                busBeneficiadasDemandasList.add(busBeneficiadasDemanda);
-//            }
-//            demandaSalva.setBusBeneficiadas(busBeneficiadasDemandasList);
-//            demandaService.updateBusBeneficiadasDemanda(demandaSalva.getIdDemanda(), bu);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
             LocalDate localDate = LocalDate.now();
@@ -268,6 +250,10 @@ public class DemandaController {
     public ResponseEntity<Object> findByAnalista(@PathVariable("numeroCadastroAnalista") Integer numeroCadastroAnalista) {
         try {
             Usuario analistaDemanda = usuarioService.findById(numeroCadastroAnalista).get();
+            if (analistaDemanda.getCargoUsuario() != Cargo.ANALISTA) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O usuário " + analistaDemanda.getNomeUsuario() + " não é um analista! " +
+                        "Ele é um " + analistaDemanda.getCargoUsuario().getNome());
+            }
             List<Demanda> demandas = demandaService.findByAnalistaResponsavelDemanda(analistaDemanda);
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O analista " + analistaDemanda.getNomeUsuario() + " não possui demandas!");
@@ -281,19 +267,19 @@ public class DemandaController {
     //Atualiza uma demanda informando seu id
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizarDemanda(
-            @PathVariable("id") Integer id,
+            @PathVariable("id") Integer idDemanda,
             @RequestParam("demandaForm") @Valid String demandaJson
     ) {
         DemandaUtil demandaUtil = new DemandaUtil();
         CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
-        if (!demandaService.existsById(id)) {
+        if (!demandaService.existsById(idDemanda)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Não foi encontrado a demanda com o id " + id);
+                    .body("Não foi encontrado a demanda com o id " + idDemanda);
         }
-        Demanda demanda = demandaService.findById(id).get();
+        Demanda demanda = demandaService.findById(idDemanda).get();
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
-                demanda.getHistoricoWorkflowUltimaVersao(), demanda);
+                demanda.getHistoricoWorkflowUltimaVersao());
         demandaService.save(demanda);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
@@ -334,22 +320,24 @@ public class DemandaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
             }
         }
+        historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
+                demanda.getHistoricoWorkflowUltimaVersao());
         return ResponseEntity.status(HttpStatus.OK).body(demandaSalva);
     }
 
     //Deleta uma demanda informando seu id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer id) {
+    public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer idDemanda) {
         try {
-            if (!demandaService.existsById(id)) {
+            if (!demandaService.existsById(idDemanda)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Não foi encontrado a demanda com o id " + id);
+                        .body("Não foi encontrado a demanda com o id " + idDemanda);
             }
-            if (demandaService.findById(id).get().getStatusDemanda().equals(StatusDemanda.RASCUNHO)) {
-                demandaService.deleteById(id);
-                return ResponseEntity.status(HttpStatus.OK).body("Demanda com o id: " + id + " deletada com sucesso!");
+            if (demandaService.findById(idDemanda).get().getStatusDemanda().equals(StatusDemanda.RASCUNHO)) {
+                demandaService.deleteById(idDemanda);
+                return ResponseEntity.status(HttpStatus.OK).body("Demanda com o id: " + idDemanda + " deletada com sucesso!");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Demanda com o id: " + id + " não pode ser deletada pois não tem o status rascunho!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Demanda com o id: " + idDemanda + " não pode ser deletada pois não tem o status rascunho!");
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao deletar a demanda: " + e.getMessage());

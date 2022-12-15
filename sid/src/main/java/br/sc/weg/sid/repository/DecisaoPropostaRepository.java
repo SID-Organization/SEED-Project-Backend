@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public interface DecisaoPropostaRepository extends JpaRepository<DecisaoProposta, Integer> {
 
-    List<DecisaoProposta> findByIdAta(Ata idAta);
-    List<DecisaoProposta> findByIdPauta(Pauta idPauta);
-    List<DecisaoProposta> findByIdProposta(Proposta idProposta);
+    List<DecisaoProposta> findByAtaDecisaoProposta(Ata idAta);
+    List<DecisaoProposta> findByPautaDecisaoProposta(Pauta idPauta);
+    List<DecisaoProposta> findByPropostaDecisaoProposta(Proposta idProposta);
 
 }

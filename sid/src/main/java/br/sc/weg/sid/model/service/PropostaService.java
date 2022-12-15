@@ -39,8 +39,8 @@ public class PropostaService {
         return propostaRepository.findAllByAprovadoWorkflowProposta(aprovadoWorkflowProposta);
     }
 
-    public List<Proposta> findByIdDemanda(Demanda idDemanda) {
-        return propostaRepository.findByIdDemanda(idDemanda);
+    public List<Proposta> findByDemandaProposta(Demanda idDemanda) {
+        return propostaRepository.findByDemandaProposta(idDemanda);
     }
 
     public List<Proposta> findAllByPaybackProposta(Double paybackProposta) {

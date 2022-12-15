@@ -27,7 +27,7 @@ public class CadastroDemandaDTO {
 //    @FutureOrPresent
 //    public Date prazoElaboracaoDemanda;
 
-//    public Integer codigoPPM;
+//    public Integer codigoPPMDemanda;
 
     public Usuario solicitanteDemanda;
 

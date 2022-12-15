@@ -20,7 +20,7 @@ public class Proposta {
     private Integer idProposta;
 
     @Column(name = "CodigoPPM", nullable = false)
-    private String codigoPPM;
+    private String codigoPPMProposta;
 
     @Column(name = "EscopoProposta", nullable = false, length = 4000)
     private String escopoProposta;
@@ -30,22 +30,22 @@ public class Proposta {
 
     @FutureOrPresent
     @Column(name = "PeriodoExecucaoInicioProposta", nullable = false)
-    private Date periodoExecucaoInicio;
+    private Date periodoExecucaoInicioProposta;
 
     @FutureOrPresent
     @Column(name = "PeriodoExecucaoFimProposta", nullable = false)
-    private Date periodoExecucaoFim;
+    private Date periodoExecucaoFimProposta;
 
     @Column(length = 255, name = "LinkJiraProposta", nullable = false)
-    private String linkJira;
+    private String linkJiraProposta;
 
     @Column(name = "AprovadoWorkflowProposta", nullable = false)
     private Integer aprovadoWorkflowProposta;
 
     @Column(name = "MotivoRecusaProposta")
-    private String motivoRecusaProposta;
+    private String motivoRecusaWorkflowProposta;
 
-    @JoinColumn(name = "IdDemanda", referencedColumnName = "IdDemanda")
+    @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
     @ManyToOne(optional = false)
-    private Demanda idDemanda;
+    private Demanda demandaProposta;
 }
