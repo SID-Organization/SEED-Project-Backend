@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ChatUtil {
 
-    public List<ChatResumido> resumirChat(List<Chat> chatList, MensagemService mensagemService) {
+    public List<ChatResumido> resumirChat(List<Chat> chatList, MensagemService mensagemService, Integer numeroCadastroUsuario) {
         List<ChatResumido> chatResumidoList = new ArrayList<>();
         for (Chat chat : chatList) {
             if (chat != null) {
@@ -22,7 +22,7 @@ public class ChatUtil {
                 System.out.println(chat);
                 chatResumido.setTituloDemanda(chat.getIdDemanda().getTituloDemanda());
                 for (int i = 0; i < chat.getUsuarios().size(); i++) {
-                    if (chat.getUsuarios().get(i).getNumeroCadastroUsuario() != chat.getIdDemanda().getSolicitanteDemanda().getNumeroCadastroUsuario()) {
+                    if (!chat.getUsuarios().get(i).getNumeroCadastroUsuario().equals(numeroCadastroUsuario)) {
                         chatResumido.setFotoAnalista(chat.getUsuarios().get(i).getFotoUsuario());
                         chatResumido.setNomeAnalista(chat.getUsuarios().get(i).getNomeUsuario());
                         idAnalista = chat.getUsuarios().get(i).getNumeroCadastroUsuario();
@@ -47,6 +47,7 @@ public class ChatUtil {
                 chatResumidoList.add(chatResumido);
             }
         }
+        System.out.println(chatResumidoList);
         return chatResumidoList;
     }
 }

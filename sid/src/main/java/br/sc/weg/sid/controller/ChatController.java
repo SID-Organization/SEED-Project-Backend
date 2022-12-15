@@ -56,6 +56,6 @@ public class ChatController {
     public ResponseEntity<Object> findChatByNumeroCadastroUsuario(@PathVariable Integer numeroCadastroUsuario) throws ParseException {
         ChatUtil chatUtil = new ChatUtil();
         System.out.println(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario));
-        return ResponseEntity.ok().body(chatUtil.resumirChat(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario), mensagemService));
+        return ResponseEntity.ok().body(chatUtil.resumirChat(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario), mensagemService, numeroCadastroUsuario));
     }
 }
