@@ -10,5 +10,8 @@ import java.util.List;
 
 @Data
 public class CadastroBusBeneficiadasDemandaDTO {
+    private String secaoTIResponsavelDemanda;
+    private String buSolicitanteDemanda;
     private List<BusinessUnity> busBeneficiadasDemanda;
+    private TamanhoDemanda tamanhoDemanda;
 }
