@@ -36,14 +36,14 @@ public class PropostaController {
         try {
             Proposta proposta = new Proposta();
 
-            Optional<Demanda> demandaOptional = demandaService.findById(cadastroPropostaDTO.getIdDemanda().getIdDemanda());
+            Optional<Demanda> demandaOptional = demandaService.findById(cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
 
             if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != StatusDemanda.CANCELADA) {
                 Demanda demanda = demandaOptional.get();
-                demanda.setLinkJiraDemanda(cadastroPropostaDTO.getLinkJiraDemanda());
+                demanda.setLinkJiraDemanda(cadastroPropostaDTO.getLinkJiraProposta());
                 demandaService.save(demanda);
             } else {
-                return ResponseEntity.badRequest().body("ERROR 0006: A demanda inserida não existe ou foi reprovada! ID DEMANDA: " + cadastroPropostaDTO.getIdDemanda().getIdDemanda());
+                return ResponseEntity.badRequest().body("ERROR 0006: A demanda inserida não existe ou foi reprovada! ID DEMANDA: " + cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
             }
 
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);
