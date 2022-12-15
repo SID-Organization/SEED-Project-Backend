@@ -12,5 +12,5 @@ public class ChatResumido {
     private byte[] fotoAnalista;
     private String nomeAnalista;
     private String ultimaMensagem;
-    private Date dataUltimaMensagem;
+    private String dataUltimaMensagem;
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.Optional;
 
 @Controller
@@ -52,7 +53,7 @@ public class ChatController {
     }
 
     @GetMapping("/usuario/{numeroCadastroUsuario}")
-    public ResponseEntity<Object> findChatByNumeroCadastroUsuario(@PathVariable Integer numeroCadastroUsuario) {
+    public ResponseEntity<Object> findChatByNumeroCadastroUsuario(@PathVariable Integer numeroCadastroUsuario) throws ParseException {
         ChatUtil chatUtil = new ChatUtil();
         System.out.println(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario));
         return ResponseEntity.ok().body(chatUtil.resumirChat(chatService.findChatByNumeroCadastroUsuario(numeroCadastroUsuario), mensagemService));
