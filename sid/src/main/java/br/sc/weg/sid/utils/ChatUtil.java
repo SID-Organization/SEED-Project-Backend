@@ -6,6 +6,7 @@ import br.sc.weg.sid.model.entities.Mensagem;
 import br.sc.weg.sid.model.service.MensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,8 @@ public class ChatUtil {
                 for (Mensagem mensagem : mensagens) {
                     if (mensagem.getIdMensagem() == idMensagem) {
                         chatResumido.setUltimaMensagem(mensagem.getTextoMensagem());
-                        chatResumido.setDataUltimaMensagem(mensagem.getDataMensagem());
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                        chatResumido.setDataUltimaMensagem(sdf.format(mensagem.getDataMensagem()));
                     }
                 }
                 chatResumidoList.add(chatResumido);
