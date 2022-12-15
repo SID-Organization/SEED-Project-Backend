@@ -19,7 +19,6 @@ public class ChatUtil {
                 ChatResumido chatResumido = new ChatResumido();
                 Integer idAnalista = null;
                 List<Mensagem> mensagens = null;
-                System.out.println(chat);
                 chatResumido.setTituloDemanda(chat.getIdDemanda().getTituloDemanda());
                 for (int i = 0; i < chat.getUsuarios().size(); i++) {
                     if (!chat.getUsuarios().get(i).getNumeroCadastroUsuario().equals(numeroCadastroUsuario)) {
@@ -47,7 +46,6 @@ public class ChatUtil {
                 chatResumidoList.add(chatResumido);
             }
         }
-        System.out.println(chatResumidoList);
         return chatResumidoList;
     }
 }

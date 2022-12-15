@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Integer> {
 
-    @Query(value = "select * from chat c right join usuario_chat u on u.id_usuario = ?1", nativeQuery = true)
+    @Query(value = "select * from chat, usuario_chat where usuario_chat.id_usuario = ?1 and usuario_chat.id_chat = chat.id_chat", nativeQuery = true)
     List<Chat> findChatByNumeroCadastroUsuario(Integer numeroCadastroUsuario);
 }
