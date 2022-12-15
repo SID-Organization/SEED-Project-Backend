@@ -14,6 +14,8 @@ public class CadastroHistoricoWorkflowDTO {
 
     private Demanda demandaHistorico;
 
+    private String acaoFeitaHistorico;
+
     private Usuario idResponsavel;
 
 }
