@@ -32,7 +32,7 @@ public class PropostaController {
     private DemandaService demandaService;
 
     @PostMapping()
-    ResponseEntity<Object> cadastrarProsposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
+    ResponseEntity<Object> cadastrarProposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
         try {
             Proposta proposta = new Proposta();
 
@@ -40,7 +40,7 @@ public class PropostaController {
 
             if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != StatusDemanda.CANCELADA) {
                 Demanda demanda = demandaOptional.get();
-                demanda.setLinkJira(cadastroPropostaDTO.getLinkJira());
+                demanda.setLinkJiraDemanda(cadastroPropostaDTO.getLinkJiraDemanda());
                 demandaService.save(demanda);
             } else {
                 return ResponseEntity.badRequest().body("ERROR 0006: A demanda inserida não existe ou foi reprovada! ID DEMANDA: " + cadastroPropostaDTO.getIdDemanda().getIdDemanda());
@@ -107,7 +107,7 @@ public class PropostaController {
     ResponseEntity<Object> listarPropostaPorIdDemanda(@PathVariable("id") Integer id) {
         try {
             Optional<Demanda> demanda = demandaService.findById(id);
-            return ResponseEntity.ok(propostaService.findByIdDemanda(demanda.get()));
+            return ResponseEntity.ok(propostaService.findByDemandaProposta(demanda.get()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }

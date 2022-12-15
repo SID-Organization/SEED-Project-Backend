@@ -36,15 +36,15 @@ public class DecisaoPropostaService {
         decisaoPropostaRepository.deleteById(integer);
     }
 
-    public List<DecisaoProposta> findByIdAta(Ata idAta) {
-        return decisaoPropostaRepository.findByIdAta(idAta);
+    public List<DecisaoProposta> findByAtaDecisaoProposta(Ata idAta) {
+        return decisaoPropostaRepository.findByAtaDecisaoProposta(idAta);
     }
 
-    public List<DecisaoProposta> findByIdPauta(Pauta idPauta) {
-        return decisaoPropostaRepository.findByIdPauta(idPauta);
+    public List<DecisaoProposta> findByPautaDecisaoProposta(Pauta idPauta) {
+        return decisaoPropostaRepository.findByPautaDecisaoProposta(idPauta);
     }
 
-    public List<DecisaoProposta> findByIdProposta(Proposta idProposta) {
-        return decisaoPropostaRepository.findByIdProposta(idProposta);
+    public List<DecisaoProposta> findByPropostaDecisaoProposta(Proposta idProposta) {
+        return decisaoPropostaRepository.findByPropostaDecisaoProposta(idProposta);
     }
 }

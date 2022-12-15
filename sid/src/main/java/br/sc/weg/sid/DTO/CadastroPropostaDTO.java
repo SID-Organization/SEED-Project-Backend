@@ -14,15 +14,15 @@ import java.util.List;
 
 @Data
 public class CadastroPropostaDTO {
-    private String codigoPPM;
+    private String codigoPPMProposta;
     private String escopoProposta;
     private Double paybackProposta;
     @FutureOrPresent(message = "A data de inicio não pode ser no passado")
-    private Date periodoExecucaoInicio;
+    private Date periodoExecucaoInicioProposta;
     @FutureOrPresent(message = "A data de fim não pode ser no passado")
-    private Date periodoExecucaoFim;
-    private String linkJira;
+    private Date periodoExecucaoFimProposta;
+    private String linkJiraProposta;
     private Integer aprovadoWorkflowProposta;
-    private Demanda idDemanda;
+    private Demanda demandaProposta;
     private List<ResponsaveisNegocio> responsaveisNegocio;
 }

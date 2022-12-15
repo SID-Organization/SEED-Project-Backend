@@ -16,7 +16,7 @@ public class CadastroPautaDTO {
     @FutureOrPresent
     private Date dataReuniaoPauta;
 
-    private Forum idForum;
+    private Forum forumPauta;
 
     private List<Proposta> propostasPauta;
 }

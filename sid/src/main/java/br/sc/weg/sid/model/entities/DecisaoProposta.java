@@ -18,16 +18,16 @@ public class DecisaoProposta {
     private Integer idDecisaoProposta;
 
     @ManyToOne
-    @JoinColumn(name = "idProposta", nullable = false)
-    private Proposta idProposta;
+    @JoinColumn(name = "propostaDecisaoProposta", nullable = false)
+    private Proposta propostaDecisaoProposta;
 
     @ManyToOne
-    @JoinColumn(name = "idPauta", nullable = false)
-    private Pauta idPauta;
+    @JoinColumn(name = "pautaDecisaoProposta", nullable = false)
+    private Pauta pautaDecisaoProposta;
 
     @ManyToOne
-    @JoinColumn(name = "idAta", nullable = false)
-    private Ata idAta;
+    @JoinColumn(name = "ataDecisaoProposta", nullable = false)
+    private Ata ataDecisaoProposta;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "StatusComissaoDecisaoProposta", nullable = false)

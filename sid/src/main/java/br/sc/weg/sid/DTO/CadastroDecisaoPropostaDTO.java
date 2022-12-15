@@ -11,11 +11,11 @@ import javax.validation.constraints.*;
 @Data
 public class CadastroDecisaoPropostaDTO {
     @NotNull(message = "Proposta não pode ser nulo")
-    private Proposta idProposta;
+    private Proposta propostaDecisaoProposta;
     @NotNull(message = "Pauta não pode ser nula")
-    private Pauta idPauta;
+    private Pauta pautaDecisaoProposta;
     @NotNull(message = "O campo Ata não pode ser nulo")
-    private Ata idAta;
+    private Ata ataDecisaoProposta;
     @NotNull(message = "StatusDemanda da decisão da proposta não pode ser nulo")
     private StatusDemanda statusDemandaDecisaoProposta;
     @NotNull(message = "O campo que define se a ata vai ser publicada ou não, não pode ser nulo")

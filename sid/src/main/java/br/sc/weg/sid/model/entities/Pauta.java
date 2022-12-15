@@ -8,12 +8,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "PAUTA")
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@ToString
+@Data
 public class Pauta {
 
     @Id
@@ -26,7 +24,7 @@ public class Pauta {
 
     @ManyToOne()
     @JoinColumn(name = "idForum", nullable = false)
-    private Forum idForum;
+    private Forum forumPauta;
 
     @ManyToMany
     @JoinTable(name = "proposta_pauta",
