@@ -88,9 +88,6 @@ public class Demanda {
             , inverseJoinColumns = @JoinColumn(name = "idBusinessUnity"))
     private List<BusinessUnity> busBeneficiadasDemanda;
 
-    @Column()
-    private String busBeneficiadasDemanda;
-
     @OneToMany(mappedBy = "idDemanda",cascade = CascadeType.ALL)
     private List<ArquivoDemanda> arquivosDemandas = new ArrayList<>();
 
