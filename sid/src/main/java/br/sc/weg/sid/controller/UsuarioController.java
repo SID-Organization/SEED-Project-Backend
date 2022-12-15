@@ -5,6 +5,7 @@ import br.sc.weg.sid.model.service.UsuarioService;
 import br.sc.weg.sid.utils.UsuarioUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,8 +33,9 @@ public class UsuarioController {
             throw new RuntimeException("Erro ao converter a imagem");
         }
 
-        Usuario usuarioSalvo = usuarioService.save(usuario);
-        return ResponseEntity.ok("Usuário cadastrado com sucesso! \n" + usuarioSalvo);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        usuario.setSenhaUsuario(encoder.encode(usuario.getSenhaUsuario()));
+        return ResponseEntity.ok("Usuário cadastrado com sucesso! \n" + usuarioService.save(usuario));
     }
 
     @DeleteMapping("/{id}")
