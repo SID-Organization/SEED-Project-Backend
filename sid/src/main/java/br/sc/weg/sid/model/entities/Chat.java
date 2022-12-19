@@ -20,7 +20,7 @@ public class Chat {
     private Integer idChat;
 
     @Column(name = "AtivoChat", nullable = false)
-    private Integer ativoChat;
+    private Boolean ativoChat;
 
     @OneToOne
     @JoinColumn(name = "idDemanda", nullable = false)
