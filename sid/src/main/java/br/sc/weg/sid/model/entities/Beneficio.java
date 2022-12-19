@@ -38,5 +38,5 @@ public class Beneficio {
     @ManyToOne()
     @JoinColumn(name = "idDemanda")
     @JsonIgnore
-    private Demanda idDemanda;
+    private Demanda demandaBeneficio;
 }
