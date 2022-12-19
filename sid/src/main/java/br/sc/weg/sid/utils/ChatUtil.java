@@ -28,7 +28,7 @@ public class ChatUtil {
                         chatResumido.setFotoAnalista(chat.getUsuarios().get(i).getFotoUsuario());
                         chatResumido.setNomeAnalista(chat.getUsuarios().get(i).getNomeUsuario());
                         idAnalista = chat.getUsuarios().get(i).getNumeroCadastroUsuario();
-                        mensagens = mensagemService.findByIdChatAndIdUsuario(chat, chat.getUsuarios().get(i));
+                        mensagens = mensagemService.findByIdChat(chat);
                         chatResumido.setIdUsuario(idAnalista);
                     }
                 }
