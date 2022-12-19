@@ -114,7 +114,7 @@ public class DemandaController {
             }
             //Cadastra os benefícios da demanda
             for (Beneficio beneficio : demandaSalva.getBeneficiosDemanda()) {
-                beneficio.setIdDemanda(demandaSalva);
+                beneficio.setDemandaBeneficio(demandaSalva);
                 beneficioService.save(beneficio);
             }
 
