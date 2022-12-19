@@ -7,12 +7,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "FORUM")
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
+@Data
 public class Forum {
 
     @Id
@@ -25,7 +22,7 @@ public class Forum {
 
     @ManyToOne
     @JoinColumn(name = "numeroCadastroAnalistaResponsavel", nullable = false)
-    private Usuario numeroCadastroAnalistaResponsavel;
+    private Usuario analistaResponsavelForum;
 
     @ManyToMany()
     @JoinTable(name = "usuarios_forum",

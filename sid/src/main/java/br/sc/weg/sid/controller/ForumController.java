@@ -63,7 +63,7 @@ public class ForumController {
     public ResponseEntity<Object> listarForumPorAnalista(@PathVariable Integer id) {
         try {
             Usuario analista = usuarioService.findById(id).get();
-            return ResponseEntity.ok((forumService.findByNumeroCadastroAnalistaResponsavel(analista)));
+            return ResponseEntity.ok((forumService.findByAnalistaResponsavelForum(analista)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao listar fóruns: " + e.getMessage());
         }

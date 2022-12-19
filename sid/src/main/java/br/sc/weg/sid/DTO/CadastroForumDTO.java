@@ -13,7 +13,7 @@ public class CadastroForumDTO {
 
     private String nomeForum;
 
-    private Usuario numeroCadastroAnalistaResponsavel;
+    private Usuario analistaResponsavel;
 
     private List<Usuario> usuariosForum;
 }

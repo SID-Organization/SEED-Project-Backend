@@ -36,7 +36,7 @@ public class ForumService {
         forumRepository.deleteById(integer);
     }
 
-    public List<Forum> findByNumeroCadastroAnalistaResponsavel(Usuario numeroCadastroAnalistaResponsavel) {
-        return forumRepository.findByNumeroCadastroAnalistaResponsavel(numeroCadastroAnalistaResponsavel);
+    public List<Forum> findByAnalistaResponsavelForum(Usuario numeroCadastroAnalistaResponsavel) {
+        return forumRepository.findByAnalistaResponsavelForum(numeroCadastroAnalistaResponsavel);
     }
 }
