@@ -31,14 +31,11 @@ public class MensagemController {
 
     @MessageMapping("/sid/api/mensagem")
     public ResponseEntity<Object> receiveMessage(@RequestBody MensagemDTO mensagemDTO){
-
-        System.out.println("Mensagem recebida: " + mensagemDTO.toString());
         Mensagem mensagem = new Mensagem();
         BeanUtils.copyProperties(mensagemDTO, mensagem);
         // /demanda/{idDemanda}/{idChat}
         Chat chat = chatService.findById(mensagemDTO.getIdChat().getIdChat()).get();
         simpMessagingTemplate.convertAndSendToUser( /*id da demanda*/ chat.getIdDemanda().getIdDemanda().toString(), /*id do chat*/ mensagem.getIdChat().getIdChat().toString(), mensagem);
-        System.out.println(chat.getIdDemanda().getIdDemanda().toString() + " " + mensagem.getIdChat().getIdChat().toString());
         try {
             mensagemService.save(mensagem);
         } catch (Exception e) {

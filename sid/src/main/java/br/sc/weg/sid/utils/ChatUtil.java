@@ -22,12 +22,14 @@ public class ChatUtil {
                 List<Mensagem> mensagens = null;
                 chatResumido.setTituloDemanda(chat.getIdDemanda().getTituloDemanda());
                 chatResumido.setIdChat(chat.getIdChat());
+                chatResumido.setIdDemanda(chat.getIdDemanda().getIdDemanda());
                 for (int i = 0; i < chat.getUsuarios().size(); i++) {
                     if (!chat.getUsuarios().get(i).getNumeroCadastroUsuario().equals(numeroCadastroUsuario)) {
                         chatResumido.setFotoAnalista(chat.getUsuarios().get(i).getFotoUsuario());
                         chatResumido.setNomeAnalista(chat.getUsuarios().get(i).getNomeUsuario());
                         idAnalista = chat.getUsuarios().get(i).getNumeroCadastroUsuario();
-                        mensagens = mensagemService.findByIdChatAndIdUsuario(chat, chat.getUsuarios().get(i));
+                        mensagens = mensagemService.findByIdChat(chat);
+                        chatResumido.setIdUsuario(idAnalista);
                     }
                 }
 
