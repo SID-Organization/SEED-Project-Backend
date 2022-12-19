@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class CadastroChatDTO {
-    private Integer ativoChat;
+    private Boolean ativoChat;
     private Demanda idDemanda;
     private List<Usuario> usuarios;
 }
