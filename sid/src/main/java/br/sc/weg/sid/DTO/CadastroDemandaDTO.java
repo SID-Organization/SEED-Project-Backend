@@ -20,18 +20,9 @@ public class CadastroDemandaDTO {
 
 //    public String secaoSolicitanteDemanda;
 
-//    public TamanhoDemanda tamanhoDemanda;
-
     public String frequenciaUsoDemanda;
 
-//    @FutureOrPresent
-//    public Date prazoElaboracaoDemanda;
-
-//    public Integer codigoPPMDemanda;
-
     public Usuario solicitanteDemanda;
-
-    public Usuario analistaResponsavelDemanda;
 
     public List<Beneficio> beneficiosDemanda;
 }
