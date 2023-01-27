@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "PROPOSTA")
@@ -45,7 +46,18 @@ public class Proposta {
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
 
+    @FutureOrPresent
+    @Column(name = "PeriodoExecucaoDemanda", nullable = false)
+    private Date periodoExecucaoDemanda;
+
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
     @ManyToOne(optional = false)
     private Demanda demandaProposta;
+
+    @ManyToMany
+    @JoinTable(name = "usuarios_proposta",
+            joinColumns = @JoinColumn(name = "idProposta"),
+            inverseJoinColumns = @JoinColumn(name = "numeroCadastroUsuario"))
+    private List<Usuario> usuariosProposta;
+
 }
