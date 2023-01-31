@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @CrossOrigin
@@ -61,16 +62,17 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
         }
 
+        List<Map<String, Object>> demandasResumidas = demandas.stream().map(demanda -> {
+            Map<String, Object> demandaResumida = new HashMap<>();
+            demandaResumida.put("idDemanda", demanda.getIdDemanda());
+            demandaResumida.put("tituloDemanda", demanda.getTituloDemanda());
+            return demandaResumida;
+        }).collect(Collectors.toList());
 
-        List<DemandaResumida> titulosDemandas = new ArrayList<>();
-        for (Demanda demanda : demandas) {
-            DemandaResumida demandaObject = new DemandaResumida();
-            demandaObject.setIdDemanda(demanda.getIdDemanda());
-            demandaObject.setTituloDemanda(demanda.getTituloDemanda());
-            titulosDemandas.add(demandaObject);
-            System.out.println(titulosDemandas);
-        }
-        return ResponseEntity.status(HttpStatus.FOUND).body(titulosDemandas);
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+
+
+
     }
 
 
