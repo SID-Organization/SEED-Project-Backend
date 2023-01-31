@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -63,15 +62,13 @@ public class HistoricoWorkflowController {
         BeanUtils.copyProperties(historicoWorkflowDTO, historicoWorkflow);
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
             historicoWorkflow.setAcaoFeitaHistorico("Enviar");
-            historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
+            historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);;
             historicoWorkflow.setVersaoHistorico(0.1);
         } else {
             Demanda demanda = demandaService.findById(historicoWorkflow.getDemandaHistorico().getIdDemanda()).get();
             HistoricoWorkflow  historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
             atualizaStatusWorkflow(historicoWorkflowAnterior.getIdHistoricoWorkflow(), historicoWorkflowAnterior);
             historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
-            System.out.println("Historico: " + historicoWorkflow);
-            System.out.println("Historico Anterior: " + historicoWorkflowAnterior);
             if(historicoWorkflow.equals(historicoWorkflowAnterior)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Não houveram alterações!");
             }
@@ -129,7 +126,6 @@ public class HistoricoWorkflowController {
         }
     }
 
-
     //Busca um histórico de workflow pelo número de cadastro de um responsável
 
     @GetMapping("/responsavel/{numeroCadastroResponsavel}")
@@ -161,7 +157,6 @@ public class HistoricoWorkflowController {
         }
     }
 
-
     //Atualiza a versão da demanda de um histórico de workflow
 
     @PutMapping("/atualiza-versao-workflow/{id}")
@@ -178,9 +173,7 @@ public class HistoricoWorkflowController {
         }
     }
 
-
     //Atualiza o status de um histórico de workflow
-
     @PutMapping("/atualiza-status-workflow/{id}")
     public ResponseEntity<Object> atualizaStatusWorkflow(@PathVariable Integer idHistoricoWorkflow, @RequestBody HistoricoWorkflow historicoWorkflow) {
         try {
@@ -195,7 +188,6 @@ public class HistoricoWorkflowController {
             return ResponseEntity.badRequest().body("Erro ao atualizar histórico de workflow: " + e.getMessage());
         }
     }
-
 
     //Deleta um histórico de workflow pelo id
     @DeleteMapping("/{idHistoricoWorkflow}")

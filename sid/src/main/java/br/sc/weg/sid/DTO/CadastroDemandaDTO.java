@@ -3,13 +3,13 @@ package br.sc.weg.sid.DTO;
 import br.sc.weg.sid.model.entities.*;
 import lombok.Data;
 
-import javax.validation.constraints.FutureOrPresent;
-import java.util.Date;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
 public class CadastroDemandaDTO {
-
+    @NotBlank(message = "O campo tituloDemanda não pode estar em branco!")
     public String tituloDemanda;
 
     public String propostaMelhoriaDemanda;
