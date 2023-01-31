@@ -53,6 +53,21 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
+    //Get all, pega todas as demandas
+    @GetMapping("/titulos-demanda")
+    public ResponseEntity<Object> findAllTitles() {
+        List<Demanda> demandas = demandaService.findAll();
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
+        }
+        List<String> titulosDemandas = new ArrayList<>();
+        for (Demanda demanda : demandas) {
+            titulosDemandas.add(demanda.getTituloDemanda());
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).body(titulosDemandas);
+    }
+
+
     //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status de RASCUNHO) e retorna a demanda criada
     @PostMapping()
     public ResponseEntity<Object> cadastroDemanda(
