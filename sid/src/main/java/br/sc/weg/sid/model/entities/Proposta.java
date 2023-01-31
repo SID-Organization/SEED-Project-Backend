@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class Proposta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,10 +24,10 @@ public class Proposta {
     @Column(name = "CodigoPPM", nullable = false)
     private String codigoPPMProposta;
 
-    @Column(name = "EscopoProposta", nullable = false, length = 4000)
+    @Column(name = "EscopoProposta", length = 4000)
     private String escopoProposta;
 
-    @Column(name = "PaybackProposta", nullable = false)
+    @Column(name = "PaybackProposta")
     private Double paybackProposta;
 
     @FutureOrPresent
@@ -40,14 +41,14 @@ public class Proposta {
     @Column(length = 255, name = "LinkJiraProposta", nullable = false)
     private String linkJiraProposta;
 
-    @Column(name = "AprovadoWorkflowProposta", nullable = false)
+    @Column(name = "AprovadoWorkflowProposta")
     private Integer aprovadoWorkflowProposta;
 
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
 
     @FutureOrPresent
-    @Column(name = "PeriodoExecucaoDemanda", nullable = false)
+    @Column(name = "PeriodoExecucaoDemanda")
     private Date periodoExecucaoDemanda;
 
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
@@ -55,9 +56,9 @@ public class Proposta {
     private Demanda demandaProposta;
 
     @ManyToMany
-    @JoinTable(name = "usuarios_proposta",
+    @JoinTable(name = "responsaveis_negocio",
             joinColumns = @JoinColumn(name = "idProposta"),
             inverseJoinColumns = @JoinColumn(name = "numeroCadastroUsuario"))
-    private List<Usuario> usuariosProposta;
+    private List<Usuario> responsaveisNegocio;
 
 }
