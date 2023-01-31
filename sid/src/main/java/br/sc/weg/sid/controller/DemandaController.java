@@ -69,7 +69,6 @@ public class DemandaController {
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
             }
-            Usuario usuarioBusinesUnity = usuarioService.findById(demanda.getSolicitanteDemanda().getNumeroCadastroUsuario()).get();
             demanda.setScoreDemanda(549.00);
             demanda.setStatusDemanda(StatusDemanda.ABERTA);
 
@@ -79,7 +78,8 @@ public class DemandaController {
             atributos.forEach(atributo -> {
                 try {
                     Object valor = atributo.get(cadastroDemandaDTO);
-                    if (valor == null) {
+                    System.out.println(valor);
+                    if (valor == null || valor.equals("")) {
                         demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
                     }
                 } catch (IllegalAccessException e) {

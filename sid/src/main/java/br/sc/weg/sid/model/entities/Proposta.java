@@ -62,3 +62,4 @@ public class Proposta {
     private List<Usuario> responsaveisNegocio;
 
 }
+
