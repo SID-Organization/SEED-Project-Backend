@@ -68,10 +68,6 @@ public class Demanda {
     @JsonIgnore
     HistoricoWorkflow historicoWorkflowUltimaVersao;
 
-    @OneToOne
-    @JsonIgnore
-    HistoricoWorkflow historicoWorkflowPrimeiraVersao;
-
     @Column(length = 6000)
     private String situacaoAtualDemanda;
 
