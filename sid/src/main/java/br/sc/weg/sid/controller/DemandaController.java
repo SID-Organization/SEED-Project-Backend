@@ -54,15 +54,40 @@ public class DemandaController {
     }
 
     //Get all, pega todas as demandas
-    @GetMapping("/titulos-demanda")
+    @GetMapping("/titulos-id-demanda")
     public ResponseEntity<Object> findAllTitles() {
         List<Demanda> demandas = demandaService.findAll();
         if (demandas.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
         }
-        List<String> titulosDemandas = new ArrayList<>();
+
+        Demanda demandaObject = new Demanda() {
+            private String title;
+            private int id;
+            // Métodos get e set para acessar e modificar os atributos
+
+            public String getTitle() {
+                return title;
+            }
+
+            public void setTitle(String title) {
+                this.title = title;
+            }
+
+            public int getId() {
+                return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
+            }
+        };
+
+        List<Object> titulosDemandas = new ArrayList<>();
         for (Demanda demanda : demandas) {
-            titulosDemandas.add(demanda.getTituloDemanda());
+            demandaObject.setIdDemanda(demanda.getIdDemanda());
+            demandaObject.setTituloDemanda(demanda.getTituloDemanda());
+            titulosDemandas.add(demandaObject);
         }
         return ResponseEntity.status(HttpStatus.FOUND).body(titulosDemandas);
     }
