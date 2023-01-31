@@ -61,33 +61,14 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
         }
 
-        Demanda demandaObject = new Demanda() {
-            private String title;
-            private int id;
-            // Métodos get e set para acessar e modificar os atributos
 
-            public String getTitle() {
-                return title;
-            }
-
-            public void setTitle(String title) {
-                this.title = title;
-            }
-
-            public int getId() {
-                return id;
-            }
-
-            public void setId(int id) {
-                this.id = id;
-            }
-        };
-
-        List<Object> titulosDemandas = new ArrayList<>();
+        List<DemandaResumida> titulosDemandas = new ArrayList<>();
         for (Demanda demanda : demandas) {
+            DemandaResumida demandaObject = new DemandaResumida();
             demandaObject.setIdDemanda(demanda.getIdDemanda());
             demandaObject.setTituloDemanda(demanda.getTituloDemanda());
             titulosDemandas.add(demandaObject);
+            System.out.println(titulosDemandas);
         }
         return ResponseEntity.status(HttpStatus.FOUND).body(titulosDemandas);
     }
@@ -329,7 +310,7 @@ public class DemandaController {
             @PathVariable("id") Integer id,
             @RequestBody @Valid CadastroBusBeneficiadasDemandaDTO cadastroBusBeneficiadasDemandaDTO,
             @RequestBody @Valid MultipartFile[] additionalFiles
-            ) {
+    ) {
         if (!demandaService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id: " + id);
