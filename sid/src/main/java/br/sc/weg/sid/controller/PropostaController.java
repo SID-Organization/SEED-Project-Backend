@@ -1,13 +1,12 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
+import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Proposta;
-import br.sc.weg.sid.model.entities.ResponsaveisNegocio;
 import br.sc.weg.sid.model.entities.StatusDemanda;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PropostaService;
-import br.sc.weg.sid.model.service.ResponsaveisNegocioService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +23,6 @@ import java.util.Optional;
 public class PropostaController {
     @Autowired
     private PropostaService propostaService;
-
-    @Autowired
-    private ResponsaveisNegocioService responsaveisNegocioService;
 
     @Autowired
     private DemandaService demandaService;
@@ -50,17 +46,6 @@ public class PropostaController {
 
             Proposta propostaSalva = propostaService.save(proposta);
 
-            for (ResponsaveisNegocio responsaveisNegocio : cadastroPropostaDTO.getResponsaveisNegocio()) {
-                try {
-                    responsaveisNegocio.setIdProposta(propostaSalva);
-                    responsaveisNegocioService.save(responsaveisNegocio);
-                } catch (Exception e) {
-                    propostaService.deleteById(propostaSalva.getIdProposta());
-                    return ResponseEntity.badRequest().body("ERROR 0004: Erro ao salvar responsável pelo negócio, a proposta não foi salva!" + "\nMessage: " + e.getMessage());
-                }
-            }
-
-
             return ResponseEntity.ok(propostaSalva);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0001: Erro ao cadastrar proposta!" + "\nMessage: " + e.getMessage());
@@ -69,19 +54,35 @@ public class PropostaController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<Object> deletarProposta(@PathVariable("id") Integer id) {
-        List<ResponsaveisNegocio> responsaveisNegocio = responsaveisNegocioService.findAllByIdProposta(propostaService.findById(id).get());
         try {
-            for (ResponsaveisNegocio responsaveisNegocio1 : responsaveisNegocio) {
-                try {
-                    responsaveisNegocioService.deleteById(responsaveisNegocio1.getIdResponsaveisNegocio());
-                } catch (Exception e) {
-                    return ResponseEntity.badRequest().body("ERROR 0005: Erro ao deletar responsável pelo negócio, a proposta não foi deletada!" + "\nMessage: " + e.getMessage());
-                }
+            Optional<Proposta> propostaOptional = propostaService.findById(id);
+            if (propostaOptional.isPresent()) {
+                propostaService.deleteById(id);
+                return ResponseEntity.ok("Proposta deletada com sucesso!");
+            } else {
+                return ResponseEntity.badRequest().body("ERROR 0002: A proposta inserida não existe! ID PROPOSTA: " + id);
             }
-            propostaService.deleteById(id);
-            return ResponseEntity.ok("Proposta deletada com sucesso!");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("ERROR 0002: Erro ao deletar proposta!" + "\nMessage: " + e.getMessage());
+            return ResponseEntity.badRequest().body("ERROR 0003: Erro ao deletar proposta!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    ResponseEntity<Object> atualizarProposta(@PathVariable("id") Integer id, @RequestBody @Valid UpdatePropostaDTO updatePropostaDTO) {
+        try {
+            Optional<Proposta> propostaOptional = propostaService.findById(id);
+            if (propostaOptional.isPresent()) {
+                Proposta proposta = propostaOptional.get();
+                System.out.println(proposta.toString());
+                BeanUtils.copyProperties(updatePropostaDTO, proposta);
+                System.out.println(proposta.toString());
+                propostaService.save(proposta);
+                return ResponseEntity.ok(proposta);
+            } else {
+                return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + id);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("ERROR 0008: Erro ao atualizar proposta!" + "\nMessage: " + e.getMessage());
         }
     }
 

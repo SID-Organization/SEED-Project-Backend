@@ -15,6 +15,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Demanda {
 
@@ -67,10 +68,6 @@ public class Demanda {
     @OneToOne
     @JsonIgnore
     HistoricoWorkflow historicoWorkflowUltimaVersao;
-
-    @OneToOne
-    @JsonIgnore
-    HistoricoWorkflow historicoWorkflowPrimeiraVersao;
 
     @Column(length = 6000)
     private String situacaoAtualDemanda;

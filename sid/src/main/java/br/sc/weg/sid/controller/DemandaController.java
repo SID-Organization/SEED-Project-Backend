@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @CrossOrigin
@@ -53,6 +54,28 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
     }
 
+    //Get all, pega todas as demandas
+    @GetMapping("/titulos-id-demanda")
+    public ResponseEntity<Object> findAllTitles() {
+        List<Demanda> demandas = demandaService.findAll();
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
+        }
+
+        List<Map<String, Object>> demandasResumidas = demandas.stream().map(demanda -> {
+            Map<String, Object> demandaResumida = new HashMap<>();
+            demandaResumida.put("idDemanda", demanda.getIdDemanda());
+            demandaResumida.put("tituloDemanda", demanda.getTituloDemanda());
+            return demandaResumida;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+
+
+
+    }
+
+
     //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status de RASCUNHO) e retorna a demanda criada
     @PostMapping()
     public ResponseEntity<Object> cadastroDemanda(
@@ -69,7 +92,6 @@ public class DemandaController {
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
             }
-            Usuario usuarioBusinesUnity = usuarioService.findById(demanda.getSolicitanteDemanda().getNumeroCadastroUsuario()).get();
             demanda.setScoreDemanda(549.00);
             demanda.setStatusDemanda(StatusDemanda.ABERTA);
 
@@ -79,7 +101,8 @@ public class DemandaController {
             atributos.forEach(atributo -> {
                 try {
                     Object valor = atributo.get(cadastroDemandaDTO);
-                    if (valor == null) {
+                    System.out.println(valor);
+                    if (valor == null || valor.equals("")) {
                         demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
                     }
                 } catch (IllegalAccessException e) {
@@ -289,7 +312,7 @@ public class DemandaController {
             @PathVariable("id") Integer id,
             @RequestBody @Valid CadastroBusBeneficiadasDemandaDTO cadastroBusBeneficiadasDemandaDTO,
             @RequestBody @Valid MultipartFile[] additionalFiles
-            ) {
+    ) {
         if (!demandaService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id: " + id);
