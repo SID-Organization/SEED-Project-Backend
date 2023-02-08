@@ -181,6 +181,9 @@ public class HistoricoWorkflowController {
             if (historicoWorkflowOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado com o id: " + idHistoricoWorkflow);
             }
+            LocalDate localDate = LocalDate.now();
+            Date dataConclusao = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            historicoWorkflow.setConclusaoHistorico(dataConclusao);
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
             historicoWorkflow.setAcaoFeitaHistorico("Aprovar");
             return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflowService.save(historicoWorkflow));
