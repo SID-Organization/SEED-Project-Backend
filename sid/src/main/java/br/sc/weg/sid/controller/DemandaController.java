@@ -72,7 +72,6 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
 
 
-
     }
 
 
@@ -324,6 +323,29 @@ public class DemandaController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+
+    //Atualiza status da demanda
+    @PutMapping("/status/{id}")
+    public ResponseEntity<Object> atualizarStatusDemanda(
+            @PathVariable("id") Integer idDemanda,
+            @RequestBody Map<String, String> requestBody) {
+
+        StatusDemanda statusDemanda = StatusDemanda.valueOf(requestBody.get("statusDemanda"));
+
+        if (!demandaService.existsById(idDemanda)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não foi encontrado a demanda com o id " + idDemanda);
+        }
+        Demanda demanda = demandaService.findById(idDemanda).get();
+        if (statusDemanda == StatusDemanda.CANCELADA) {
+            demanda.setAnalistaResponsavelDemanda(null);
+            demanda.setGerenteDaAreaDemanda(null);
+            demanda.setGestorResponsavelDemanda(null);
+        }
+        demanda.setStatusDemanda(statusDemanda);
+        demandaService.save(demanda);
+        return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
     //Atualiza uma demanda informando seu id
