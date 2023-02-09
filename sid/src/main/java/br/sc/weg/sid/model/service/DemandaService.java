@@ -58,6 +58,14 @@ public class DemandaService {
         return demandaRepository.findByAnalistaResponsavelDemanda(analistaResponsavelDemanda);
     }
 
+    public List<Demanda> findByGerenteDaAreaDemanda(Usuario gerenteDaAreaDemanda) {
+        return demandaRepository.findByGerenteDaAreaDemanda(gerenteDaAreaDemanda);
+    }
+
+    public List<Demanda> findByGestorResponsavelDemanda(Usuario gestorResponsavelDemanda) {
+        return demandaRepository.findByGestorResponsavelDemanda(gestorResponsavelDemanda);
+    }
+
     public List<Demanda> findByPrazoElaboracaoDemandaAsc() {
         return demandaRepository.findByPrazoElaboracaoDemandaAsc();
     }

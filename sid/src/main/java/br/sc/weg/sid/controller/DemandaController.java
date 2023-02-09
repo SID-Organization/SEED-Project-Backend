@@ -86,6 +86,7 @@ public class DemandaController {
         try {
             DemandaUtil demandaUtil = new DemandaUtil();
             CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
+            System.out.println(demandaJson);
             Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
             try {
                 demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
@@ -280,6 +281,44 @@ public class DemandaController {
             List<Demanda> demandas = demandaService.findByAnalistaResponsavelDemanda(analistaDemanda);
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O analista " + analistaDemanda.getNomeUsuario() + " não possui demandas!");
+            }
+            return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    //Busca demandas de um determinado gerente da área responsável
+    @GetMapping("/gerente-da-area/{numeroCadastroUsuario}")
+    public ResponseEntity<Object> findByGerente(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroGerente) {
+        try {
+            Usuario gerenteDaAreaDemanda = usuarioService.findById(numeroCadastroGerente).get();
+            if (gerenteDaAreaDemanda.getCargoUsuario() != Cargo.GERENTE) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O usuário " + gerenteDaAreaDemanda.getNomeUsuario() + " não é um gerente! " +
+                        "Ele é um " + gerenteDaAreaDemanda.getCargoUsuario().getNome());
+            }
+            List<Demanda> demandas = demandaService.findByGerenteDaAreaDemanda(gerenteDaAreaDemanda);
+            if (demandas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O gerente " + gerenteDaAreaDemanda.getNomeUsuario() + " não possui demandas!");
+            }
+            return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum usuário com o número de cadastro: " + numeroCadastroGerente + " foi encontrado!");
+        }
+    }
+
+    //Busca demandas de um determinado gestor de ti responsável
+    @GetMapping("/gestor-ti/{numeroCadastroUsuario}")
+    public ResponseEntity<Object> findByGestor(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroGestor) {
+        try {
+            Usuario gestorDeTiDemanda = usuarioService.findById(numeroCadastroGestor).get();
+            if (gestorDeTiDemanda.getCargoUsuario() != Cargo.GESTOR_TI) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O usuário " + gestorDeTiDemanda.getNomeUsuario() + " não é um gestor! " +
+                        "Ele é um " + gestorDeTiDemanda.getCargoUsuario().getNome());
+            }
+            List<Demanda> demandas = demandaService.findByGestorResponsavelDemanda(gestorDeTiDemanda);
+            if (demandas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O gestor " + gestorDeTiDemanda.getNomeUsuario() + " não possui demandas!");
             }
             return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
         } catch (Exception e) {

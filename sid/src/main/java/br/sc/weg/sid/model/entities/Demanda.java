@@ -66,6 +66,14 @@ public class Demanda {
     private Usuario analistaResponsavelDemanda;
 
     @OneToOne
+    @JoinColumn(name = "gerenteDaArea")
+    private Usuario gerenteDaAreaDemanda;
+
+    @OneToOne
+    @JoinColumn(name = "gestorResponsavel")
+    private Usuario gestorResponsavelDemanda;
+
+    @OneToOne
     @JsonIgnore
     HistoricoWorkflow historicoWorkflowUltimaVersao;
 
