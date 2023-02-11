@@ -101,9 +101,10 @@ public class DemandaController {
             atributos.forEach(atributo -> {
                 try {
                     Object valor = atributo.get(cadastroDemandaDTO);
-                    System.out.println(valor);
-                    if (valor == null || valor.equals("")) {
-                        demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
+                    if (!atributo.getName().equals("descricaoQualitativoDemanda")) {
+                        if (valor == null || valor.equals("")) {
+                            demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
+                        }
                     }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
