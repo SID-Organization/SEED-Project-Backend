@@ -12,7 +12,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@ToString
 public class Beneficio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
