@@ -1,9 +1,8 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.CadastroNotificaoDTO;
+import br.sc.weg.sid.DTO.CadastroNotificacaoDTO;
 import br.sc.weg.sid.model.entities.Notificacao;
 import br.sc.weg.sid.model.service.NotificacaoService;
-import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,9 +21,9 @@ public class NotificacaoController {
     private NotificacaoService notificacaoService;
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody @Valid CadastroNotificaoDTO cadastroNotificaoDTO) {
+    public ResponseEntity<Object> save(@RequestBody @Valid CadastroNotificacaoDTO cadastroNotificacaoDTO) {
         Notificacao notificacao = new Notificacao();
-        BeanUtils.copyProperties(cadastroNotificaoDTO, notificacao);
+        BeanUtils.copyProperties(cadastroNotificacaoDTO, notificacao);
         try {
             Notificacao notificacaoSalva = notificacaoService.save(notificacao);
             return ResponseEntity.status(HttpStatus.CREATED).body(notificacaoSalva);

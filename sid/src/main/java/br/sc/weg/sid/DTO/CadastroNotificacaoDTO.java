@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-public class CadastroNotificaoDTO {
+public class CadastroNotificacaoDTO {
     @NotBlank(message = "O campo texto da notificação é obrigatório")
     private String textoNotificacao;
     @NotBlank(message = "O campo link da notificação é obrigatório")
