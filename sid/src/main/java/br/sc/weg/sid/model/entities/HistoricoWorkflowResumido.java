@@ -17,6 +17,8 @@ public class HistoricoWorkflowResumido {
 
     private String nomeResponsavel;
 
+    private String numeroCadastroResponsavel;
+
     private String acaoFeitaHistorico;
 
     private String statusWorkflow;
