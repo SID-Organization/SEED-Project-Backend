@@ -92,7 +92,6 @@ public class DemandaController {
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
             }
-            demanda.setScoreDemanda(549.00);
             demanda.setStatusDemanda(StatusDemanda.ABERTA);
 
             //Verifica se a demanda possui todos os campos preenchidos, se não possuir, o status será RASCUNHO
@@ -142,7 +141,7 @@ public class DemandaController {
                 beneficioService.save(beneficio);
             }
 
-            //Se a demanda tiver em status Aberta(Backlog) um historico de workflow é criado
+            //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
             if (demandaSalva.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
                 CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
                 historicoWorkflowDTO.setDemandaHistorico(demandaSalva);
