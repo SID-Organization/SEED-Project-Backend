@@ -22,4 +22,6 @@ public class UpdatePropostaDTO {
 
     private Date periodoExecucaoDemanda;
 
+    private String propostaDelta;
+
 }
