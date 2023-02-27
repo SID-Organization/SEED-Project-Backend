@@ -110,6 +110,7 @@ public class DemandaController {
                     throw new RuntimeException(e);
                 }
             });
+            System.out.println("DemandaJSON: " + demandaJson);
             Demanda demandaSalva = demandaService.save(demanda);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
@@ -148,6 +149,7 @@ public class DemandaController {
                 historicoWorkflowDTO.setDemandaHistorico(demandaSalva);
                 historicoWorkflowDTO.setIdResponsavel(demandaSalva.getSolicitanteDemanda());
                 historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
+                historicoWorkflowDTO.setAcaoFeitaHistorico("Enviar");
                 try {
                     historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
                     historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);
