@@ -25,7 +25,7 @@ public class GerarPDFController {
     }
 
     @GetMapping("/gerar-pdf/{idDemanda}")
-    public void gerarPDF(HttpServletResponse response, @PathVariable("id") int idDemanda) throws Exception {
+    public void gerarPDF(HttpServletResponse response, @PathVariable("idDemanda") int idDemanda) throws Exception {
         response.setContentType("application/pdf");
 
         String headerKey = "Content-Disposition";

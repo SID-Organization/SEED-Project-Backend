@@ -5,6 +5,7 @@ import com.lowagie.text.*;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,11 +19,16 @@ import java.util.Optional;
 @Service
 public class GerarPDFService {
 
+    private final DemandaService demandaService;
+
+    @Autowired
+    public GerarPDFService(DemandaService demandaService) {
+        this.demandaService = demandaService;
+    }
+
     public void export(HttpServletResponse response, Integer idDemanda) throws IOException {
         Document document = new Document(PageSize.A4, 40, 40, 25, 15);
         PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
-
-        DemandaService demandaService = new DemandaService();
 
         Optional<Demanda> demanda = demandaService.findById(idDemanda);
         writer.setPageEvent(new PdfPageEventHelper() {
@@ -67,14 +73,17 @@ public class GerarPDFService {
         dateParagraph.setAlignment(Paragraph.ALIGN_RIGHT);
         dateParagraph.setSpacingAfter(5);
 
-        String tituloCaixaAltaDemanda= demanda.get().getTituloDemanda().toUpperCase();
+        String tituloCaixaAltaDemanda = demanda.get().getTituloDemanda().toUpperCase();
 
         Paragraph titleDemandParagraph = new Paragraph(tituloCaixaAltaDemanda + " – " + demanda.get().getIdDemanda(), fontTitle);
         List listTitle = new List(List.ORDERED);
         listTitle.add(new ListItem(titleDemandParagraph));
 
-        Paragraph requesterParagraph = new Paragraph("Solicitante: " + demanda.get().getSolicitanteDemanda().getNomeUsuario() + " - " +
-                demanda.get().getSolicitanteDemanda().getDepartamentoUsuario(), fontTitle);
+        Phrase requesterPhrase = new Phrase("Solicitante: ", fontTitle);
+        Chunk solicitanteChunk = new Chunk(demanda.get().getSolicitanteDemanda().getNomeUsuario() + " - " +
+                demanda.get().getSolicitanteDemanda().getDepartamentoUsuario(), textFont);
+        requesterPhrase.add(solicitanteChunk);
+        Paragraph requesterParagraph = new Paragraph(requesterPhrase);
         requesterParagraph.setSpacingBefore(8);
 
 
