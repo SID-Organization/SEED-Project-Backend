@@ -9,6 +9,7 @@ import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class PropostaController {
 
             Optional<Demanda> demandaOptional = demandaService.findById(cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
 
-            if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != StatusDemanda.CANCELADA) {
+            if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != StatusDemanda.RASCUNHO || demandaOptional.get().getStatusDemanda() != StatusDemanda.CANCELADA) {
                 Demanda demanda = demandaOptional.get();
                 demanda.setLinkJiraDemanda(cadastroPropostaDTO.getLinkJiraProposta());
                 demandaService.save(demanda);
@@ -46,7 +47,7 @@ public class PropostaController {
 
             Proposta propostaSalva = propostaService.save(proposta);
 
-            return ResponseEntity.ok(propostaSalva);
+            return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0001: Erro ao cadastrar proposta!" + "\nMessage: " + e.getMessage());
         }
