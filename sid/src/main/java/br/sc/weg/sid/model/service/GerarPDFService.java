@@ -6,9 +6,14 @@ import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.time.LocalDate;
@@ -26,11 +31,12 @@ public class GerarPDFService {
         this.demandaService = demandaService;
     }
 
-    public void export(HttpServletResponse response, Integer idDemanda) throws IOException {
+    public ResponseEntity<byte[]> export(HttpServletResponse response, Integer idDemanda) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 40, 25, 15);
-        PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
+        PdfWriter writer = PdfWriter.getInstance(document, baos);
 
-        Optional<Demanda> demanda = demandaService.findById(idDemanda);
+            Optional<Demanda> demanda = demandaService.findById(idDemanda);
         writer.setPageEvent(new PdfPageEventHelper() {
             @Override
             public void onStartPage(PdfWriter writer, Document document) {
@@ -87,13 +93,17 @@ public class GerarPDFService {
         requesterParagraph.setSpacingBefore(8);
 
 
-        Paragraph proposalParagraph = new Paragraph("Objetivo:", fontTitle);
+        Phrase proposalPhrase = new Phrase("Objetivo: ", fontTitle);
+        Chunk objetivoChunk = new Chunk(demanda.get().getPropostaMelhoriaDemanda(), textFont);
+        proposalPhrase.add(objetivoChunk);
+        Paragraph proposalParagraph = new Paragraph(proposalPhrase);
         proposalParagraph.setSpacingBefore(8);
         proposalParagraph.setSpacingAfter(5);
 
-        Paragraph actualSituationParagraph = new Paragraph("Situação Atual:", fontTitle);
+        Paragraph actualSituationParagraph = new Paragraph("Situação Atual - Problema a ser tratado/ resolvido:", fontTitle);
         actualSituationParagraph.setSpacingBefore(8);
-        actualSituationParagraph.setSpacingAfter(5);
+
+        Paragraph actualSituationParagraphText = new Paragraph(demanda.get().getSituacaoAtualDemanda(), textFont);
 
 
         Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", fontTitle);
@@ -108,6 +118,7 @@ public class GerarPDFService {
 
 
         document.add(actualSituationParagraph);
+        document.add(actualSituationParagraphText);
 
         document.add(projectScopeParagraph);
 
@@ -119,5 +130,13 @@ public class GerarPDFService {
         document.add(evaluatedAlternativesParagraph);
         document.close();
 
+
+        byte[] pdfBytes = baos.toByteArray();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("filename", "documento.pdf");
+
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }
