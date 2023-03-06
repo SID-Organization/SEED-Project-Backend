@@ -8,6 +8,8 @@ import java.util.Date;
 @Data
 @ToString
 public class DemandaResumida {
+
+    Integer idDemanda;
     String tituloDemanda;
 
     Date prazoElaboracaoDemanda;
