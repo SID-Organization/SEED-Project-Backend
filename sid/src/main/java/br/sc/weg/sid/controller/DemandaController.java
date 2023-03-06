@@ -66,6 +66,7 @@ public class DemandaController {
             Map<String, Object> demandaResumida = new HashMap<>();
             demandaResumida.put("idDemanda", demanda.getIdDemanda());
             demandaResumida.put("tituloDemanda", demanda.getTituloDemanda());
+            demandaResumida.put("statusDemanda", demanda.getStatusDemanda());
             return demandaResumida;
         }).collect(Collectors.toList());
 

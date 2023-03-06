@@ -9,12 +9,12 @@ import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,4 +123,18 @@ public class PropostaController {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
     }
+
+    @GetMapping("/proposta.pdf/{idProposta}")
+    public ResponseEntity<byte[]> getPropostaPDF(@PathVariable("idProposta") Integer idProposta) throws IOException {
+        // Lógica para carregar o arquivo PDF em um byte array
+        Proposta proposta = propostaService.findById(idProposta).get();
+        byte[] pdfBytes = proposta.getPropostaPDF();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.builder("inline").filename("proposta.pdf").build());
+
+        return ResponseEntity.ok().headers(headers).body(pdfBytes);
+    }
+
 }
