@@ -110,6 +110,7 @@ public class DemandaController {
                     throw new RuntimeException(e);
                 }
             });
+            System.out.println("DemandaJSON: " + demandaJson);
             Demanda demandaSalva = demandaService.save(demanda);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda

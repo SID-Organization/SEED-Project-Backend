@@ -47,6 +47,9 @@ public class Proposta {
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
 
+    @Column(name = "PropostaDelta")
+    private String propostaDelta;
+
     @FutureOrPresent
     @Column(name = "PeriodoExecucaoDemanda")
     private Date periodoExecucaoDemanda;
