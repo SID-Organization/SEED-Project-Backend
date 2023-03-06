@@ -22,6 +22,15 @@ public class Pauta {
     @Column(name = "dataReuniaoPauta", nullable = false)
     private Date dataReuniaoPauta;
 
+    @Column(name = "horarioInicioPauta", nullable = false)
+    private Date horarioInicioPauta;
+
+    @Column(name = "horarioTerminoPauta", nullable = false)
+    private Date horarioTerminoPauta;
+
+    @Column(name = "comissaoPauta", nullable = false)
+    private String comissaoPauta;
+
     @ManyToOne()
     @JoinColumn(name = "idForum", nullable = false)
     private Forum forumPauta;

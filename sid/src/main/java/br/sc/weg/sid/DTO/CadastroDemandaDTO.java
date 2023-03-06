@@ -14,7 +14,11 @@ public class CadastroDemandaDTO {
 
     public String propostaMelhoriaDemanda;
 
+    public String propostaMelhoriaDemandaDELTA;
+
     public String situacaoAtualDemanda;
+
+    public String situacaoAtualDemandaDELTA;
 
     public String descricaoQualitativoDemanda;
 

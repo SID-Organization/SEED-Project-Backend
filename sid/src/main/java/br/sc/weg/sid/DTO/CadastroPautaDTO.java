@@ -18,4 +18,13 @@ public class CadastroPautaDTO {
     private Forum forumPauta;
     @NotNull(message = "O campo propostasPauta não pode ser nulo")
     private List<Proposta> propostasPauta;
+
+    @NotNull(message = "O campo horarioInicioPauta não pode ser nulo")
+    private Date horarioInicioPauta;
+
+    @NotNull(message = "O campo horarioTerminoPauta não pode ser nulo")
+    private Date horarioTerminoPauta;
+
+    @NotNull(message = "O campo comissaoPauta não pode ser nulo")
+    private String comissaoPauta;
 }

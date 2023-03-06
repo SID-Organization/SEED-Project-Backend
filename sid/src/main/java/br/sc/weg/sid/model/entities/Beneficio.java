@@ -31,6 +31,9 @@ public class Beneficio {
     @Column(length = 4000, name = "DescricaoBeneficio", nullable = false)
     private String descricaoBeneficio;
 
+    @Column(columnDefinition = "TEXT", name = "DescricaoBeneficioDELTA")
+    private String descricaoBeneficioDELTA;
+
     @Column(name = "TipoBeneficio", nullable = false)
     private TipoBeneficio tipoBeneficio;
 

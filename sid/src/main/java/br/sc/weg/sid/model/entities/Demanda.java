@@ -40,6 +40,9 @@ public class Demanda {
     @Column(length = 4000)
     private String propostaMelhoriaDemanda;
 
+    @Column(columnDefinition = "TEXT", name = "propostaMelhoriaDemandaDELTA")
+    private String propostaMelhoriaDemandaDELTA;
+
     @Column()
     private String secaoTIResponsavelDemanda;
 
@@ -79,6 +82,10 @@ public class Demanda {
 
     @Column(length = 6000)
     private String situacaoAtualDemanda;
+
+
+    @Column(columnDefinition = "TEXT", name = "situacaoAtualDemandaDELTA")
+    private String situacaoAtualDemandaDELTA;
 
     @JoinColumn(name = "idBuSolicitante")
     private String buSolicitanteDemanda;
