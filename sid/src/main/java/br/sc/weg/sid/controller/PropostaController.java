@@ -9,11 +9,12 @@ import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class PropostaController {
 
             Optional<Demanda> demandaOptional = demandaService.findById(cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
 
-            if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != StatusDemanda.CANCELADA) {
+            if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != StatusDemanda.RASCUNHO || demandaOptional.get().getStatusDemanda() != StatusDemanda.CANCELADA) {
                 Demanda demanda = demandaOptional.get();
                 demanda.setLinkJiraDemanda(cadastroPropostaDTO.getLinkJiraProposta());
                 demandaService.save(demanda);
@@ -46,7 +47,7 @@ public class PropostaController {
 
             Proposta propostaSalva = propostaService.save(proposta);
 
-            return ResponseEntity.ok(propostaSalva);
+            return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0001: Erro ao cadastrar proposta!" + "\nMessage: " + e.getMessage());
         }
@@ -122,4 +123,18 @@ public class PropostaController {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
     }
+
+    @GetMapping("/proposta.pdf/{idProposta}")
+    public ResponseEntity<byte[]> getPropostaPDF(@PathVariable("idProposta") Integer idProposta) throws IOException {
+        // Lógica para carregar o arquivo PDF em um byte array
+        Proposta proposta = propostaService.findById(idProposta).get();
+        byte[] pdfBytes = proposta.getPropostaPDF();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.builder("inline").filename("proposta.pdf").build());
+
+        return ResponseEntity.ok().headers(headers).body(pdfBytes);
+    }
+
 }

@@ -100,9 +100,7 @@ public class HistoricoWorkflowController {
         return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvoResumido);
     }
 
-
     //Busca um histórico de workflow pelo id de uma demanda
-
     @GetMapping("/demanda/{id}")
     public ResponseEntity<Object> findByDemandaHistorico(@PathVariable("id") Demanda demandaHistorico) {
         try {

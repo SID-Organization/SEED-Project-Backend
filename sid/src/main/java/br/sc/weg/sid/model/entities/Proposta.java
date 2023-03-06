@@ -27,6 +27,15 @@ public class Proposta {
     @Column(name = "EscopoProposta", length = 4000)
     private String escopoProposta;
 
+    @Column(name = "NaoFazParteDoEscopoProposta", length = 4000)
+    private String naoFazParteDoEscopoProposta;
+
+    @Column(name = "AlternativasAvaliadasProposta", length = 4000)
+    private String alternativasAvaliadasProposta;
+
+    @Column(name = "PlanoMitigacaoProposta", columnDefinition = "TEXT")
+    private String planoMitigacaoProposta;
+
     @Column(name = "PaybackProposta")
     private Double paybackProposta;
 
@@ -47,8 +56,11 @@ public class Proposta {
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
 
-    @Column(name = "PropostaDelta")
-    private String propostaDelta;
+    @Column(name = "PropostaMarkdown")
+    private String propostaMarkdown;
+
+    @Column(name = "PropostaPDF")
+    private byte[] propostaPDF;
 
     @FutureOrPresent
     @Column(name = "PeriodoExecucaoDemanda")

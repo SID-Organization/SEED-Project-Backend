@@ -17,9 +17,6 @@ import java.util.Optional;
 @NoArgsConstructor
 public class DemandaUtil {
 
-    @Autowired
-    UsuarioService usuarioService;
-
     private ObjectMapper mapper = new ObjectMapper();
 
     public Demanda convertDtoToModel(CadastroDemandaDTO cadastroDemandaDTO) {
