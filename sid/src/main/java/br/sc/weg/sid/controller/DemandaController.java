@@ -184,11 +184,13 @@ public class DemandaController {
         try {
             List<Demanda> demandas = demandaService.findByStatusDemanda(statusDemanda);
             if (demandas.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com statusDemanda " + statusDemanda + " encontrada!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não existem demandas com status: " + statusDemanda);
             }
-            return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+            DemandaUtil demandaUtil = new DemandaUtil();
+            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+            return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com statusDemanda " + statusDemanda + " encontrada!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar demandas por status: " + e.getMessage());
         }
     }
 
@@ -215,22 +217,26 @@ public class DemandaController {
         try {
             List<Demanda> demandas = demandaService.findBySecaoTIResponsavelDemanda(secao);
             if (demandas.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda na seção " + secao + " encontrada!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada para a seção: " + secao);
             }
-            return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+            DemandaUtil demandaUtil = new DemandaUtil();
+            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+            return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Seção " + secao + " não existe!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada para a seção: " + secao);
         }
     }
 
     //Busca demandas por data de criação (mais nova a mais antiga)
     @GetMapping("/data-decrescente")
     public ResponseEntity<Object> findByDataDecrescente() {
+        DemandaUtil demandaUtil = new DemandaUtil();
         List<Demanda> demandas = demandaService.findByPrazoElaboracaoDemandaDesc();
         if (demandas.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada!");
         }
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
     }
 
     //Busca demanda por data de criação (mais antiga a mais nova)
