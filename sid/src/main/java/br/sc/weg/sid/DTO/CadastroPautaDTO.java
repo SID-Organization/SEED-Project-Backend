@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,10 +21,10 @@ public class CadastroPautaDTO {
     private List<Proposta> propostasPauta;
 
     @NotNull(message = "O campo horarioInicioPauta não pode ser nulo")
-    private Date horarioInicioPauta;
+    private LocalTime horarioInicioPauta;
 
     @NotNull(message = "O campo horarioTerminoPauta não pode ser nulo")
-    private Date horarioTerminoPauta;
+    private LocalTime horarioTerminoPauta;
 
     @NotNull(message = "O campo comissaoPauta não pode ser nulo")
     private String comissaoPauta;

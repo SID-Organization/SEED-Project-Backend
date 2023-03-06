@@ -12,7 +12,7 @@ public class CadastroForumDTO {
     @NotBlank(message = "O campo nomeForum não pode estar em branco!")
     private String nomeForum;
     @NotNull(message = "O campo analistaResponsavel não pode ser nulo")
-    private Usuario analistaResponsavel;
+    private Usuario analistaResponsavelForum;
     @NotNull(message = "O campo usuariosForum não pode ser nulo")
     private List<Usuario> usuariosForum;
 }

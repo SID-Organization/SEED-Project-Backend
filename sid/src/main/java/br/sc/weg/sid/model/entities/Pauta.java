@@ -1,8 +1,13 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -22,11 +27,15 @@ public class Pauta {
     @Column(name = "dataReuniaoPauta", nullable = false)
     private Date dataReuniaoPauta;
 
+    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
     @Column(name = "horarioInicioPauta", nullable = false)
-    private Date horarioInicioPauta;
+    private LocalTime horarioInicioPauta;
 
+    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
     @Column(name = "horarioTerminoPauta", nullable = false)
-    private Date horarioTerminoPauta;
+    private LocalTime horarioTerminoPauta;
 
     @Column(name = "comissaoPauta", nullable = false)
     private String comissaoPauta;
