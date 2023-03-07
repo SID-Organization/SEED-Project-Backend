@@ -79,8 +79,17 @@ public class DemandaController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+    }
 
-
+    @GetMapping("/rascunhos")
+    public ResponseEntity<Object> findAllRascunhos() {
+        List<Demanda> demandas = demandaService.findByStatusDemanda(StatusDemanda.RASCUNHO);
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
+        }
+        DemandaUtil demandaUtil = new DemandaUtil();
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
     }
 
 
