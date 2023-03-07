@@ -1,8 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
-import br.sc.weg.sid.utils.ConverterUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.gson.JsonObject;
 import lombok.*;
 
 import javax.persistence.*;
@@ -43,8 +41,7 @@ public class Demanda {
     private String propostaMelhoriaDemanda;
 
     @Column(columnDefinition = "TEXT", name = "propostaMelhoriaDemandaDELTA")
-    @Convert(converter = ConverterUtil.class)
-    private JsonObject propostaMelhoriaDemandaDELTA;
+    private String propostaMelhoriaDemandaDELTA;
 
     @Column()
     private String secaoTIResponsavelDemanda;
@@ -88,8 +85,7 @@ public class Demanda {
 
 
     @Column(columnDefinition = "TEXT", name = "situacaoAtualDemandaDELTA")
-    @Convert(converter = ConverterUtil.class)
-    private JsonObject situacaoAtualDemandaDELTA;
+    private String situacaoAtualDemandaDELTA;
 
     @JoinColumn(name = "idBuSolicitante")
     private String buSolicitanteDemanda;
