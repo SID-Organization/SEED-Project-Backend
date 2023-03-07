@@ -1,11 +1,9 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.GerarPDFDTO;
-import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.service.DemandaService;
-import br.sc.weg.sid.model.service.GerarPDFService;
+import br.sc.weg.sid.model.service.GerarPDFPropostaService;
 import br.sc.weg.sid.model.service.PropostaService;
-import com.lowagie.text.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -19,16 +17,16 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 @CrossOrigin
 @RequestMapping("/sid/api/PDF")
-public class GerarPDFController {
+public class GerarPDFPropostaController {
     @Autowired
-    private final GerarPDFService gerarPDFService;
+    private final GerarPDFPropostaService gerarPDFService;
     @Autowired
     private final DemandaService demandaService;
 
     @Autowired
     private final PropostaService propostaService;
 
-    public GerarPDFController(GerarPDFService gerarPDFService, DemandaService demandaService, PropostaService propostaService) {
+    public GerarPDFPropostaController(GerarPDFPropostaService gerarPDFService, DemandaService demandaService, PropostaService propostaService) {
         this.gerarPDFService = gerarPDFService;
         this.demandaService = demandaService;
         this.propostaService = propostaService;

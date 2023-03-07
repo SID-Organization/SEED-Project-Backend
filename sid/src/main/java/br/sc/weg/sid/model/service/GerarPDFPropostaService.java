@@ -22,12 +22,12 @@ import java.util.Date;
 import java.util.Optional;
 
 @Service
-public class GerarPDFService {
+public class GerarPDFPropostaService {
 
     private final DemandaService demandaService;
 
     @Autowired
-    public GerarPDFService(DemandaService demandaService) {
+    public GerarPDFPropostaService(DemandaService demandaService) {
         this.demandaService = demandaService;
     }
 
