@@ -318,7 +318,8 @@ public class DemandaController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O analista " + analistaDemanda.getNomeUsuario() + " não possui demandas!");
             }
             for (Demanda demanda : demandas) {
-                if (demanda.getSolicitanteDemanda() != analistaDemanda) {
+                if (demanda.getSolicitanteDemanda() != analistaDemanda && demanda.getAnalistaResponsavelDemanda() == analistaDemanda &&
+                demanda.getStatusDemanda() != StatusDemanda.RASCUNHO) {
                     demandasFiltradas.add(demanda);
                 }
             }
