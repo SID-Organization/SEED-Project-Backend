@@ -48,11 +48,17 @@ public class DemandaController {
     @GetMapping()
     public ResponseEntity<Object> findAll() {
         List<Demanda> demandas = demandaService.findAll();
+        List<Demanda> demandasFiltradas = new ArrayList<>();
         if (demandas.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
         }
+        for (Demanda demanda : demandas) {
+            if (demanda.getStatusDemanda() != StatusDemanda.RASCUNHO) {
+                demandasFiltradas.add(demanda);
+            }
+        }
         DemandaUtil demandaUtil = new DemandaUtil();
-        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasFiltradas);
         return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
     }
 
@@ -73,8 +79,17 @@ public class DemandaController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+    }
 
-
+    @GetMapping("/rascunhos")
+    public ResponseEntity<Object> findAllRascunhos() {
+        List<Demanda> demandas = demandaService.findByStatusDemanda(StatusDemanda.RASCUNHO);
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
+        }
+        DemandaUtil demandaUtil = new DemandaUtil();
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
     }
 
 
