@@ -1,7 +1,6 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.utils.TesteDeltaUtil;
-import com.google.gson.JsonObject;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.http.HttpStatus;
@@ -19,8 +18,9 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/sid/api/pdf-teste")
 public class PdfTesteController {
     @PostMapping()
-    ResponseEntity<Object> mandaDeltaVoltaHtml(@RequestBody JsonObject delta) {
+    ResponseEntity<Object> mandaCodificadoVoltaPDF(@RequestBody String deltaCodificado) {
         TesteDeltaUtil testeDeltaUtil = new TesteDeltaUtil();
-        return new ResponseEntity<>(testeDeltaUtil.converter(delta), HttpStatus.OK);
+        String deltaDecodificado = testeDeltaUtil.decoderDelta(deltaCodificado);
+        return new ResponseEntity<>(testeDeltaUtil.converter(deltaDecodificado), HttpStatus.OK);
     }
 }

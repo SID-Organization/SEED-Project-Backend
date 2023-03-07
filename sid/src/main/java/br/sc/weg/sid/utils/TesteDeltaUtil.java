@@ -1,30 +1,22 @@
 package br.sc.weg.sid.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonParser;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import lombok.Data;
 import lombok.ToString;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
-import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Data
 @ToString
@@ -68,35 +60,32 @@ public class TesteDeltaUtil {
         return pdf;
     }
 
-    public String converter(JsonObject deltaJson) {
-        System.out.println("deltaJson: " + deltaJson);
-//        StringBuilder html = new StringBuilder();
-//        try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            JsonNode delta = mapper.readTree(String.valueOf(deltaJson));
-//            for (JsonNode op : delta.get("ops")) {
-//                if (op.has("insert")) {
-//                    String text = op.get("insert").asText();
-//                    if (op.has("attributes")) {
-//                        JsonNode attrs = op.get("attributes");
-//                        if (attrs.has("bold")) {
-//                            text = "<strong>" + text + "</strong>";
-//                        }
-//                        if (attrs.has("italic")) {
-//                            text = "<em>" + text + "</em>";
-//                        }
-//                        if (attrs.has("list")) {
-//                            String tag = attrs.get("list").asText().equals("ordered") ? "ol" : "ul";
-//                            text = "<" + tag + "><li>" + text + "</li></" + tag + ">";
-//                        }
-//                    }
-//                    html.append(text);
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return html.toString();
-        return deltaJson.toString();
+    public String converter(String delta) {
+        String html = "";
+
+        try {
+            // Carrega o arquivo JavaScript
+            String script = new String(Files.readAllBytes(Paths.get("C:\\Users\\otavio_a_santos\\Documents\\GitHub\\SID-Project-Backend\\sid\\src\\main\\resources\\static\\QuillDeltaToHtmlConverter.js")), StandardCharsets.UTF_8);
+
+            // Cria uma instância do mecanismo de script Nashorn
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+
+            // Executa o arquivo JavaScript
+            engine.eval(script);
+
+            // Obtém a referência da função "convertDeltaToHtml" no arquivo JavaScript
+            Object function = engine.eval("convertDeltaToHtml");
+
+            // Converte o delta para HTML usando a função obtida acima
+            html = (String) ((javax.script.Invocable) engine).invokeFunction("convertDeltaToHtml", delta);
+        } catch (ScriptException | NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return html;
     }
+
+
 }
