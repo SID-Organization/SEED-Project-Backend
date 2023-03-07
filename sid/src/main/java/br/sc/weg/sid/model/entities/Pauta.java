@@ -27,12 +27,12 @@ public class Pauta {
     @Column(name = "dataReuniaoPauta", nullable = false)
     private Date dataReuniaoPauta;
 
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm")
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     @Column(name = "horarioInicioPauta", nullable = false)
     private LocalTime horarioInicioPauta;
 
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm")
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     @Column(name = "horarioTerminoPauta", nullable = false)
     private LocalTime horarioTerminoPauta;
