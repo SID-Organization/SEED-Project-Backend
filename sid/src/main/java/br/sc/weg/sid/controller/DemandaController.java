@@ -280,10 +280,16 @@ public class DemandaController {
                         "Ele é um " + analistaDemanda.getCargoUsuario().getNome());
             }
             List<Demanda> demandas = demandaService.findByAnalistaResponsavelDemanda(analistaDemanda);
+            List<Demanda> demandasFiltradas = new ArrayList<>();
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O analista " + analistaDemanda.getNomeUsuario() + " não possui demandas!");
             }
-            return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+            for (Demanda demanda : demandas) {
+                if (demanda.getSolicitanteDemanda() != analistaDemanda) {
+                    demandasFiltradas.add(demanda);
+                }
+            }
+            return ResponseEntity.status(HttpStatus.FOUND).body(demandasFiltradas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
