@@ -51,7 +51,9 @@ public class DemandaController {
         if (demandas.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
         }
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+        DemandaUtil demandaUtil = new DemandaUtil();
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
     }
 
     //Get all, pega todas as demandas
@@ -110,7 +112,6 @@ public class DemandaController {
                     throw new RuntimeException(e);
                 }
             });
-            System.out.println("DemandaJSON: " + demandaJson);
             Demanda demandaSalva = demandaService.save(demanda);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
