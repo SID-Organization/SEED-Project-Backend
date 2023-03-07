@@ -13,14 +13,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Controller
 @CrossOrigin
 @RequestMapping("/sid/api/pdf-teste")
 public class PdfTesteController {
     @PostMapping()
-    ResponseEntity<Object> mandaDeltaVoltaHtml(@RequestBody JsonObject delta) {
+    ResponseEntity<Object> mandaDeltaVoltaHtml(@RequestBody Map<String, Object> delta) {
         TesteDeltaUtil testeDeltaUtil = new TesteDeltaUtil();
-        return new ResponseEntity<>(testeDeltaUtil.converter(delta), HttpStatus.OK);
+        System.out.println(testeDeltaUtil.convertDeltaToHtml(delta));
+        return new ResponseEntity<>(testeDeltaUtil.convertDeltaToHtml(delta), HttpStatus.OK);
     }
 }

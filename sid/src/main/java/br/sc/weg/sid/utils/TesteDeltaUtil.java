@@ -15,6 +15,8 @@ import java.io.FileReader;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.script.Invocable;
@@ -68,35 +70,104 @@ public class TesteDeltaUtil {
         return pdf;
     }
 
-    public String converter(JsonObject deltaJson) {
-        System.out.println("deltaJson: " + deltaJson);
-//        StringBuilder html = new StringBuilder();
-//        try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            JsonNode delta = mapper.readTree(String.valueOf(deltaJson));
-//            for (JsonNode op : delta.get("ops")) {
-//                if (op.has("insert")) {
-//                    String text = op.get("insert").asText();
-//                    if (op.has("attributes")) {
-//                        JsonNode attrs = op.get("attributes");
-//                        if (attrs.has("bold")) {
-//                            text = "<strong>" + text + "</strong>";
-//                        }
-//                        if (attrs.has("italic")) {
-//                            text = "<em>" + text + "</em>";
-//                        }
-//                        if (attrs.has("list")) {
-//                            String tag = attrs.get("list").asText().equals("ordered") ? "ol" : "ul";
-//                            text = "<" + tag + "><li>" + text + "</li></" + tag + ">";
-//                        }
-//                    }
-//                    html.append(text);
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return html.toString();
-        return deltaJson.toString();
+//    public String converter( deltaJson) {
+//
+//    }
+
+    private static final Map<String, String> FORMAT_TAGS_MAP = new LinkedHashMap<String, String>() {{
+        put("header", "h");
+        put("bold", "strong");
+        put("italic", "em");
+        put("underline", "u");
+        put("strike", "s");
+        put("link", "a");
+        put("image", "img");
+        put("code-block", "pre");
+        put("blockquote", "blockquote");
+        put("list", "ul");
+        put("ordered", "ol");
+        put("indent", "blockquote");
+        put("align", "div");
+    }};
+
+    public String convertDeltaHtml(Map<String, Object> delta) {
+        String html = "";
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.convertValue(delta, JsonNode.class);
+            html = convertDeltaToHtml(jsonNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return html;
     }
+
+    private String convertDeltaToHtml(JsonNode delta) {
+        StringBuilder html = new StringBuilder();
+        if (delta.isArray()) {
+            for (JsonNode node : delta) {
+                html.append(convertDeltaToHtml(node));
+            }
+        } else if (delta.isObject()) {
+            String format = delta.get("insert").asText();
+            if (FORMAT_TAGS_MAP.containsKey(format)) {
+                String tag = FORMAT_TAGS_MAP.get(format);
+                html.append("<").append(tag).append(">");
+                if (delta.has("attributes")) {
+                    JsonNode attributes = delta.get("attributes");
+                    if (attributes.has("header")) {
+                        html.append("<h").append(attributes.get("header").asInt()).append(">");
+                    }
+                    if (attributes.has("link")) {
+                        html.append("<a href=\"").append(attributes.get("link").asText()).append("\">");
+                    }
+                    if (attributes.has("image")) {
+                        html.append("<img src=\"").append(attributes.get("image").asText()).append("\">");
+                    }
+                    if (attributes.has("align")) {
+                        html.append("<div style=\"text-align:").append(attributes.get("align").asText()).append("\">");
+                    }
+                }
+                if (delta.has("insert")) {
+                    html.append(delta.get("insert").asText());
+                }
+                if (delta.has("attributes")) {
+                    JsonNode attributes = delta.get("attributes");
+                    if (attributes.has("header")) {
+                        html.append("</h").append(attributes.get("header").asInt()).append(">");
+                    }
+                    if (attributes.has("link")) {
+                        html.append("</a>");
+                    }
+                    if (attributes.has("image")) {
+                        html.append("</img>");
+                    }
+                    if (attributes.has("align")) {
+                        html.append("</div>");
+                    }
+                }
+                html.append("</").append(tag).append(">");
+            } else if (format.equals("list")) {
+                html.append("<ul>");
+                if (delta.has("insert")) {
+                    JsonNode insert = delta.get("insert");
+                    if (insert.isArray()) {
+                        for (JsonNode node : insert) {
+                            html.append("<li>").append(node.asText()).append("</li>");
+                        }
+                    }
+                }
+                html.append("</ul>");
+            } else if (format.equals("ordered")) {
+                html.append("<ol>");
+                if (delta.has("insert")) {
+                    JsonNode insert = delta.get("insert");
+                    if (insert.isArray()) {
+                        for (JsonNode node : insert) {
+                            html.append("<li>").append(node.asText()).append("</li>");
+                        }
+                    }
+                    
+
 }
+
