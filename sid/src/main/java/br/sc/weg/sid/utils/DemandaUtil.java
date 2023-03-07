@@ -2,6 +2,7 @@ package br.sc.weg.sid.utils;
 
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.DemandaResumida;
 import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.service.ArquivoDemandaService;
 import br.sc.weg.sid.model.service.UsuarioService;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @NoArgsConstructor
@@ -25,11 +28,26 @@ public class DemandaUtil {
         return demanda;
     }
 
-    public CadastroDemandaDTO convertToDto(String  demandaJson) {
-        try{
+    public CadastroDemandaDTO convertToDto(String demandaJson) {
+        try {
             return this.mapper.readValue(demandaJson, CadastroDemandaDTO.class);
-        } catch (Exception e){
-            throw  new RuntimeException("Erro ao converter o demandaJson para objeto CadastroDemandaDTO! \n" + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroDemandaDTO! \n" + e.getMessage());
         }
     }
+
+    public List<DemandaResumida> resumirDemanda(List<Demanda> demandas) {
+        List<DemandaResumida> demandasResumidas = new ArrayList<>();
+        for (Demanda demanda : demandas) {
+            DemandaResumida demandaResumida = new DemandaResumida();
+            demandaResumida.setTituloDemanda(demanda.getTituloDemanda());
+            demandaResumida.setStatusDemanda(demanda.getStatusDemanda());
+            demandaResumida.setPrazoElaboracaoDemanda(demanda.getPrazoElaboracaoDemanda());
+            demandaResumida.setScoreDemanda(demanda.getScoreDemanda());
+            demandaResumida.setIdDemanda(demanda.getIdDemanda());
+            demandasResumidas.add(demandaResumida);
+        }
+        return demandasResumidas;
+    }
+
 }

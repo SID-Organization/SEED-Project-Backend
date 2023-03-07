@@ -1,6 +1,7 @@
 package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.*;
+import com.google.gson.JsonObject;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -14,7 +15,11 @@ public class CadastroDemandaDTO {
 
     public String propostaMelhoriaDemanda;
 
+    public JsonObject propostaMelhoriaDemandaDELTA;
+
     public String situacaoAtualDemanda;
+
+    public JsonObject situacaoAtualDemandaDELTA;
 
     public String descricaoQualitativoDemanda;
 
