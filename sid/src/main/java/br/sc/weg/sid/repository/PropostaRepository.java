@@ -14,4 +14,5 @@ public interface PropostaRepository extends JpaRepository<Proposta, Integer> {
     List<Proposta> findByDemandaProposta(Demanda idDemanda);
 
     List<Proposta> findAllByPaybackProposta(Double paybackProposta);
+
 }

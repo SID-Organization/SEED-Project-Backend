@@ -3,6 +3,7 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.CadastroPautaDTO;
 import br.sc.weg.sid.model.entities.Forum;
 import br.sc.weg.sid.model.entities.Pauta;
+import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.service.PautaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @CrossOrigin
@@ -43,6 +45,16 @@ public class PautaController {
             return ResponseEntity.ok(pautaService.findById(id));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao listar pauta: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/propostas/{id}")
+    public ResponseEntity<Object> listarPropostasPorPauta(@PathVariable Integer id) {
+        try {
+            List<Proposta> propostasPauta = pautaService.findById(id).get().getPropostasPauta();
+            return ResponseEntity.ok().body(propostasPauta);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Pauta com id informado não existe!");
         }
     }
 

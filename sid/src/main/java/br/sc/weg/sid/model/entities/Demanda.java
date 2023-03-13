@@ -1,6 +1,5 @@
 package br.sc.weg.sid.model.entities;
 
-import br.sc.weg.sid.utils.ConverterUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 

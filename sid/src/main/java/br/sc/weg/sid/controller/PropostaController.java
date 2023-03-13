@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,6 +114,18 @@ public class PropostaController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/proposta-finalizada")
+    ResponseEntity<Object> listarPropostaPorStatusDemanda() {
+        List<Proposta> proposta = propostaService.findAll();
+        List<Proposta> propostaFiltrada = new ArrayList<>();
+        for (Proposta p : proposta) {
+            if (p.getDemandaProposta().getStatusDemanda() == StatusDemanda.PROPOSTA_FINALIZADA) {
+                propostaFiltrada.add(p);
+            }
+        }
+        return ResponseEntity.ok(propostaFiltrada);
     }
 
     @GetMapping("/payback/{value}")

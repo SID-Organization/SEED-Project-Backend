@@ -51,10 +51,18 @@ public class DemandaController {
     @GetMapping()
     public ResponseEntity<Object> findAll() {
         List<Demanda> demandas = demandaService.findAll();
+        List<Demanda> demandasFiltradas = new ArrayList<>();
         if (demandas.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
         }
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandas);
+        for (Demanda demanda : demandas) {
+            if (demanda.getStatusDemanda() != StatusDemanda.RASCUNHO) {
+                demandasFiltradas.add(demanda);
+            }
+        }
+        DemandaUtil demandaUtil = new DemandaUtil();
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasFiltradas);
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
     }
 
     //Get all, pega todas as demandas
@@ -74,8 +82,17 @@ public class DemandaController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+    }
 
-
+    @GetMapping("/rascunhos")
+    public ResponseEntity<Object> findAllRascunhos() {
+        List<Demanda> demandas = demandaService.findByStatusDemanda(StatusDemanda.RASCUNHO);
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada");
+        }
+        DemandaUtil demandaUtil = new DemandaUtil();
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
     }
 
 
@@ -116,7 +133,6 @@ public class DemandaController {
                     throw new RuntimeException(e);
                 }
             });
-            System.out.println("DemandaJSON: " + demandaJson);
             Demanda demandaSalva = demandaService.save(demanda);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
@@ -323,11 +339,18 @@ public class DemandaController {
                         "Ele é um " + analistaDemanda.getCargoUsuario().getNome());
             }
             List<Demanda> demandas = demandaService.findByAnalistaResponsavelDemanda(analistaDemanda);
+            List<Demanda> demandasFiltradas = new ArrayList<>();
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O analista " + analistaDemanda.getNomeUsuario() + " não possui demandas!");
             }
+            for (Demanda demanda : demandas) {
+                if (demanda.getSolicitanteDemanda() != analistaDemanda && demanda.getAnalistaResponsavelDemanda() == analistaDemanda &&
+                demanda.getStatusDemanda() != StatusDemanda.RASCUNHO) {
+                    demandasFiltradas.add(demanda);
+                }
+            }
             DemandaUtil demandaUtil = new DemandaUtil();
-            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasFiltradas);
             return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
