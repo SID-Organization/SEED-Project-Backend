@@ -116,7 +116,7 @@ public class PropostaController {
         }
     }
 
-    @GetMapping("/demanda-status")
+    @GetMapping("/proposta-finalizada")
     ResponseEntity<Object> listarPropostaPorStatusDemanda() {
         List<Proposta> proposta = propostaService.findAll();
         List<Proposta> propostaFiltrada = new ArrayList<>();
