@@ -137,17 +137,17 @@ public class PropostaController {
         }
     }
 
-    @GetMapping("/proposta.pdf/{idProposta}")
-    public ResponseEntity<byte[]> getPropostaPDF(@PathVariable("idProposta") Integer idProposta) throws IOException {
-        // Lógica para carregar o arquivo PDF em um byte array
-        Proposta proposta = propostaService.findById(idProposta).get();
-        byte[] pdfBytes = proposta.getPropostaPDF();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDisposition(ContentDisposition.builder("inline").filename("proposta.pdf").build());
-
-        return ResponseEntity.ok().headers(headers).body(pdfBytes);
-    }
+//    @GetMapping("/proposta.pdf/{idProposta}")
+//    public ResponseEntity<byte[]> getPropostaPDF(@PathVariable("idProposta") Integer idProposta) throws IOException {
+//        // Lógica para carregar o arquivo PDF em um byte array
+//        Proposta proposta = propostaService.findById(idProposta).get();
+//        byte[] pdfBytes = proposta.getPropostaPDF();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_PDF);
+//        headers.setContentDisposition(ContentDisposition.builder("inline").filename("proposta.pdf").build());
+//
+//        return ResponseEntity.ok().headers(headers).body(pdfBytes);
+//    }
 
 }

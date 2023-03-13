@@ -3,6 +3,7 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
+import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
@@ -32,6 +33,8 @@ public class DemandaController {
     @Autowired
     DemandaService demandaService;
 
+    @Autowired
+    PdfDemandaService pdfDemandaService;
     @Autowired
     UsuarioService usuarioService;
 
@@ -98,13 +101,16 @@ public class DemandaController {
     public ResponseEntity<Object> cadastroDemanda(
 
             @RequestParam("demandaForm") @Valid String demandaJson,
+            @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson,
             @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalFiles
     ) {
         try {
             DemandaUtil demandaUtil = new DemandaUtil();
             CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
+            CadastroPdfDemandaDTO cadastroPdfDemandaDTO = demandaUtil.convertToPdfDto(pdfDemandaJson);
             System.out.println(demandaJson);
             Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
+            PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
             try {
                 demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
             } catch (Exception e) {
@@ -176,10 +182,30 @@ public class DemandaController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
                 }
             }
+            try {
+                pdfDemanda.setDemanda(demandaSalva);
+                pdfDemandaService.save(pdfDemanda);
+            } catch (Exception e) {
+                demandaService.deleteById(demandaSalva.getIdDemanda());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar pdf: " + e.getMessage());
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Erro ao cadastrar demanda: " + e.getMessage());
+        }
+    }
+
+    //Busca PDF da demanda
+    @GetMapping("/pdf/{id}")
+    public ResponseEntity<Object> findPdfById(@PathVariable("id") Integer id) {
+        try {
+            Demanda demanda = demandaService.findById(id).get();
+            List<PdfDemanda> pdfDemandas = pdfDemandaService.findByDemanda(demanda);
+            PdfDemanda pdfDemanda = pdfDemandas.get(pdfDemandas.size() - 1);
+            return ResponseEntity.status(HttpStatus.FOUND).body(pdfDemanda);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("PDF da demanda com id: " + id + " não encontrado!");
         }
     }
 
@@ -400,18 +426,26 @@ public class DemandaController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizarDemanda(
             @PathVariable("id") Integer idDemanda,
-            @RequestParam("demandaForm") @Valid String demandaJson
+            @RequestParam("demandaForm") @Valid String demandaJson,
+            @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson
     ) {
         DemandaUtil demandaUtil = new DemandaUtil();
         CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
+        CadastroPdfDemandaDTO cadastroPdfDemandaDTO = demandaUtil.convertToPdfDto(pdfDemandaJson);
         if (!demandaService.existsById(idDemanda)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id " + idDemanda);
         }
         Demanda demanda = demandaService.findById(idDemanda).get();
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
+        PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
         historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                 demanda.getHistoricoWorkflowUltimaVersao());
+        try {
+            pdfDemandaService.save(pdfDemanda);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda, a mesma não será atualizada!" + e.getMessage());
+        }
         demandaService.save(demanda);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
