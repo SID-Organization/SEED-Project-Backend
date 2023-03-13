@@ -1,8 +1,10 @@
 package br.sc.weg.sid.utils;
 
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
+import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.DemandaResumida;
+import br.sc.weg.sid.model.entities.PdfDemanda;
 import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.service.ArquivoDemandaService;
 import br.sc.weg.sid.model.service.UsuarioService;
@@ -34,6 +36,20 @@ public class DemandaUtil {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroDemandaDTO! \n" + e.getMessage());
         }
+    }
+
+    public CadastroPdfDemandaDTO convertToPdfDto(String pdfDemandaJson) {
+        try {
+            return this.mapper.readValue(pdfDemandaJson, CadastroPdfDemandaDTO.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroPdfDemandaDTO! \n" + e.getMessage());
+        }
+    }
+
+    public PdfDemanda convertPdfDtoToModel(CadastroPdfDemandaDTO cadastroPdfDemandaDTO) {
+        PdfDemanda pdfDemanda = new PdfDemanda();
+        BeanUtils.copyProperties(cadastroPdfDemandaDTO, pdfDemanda);
+        return pdfDemanda;
     }
 
     public List<DemandaResumida> resumirDemanda(List<Demanda> demandas) {

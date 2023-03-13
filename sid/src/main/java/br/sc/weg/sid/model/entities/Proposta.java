@@ -58,13 +58,6 @@ public class Proposta {
 
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
-
-    @Column(name = "PropostaMarkdown")
-    private String propostaMarkdown;
-
-    @Column(name = "PropostaPDF")
-    private byte[] propostaPDF;
-
     @FutureOrPresent
     @Column(name = "PeriodoExecucaoDemanda")
     private Date periodoExecucaoDemanda;
