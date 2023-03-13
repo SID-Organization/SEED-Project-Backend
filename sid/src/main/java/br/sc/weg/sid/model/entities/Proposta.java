@@ -53,6 +53,9 @@ public class Proposta {
     @Column(name = "AprovadoWorkflowProposta")
     private Integer aprovadoWorkflowProposta;
 
+    @Column(name = "CustosTotaisDoProjeto")
+    private Integer custosTotaisDoProjeto;
+
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
     @FutureOrPresent
