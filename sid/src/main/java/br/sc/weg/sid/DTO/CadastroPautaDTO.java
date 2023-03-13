@@ -26,6 +26,4 @@ public class CadastroPautaDTO {
     @NotNull(message = "O campo horarioTerminoPauta não pode ser nulo")
     private LocalTime horarioTerminoPauta;
 
-    @NotNull(message = "O campo comissaoPauta não pode ser nulo")
-    private String comissaoPauta;
 }

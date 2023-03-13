@@ -37,9 +37,6 @@ public class Pauta {
     @Column(name = "horarioTerminoPauta", nullable = false)
     private LocalTime horarioTerminoPauta;
 
-    @Column(name = "comissaoPauta", nullable = false)
-    private String comissaoPauta;
-
     @ManyToOne()
     @JoinColumn(name = "idForum", nullable = false)
     private Forum forumPauta;
