@@ -1,11 +1,15 @@
 package br.sc.weg.sid.utils;
 
+import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
+import br.sc.weg.sid.DTO.CadastroPdfPropostaDTO;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.PropostaResumida;
 import br.sc.weg.sid.model.entities.TamanhoDemanda;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,5 +44,13 @@ public class PropostaUtil {
         });
         return propostasResumidas;
     };
+
+    public CadastroPdfPropostaDTO convertToCadastroPdfPropostaDTO(String json) {
+        try {
+            return this.mapper.readValue(json, CadastroPdfPropostaDTO.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroPdfDemandaDTO! \n" + e.getMessage());
+        }
+    }
 
 }

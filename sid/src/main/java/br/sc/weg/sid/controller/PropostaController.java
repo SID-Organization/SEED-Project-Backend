@@ -1,5 +1,6 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.CadastroPdfPropostaDTO;
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
@@ -7,6 +8,7 @@ import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.StatusDemanda;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PropostaService;
+import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -35,6 +37,10 @@ public class PropostaController {
             Proposta proposta = new Proposta();
 
             Optional<Demanda> demandaOptional = demandaService.findById(cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
+
+            PropostaUtil propostaUtil = new PropostaUtil();
+
+            CadastroPdfPropostaDTO cadastroPdfPropostaDTO = propostaUtil.convertToCadastroPdfPropostaDTO();
 
             if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != StatusDemanda.RASCUNHO || demandaOptional.get().getStatusDemanda() != StatusDemanda.CANCELADA) {
                 Demanda demanda = demandaOptional.get();
@@ -70,7 +76,11 @@ public class PropostaController {
     }
 
     @PutMapping("/update/{id}")
-    ResponseEntity<Object> atualizarProposta(@PathVariable("id") Integer id, @RequestBody @Valid UpdatePropostaDTO updatePropostaDTO) {
+    ResponseEntity<Object> atualizarProposta(
+            @PathVariable("id") Integer id,
+            @RequestBody @Valid UpdatePropostaDTO updatePropostaDTO,
+            @RequestParam(value = "pdfPropostaForm", required = false) String pdfPropostaForm
+    ) {
         try {
             Optional<Proposta> propostaOptional = propostaService.findById(id);
             if (propostaOptional.isPresent()) {

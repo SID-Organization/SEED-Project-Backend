@@ -183,7 +183,6 @@ public class DemandaController {
                 }
             }
             try {
-                pdfDemanda.setBeneficios(demandaSalva.getBeneficiosDemanda());
                 pdfDemanda.setDemanda(demandaSalva);
                 pdfDemandaService.save(pdfDemanda);
             } catch (Exception e) {
