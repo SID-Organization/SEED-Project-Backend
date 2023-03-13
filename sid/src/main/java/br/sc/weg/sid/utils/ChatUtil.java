@@ -15,7 +15,6 @@ public class ChatUtil {
 
     public List<ChatResumido> resumirChat(List<Chat> chatList, MensagemService mensagemService, Integer numeroCadastroUsuario) {
         List<ChatResumido> chatResumidoList = new ArrayList<>();
-        System.out.println("CHATRESUMIDOLIST: " + chatResumidoList);
         for (Chat chat : chatList) {
             if (chat != null) {
                 ChatResumido chatResumido = new ChatResumido();
