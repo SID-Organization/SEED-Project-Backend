@@ -1,4 +1,4 @@
-package br.sc.weg.sid.security.service;
+package br.sc.weg.sid.auth.service;
 
 import org.springframework.stereotype.Service;
 
