@@ -31,4 +31,8 @@ public class Ata {
     @Lob
     @NotNull
     private byte[] documentoAprovacaoAta;
+
+    @OneToOne
+    @JoinColumn(name = "idPauta", referencedColumnName = "idPauta")
+    Pauta pautaAta;
 }

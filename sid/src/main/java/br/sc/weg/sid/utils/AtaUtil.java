@@ -4,6 +4,7 @@ import br.sc.weg.sid.DTO.CadastroAtaDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroUsuarioDTO;
 import br.sc.weg.sid.model.entities.Ata;
+import br.sc.weg.sid.model.entities.AtaResumida;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.service.ArquivoDemandaService;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @NoArgsConstructor
@@ -47,4 +50,20 @@ public class AtaUtil {
             throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroAtaDTO! \n" + e.getMessage());
         }
     }
+
+
+    public static List<AtaResumida> converterAtaParaAtaResumida(List<Ata> atas) {
+        List<AtaResumida> atasResumidas = new ArrayList<>();
+        atas.forEach(ata -> {
+            AtaResumida ataResumida = new AtaResumida();
+            BeanUtils.copyProperties(ata, ataResumida);
+            ataResumida.setIdAta(ata.getIdAta());
+            ataResumida.setQtdPropostas(ata.getPautaAta().getPropostasPauta().size());
+            ataResumida.setDataReuniaoAta(ata.getPautaAta().getDataReuniaoPauta());
+            ataResumida.setHorarioInicioAta(ata.getPautaAta().getHorarioInicioPauta());
+            ataResumida.setAnalistaResponsavel(ata.getPautaAta().getAnalistaResponsavelPauta());
+            atasResumidas.add(ataResumida);
+        });
+        return atasResumidas;
+    };
 }

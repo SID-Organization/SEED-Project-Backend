@@ -1,10 +1,10 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroPautaDTO;
-import br.sc.weg.sid.model.entities.Forum;
-import br.sc.weg.sid.model.entities.Pauta;
-import br.sc.weg.sid.model.entities.Proposta;
+import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.PautaService;
+import br.sc.weg.sid.utils.PautaUtil;
+import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -33,10 +34,16 @@ public class PautaController {
     @GetMapping
     public ResponseEntity<Object> listarPautas() {
         try {
-            return ResponseEntity.ok(pautaService.findAll());
+            List<Pauta> pautas = pautaService.findAll();
+            List<PautaResumida> pautasResumidas = PautaUtil.converterPautaParaPautaResumida(pautas);
+            if (pautasResumidas.isEmpty()) {
+                return ResponseEntity.ok().body("Nenhuma pauta cadastrada!");
+            }
+            return ResponseEntity.ok(pautasResumidas);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao listar pautas: " + e.getMessage());
+            e.printStackTrace();
         }
+        return ResponseEntity.badRequest().body("Erro ao listar pautas!");
     }
 
     @GetMapping("/{id}")
@@ -52,9 +59,13 @@ public class PautaController {
     public ResponseEntity<Object> listarPropostasPorPauta(@PathVariable Integer id) {
         try {
             List<Proposta> propostasPauta = pautaService.findById(id).get().getPropostasPauta();
-            return ResponseEntity.ok().body(propostasPauta);
+            List<PropostaResumida> propostasResumidas = PropostaUtil.converterPropostaParaPropostaResumida(propostasPauta);
+            if (propostasResumidas.isEmpty()) {
+                return ResponseEntity.ok().body("Nenhuma proposta cadastrada para essa pauta!");
+            }
+            return ResponseEntity.ok().body(propostasResumidas);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Pauta com id informado não existe!");
+            return ResponseEntity.badRequest().body("Pauta com id informado não existe! " + e.getMessage());
         }
     }
 
