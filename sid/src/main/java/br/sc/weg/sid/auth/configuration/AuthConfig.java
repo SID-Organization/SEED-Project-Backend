@@ -2,6 +2,7 @@ package br.sc.weg.sid.auth.configuration;
 
 import br.sc.weg.sid.auth.filters.AuthFilter;
 import br.sc.weg.sid.auth.service.JpaService;
+import br.sc.weg.sid.auth.utils.TokenUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
