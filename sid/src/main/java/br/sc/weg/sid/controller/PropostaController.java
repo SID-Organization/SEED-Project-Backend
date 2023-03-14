@@ -4,9 +4,11 @@ import br.sc.weg.sid.DTO.CadastroPdfPropostaDTO;
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.PdfProposta;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.StatusDemanda;
 import br.sc.weg.sid.model.service.DemandaService;
+import br.sc.weg.sid.model.service.PdfPropostaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
@@ -31,16 +33,15 @@ public class PropostaController {
     @Autowired
     private DemandaService demandaService;
 
+    @Autowired
+    private PdfPropostaService pdfPropostaService;
+
     @PostMapping()
     ResponseEntity<Object> cadastrarProposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
         try {
             Proposta proposta = new Proposta();
 
             Optional<Demanda> demandaOptional = demandaService.findById(cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
-
-            PropostaUtil propostaUtil = new PropostaUtil();
-
-            CadastroPdfPropostaDTO cadastroPdfPropostaDTO = propostaUtil.convertToCadastroPdfPropostaDTO();
 
             if (demandaOptional.isPresent() && demandaOptional.get().getStatusDemanda() != StatusDemanda.RASCUNHO || demandaOptional.get().getStatusDemanda() != StatusDemanda.CANCELADA) {
                 Demanda demanda = demandaOptional.get();
@@ -84,11 +85,28 @@ public class PropostaController {
         try {
             Optional<Proposta> propostaOptional = propostaService.findById(id);
             if (propostaOptional.isPresent()) {
+
+                PropostaUtil propostaUtil = new PropostaUtil();
+                PdfProposta pdfProposta = new PdfProposta();
+
+                try {
+                    CadastroPdfPropostaDTO cadastroPdfPropostaDTO = propostaUtil.convertToCadastroPdfPropostaDTO(pdfPropostaForm);
+
+                    BeanUtils.copyProperties(cadastroPdfPropostaDTO, pdfProposta);
+
+                    pdfPropostaService.save(pdfProposta);
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("ERROR 0009: Erro ao salvar pdf da proposta, a atualização da mesma não será realizada!" + "\nMessage: " + e.getMessage());
+                }
+
                 Proposta proposta = propostaOptional.get();
-                System.out.println(proposta.toString());
                 BeanUtils.copyProperties(updatePropostaDTO, proposta);
-                System.out.println(proposta.toString());
-                propostaService.save(proposta);
+                try {
+                    propostaService.save(proposta);
+                } catch (Exception e) {
+                    pdfPropostaService.deleteById(pdfProposta.getIdPdfProposta());
+                    return ResponseEntity.badRequest().body("ERROR 0008: Erro ao atualizar proposta!" + "\nMessage: " + e.getMessage());
+                }
                 return ResponseEntity.ok(proposta);
             } else {
                 return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + id);
