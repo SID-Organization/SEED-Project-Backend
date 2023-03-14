@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class PropostaResumida {
 
+    Integer idProposta;
+
     String demandaPropostaTitulo;
 
     Integer tempoDeExecucaoDemanda;

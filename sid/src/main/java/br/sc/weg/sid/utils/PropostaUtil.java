@@ -23,6 +23,7 @@ public class PropostaUtil {
         propostas.forEach(proposta -> {
             PropostaResumida propostaResumida = new PropostaResumida();
             BeanUtils.copyProperties(proposta, propostaResumida);
+            propostaResumida.setIdProposta(proposta.getIdProposta());
             propostaResumida.setDemandaPropostaTitulo(proposta.getDemandaProposta().getTituloDemanda());
             TamanhoDemanda tamanhoDemanda = proposta.getDemandaProposta().getTamanhoDemanda();
             Integer tempoDeExecucaoDemanda = 0;

@@ -1,6 +1,7 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.model.entities.Ata;
+import br.sc.weg.sid.model.entities.AtaResumida;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.utils.AtaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Controller
 @CrossOrigin
@@ -59,7 +62,12 @@ public class AtaController {
     @GetMapping
     public ResponseEntity<Object> findAll() {
         try {
-            return ResponseEntity.ok(ataService.findAll());
+            List<Ata> atas = ataService.findAll();
+            if (atas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma ata encontrada");
+            }
+            List<AtaResumida> atasResumidas = AtaUtil.converterAtaParaAtaResumida(atas);
+            return ResponseEntity.ok(atasResumidas);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao buscar atas: " + e.getMessage());
         }

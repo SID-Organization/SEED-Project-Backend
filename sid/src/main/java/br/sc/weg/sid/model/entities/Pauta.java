@@ -46,4 +46,8 @@ public class Pauta {
             joinColumns = @JoinColumn(name = "idPauta"),
             inverseJoinColumns = @JoinColumn(name = "idProposta"))
     private List<Proposta> propostasPauta;
+
+    @ManyToOne()
+    @JoinColumn(name = "numero_cadastro_usuario")
+    private Usuario analistaResponsavelPauta;
 }

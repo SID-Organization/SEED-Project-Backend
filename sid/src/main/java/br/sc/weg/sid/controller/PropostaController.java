@@ -6,6 +6,7 @@ import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.PdfProposta;
 import br.sc.weg.sid.model.entities.Proposta;
+import br.sc.weg.sid.model.entities.PropostaResumida;
 import br.sc.weg.sid.model.entities.StatusDemanda;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PdfPropostaService;
@@ -122,7 +123,12 @@ public class PropostaController {
     @GetMapping
     ResponseEntity<Object> listarPropostas() {
         try {
-            return ResponseEntity.ok(propostaService.findAll());
+            List<Proposta> propostas = propostaService.findAll();
+            List<PropostaResumida> propostasResumidas = PropostaUtil.converterPropostaParaPropostaResumida(propostas);
+            if (propostasResumidas.isEmpty()) {
+                return ResponseEntity.badRequest().body("ERROR 0004: Não existem propostas cadastradas!");
+            }
+            return ResponseEntity.ok(propostasResumidas);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
@@ -149,20 +155,33 @@ public class PropostaController {
 
     @GetMapping("/proposta-finalizada")
     ResponseEntity<Object> listarPropostaPorStatusDemanda() {
-        List<Proposta> proposta = propostaService.findAll();
-        List<Proposta> propostaFiltrada = new ArrayList<>();
-        for (Proposta p : proposta) {
-            if (p.getDemandaProposta().getStatusDemanda() == StatusDemanda.PROPOSTA_FINALIZADA) {
-                propostaFiltrada.add(p);
+        try{
+            List<Proposta> proposta = propostaService.findAll();
+            List<Proposta> propostasFiltradas = new ArrayList<>();
+            for (Proposta p : proposta) {
+                if (p.getDemandaProposta().getStatusDemanda() == StatusDemanda.PROPOSTA_FINALIZADA) {
+                    propostasFiltradas.add(p);
+                }
             }
+            List<PropostaResumida> propostasResumidas = PropostaUtil.converterPropostaParaPropostaResumida(propostasFiltradas);
+            if (propostasResumidas.isEmpty()) {
+                return ResponseEntity.badRequest().body("ERROR 0004: Não existem propostas cadastradas!");
+            }
+            return ResponseEntity.ok(propostasResumidas);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
-        return ResponseEntity.ok(propostaFiltrada);
     }
 
-    @GetMapping("/payback/{value}")
-    ResponseEntity<Object> listarPropostaPorPayback(@PathVariable("value") Double value) {
+    @GetMapping("/payback/{payback}")
+    ResponseEntity<Object> listarPropostaPorPayback(@PathVariable("payback") Double payback) {
         try {
-            return ResponseEntity.ok(propostaService.findAllByPaybackProposta(value));
+            List<Proposta> proposta = propostaService.findAllByPaybackProposta(payback);
+            List<PropostaResumida> propostasResumidas = PropostaUtil.converterPropostaParaPropostaResumida(proposta);
+            if (propostasResumidas.isEmpty()) {
+                return ResponseEntity.badRequest().body("ERROR 0004: Não existem propostas cadastradas!");
+            }
+            return ResponseEntity.ok(propostasResumidas);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
