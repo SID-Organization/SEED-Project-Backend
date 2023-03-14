@@ -1,5 +1,6 @@
 package br.sc.weg.sid.auth.configuration;
 
+import br.sc.weg.sid.auth.filters.AuthFilter;
 import br.sc.weg.sid.auth.service.JpaService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class AuthConfig {
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
                 .antMatchers("/login").permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().permitAll();
         httpSecurity.csrf().disable()
                 .cors().disable();
 
