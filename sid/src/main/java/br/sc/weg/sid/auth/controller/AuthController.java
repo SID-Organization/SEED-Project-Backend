@@ -1,4 +1,4 @@
-package br.sc.weg.sid.auth;
+package br.sc.weg.sid.auth.controller;
 
 import br.sc.weg.sid.auth.service.JpaService;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -3,7 +3,6 @@ package br.sc.weg.sid.auth.filters;
 import antlr.Token;
 import br.sc.weg.sid.auth.service.JpaService;
 import br.sc.weg.sid.auth.utils.TokenUtils;
-import br.sc.weg.sid.security.service.JpaService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
