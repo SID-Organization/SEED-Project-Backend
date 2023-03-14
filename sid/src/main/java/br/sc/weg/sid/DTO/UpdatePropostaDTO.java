@@ -2,7 +2,9 @@ package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Usuario;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;

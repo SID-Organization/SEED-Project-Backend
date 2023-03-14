@@ -1,11 +1,7 @@
 package br.sc.weg.sid.utils;
 
-import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
-import br.sc.weg.sid.DTO.CadastroPdfPropostaDTO;
-import br.sc.weg.sid.DTO.UpdatePropostaDTO;
-import br.sc.weg.sid.model.entities.Proposta;
-import br.sc.weg.sid.model.entities.PropostaResumida;
-import br.sc.weg.sid.model.entities.TamanhoDemanda;
+import br.sc.weg.sid.DTO.*;
+import br.sc.weg.sid.model.entities.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
@@ -57,12 +53,17 @@ public class PropostaUtil {
         }
     }
 
-    public UpdatePropostaDTO convertToUpdateProspotaDTO(String updatePropostaDTO) {
-        try {
-            return this.mapper.readValue(this.mapper.writeValueAsString(updatePropostaDTO), UpdatePropostaDTO.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroPdfDemandaDTO! \n" + e.getMessage());
+    public Proposta convertDtoToModel(UpdatePropostaDTO updatePropostaDTO) {
+        return this.mapper.convertValue(updatePropostaDTO, Proposta.class);
+    }
+
+    public UpdatePropostaDTO convertToUpdateProspotaDTO(String updatePropostaForm) {
+        try{
+            return this.mapper.readValue(updatePropostaForm, UpdatePropostaDTO.class);
+        } catch (Exception e){
+            throw  new RuntimeException(e);
         }
     }
+
 
 }

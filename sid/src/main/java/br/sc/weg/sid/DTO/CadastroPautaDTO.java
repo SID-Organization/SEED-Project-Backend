@@ -3,6 +3,7 @@ package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.Forum;
 import br.sc.weg.sid.model.entities.Proposta;
+import br.sc.weg.sid.model.entities.Usuario;
 import lombok.Data;
 
 import javax.validation.constraints.FutureOrPresent;
@@ -25,5 +26,8 @@ public class CadastroPautaDTO {
 
     @NotNull(message = "O campo horarioTerminoPauta não pode ser nulo")
     private LocalTime horarioTerminoPauta;
+
+    @NotNull(message = "O campo analistaResponsavelPauta não pode ser nulo")
+    private Usuario analistaResponsavelPauta;
 
 }

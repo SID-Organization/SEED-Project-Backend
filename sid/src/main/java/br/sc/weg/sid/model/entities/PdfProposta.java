@@ -27,7 +27,7 @@ public class PdfProposta {
     @Column(columnDefinition = "TEXT", name = "planoMitigacaoPropostaHTML")
     private String planoMitigacaoPropostaHTML;
 
-    @JoinColumn(name = "idProposta", referencedColumnName = "idProposta")
+    @JoinColumn(name = "proposta", referencedColumnName = "idProposta")
     @ManyToOne
     private Proposta proposta;
 }
