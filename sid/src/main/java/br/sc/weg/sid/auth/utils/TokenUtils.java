@@ -34,11 +34,11 @@ public class TokenUtils {
         }
     }
 
-    public Integer getUsuarioNumeroCadastro(String token) {
-        return Integer.parseInt(Jwts.parser()
+    public String getUsuarioNumeroCadastro(String token) {
+        return Jwts.parser()
                 .setSigningKey(senhaForte)
                 .parseClaimsJws(token)
-                .getBody().getSubject());
+                .getBody().getSubject();
     }
 
     public String buscarCookie(HttpServletRequest request, String nomeCookie){
