@@ -32,7 +32,7 @@ public class AuthConfig {
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/login", "/login/auth").permitAll()
                 .anyRequest().permitAll();
         httpSecurity.csrf().disable()
                 .cors().disable();

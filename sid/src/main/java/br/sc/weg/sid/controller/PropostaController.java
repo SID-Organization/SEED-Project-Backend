@@ -87,10 +87,8 @@ public class PropostaController {
         try {
             Optional<Proposta> propostaOptional = propostaService.findById(id);
             if (propostaOptional.isPresent()) {
-
                 PropostaUtil propostaUtil = new PropostaUtil();
                 PdfProposta pdfProposta = new PdfProposta();
-
                 try {
                     CadastroPdfPropostaDTO cadastroPdfPropostaDTO = propostaUtil.convertToCadastroPdfPropostaDTO(pdfPropostaForm);
 
