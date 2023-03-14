@@ -2,6 +2,7 @@ package br.sc.weg.sid.auth.filters;
 
 import antlr.Token;
 import br.sc.weg.sid.auth.service.JpaService;
+import br.sc.weg.sid.auth.utils.TokenUtils;
 import br.sc.weg.sid.security.service.JpaService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class AuthFilter extends OncePerRequestFilter {
 
-//    private TokenUtils tokenUtils;
+    private TokenUtils tokenUtils;
 
     private JpaService jpaService;
 
@@ -31,12 +32,12 @@ public class AuthFilter extends OncePerRequestFilter {
         }
 
         try {
-            String token = tokenUtils.buscarCookie(request);
-            Boolean valido = tokenUtils.validaToken(token);
+            String token = tokenUtils.buscarCookie(request, "jwt");
+            Boolean valido = tokenUtils.validarToken(token);
             if (valido) {
                 System.out.println("Token válido!");
-                Long username = tokenUtils.getUsername(token);
-                UserDetails usuario = jpaService.loadUserByUsername(username);
+                String usuarioNumeroCadastro = tokenUtils.getUsuarioNumeroCadastro(token);
+                UserDetails usuario = jpaService.loadUserByUsername(usuarioNumeroCadastro);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario.getUsername(), null, usuario.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
