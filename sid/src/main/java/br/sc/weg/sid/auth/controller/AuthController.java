@@ -1,6 +1,9 @@
 package br.sc.weg.sid.auth.controller;
 
+import br.sc.weg.sid.auth.DTO.UsuarioDTO;
+import br.sc.weg.sid.auth.users.UserJpa;
 import br.sc.weg.sid.auth.utils.TokenUtils;
+import br.sc.weg.sid.model.entities.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,15 +33,15 @@ public class AuthController {
     public ResponseEntity<Object> autenticacao(
             @RequestBody @Valid UsuarioDTO usuarioDTO, HttpServletResponse response){
         UsernamePasswordAuthenticationToken dadosLogin =
-                new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(), usuarioDTO.getSenha());
+                new UsernamePasswordAuthenticationToken(usuarioDTO.getUsername(), usuarioDTO.getSenha());
         try{
             Authentication authentication = authenticationManager.authenticate(dadosLogin);
             String token = tokenUtils.gerarToken(authentication);
             Cookie cookie = new Cookie("jwt", token);
-            UserJPA userJPA = (UserJPA) authentication.getPrincipal();
-            Pessoa pessoa = userJPA.getPessoa();
+            UserJpa userJPA = (UserJpa) authentication.getPrincipal();
+            Usuario usuario = userJPA.getUsuario();
             response.addCookie(cookie);
-            return ResponseEntity.ok().body(pessoa);
+            return ResponseEntity.ok().body(usuario);
         }catch (AuthenticationException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
