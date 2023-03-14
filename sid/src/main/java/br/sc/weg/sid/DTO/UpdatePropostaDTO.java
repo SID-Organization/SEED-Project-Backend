@@ -13,15 +13,13 @@ import java.util.List;
 public class UpdatePropostaDTO {
 
     private String escopoProposta;
-
     private Double paybackProposta;
-
     private Integer aprovadoWorkflowProposta;
-
     private String motivoRecusaWorkflowProposta;
-
     private Date periodoExecucaoDemanda;
-
-    private String propostaDelta;
+    private String naoFazParteDoEscopoProposta;
+    private String alternativasAvaliadasProposta;
+    private String planoMitigacaoProposta;
+    private Integer custosTotaisDoProjeto;
 
 }

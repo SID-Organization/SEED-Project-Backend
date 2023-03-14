@@ -11,6 +11,7 @@ import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PdfPropostaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.PropostaUtil;
+import org.hibernate.sql.Update;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -79,7 +80,7 @@ public class PropostaController {
     @PutMapping("/update/{id}")
     ResponseEntity<Object> atualizarProposta(
             @PathVariable("id") Integer id,
-            @RequestBody @Valid UpdatePropostaDTO updatePropostaDTO,
+            @RequestParam(value = "updatePropostaForm" , required = true) @Valid String updatePropostaForm,
             @RequestParam(value = "pdfPropostaForm", required = false) String pdfPropostaForm
     ) {
         try {
@@ -98,6 +99,8 @@ public class PropostaController {
                 } catch (Exception e) {
                     return ResponseEntity.badRequest().body("ERROR 0009: Erro ao salvar pdf da proposta, a atualização da mesma não será realizada!" + "\nMessage: " + e.getMessage());
                 }
+
+                UpdatePropostaDTO updatePropostaDTO = propostaUtil.convertToUpdateProspotaDTO(updatePropostaForm);
 
                 Proposta proposta = propostaOptional.get();
                 BeanUtils.copyProperties(updatePropostaDTO, proposta);

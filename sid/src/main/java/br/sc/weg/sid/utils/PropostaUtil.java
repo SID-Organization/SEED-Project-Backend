@@ -2,6 +2,7 @@ package br.sc.weg.sid.utils;
 
 import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroPdfPropostaDTO;
+import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.PropostaResumida;
 import br.sc.weg.sid.model.entities.TamanhoDemanda;
@@ -25,7 +26,7 @@ public class PropostaUtil {
             propostaResumida.setDemandaPropostaTitulo(proposta.getDemandaProposta().getTituloDemanda());
             TamanhoDemanda tamanhoDemanda = proposta.getDemandaProposta().getTamanhoDemanda();
             Integer tempoDeExecucaoDemanda = 0;
-            if (tamanhoDemanda == TamanhoDemanda.MUITO_GRANDE){
+            if (tamanhoDemanda == TamanhoDemanda.MUITO_GRANDE) {
                 tempoDeExecucaoDemanda = 3000;
             } else if (tamanhoDemanda == TamanhoDemanda.GRANDE) {
                 tempoDeExecucaoDemanda = 1500;
@@ -33,7 +34,7 @@ public class PropostaUtil {
                 tempoDeExecucaoDemanda = 500;
             } else if (tamanhoDemanda == TamanhoDemanda.PEQUENA) {
                 tempoDeExecucaoDemanda = 150;
-            } else if (tamanhoDemanda == TamanhoDemanda.MUITO_PEQUENA){
+            } else if (tamanhoDemanda == TamanhoDemanda.MUITO_PEQUENA) {
                 tempoDeExecucaoDemanda = 20;
             }
             propostaResumida.setTempoDeExecucaoDemanda(tempoDeExecucaoDemanda);
@@ -43,12 +44,22 @@ public class PropostaUtil {
             propostasResumidas.add(propostaResumida);
         });
         return propostasResumidas;
-    };
+    }
+
+    ;
 
     public CadastroPdfPropostaDTO convertToCadastroPdfPropostaDTO(String json) {
         try {
             return this.mapper.readValue(json, CadastroPdfPropostaDTO.class);
         } catch (Exception e) {
+            throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroPdfDemandaDTO! \n" + e.getMessage());
+        }
+    }
+
+    public UpdatePropostaDTO convertToUpdateProspotaDTO(String updatePropostaDTO) {
+        try {
+            return this.mapper.readValue(this.mapper.writeValueAsString(updatePropostaDTO), UpdatePropostaDTO.class);
+        } catch (JsonProcessingException e) {
             throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroPdfDemandaDTO! \n" + e.getMessage());
         }
     }
