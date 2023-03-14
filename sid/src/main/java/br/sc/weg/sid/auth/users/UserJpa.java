@@ -30,7 +30,7 @@ public class UserJpa implements UserDetails {
 
     @Override
     public String getUsername() {
-//        return usuario.getNumeroCadastroUsuario();
+        return Integer.toString(usuario.getNumeroCadastroUsuario());
     }
 
     private boolean accountNonExpired = true;
