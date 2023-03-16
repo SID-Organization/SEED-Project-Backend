@@ -3,14 +3,11 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.CadastroPdfPropostaDTO;
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
-import br.sc.weg.sid.model.entities.Demanda;
-import br.sc.weg.sid.model.entities.PdfProposta;
-import br.sc.weg.sid.model.entities.Proposta;
-import br.sc.weg.sid.model.entities.PropostaResumida;
-import br.sc.weg.sid.model.entities.StatusDemanda;
+import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PdfPropostaService;
 import br.sc.weg.sid.model.service.PropostaService;
+import br.sc.weg.sid.model.service.TabelaCustoService;
 import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,9 @@ public class PropostaController {
 
     @Autowired
     private PdfPropostaService pdfPropostaService;
+
+    @Autowired
+    private TabelaCustoService tabelaCustoService;
 
     @PostMapping()
     ResponseEntity<Object> cadastrarProposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
@@ -102,6 +102,12 @@ public class PropostaController {
                 BeanUtils.copyProperties(updatePropostaDTO, proposta);
                 try {
                     propostaService.save(proposta);
+
+                    TabelaCusto tabelaCusto = updatePropostaDTO.getTabelaCusto();
+                    tabelaCusto.setProposta(proposta);
+                    tabelaCustoService.save(tabelaCusto);
+
+
                 } catch (Exception e) {
                     pdfPropostaService.deleteById(pdfProposta.getIdPdfProposta());
                     e.printStackTrace();

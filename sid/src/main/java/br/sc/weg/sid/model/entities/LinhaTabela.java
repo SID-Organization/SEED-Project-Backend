@@ -17,19 +17,22 @@ public class LinhaTabela {
     @Column(name = "IdLinhaTabela", nullable = false, unique = true)
     private Integer idLinhaTabela;
 
-    @Column(name = "NomeLinhaTabela", nullable = false)
-    private String nomeLinhaTabela;
+    @Column(name = "PerfilDespesaLinhaTabela", nullable = false)
+    private String perfilDespesaLinhaTabela;
 
-    @Column(name = "licencaLinhaTabela")
-    private Integer licencaLinhaTabela;
+    @Column(name = "PeriodoExecucaoLinhaTabela", nullable = false)
+    private Integer periodoExecucaoLinhaTabela;
 
-    @Column(name = "esforcoLinhaTabela")
-    private Integer esforcoLinhaTabela;
+    @Column(name = "QuantidadeHorasLinhaTabela", nullable = false)
+    private Integer quantidadeHorasLinhaTabela;
 
-    @Column(name = "totalLinhaTabela", nullable = false)
-    private Double totalLinhaTabela;
+    @Column(name = "ValorHoraLinhaTabela", nullable = false)
+    private Double valorHoraLinhaTabela;
 
-    @ManyToOne
-    @JoinColumn(name = "idTabelaCusto", nullable = false)
-    private TabelaCusto idTabelaCusto;
+    @Column(name = "ValorTotalLinhaTabela", nullable = false)
+    private Double valorTotalLinhaTabela;
+
+    @OneToOne
+    @JoinColumn(name = "IdTabelaCusto", referencedColumnName = "IdTabelaCusto")
+    private TabelaCusto tabelaCusto;
 }

@@ -66,6 +66,10 @@ public class Proposta {
     @ManyToOne(optional = false)
     private Demanda demandaProposta;
 
+    @JoinColumn(name = "tabelaCustoProposta", referencedColumnName = "IdTabelaCusto")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TabelaCusto> tabelaCustoProposta;
+
     @ManyToMany
     @JoinTable(name = "responsaveis_negocio",
             joinColumns = @JoinColumn(name = "idProposta"),

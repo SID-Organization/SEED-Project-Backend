@@ -14,10 +14,6 @@ public class TabelaCustoService {
     @Autowired
     TabelaCustoRepository tabelaCustoRepository;
 
-    public List<TabelaCusto> findAllByIdProposta(Proposta idProposta) {
-        return tabelaCustoRepository.findAllByIdProposta(idProposta);
-    }
-
     public List<TabelaCusto> findAll() {
         return tabelaCustoRepository.findAll();
     }

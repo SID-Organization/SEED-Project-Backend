@@ -14,10 +14,6 @@ public class LinhaTabelaService {
     @Autowired
     LinhaTabelaRepository linhaTabelaRepository;
 
-    public List<LinhaTabela> findAllByIdTabelaCusto(TabelaCusto idTabelaCusto) {
-        return linhaTabelaRepository.findAllByIdTabelaCusto(idTabelaCusto);
-    }
-
     public List<LinhaTabela> findAll() {
         return linhaTabelaRepository.findAll();
     }
