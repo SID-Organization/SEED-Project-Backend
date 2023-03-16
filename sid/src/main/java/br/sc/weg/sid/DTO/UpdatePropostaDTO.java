@@ -1,6 +1,7 @@
 package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.model.entities.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,5 +24,5 @@ public class UpdatePropostaDTO {
     private String alternativasAvaliadasProposta;
     private String planoMitigacaoProposta;
     private Integer custosTotaisDoProjeto;
-
+    private TabelaCusto tabelaCusto;
 }

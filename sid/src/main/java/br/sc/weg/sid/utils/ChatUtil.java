@@ -5,6 +5,7 @@ import br.sc.weg.sid.model.entities.ChatResumido;
 import br.sc.weg.sid.model.entities.Mensagem;
 import br.sc.weg.sid.model.entities.MensagemResumida;
 import br.sc.weg.sid.model.service.MensagemService;
+import com.itextpdf.text.html.simpleparser.HTMLWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
@@ -50,6 +51,7 @@ public class ChatUtil {
                 chatResumidoList.add(chatResumido);
             }
         }
+
         return chatResumidoList;
     }
 
