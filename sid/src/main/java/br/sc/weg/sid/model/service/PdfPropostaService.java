@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.PdfProposta;
+import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.repository.PdfPropostaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,9 @@ public class PdfPropostaService {
 
     public void deleteById(Integer integer) {
         pdfPropostaRepository.deleteById(integer);
+    }
+
+    public Optional<PdfProposta> findByProposta(Proposta proposta){
+        return pdfPropostaRepository.findByProposta(proposta);
     }
 }

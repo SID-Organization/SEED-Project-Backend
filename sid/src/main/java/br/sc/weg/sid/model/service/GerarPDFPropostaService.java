@@ -1,20 +1,26 @@
 package br.sc.weg.sid.model.service;
 
+import br.sc.weg.sid.model.entities.Beneficio;
 import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.PdfProposta;
+import br.sc.weg.sid.model.entities.Proposta;
 import com.lowagie.text.*;
+import com.lowagie.text.html.simpleparser.HTMLWorker;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfWriter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.lowagie.text.List;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -22,21 +28,20 @@ import java.util.Date;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class GerarPDFPropostaService {
 
     private final DemandaService demandaService;
 
-    @Autowired
-    public GerarPDFPropostaService(DemandaService demandaService) {
-        this.demandaService = demandaService;
-    }
+    private final PdfPropostaService pdfPropostaService;
 
-    public ResponseEntity<byte[]> export(HttpServletResponse response, Integer idDemanda) throws IOException {
+    public ResponseEntity<byte[]> export(HttpServletResponse response, Integer idDemanda, Proposta proposta) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 40, 25, 15);
         PdfWriter writer = PdfWriter.getInstance(document, baos);
 
-            Optional<Demanda> demanda = demandaService.findById(idDemanda);
+        Optional<Demanda> demanda = demandaService.findById(idDemanda);
+        Optional<PdfProposta> pdfProposta = pdfPropostaService.findByProposta(proposta);
         writer.setPageEvent(new PdfPageEventHelper() {
             @Override
             public void onStartPage(PdfWriter writer, Document document) {
@@ -104,11 +109,94 @@ public class GerarPDFPropostaService {
         actualSituationParagraph.setSpacingBefore(8);
 
         Paragraph actualSituationParagraphText = new Paragraph(demanda.get().getSituacaoAtualDemanda(), textFont);
-
+        actualSituationParagraphText.setSpacingAfter(5);
 
         Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", fontTitle);
         projectScopeParagraph.setSpacingBefore(8);
-        projectScopeParagraph.setSpacingAfter(5);
+
+
+
+
+
+
+        Paragraph projectScopeParagraphText = new Paragraph(pdfProposta.get().getEscopoPropostaHTML(), textFont);
+        projectScopeParagraphText.setSpacingAfter(5);
+
+        Paragraph noPartOfScopeProjectParagraph;
+        if(!pdfProposta.get().getNaoFazParteDoEscopoPropostaHTML().isEmpty()){
+            noPartOfScopeProjectParagraph = new Paragraph("Não faz parte do escopo do projeto:", fontTitle);
+            projectScopeParagraph.setSpacingBefore(8);
+        }else {
+            noPartOfScopeProjectParagraph = new Paragraph();
+        }
+
+        if(!pdfProposta.get().getNaoFazParteDoEscopoPropostaHTML().isEmpty()){
+
+//            System.out.println("JFDKIAFJÇS: " + pdfProposta.get().getEscopoPropostaHTML());
+//            System.out.println(projectScopeParagraphTextHTML);
+
+        }
+            String projectScopeParagraphTextHTML = "<p> <strong> Exemplo: </strong> Este é um trecho de texto em HTML. </p>";
+            HTMLWorker htmlWorker = new HTMLWorker(document);
+            htmlWorker.parse(new StringReader(projectScopeParagraphTextHTML));
+
+        Paragraph evaluatedAlternativesParagraph = new Paragraph("Alternativas Avaliadas:", fontTitle);
+        evaluatedAlternativesParagraph.setSpacingBefore(13);
+
+        Paragraph evaluatedAlternativesParagraphText = new Paragraph(pdfProposta.get().getAlternativasAvaliadasPropostaHTML(), textFont);
+        evaluatedAlternativesParagraphText.setSpacingAfter(5);
+
+        Paragraph projectCoverageParagraph = new Paragraph("Abrangência do Projeto:", fontTitle);
+        projectCoverageParagraph.setSpacingBefore(8);
+
+        Paragraph projectCoverageParagraphText = new Paragraph(pdfProposta.get().getAbrangenciaProjetoPropostaHTML(), textFont);
+        projectCoverageParagraphText.setSpacingAfter(5);
+
+        Paragraph mainRisksParagraph = new Paragraph("Riscos Principais/Plano de Mitigação:", fontTitle);
+        mainRisksParagraph.setSpacingBefore(8);
+
+        Paragraph mainRisksParagraphText = new Paragraph(pdfProposta.get().getPlanoMitigacaoPropostaHTML(), textFont);
+        mainRisksParagraphText.setSpacingAfter(5);
+
+        java.util.List<Beneficio> beneficiosDemanda = pdfProposta.get().getProposta().getDemandaProposta().getBeneficiosDemanda();
+
+        Paragraph expectedResultsQualitativeParagraphText = new Paragraph();
+        Paragraph expectedResultsPotentialParagraphText = new Paragraph();
+        for (Beneficio beneficio : beneficiosDemanda) {
+            if (beneficio.getTipoBeneficio().equals("Qualitativo")) {
+                expectedResultsQualitativeParagraphText = new Paragraph(beneficio.getDescricaoBeneficio(), textFont);
+                expectedResultsQualitativeParagraphText.setSpacingAfter(5);
+            } else if (beneficio.getTipoBeneficio().equals("Potencial")) {
+                expectedResultsPotentialParagraphText = new Paragraph(beneficio.getDescricaoBeneficio(), textFont);
+                expectedResultsPotentialParagraphText.setSpacingAfter(5);
+            }
+        }
+        Paragraph expectedResultsParagraph = null;
+        if (expectedResultsQualitativeParagraphText != null){
+            expectedResultsParagraph = new Paragraph("Resultados Esperados (Qualitativos):", fontTitle);
+            expectedResultsParagraph.setSpacingBefore(8);
+        }
+
+        Paragraph expectedResultsPotentialParagraph = new Paragraph("Resultados Esperados (Qualitativos):", fontTitle);
+        expectedResultsPotentialParagraph.setSpacingBefore(8);
+
+
+
+        Phrase executionPeriodPhrase = new Phrase("Período de execução: ", fontTitle);
+        Chunk executionPeriodChunk = new Chunk(pdfProposta.get().getProposta().getPeriodoExecucaoInicioProposta().toString() + "à" +
+                pdfProposta.get().getProposta().getPeriodoExecucaoFimProposta().toString(), textFont);
+        executionPeriodPhrase.add(executionPeriodChunk);
+        Paragraph executionPeriodParagraph = new Paragraph(requesterPhrase);
+        executionPeriodParagraph.setSpacingBefore(8);
+
+        Phrase paybackPhrase = new Phrase("Payback: ", fontTitle);
+        Chunk paybackChunk = new Chunk(pdfProposta.get().getProposta().getPaybackProposta().toString(), textFont);
+        paybackPhrase.add(paybackChunk);
+        Paragraph paybackParagraph = new Paragraph(paybackPhrase);
+        paybackParagraph.setSpacingBefore(8);
+
+
+
 
         document.add(paragraph);
         document.add(dateParagraph);
@@ -121,13 +209,30 @@ public class GerarPDFPropostaService {
         document.add(actualSituationParagraphText);
 
         document.add(projectScopeParagraph);
+        document.add(projectScopeParagraphText);
 
-        Paragraph evaluatedAlternativesParagraph = new Paragraph("Alternativas Avaliadas:", fontTitle);
-        evaluatedAlternativesParagraph.setSpacingBefore(8);
-        evaluatedAlternativesParagraph.setSpacingAfter(5);
-
+        if (!pdfProposta.get().getNaoFazParteDoEscopoPropostaHTML().isEmpty()) {
+            document.add(noPartOfScopeProjectParagraph);
+        }
 
         document.add(evaluatedAlternativesParagraph);
+        document.add(evaluatedAlternativesParagraphText);
+
+        document.add(projectCoverageParagraph);
+        document.add(projectCoverageParagraphText);
+
+        document.add(mainRisksParagraph);
+        document.add(mainRisksParagraphText);
+
+        if (expectedResultsQualitativeParagraphText != null){
+            document.add(expectedResultsParagraph);
+            document.add(expectedResultsQualitativeParagraphText);
+        }
+
+        document.add(expectedResultsPotentialParagraph);
+        document.add(expectedResultsPotentialParagraphText);
+
+
         document.close();
 
 
