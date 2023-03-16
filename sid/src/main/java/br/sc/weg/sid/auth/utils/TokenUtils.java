@@ -43,7 +43,9 @@ public class TokenUtils {
 
     public String buscarCookie(HttpServletRequest request, String nomeCookie){
         Cookie cookie = WebUtils.getCookie(request, nomeCookie);
-        if (cookie != null) return cookie.getValue();
+        if (cookie != null){
+            return cookie.getValue();
+        }
         throw new RuntimeException("Cookie não encontrado");
     }
 

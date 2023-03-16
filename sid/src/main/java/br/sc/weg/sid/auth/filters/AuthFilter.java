@@ -29,7 +29,6 @@ public class AuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
         try {
             String token = tokenUtils.buscarCookie(request, "jwt");
             Boolean valido = tokenUtils.validarToken(token);

@@ -12,7 +12,6 @@ import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.PdfPropostaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.PropostaUtil;
-import org.hibernate.sql.Update;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +52,6 @@ public class PropostaController {
             }
 
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);
-
             Proposta propostaSalva = propostaService.save(proposta);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
@@ -87,10 +84,8 @@ public class PropostaController {
         try {
             Optional<Proposta> propostaOptional = propostaService.findById(id);
             if (propostaOptional.isPresent()) {
-
                 PropostaUtil propostaUtil = new PropostaUtil();
                 PdfProposta pdfProposta = new PdfProposta();
-
                 try {
                     CadastroPdfPropostaDTO cadastroPdfPropostaDTO = propostaUtil.convertToCadastroPdfPropostaDTO(pdfPropostaForm);
 
@@ -98,7 +93,7 @@ public class PropostaController {
 
                     pdfPropostaService.save(pdfProposta);
                 } catch (Exception e) {
-                    return ResponseEntity.badRequest().body("ERROR 0009: Erro ao salvar pdf da proposta, a atualização da mesma não será realizada!" + "\nMessage: " + e.getMessage());
+                    e.printStackTrace();
                 }
 
                 UpdatePropostaDTO updatePropostaDTO = propostaUtil.convertToUpdateProspotaDTO(updatePropostaForm);
@@ -109,15 +104,16 @@ public class PropostaController {
                     propostaService.save(proposta);
                 } catch (Exception e) {
                     pdfPropostaService.deleteById(pdfProposta.getIdPdfProposta());
-                    return ResponseEntity.badRequest().body("ERROR 0008: Erro ao atualizar proposta!" + "\nMessage: " + e.getMessage());
+                    e.printStackTrace();
                 }
                 return ResponseEntity.ok(proposta);
             } else {
                 return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + id);
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("ERROR 0008: Erro ao atualizar proposta!" + "\nMessage: " + e.getMessage());
+            e.printStackTrace();
         }
+        return ResponseEntity.badRequest().body("ERROR 0005: Erro ao atualizar proposta!");
     }
 
     @GetMapping

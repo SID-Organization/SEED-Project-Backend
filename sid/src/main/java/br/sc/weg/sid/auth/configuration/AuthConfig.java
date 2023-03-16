@@ -33,7 +33,7 @@ public class AuthConfig {
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
                 .antMatchers("/login", "/login/auth").permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().permitAll();
         httpSecurity.csrf().disable()
                 .cors().disable();
 
