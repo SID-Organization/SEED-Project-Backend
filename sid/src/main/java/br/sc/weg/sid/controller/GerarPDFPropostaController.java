@@ -1,6 +1,7 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.GerarPDFDTO;
+import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.GerarPDFPropostaService;
 import br.sc.weg.sid.model.service.PropostaService;
@@ -42,23 +43,29 @@ public class GerarPDFPropostaController {
 
         try{
             if (demandaService.existsById(gerarPDFDTO.getIdDemanda())) {
-                byte[] pdf = gerarPDFService.export(response, gerarPDFDTO.getIdDemanda()).getBody();
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_PDF);
-                headers.setContentDisposition(ContentDisposition.builder("attachment").filename("pdf_teste.pdf").build());
-//                if (propostaService.existsById(gerarPDFDTO.getIdProposta())) {
-//                    Proposta proposta = propostaService.findById(gerarPDFDTO.getIdProposta()).get();
-//                    proposta.setPropostaPDF(pdf);
-//                    propostaService.save(proposta);
-//                }else {
-//                    return ResponseEntity.badRequest().body("Proposta não encontrada");
-//                }
-                return ResponseEntity.ok().headers(headers).body(pdf);
+                if (propostaService.existsById(gerarPDFDTO.getIdProposta())) {
+                    Proposta proposta = propostaService.findById(gerarPDFDTO.getIdProposta()).get();
+                    byte[] pdf = gerarPDFService.export(response, gerarPDFDTO.getIdDemanda(), proposta).getBody();
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_PDF);
+                    headers.setContentDisposition(ContentDisposition.builder("attachment").filename("pdf_teste.pdf").build());
+    //                if (propostaService.existsById(gerarPDFDTO.getIdProposta())) {
+    //                    Proposta proposta = propostaService.findById(gerarPDFDTO.getIdProposta()).get();
+    //                    proposta.setPropostaPDF(pdf);
+    //                    propostaService.save(proposta);
+    //                }else {
+    //                    return ResponseEntity.badRequest().body("Proposta não encontrada");
+    //                }
+                    return ResponseEntity.ok().headers(headers).body(pdf);
+                }else {
+                    return ResponseEntity.badRequest().body("Proposta não encontrada");
+                }
             } else {
                 return ResponseEntity.badRequest().body("Demanda não encontrada");
             }
         }catch (Exception e){
-            return ResponseEntity.badRequest().body("Erro ao gerar PDF: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Erro ao gerar PDF");
         }
     }
 
