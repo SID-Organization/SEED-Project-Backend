@@ -131,14 +131,11 @@ public class GerarPDFPropostaService {
         }
 
         if(!pdfProposta.get().getNaoFazParteDoEscopoPropostaHTML().isEmpty()){
+            String projectScopeParagraphTextHTML = pdfProposta.get().getEscopoPropostaHTML();
 
-//            System.out.println("JFDKIAFJÇS: " + pdfProposta.get().getEscopoPropostaHTML());
-//            System.out.println(projectScopeParagraphTextHTML);
-
-        }
-            String projectScopeParagraphTextHTML = "<p> <strong> Exemplo: </strong> Este é um trecho de texto em HTML. </p>";
             HTMLWorker htmlWorker = new HTMLWorker(document);
             htmlWorker.parse(new StringReader(projectScopeParagraphTextHTML));
+        }
 
         Paragraph evaluatedAlternativesParagraph = new Paragraph("Alternativas Avaliadas:", fontTitle);
         evaluatedAlternativesParagraph.setSpacingBefore(13);
