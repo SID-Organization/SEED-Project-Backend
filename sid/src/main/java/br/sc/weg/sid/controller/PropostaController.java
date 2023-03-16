@@ -81,7 +81,7 @@ public class PropostaController {
     @PutMapping("/update/{id}")
     ResponseEntity<Object> atualizarProposta(
             @PathVariable("id") Integer id,
-            @RequestParam(value = "updatePropostaForm" , required = true) @Valid String updatePropostaForm,
+            @RequestParam(value = "updatePropostaForm") String updatePropostaForm,
             @RequestParam(value = "pdfPropostaForm", required = false) String pdfPropostaForm
     ) {
         try {

@@ -16,4 +16,7 @@ public class CadastroPdfDemandaDTO {
     @NotNull(message = "O campo situacaoAtualDemandaHTML não pode ser nulo")
     public String situacaoAtualDemandaHTML;
 
+    @NotNull(message = "O campo frequenciaUsoDemandaHTML não pode ser nulo")
+    public String frequenciaUsoDemandaHTML;
+
 }

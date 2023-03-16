@@ -20,6 +20,9 @@ public class PdfDemanda {
     @Column(columnDefinition = "TEXT", name = "situacaoAtualDemandaHTML")
     private String situacaoAtualDemandaHTML;
 
+    @Column(columnDefinition = "TEXT", name = "frequenciaUsoDemandaHTML")
+    private String frequenciaUsoDemandaHTML;
+
     @JoinColumn(name = "idDemanda", referencedColumnName = "idDemanda")
     @ManyToOne
     private Demanda demanda;
