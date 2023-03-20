@@ -3,6 +3,7 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.CadastroPautaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.PautaService;
+import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.PautaUtil;
 import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
@@ -23,11 +24,19 @@ public class PautaController {
     @Autowired
     PautaService pautaService;
 
+    @Autowired
+    PropostaService propostaService;
+
     @PostMapping
     public ResponseEntity<Object> cadastroPauta(@RequestBody @Valid CadastroPautaDTO cadastroPautaDTO) {
         Pauta pauta = new Pauta();
         BeanUtils.copyProperties(cadastroPautaDTO, pauta);
         Pauta pautaSalva = pautaService.save(pauta);
+        List<Proposta> propostas = pautaSalva.getPropostasPauta();
+        for (Proposta proposta : propostas) {
+            proposta.setPautaProposta(pautaSalva);
+            propostaService.save(proposta);
+        }
         return ResponseEntity.ok("Pauta cadastrada com sucesso! \n" + pautaSalva);
     }
 

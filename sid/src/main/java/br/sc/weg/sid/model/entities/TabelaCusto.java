@@ -27,7 +27,7 @@ public class TabelaCusto {
     @Column(name = "totalTabelaCusto", nullable = false)
     private Double totalTabelaCusto;
 
-    @JoinColumn(name = "IdLinhaTabela", referencedColumnName = "IdLinhaTabela")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LinhaTabela> linhaTabela;
+//    @JoinColumn(name = "IdLinhaTabela", referencedColumnName = "IdLinhaTabela")
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<LinhaTabela> linhaTabela;
 }

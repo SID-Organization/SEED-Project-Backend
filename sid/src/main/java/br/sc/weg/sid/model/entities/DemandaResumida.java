@@ -17,4 +17,6 @@ public class DemandaResumida {
     Double scoreDemanda;
 
     StatusDemanda statusDemanda;
+
+    String nomeSolicitante;
 }
