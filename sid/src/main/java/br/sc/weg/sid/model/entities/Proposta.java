@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;
@@ -65,6 +66,10 @@ public class Proposta {
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
     @FutureOrPresent
+    @Column(name = "PeriodoExecucaoDemanda")
+    private Date periodoExecucaoDemanda;
+
+    @FutureOrPresent
     @Column(name = "PeriodoExecucaoDemandaInicio")
     private Date periodoExecucaoDemandaInicio;
 
@@ -78,17 +83,14 @@ public class Proposta {
     @Column(name = "AreaResponsavelNegocio")
     private String areaResponsavelNegocio;
 
-    @JoinColumn(name = "CentroCusto", referencedColumnName = "IdCentroCusto")
-    @ManyToOne(optional = false)
+
+    @JoinColumn(name = "CentroCusto", referencedColumnName = "IdCentroCusto", nullable = true)
+    @ManyToOne(optional = true)
     private CentroCusto centroCusto;
 
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
     @ManyToOne(optional = false)
     private Demanda demandaProposta;
-
-//    @JoinColumn(name = "tabelaCustoProposta", referencedColumnName = "IdTabelaCusto")
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<TabelaCusto> tabelaCustoProposta;
 
     @ManyToMany
     @JoinTable(name = "responsaveis_negocio",
@@ -96,9 +98,11 @@ public class Proposta {
             inverseJoinColumns = @JoinColumn(name = "numeroCadastroUsuario"))
     private List<Usuario> responsaveisNegocio;
 
-    @OneToOne
-    @JoinColumn(name = "idPauta")
-    private Pauta pautaProposta;
+    @ManyToMany
+    @JoinTable(name = "pauta_proposta",
+            joinColumns = @JoinColumn(name = "idProposta"),
+            inverseJoinColumns = @JoinColumn(name = "idPauta"))
+    private List<Pauta> pautaProposta;
 
 }
 

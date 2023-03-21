@@ -1,13 +1,11 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
-import br.sc.weg.sid.model.entities.Ata;
-import br.sc.weg.sid.model.entities.AtaResumida;
-import br.sc.weg.sid.model.entities.Pauta;
-import br.sc.weg.sid.model.entities.PropostasLog;
+import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.PautaService;
 import br.sc.weg.sid.model.service.PropostaLogService;
+import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.AtaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +29,9 @@ public class AtaController {
 
     @Autowired
     PropostaLogService propostaLogService;
+
+    @Autowired
+    PropostaService propostaService;
 
     @PostMapping
     public ResponseEntity<Object> save(
@@ -61,10 +62,15 @@ public class AtaController {
                 propostasLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
                 propostasLog.setDemandaTituloPropostaLog(proposta.getDemandaProposta().getTituloDemanda());
                 propostasLog.setDemandaTempoExecucaoPropostaLog(Long.valueOf(proposta.getPeriodoExecucaoDemanda().getTime()).intValue());
-                propostasLog.setConsideracoesProposta(cadastroAtaDTO.getConsideracoesProposta());
-                propostasLog.setParecerComissaoPropostaLog(cadastroAtaDTO.getParecerComissaoPropostaLog());
-                propostasLog.setTipoAta(cadastroAtaDTO.getTipoAta());
                 propostasLog.setPropostaPropostaLog(proposta);
+                cadastroAtaDTO.getPropostasLogDTO().forEach(propostaLogDTO -> {
+                    Proposta propostaLogFind = propostaService.findById(propostaLogDTO.getPropostaPropostaLogDTO().getIdProposta()).get();
+                    if (propostaLogFind.getIdProposta().equals(proposta.getIdProposta())) {
+                        propostasLog.setConsideracoesProposta(propostaLogDTO.getConsideracoesPropostaLogDTO());
+                        propostasLog.setParecerComissaoPropostaLog(propostaLogDTO.getParecerComissaoPropostaLogDTO());
+                        propostasLog.setTipoAta(propostaLogDTO.getTipoAtaPropostaLogDTO());
+                    }
+                });
                 propostaLogService.save(propostasLog);
             });
             ata.setPropostasLogAta(propostasLogs);
@@ -121,18 +127,17 @@ public class AtaController {
         }
     }
 
-    @GetMapping("/pauta-ata/{idPauta}")
-    public ResponseEntity<Object> findByPautaAta(@PathVariable Integer idPauta) {
-        try {
-            Pauta pautaAta = pautaService.findById(idPauta).get();
-            List<Ata> atas = ataService.findByPautaAta(pautaAta);
-            if (atas.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ata com id da pauta: " + idPauta + " não encontrada");
-            }
-            return ResponseEntity.ok(atas);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao buscar ata: " + e.getMessage());
-        }
-    }
+//    @GetMapping("/pauta-ata/{idPauta}")
+//    public ResponseEntity<Object> findByPautaAta(@PathVariable Integer idPauta) {
+//        try {
+//            Pauta pautaAta = pautaService.findById(idPauta).get();
+//            List<Ata> atas = ataService.findByPautaAta(pautaAta);
+//            if (atas.isEmpty()) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ata com id da pauta: " + idPauta + " não encontrada");
+//            }
+//            return ResponseEntity.ok(atas);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body("Erro ao buscar ata: " + e.getMessage());
+//        }
 
 }

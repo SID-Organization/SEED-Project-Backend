@@ -11,7 +11,7 @@ public class PropostaResumida {
 
     Integer tempoDeExecucaoDemanda;
 
-    Integer valorDemanda;
+    Double valorDemanda;
 
     Integer idDemanda;
 

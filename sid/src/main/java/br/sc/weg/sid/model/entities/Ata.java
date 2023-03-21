@@ -34,7 +34,6 @@ public class Ata {
     @OneToMany(mappedBy = "idPropostaLog")
     List<PropostasLog> propostasLogAta;
 
-    @Column(name = "PautaAta", nullable = false)
     @OneToOne
     Pauta pautaAta;
 }
