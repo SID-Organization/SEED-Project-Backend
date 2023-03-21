@@ -31,24 +31,14 @@ public class CentroCustoController {
         }
     }
 
-    @GetMapping()
-    public ResponseEntity<Object> findAll() {
-        List<CentroCusto> centroCustos = centroCustoService.findAll();
-        if (centroCustos.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum centro de custo encontrado!");
-        }
-        return ResponseEntity.status(HttpStatus.FOUND).body(centroCustos);
-    }
-
-    @GetMapping("/nome/{nomeCentroCusto}")
-    public ResponseEntity<Object> findByNomeCentroCusto(@PathVariable String nomeCentroCusto) {
-        try {
-            CentroCusto centroCusto = centroCustoService.findByNomeCentroCusto(nomeCentroCusto).get();
-            return ResponseEntity.status(HttpStatus.FOUND).body(centroCusto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Centro de custo com o nome: " + nomeCentroCusto + " não existe!");
-        }
-    }
+//    @GetMapping()
+//    public ResponseEntity<Object> findAll() {
+//        List<CentroCusto> centroCustos = centroCustoService();
+//        if (centroCustos.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum centro de custo encontrado!");
+//        }
+//        return ResponseEntity.status(HttpStatus.FOUND).body(centroCustos);
+//    }
 
     @GetMapping("/id/{idCentroCusto}")
     public ResponseEntity<Object> findByIdCentroCusto(@PathVariable Integer idCentroCusto) {

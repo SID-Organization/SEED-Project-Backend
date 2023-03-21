@@ -14,10 +14,6 @@ public class CentroCustoService {
     @Autowired
     private CentroCustoRepository centroCustoRepository;
 
-    public List<CentroCusto> findAll() {
-        return centroCustoRepository.findAll();
-    }
-
     public <S extends CentroCusto> S save(S entity) {
         return centroCustoRepository.save(entity);
     }
@@ -33,9 +29,4 @@ public class CentroCustoService {
     public void deleteById(Integer integer) {
         centroCustoRepository.deleteById(integer);
     }
-
-    public Optional<CentroCusto> findByNomeCentroCusto(String nomeCentroCusto) {
-        return centroCustoRepository.findByNomeCentroCusto(nomeCentroCusto);
-    }
-
 }

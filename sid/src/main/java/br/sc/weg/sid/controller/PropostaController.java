@@ -103,11 +103,8 @@ public class PropostaController {
                 try {
                     propostaService.save(proposta);
 
-                    TabelaCusto tabelaCusto = updatePropostaDTO.getTabelaCusto();
-                    tabelaCusto.setProposta(proposta);
-                    tabelaCustoService.save(tabelaCusto);
-
-
+//                    TabelaCusto tabelaCusto = updatePropostaDTO.getTabelaCusto();
+//                    tabelaCustoService.save(tabelaCusto);
                 } catch (Exception e) {
                     pdfPropostaService.deleteById(pdfProposta.getIdPdfProposta());
                     e.printStackTrace();

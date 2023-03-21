@@ -28,6 +28,7 @@ public interface TabelaCustoRepository extends JpaRepository<TabelaCusto, Intege
 
     @Override
     default void deleteById(Integer integer) {
-
     }
+
+    List<TabelaCusto> findByProposta(Proposta proposta);
 }

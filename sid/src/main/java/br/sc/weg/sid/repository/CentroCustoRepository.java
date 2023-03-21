@@ -8,5 +8,16 @@ import java.util.Optional;
 
 @Repository
 public interface CentroCustoRepository extends JpaRepository<CentroCusto, Integer> {
-    Optional<CentroCusto> findByNomeCentroCusto(String nomeCentroCusto);
+
+    @Override
+    <S extends CentroCusto> S save(S entity);
+
+    @Override
+    Optional<CentroCusto> findById(Integer integer);
+
+    @Override
+    boolean existsById(Integer integer);
+
+    @Override
+    void deleteById(Integer integer);
 }

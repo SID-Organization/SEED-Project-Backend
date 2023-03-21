@@ -33,4 +33,8 @@ public class TabelaCustoService {
     public void deleteById(Integer integer) {
         tabelaCustoRepository.deleteById(integer);
     }
+
+    public List<TabelaCusto> findByProposta(Proposta proposta) {
+        return tabelaCustoRepository.findByProposta(proposta);
+    }
 }

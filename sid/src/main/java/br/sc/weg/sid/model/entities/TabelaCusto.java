@@ -24,10 +24,19 @@ public class TabelaCusto {
     @Enumerated(EnumType.STRING)
     private TipoDeDespesa tipoDespesa;
 
-    @Column(name = "totalTabelaCusto", nullable = false)
-    private Double totalTabelaCusto;
+    @Column(name = "PerfilDespesaTabelaCusto", nullable = false)
+    private String perfilDespesaTabelaCusto;
 
-    @JoinColumn(name = "IdLinhaTabela", referencedColumnName = "IdLinhaTabela")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LinhaTabela> linhaTabela;
+    @Column(name = "PeriodoExecucaoTabelaCusto", nullable = false)
+    private Integer periodoExecucaoTabelaCusto;
+
+    @Column(name = "QuantidadeHorasTabelaCusto", nullable = false)
+    private Integer quantidadeHorasTabelaCusto;
+
+    @Column(name = "ValorHoraTabelaCusto", nullable = false)
+    private Double valorHoraTabelaCusto;
+
+    @JoinColumn(name = "IdProposta", nullable = false)
+    @ManyToOne
+    private Proposta proposta;
 }

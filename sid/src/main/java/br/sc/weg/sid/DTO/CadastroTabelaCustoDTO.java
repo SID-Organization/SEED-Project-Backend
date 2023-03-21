@@ -13,27 +13,19 @@ import java.util.List;
 
 @Data
 public class CadastroTabelaCustoDTO {
-    @NotBlank(message = "O campo Nome da Tabela de Custo é obrigatório")
-    private String nomeTabelaCusto;
-    @NotNull(message = "O campo Licenças é obrigatório")
-    private Integer licensasTabelaCusto;
-    @NotNull(message = "O campo Esforço é obrigatório")
-    private Integer esforcoTabelaCusto;
-    @NotNull(message = "O campo Total é obrigatório")
-    private Double totalTabelaCusto;
-    @NotNull(message = "O campo Proposta é obrigatório")
-    private Proposta idProposta;
 
     private TipoDeDespesa tipoDespesa;
 
-    private PerfilDeDespesa perfilDespesa;
+    private String perfilDespesaTabelaCusto;
 
-    private Integer periodoExecucao;
+    private Integer periodoExecucaoTabelaCusto;
 
-    private Integer quantidadeHorasNecessarias;
+    private Integer quantidadeHorasTabelaCusto;
 
-    private Double valorHora;
+    private Double valorHoraTabelaCusto;
 
-    private List<CentroCusto> centroCusto;
+    private Proposta proposta;
+
+    private CentroCusto centroCusto;
 }
 

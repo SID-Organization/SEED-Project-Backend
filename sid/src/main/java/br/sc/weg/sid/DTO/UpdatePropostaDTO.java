@@ -1,5 +1,6 @@
 package br.sc.weg.sid.DTO;
 
+import br.sc.weg.sid.model.entities.CentroCusto;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.model.entities.Usuario;
@@ -19,10 +20,16 @@ public class UpdatePropostaDTO {
     private Double paybackProposta;
     private Integer aprovadoWorkflowProposta;
     private String motivoRecusaWorkflowProposta;
-    private Date periodoExecucaoDemanda;
+    private Date periodoExecucaoDemandaInicio;
+    private Date periodoExecucaoDemandaFim;
     private String naoFazParteDoEscopoProposta;
     private String alternativasAvaliadasProposta;
     private String planoMitigacaoProposta;
-    private Integer custosTotaisDoProjeto;
+    private Double custosTotaisDoProjeto;
+    private Double custosInternosDoProjeto;
+    private Double custosExternosDoProjeto;
     private TabelaCusto tabelaCusto;
+    private CentroCusto centroCusto;
+    private String nomeResponsavelNegocio;
+    private String areaResponsavelNegocio;
 }
