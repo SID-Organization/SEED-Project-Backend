@@ -66,6 +66,10 @@ public class Proposta {
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
     @FutureOrPresent
+    @Column(name = "PeriodoExecucaoDemanda")
+    private Date periodoExecucaoDemanda;
+
+    @FutureOrPresent
     @Column(name = "PeriodoExecucaoDemandaInicio")
     private Date periodoExecucaoDemandaInicio;
 
@@ -94,9 +98,11 @@ public class Proposta {
             inverseJoinColumns = @JoinColumn(name = "numeroCadastroUsuario"))
     private List<Usuario> responsaveisNegocio;
 
-    @OneToOne
-    @JoinColumn(name = "idPauta")
-    private Pauta pautaProposta;
+    @ManyToMany
+    @JoinTable(name = "pauta_proposta",
+            joinColumns = @JoinColumn(name = "idProposta"),
+            inverseJoinColumns = @JoinColumn(name = "idPauta"))
+    private List<Pauta> pautaProposta;
 
 }
 

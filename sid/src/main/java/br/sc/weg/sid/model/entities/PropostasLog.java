@@ -23,7 +23,7 @@ public class PropostasLog {
     private Integer demandaTempoExecucaoPropostaLog;
 
     @Column(name = "demandaValorPropostaLog", nullable = false)
-    private Integer demandaValorPropostaLog;
+    private Double demandaValorPropostaLog;
 
     @Column(name = "parecerComissaoPropostaLog", nullable = false)
     private ParecerComissao parecerComissaoPropostaLog;
@@ -34,9 +34,8 @@ public class PropostasLog {
     @Column(name = "tipoAta", nullable = false)
     private TipoAta tipoAta;
 
-//    @Column(name = "propostaPropostaLog", nullable = false)
-//    @OneToOne
-//    @JsonIgnore
-//    private Proposta propostaPropostaLog;
+    @OneToOne
+    @JsonIgnore
+    private Proposta propostaPropostaLog;
 
 }
