@@ -20,7 +20,7 @@ public class PropostasLog {
     private String demandaTituloPropostaLog;
 
     @Column(name = "demandaTempoExecucaoPropostaLog", nullable = false)
-    private Integer demandaTempoExecucaoPropostaLog;
+    private Long demandaTempoExecucaoPropostaLog;
 
     @Column(name = "demandaValorPropostaLog", nullable = false)
     private Double demandaValorPropostaLog;

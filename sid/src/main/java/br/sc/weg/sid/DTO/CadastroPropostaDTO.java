@@ -25,4 +25,10 @@ public class CadastroPropostaDTO {
     private Demanda demandaProposta;
     @NotNull(message = "O campo responsaveisNegocio não pode ser nulo")
     private List<Usuario> responsaveisNegocio;
+
+    @NotNull(message = "O campo periodoExecucaoDemandaInicio não pode ser nulo")
+    private Date periodoExecucaoDemandaInicio;
+
+    @NotNull(message = "O campo periodoExecucaoDemandaFim não pode ser nulo")
+    private Date periodoExecucaoDemandaFim;
 }

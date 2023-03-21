@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class AtaResumida {
@@ -16,6 +17,8 @@ public class AtaResumida {
 
     LocalTime horarioInicioAta;
 
-    Usuario analistaResponsavel;
+    String analistaResponsavel;
+
+    List<PropostasLog> propostasLog;
 
 }

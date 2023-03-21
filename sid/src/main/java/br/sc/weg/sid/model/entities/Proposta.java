@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -65,9 +66,6 @@ public class Proposta {
 
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
-    @FutureOrPresent
-    @Column(name = "PeriodoExecucaoDemanda")
-    private Date periodoExecucaoDemanda;
 
     @FutureOrPresent
     @Column(name = "PeriodoExecucaoDemandaInicio")
@@ -98,6 +96,7 @@ public class Proposta {
             inverseJoinColumns = @JoinColumn(name = "numeroCadastroUsuario"))
     private List<Usuario> responsaveisNegocio;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "pauta_proposta",
             joinColumns = @JoinColumn(name = "idProposta"),

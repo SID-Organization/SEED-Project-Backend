@@ -16,16 +16,6 @@ public class CadastroAtaDTO {
 
     @NotNull(message = "O campo pautaAt a não pode ser nulo")
     private Pauta pautaAta;
-
-    @NotNull(message = "O campo parecerComissao não pode ser nulo")
-    private ParecerComissao parecerComissaoPropostaLog;
-
-    @NotNull(message = "O campo consideracoesProposta não pode ser nulo")
-    private String consideracoesProposta;
-
-    @NotNull(message = "O campo tipoAta não pode ser nulo")
-    private TipoAta tipoAta;
-
     @NotNull(message = "A lista de PropostaLogDTO não pode ser nulo")
     private List<CadastroPropostaLogDTO> propostasLogDTO;
 

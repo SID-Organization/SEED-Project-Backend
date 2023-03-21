@@ -48,7 +48,7 @@ public class AtaUtil {
         try {
             return this.mapper.readValue(ataJson, CadastroAtaDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroAtaDTO! \n" + e.getMessage());
+            throw new RuntimeException("Erro ao converter o ataJson para objeto CadastroAtaDTO! \n" + e.getMessage());
         }
     }
 
@@ -60,9 +60,10 @@ public class AtaUtil {
             BeanUtils.copyProperties(ata, ataResumida);
             ataResumida.setIdAta(ata.getIdAta());
             ataResumida.setQtdPropostas(ata.getPropostasLogAta().size());
-//            ataResumida.setDataReuniaoAta(ata.getPautaAta().getDataReuniaoPauta());
-//            ataResumida.setHorarioInicioAta(ata.getPautaAta().getHorarioInicioPauta());
-//            ataResumida.setAnalistaResponsavel(ata.getPautaAta().getAnalistaResponsavelPauta());
+            ataResumida.setDataReuniaoAta(ata.getPautaAta().getDataReuniaoPauta());
+            ataResumida.setHorarioInicioAta(ata.getPautaAta().getHorarioInicioPauta());
+            ataResumida.setAnalistaResponsavel(ata.getPautaAta().getAnalistaResponsavelPauta().getNomeUsuario());
+            ataResumida.setPropostasLog(ata.getPropostasLogAta());
             atasResumidas.add(ataResumida);
         });
         return atasResumidas;

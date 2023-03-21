@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,13 +58,25 @@ public class AtaController {
 
         try {
             List<PropostasLog> propostasLogs = new ArrayList<>();
+            cadastroAtaDTO.setPautaAta(pautaService.findById(cadastroAtaDTO.getPautaAta().getIdPauta()).get());
             cadastroAtaDTO.getPautaAta().getPropostasPauta().forEach(proposta -> {
                 PropostasLog propostasLog = new PropostasLog();
                 propostasLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
                 propostasLog.setDemandaTituloPropostaLog(proposta.getDemandaProposta().getTituloDemanda());
-                propostasLog.setDemandaTempoExecucaoPropostaLog(Long.valueOf(proposta.getPeriodoExecucaoDemanda().getTime()).intValue());
+                Instant periodoExecucaoDemandaInicioInstant = proposta.getPeriodoExecucaoDemandaInicio().toInstant();
+                LocalDate dataInicial = periodoExecucaoDemandaInicioInstant.atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDateTime dataHoraInicial = LocalDateTime.of(dataInicial, LocalTime.MIN);
+
+                Instant periodoExecucaoDemandaFimInstant = proposta.getPeriodoExecucaoDemandaFim().toInstant();
+                LocalDate dataFinal = periodoExecucaoDemandaFimInstant.atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDateTime dataHoraFinal = LocalDateTime.of(dataFinal, LocalTime.MIN);
+                Duration duracao = Duration.between(dataHoraInicial, dataHoraFinal);
+                Long diferencaEmHoras = duracao.toHours();
+                propostasLog.setDemandaTempoExecucaoPropostaLog(diferencaEmHoras);
                 propostasLog.setPropostaPropostaLog(proposta);
+                System.out.println("aqui");
                 cadastroAtaDTO.getPropostasLogDTO().forEach(propostaLogDTO -> {
+                    System.out.print("EIEOFJKPIA");
                     Proposta propostaLogFind = propostaService.findById(propostaLogDTO.getPropostaPropostaLogDTO().getIdProposta()).get();
                     if (propostaLogFind.getIdProposta().equals(proposta.getIdProposta())) {
                         propostasLog.setConsideracoesProposta(propostaLogDTO.getConsideracoesPropostaLogDTO());
