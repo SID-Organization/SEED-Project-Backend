@@ -58,7 +58,7 @@ public class AtaUtil {
             AtaResumida ataResumida = new AtaResumida();
             BeanUtils.copyProperties(ata, ataResumida);
             ataResumida.setIdAta(ata.getIdAta());
-            ataResumida.setQtdPropostas(ata.getPautaAta().getPropostasPauta().size());
+            ataResumida.setQtdPropostas(ata.getPropostasLogAta().size());
             ataResumida.setDataReuniaoAta(ata.getPautaAta().getDataReuniaoPauta());
             ataResumida.setHorarioInicioAta(ata.getPautaAta().getHorarioInicioPauta());
             ataResumida.setAnalistaResponsavel(ata.getPautaAta().getAnalistaResponsavelPauta());

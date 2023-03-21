@@ -4,15 +4,13 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Table(name = "ATA")
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode
 @Data
+@AllArgsConstructor @NoArgsConstructor
+@EqualsAndHashCode
 public class Ata {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +30,11 @@ public class Ata {
     @NotNull
     private byte[] documentoAprovacaoAta;
 
+    @Column(name = "PropostasAta", nullable = false)
+    @OneToMany(mappedBy = "idPropostaLog")
+    List<PropostasLog> propostasLogAta;
+
+    @Column(name = "PautaAta", nullable = false)
     @OneToOne
-    @JoinColumn(name = "idPauta", referencedColumnName = "idPauta")
     Pauta pautaAta;
 }

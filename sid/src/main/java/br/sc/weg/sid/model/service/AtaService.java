@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.Ata;
+import br.sc.weg.sid.model.entities.Pauta;
 import br.sc.weg.sid.repository.AtaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,9 @@ public class AtaService {
 
     public Ata findByNumeroDgAta(Integer numeroDgAta) {
         return ataRepository.findByNumeroDgAta(numeroDgAta);
+    }
+
+    public List<Ata> findByPautaAta(Pauta pautaAta) {
+        return ataRepository.findByPautaAta(pautaAta);
     }
 }

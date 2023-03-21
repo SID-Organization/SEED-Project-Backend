@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -76,9 +77,12 @@ public class Proposta {
             inverseJoinColumns = @JoinColumn(name = "numeroCadastroUsuario"))
     private List<Usuario> responsaveisNegocio;
 
-    @OneToOne
-    @JoinColumn(name = "idPauta")
-    private Pauta pautaProposta;
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "pauta_proposta",
+            joinColumns = @JoinColumn(name = "idProposta"),
+            inverseJoinColumns = @JoinColumn(name = "idPauta"))
+    private List<Pauta> pautaProposta;
 
 }
 
