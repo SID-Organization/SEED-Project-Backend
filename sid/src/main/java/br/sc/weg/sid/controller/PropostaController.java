@@ -86,32 +86,12 @@ public class PropostaController {
             if (propostaOptional.isPresent()) {
                 PropostaUtil propostaUtil = new PropostaUtil();
                 PdfProposta pdfProposta = new PdfProposta();
-                try {
-                    CadastroPdfPropostaDTO cadastroPdfPropostaDTO = propostaUtil.convertToCadastroPdfPropostaDTO(pdfPropostaForm);
-
-                    BeanUtils.copyProperties(cadastroPdfPropostaDTO, pdfProposta);
-
-                    pdfPropostaService.save(pdfProposta);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
                 UpdatePropostaDTO updatePropostaDTO = propostaUtil.convertToUpdateProspotaDTO(updatePropostaForm);
 
                 Proposta proposta = propostaOptional.get();
                 BeanUtils.copyProperties(updatePropostaDTO, proposta);
-                try {
                     propostaService.save(proposta);
-
-//                    TabelaCusto tabelaCusto = updatePropostaDTO.getTabelaCusto();
-//                    tabelaCusto.set(proposta);
-//                    tabelaCustoService.save(tabelaCusto);
-
-
-                } catch (Exception e) {
-                    pdfPropostaService.deleteById(pdfProposta.getIdPdfProposta());
-                    e.printStackTrace();
-                }
                 return ResponseEntity.ok(proposta);
             } else {
                 return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + id);
