@@ -54,7 +54,7 @@ public class CentroCustoController {
         if (centroCusto == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum centro de custo encontrado!");
         }
-        return ResponseEntity.status(HttpStatus.FOUND).body(centroCusto);
+        return ResponseEntity.status(HttpStatus.OK).body(centroCusto);
 
     }
 

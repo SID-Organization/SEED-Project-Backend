@@ -29,7 +29,7 @@ public class BusinessUnityController {
         if (businessUnities.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma Business Unity encontrada!");
         }
-        return ResponseEntity.status(HttpStatus.FOUND).body(businessUnities);
+        return ResponseEntity.status(HttpStatus.OK).body(businessUnities);
     }
 
     @PostMapping()
@@ -48,14 +48,14 @@ public class BusinessUnityController {
         if(!businessUnityService.existsById(idBusinessUnity)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Business Unity com o id: " + idBusinessUnity + " não existe!");
         }
-        return ResponseEntity.status(HttpStatus.FOUND).body(businessUnityService.findById(idBusinessUnity).get());
+        return ResponseEntity.status(HttpStatus.OK).body(businessUnityService.findById(idBusinessUnity).get());
     }
 
     @GetMapping("/nome/{nameBusinessUnity}")
     public ResponseEntity<Object> findByNameBusinessUnity(@PathVariable String nameBusinessUnity) {
         Optional<BusinessUnity> businessUnity = businessUnityService.findByNomeBusinessUnity(nameBusinessUnity);
         if (businessUnity.isPresent()) {
-            return ResponseEntity.status(HttpStatus.FOUND).body(businessUnity.get());
+            return ResponseEntity.status(HttpStatus.OK).body(businessUnity.get());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Business Unity com o nome: " + nameBusinessUnity + " não existe!");
     }

@@ -87,6 +87,7 @@ public class PropostaController {
                 PropostaUtil propostaUtil = new PropostaUtil();
                 PdfProposta pdfProposta = new PdfProposta();
 
+
                 UpdatePropostaDTO updatePropostaDTO = propostaUtil.convertToUpdateProspotaDTO(updatePropostaForm);
 
                 Proposta proposta = propostaOptional.get();

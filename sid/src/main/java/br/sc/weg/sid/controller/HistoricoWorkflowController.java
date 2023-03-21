@@ -45,7 +45,7 @@ public class HistoricoWorkflowController {
             if (historicoWorkflows.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado!");
             }
-            return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflowResumidos);
+            return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflowResumidos);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
         }
@@ -118,7 +118,7 @@ public class HistoricoWorkflowController {
                     }
                 }
             });
-            return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflowResumidos);
+            return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflowResumidos);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
         }
@@ -133,7 +133,7 @@ public class HistoricoWorkflowController {
             if (historicoWorkflows.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado com o responsável de número de cadastro " + numeroCadastroResponsavel + "!");
             }
-            return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflows);
+            return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflows);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
         }
@@ -149,7 +149,7 @@ public class HistoricoWorkflowController {
             if (historicoWorkflows.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado com o status: " + statusWorkflow);
             }
-            return ResponseEntity.status(HttpStatus.FOUND).body(historicoWorkflows);
+            return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflows);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao buscar histórico de workflow: " + e.getMessage());
         }

@@ -45,12 +45,18 @@ public class PropostaUtil {
 
     ;
 
-    public CadastroPdfPropostaDTO convertToCadastroPdfPropostaDTO(String json) {
+    public CadastroPdfPropostaDTO convertToCadastroPdfPropostaDTO(String pdfPropostaJson) {
         try {
-            return this.mapper.readValue(json, CadastroPdfPropostaDTO.class);
+            return this.mapper.readValue(pdfPropostaJson, CadastroPdfPropostaDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroPdfDemandaDTO! \n" + e.getMessage());
+            throw new RuntimeException("Erro ao converter o pdfPropostaJson para objeto CadastroPdfPropostaDTO! \n" + e.getMessage());
         }
+    }
+
+    public PdfProposta convertPdfDtoToModel(CadastroPdfPropostaDTO cadastroPdfPropostaDTO) {
+        PdfProposta pdfDemanda = new PdfProposta();
+        BeanUtils.copyProperties(cadastroPdfPropostaDTO, pdfDemanda);
+        return pdfDemanda;
     }
 
     public Proposta convertDtoToModel(UpdatePropostaDTO updatePropostaDTO) {

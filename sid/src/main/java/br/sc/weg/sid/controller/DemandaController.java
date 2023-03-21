@@ -62,7 +62,7 @@ public class DemandaController {
         }
         DemandaUtil demandaUtil = new DemandaUtil();
         List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasFiltradas);
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
     //Get all, pega todas as demandas
@@ -81,7 +81,7 @@ public class DemandaController {
             return demandaResumida;
         }).collect(Collectors.toList());
 
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
     @GetMapping("/rascunhos")
@@ -92,7 +92,7 @@ public class DemandaController {
         }
         DemandaUtil demandaUtil = new DemandaUtil();
         List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
 
@@ -203,7 +203,7 @@ public class DemandaController {
             Demanda demanda = demandaService.findById(id).get();
             List<PdfDemanda> pdfDemandas = pdfDemandaService.findByDemanda(demanda);
             PdfDemanda pdfDemanda = pdfDemandas.get(pdfDemandas.size() - 1);
-            return ResponseEntity.status(HttpStatus.FOUND).body(pdfDemanda);
+            return ResponseEntity.status(HttpStatus.OK).body(pdfDemanda);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("PDF da demanda com id: " + id + " não encontrado!");
         }
@@ -214,7 +214,7 @@ public class DemandaController {
     public ResponseEntity<Object> findById(@PathVariable("id") Integer id) {
         try {
             Demanda demanda = demandaService.findById(id).get();
-            return ResponseEntity.status(HttpStatus.FOUND).body(demanda);
+            return ResponseEntity.status(HttpStatus.OK).body(demanda);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Demanda com id: " + id + " não encontrada!");
         }
@@ -230,7 +230,7 @@ public class DemandaController {
             }
             DemandaUtil demandaUtil = new DemandaUtil();
             List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-            return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar demandas por status: " + e.getMessage());
         }
@@ -247,7 +247,7 @@ public class DemandaController {
             }
             DemandaUtil demandaUtil = new DemandaUtil();
             List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-            return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Solicitante com matrícula: " + numeroCadastroSoliciante + " não encontrado!" + e.getMessage());
         }
@@ -263,7 +263,7 @@ public class DemandaController {
             }
             DemandaUtil demandaUtil = new DemandaUtil();
             List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-            return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada para a seção: " + secao);
         }
@@ -278,7 +278,7 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada!");
         }
         List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
     //Busca demanda por data de criação (mais antiga a mais nova)
@@ -290,7 +290,7 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada!");
         }
         List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
     //Busca demanda por score
@@ -302,7 +302,7 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com score: " + score + " foi encontrada!");
         }
         List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
     //Busca demandas pelo titulo
@@ -314,7 +314,7 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com título: " + tituloDemanda + " foi encontrada!");
         }
         List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
     //Busca demandas pelo tamanhoDemanda
@@ -326,7 +326,7 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda com tamanho: " + tamanhoDemanda + " foi encontrada!");
         }
         List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-        return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
     //Busca demandas de um determinado analista responsável
@@ -351,7 +351,7 @@ public class DemandaController {
             }
             DemandaUtil demandaUtil = new DemandaUtil();
             List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasFiltradas);
-            return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -372,7 +372,7 @@ public class DemandaController {
             }
             DemandaUtil demandaUtil = new DemandaUtil();
             List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-            return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum usuário com o número de cadastro: " + numeroCadastroGerente + " foi encontrado!");
         }
@@ -393,7 +393,7 @@ public class DemandaController {
             }
             DemandaUtil demandaUtil = new DemandaUtil();
             List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-            return ResponseEntity.status(HttpStatus.FOUND).body(demandasResumidas);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
