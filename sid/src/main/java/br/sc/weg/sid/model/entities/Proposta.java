@@ -1,6 +1,5 @@
 package br.sc.weg.sid.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -55,13 +54,33 @@ public class Proposta {
     private Integer aprovadoWorkflowProposta;
 
     @Column(name = "CustosTotaisDoProjeto")
-    private Integer custosTotaisDoProjeto;
+    private Double custosTotaisDoProjeto;
+
+    @Column(name = "CustosInternosDoProjeto")
+    private Double custosInternosDoProjeto;
+
+    @Column(name = "CustosExternosDoProjeto")
+    private Double custosExternosDoProjeto;
 
     @Column(name = "MotivoRecusaProposta")
     private String motivoRecusaWorkflowProposta;
     @FutureOrPresent
-    @Column(name = "PeriodoExecucaoDemanda")
-    private Date periodoExecucaoDemanda;
+    @Column(name = "PeriodoExecucaoDemandaInicio")
+    private Date periodoExecucaoDemandaInicio;
+
+    @FutureOrPresent
+    @Column(name = "PeriodoExecucaoDemandaFim")
+    private Date periodoExecucaoDemandaFim;
+
+    @Column(name = "NomeResponsavelNegocio")
+    private String nomeResponsavelNegocio;
+
+    @Column(name = "AreaResponsavelNegocio")
+    private String areaResponsavelNegocio;
+
+    @JoinColumn(name = "CentroCusto", referencedColumnName = "IdCentroCusto")
+    @ManyToOne(optional = false)
+    private CentroCusto centroCusto;
 
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
     @ManyToOne(optional = false)
@@ -77,12 +96,9 @@ public class Proposta {
             inverseJoinColumns = @JoinColumn(name = "numeroCadastroUsuario"))
     private List<Usuario> responsaveisNegocio;
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(name = "pauta_proposta",
-            joinColumns = @JoinColumn(name = "idProposta"),
-            inverseJoinColumns = @JoinColumn(name = "idPauta"))
-    private List<Pauta> pautaProposta;
+    @OneToOne
+    @JoinColumn(name = "idPauta")
+    private Pauta pautaProposta;
 
 }
 

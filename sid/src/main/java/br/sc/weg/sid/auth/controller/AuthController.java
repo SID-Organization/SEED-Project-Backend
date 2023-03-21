@@ -46,12 +46,14 @@ public class AuthController {
             Authentication authentication = authManager.authenticate(authenticationToken);
             String token = tokenUtils.gerarToken(authentication);
             Cookie cookie = new Cookie("jwt", token);
-//            cookie.setHttpOnly(true);
-//            cookie.setSecure(true);
+            cookie.setSecure(true);
             cookie.setPath("/");
+            cookie.setMaxAge(3600);
+            cookie.setHttpOnly(false);
             response.addCookie(cookie);
             UserJpa user = (UserJpa) authentication.getPrincipal();
             Usuario pessoa = user.getUsuario();
+            System.out.println(cookie.getValue());
             return ResponseEntity.status(HttpStatus.OK).body(pessoa);
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha inválidos!");
