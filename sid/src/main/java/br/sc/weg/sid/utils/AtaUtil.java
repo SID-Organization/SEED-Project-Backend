@@ -59,9 +59,9 @@ public class AtaUtil {
             BeanUtils.copyProperties(ata, ataResumida);
             ataResumida.setIdAta(ata.getIdAta());
             ataResumida.setQtdPropostas(ata.getPropostasLogAta().size());
-            ataResumida.setDataReuniaoAta(ata.getPautaAta().getDataReuniaoPauta());
-            ataResumida.setHorarioInicioAta(ata.getPautaAta().getHorarioInicioPauta());
-            ataResumida.setAnalistaResponsavel(ata.getPautaAta().getAnalistaResponsavelPauta());
+//            ataResumida.setDataReuniaoAta(ata.getPautaAta().getDataReuniaoPauta());
+//            ataResumida.setHorarioInicioAta(ata.getPautaAta().getHorarioInicioPauta());
+//            ataResumida.setAnalistaResponsavel(ata.getPautaAta().getAnalistaResponsavelPauta());
             atasResumidas.add(ataResumida);
         });
         return atasResumidas;

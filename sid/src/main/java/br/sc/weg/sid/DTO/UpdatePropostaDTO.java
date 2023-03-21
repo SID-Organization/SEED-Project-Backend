@@ -32,4 +32,5 @@ public class UpdatePropostaDTO {
     private CentroCusto centroCusto;
     private String nomeResponsavelNegocio;
     private String areaResponsavelNegocio;
+
 }

@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;
@@ -78,17 +79,14 @@ public class Proposta {
     @Column(name = "AreaResponsavelNegocio")
     private String areaResponsavelNegocio;
 
-    @JoinColumn(name = "CentroCusto", referencedColumnName = "IdCentroCusto")
-    @ManyToOne(optional = false)
+
+    @JoinColumn(name = "CentroCusto", referencedColumnName = "IdCentroCusto", nullable = true)
+    @ManyToOne(optional = true)
     private CentroCusto centroCusto;
 
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
     @ManyToOne(optional = false)
     private Demanda demandaProposta;
-
-//    @JoinColumn(name = "tabelaCustoProposta", referencedColumnName = "IdTabelaCusto")
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<TabelaCusto> tabelaCustoProposta;
 
     @ManyToMany
     @JoinTable(name = "responsaveis_negocio",

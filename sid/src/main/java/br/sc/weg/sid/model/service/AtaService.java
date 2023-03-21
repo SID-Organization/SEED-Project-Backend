@@ -38,7 +38,7 @@ public class AtaService {
         return ataRepository.findByNumeroDgAta(numeroDgAta);
     }
 
-    public List<Ata> findByPautaAta(Pauta pautaAta) {
-        return ataRepository.findByPautaAta(pautaAta);
-    }
+//    public List<Ata> findByPautaAta(Pauta pautaAta) {
+//        return ataRepository.findByPautaAta(pautaAta);
+//    }
 }

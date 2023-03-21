@@ -58,13 +58,13 @@ public class AtaController {
             List<PropostasLog> propostasLogs = new ArrayList<>();
             cadastroAtaDTO.getPautaAta().getPropostasPauta().forEach(proposta -> {
                 PropostasLog propostasLog = new PropostasLog();
-                propostasLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
+//                propostasLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
                 propostasLog.setDemandaTituloPropostaLog(proposta.getDemandaProposta().getTituloDemanda());
-                propostasLog.setDemandaTempoExecucaoPropostaLog(Long.valueOf(proposta.getPeriodoExecucaoDemanda().getTime()).intValue());
+//                propostasLog.setDemandaTempoExecucaoPropostaLog(Long.valueOf(proposta.getPeriodoExecucaoDemanda().getTime()).intValue());
                 propostasLog.setConsideracoesProposta(cadastroAtaDTO.getConsideracoesProposta());
                 propostasLog.setParecerComissaoPropostaLog(cadastroAtaDTO.getParecerComissaoPropostaLog());
                 propostasLog.setTipoAta(cadastroAtaDTO.getTipoAta());
-                propostasLog.setPropostaPropostaLog(proposta);
+//                propostasLog.setPropostaPropostaLog(proposta);
                 propostaLogService.save(propostasLog);
             });
             ata.setPropostasLogAta(propostasLogs);
@@ -121,18 +121,18 @@ public class AtaController {
         }
     }
 
-    @GetMapping("/pauta-ata/{idPauta}")
-    public ResponseEntity<Object> findByPautaAta(@PathVariable Integer idPauta) {
-        try {
-            Pauta pautaAta = pautaService.findById(idPauta).get();
-            List<Ata> atas = ataService.findByPautaAta(pautaAta);
-            if (atas.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ata com id da pauta: " + idPauta + " não encontrada");
-            }
-            return ResponseEntity.ok(atas);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao buscar ata: " + e.getMessage());
-        }
-    }
+//    @GetMapping("/pauta-ata/{idPauta}")
+//    public ResponseEntity<Object> findByPautaAta(@PathVariable Integer idPauta) {
+//        try {
+//            Pauta pautaAta = pautaService.findById(idPauta).get();
+////            List<Ata> atas = ataService.findByPautaAta(pautaAta);
+//            if (atas.isEmpty()) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ata com id da pauta: " + idPauta + " não encontrada");
+//            }
+//            return ResponseEntity.ok(atas);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body("Erro ao buscar ata: " + e.getMessage());
+//        }
+//    }
 
 }

@@ -34,9 +34,9 @@ public class PropostasLog {
     @Column(name = "tipoAta", nullable = false)
     private TipoAta tipoAta;
 
-    @Column(name = "propostaPropostaLog", nullable = false)
-    @OneToOne
-    @JsonIgnore
-    private Proposta propostaPropostaLog;
+//    @Column(name = "propostaPropostaLog", nullable = false)
+//    @OneToOne
+//    @JsonIgnore
+//    private Proposta propostaPropostaLog;
 
 }
