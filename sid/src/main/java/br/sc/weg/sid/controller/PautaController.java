@@ -39,9 +39,9 @@ public class PautaController {
             propostasEncontradas.add(propostaService.findById(proposta.getIdProposta()).get());
         }
         for (Proposta proposta : propostasEncontradas) {
-            List<Pauta> pautas = proposta.getPautaProposta();
-            pautas.add(pautaSalva);
-            proposta.setPautaProposta(pautas);
+//            List<Pauta> pautas = proposta.getPautaProposta();
+//            pautas.add(pautaSalva);
+//            proposta.setPautaProposta(pautas);
             propostaService.save(proposta);
         }
         return ResponseEntity.ok("Pauta cadastrada com sucesso! \n" + pautaSalva);

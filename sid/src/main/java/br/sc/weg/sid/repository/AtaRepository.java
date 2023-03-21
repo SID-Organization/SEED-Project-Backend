@@ -12,5 +12,5 @@ import java.util.List;
 public interface AtaRepository extends JpaRepository<Ata, Integer> {
     Ata findByNumeroDgAta(Integer numeroDgAta);
 
-    List<Ata> findByPautaAta(Pauta pautaAta);
+//    List<Ata> findByPautaAta(Pauta pautaAta);
 }

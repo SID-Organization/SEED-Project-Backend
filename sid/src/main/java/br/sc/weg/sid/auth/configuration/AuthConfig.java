@@ -47,11 +47,9 @@ public class AuthConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests().antMatchers("/login", "/login/auth").permitAll().anyRequest().permitAll();
+        httpSecurity.authorizeRequests().antMatchers("/login", "/login/auth", "/sid/api/usuario").permitAll().anyRequest().permitAll();
         httpSecurity.csrf().disable().cors().configurationSource(corsConfigurationSource()).and().logout().permitAll();
-
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
         httpSecurity.addFilterBefore(new AuthFilter(new TokenUtils(), jpaService), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }

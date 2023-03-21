@@ -10,6 +10,7 @@ import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.service.ArquivoDemandaService;
 import br.sc.weg.sid.model.service.UsuarioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ import java.util.List;
 import java.util.Optional;
 
 @NoArgsConstructor
+@AllArgsConstructor
 public class AtaUtil {
 
-    @Autowired
     UsuarioService usuarioService;
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -59,9 +60,9 @@ public class AtaUtil {
             BeanUtils.copyProperties(ata, ataResumida);
             ataResumida.setIdAta(ata.getIdAta());
             ataResumida.setQtdPropostas(ata.getPropostasLogAta().size());
-            ataResumida.setDataReuniaoAta(ata.getPautaAta().getDataReuniaoPauta());
-            ataResumida.setHorarioInicioAta(ata.getPautaAta().getHorarioInicioPauta());
-            ataResumida.setAnalistaResponsavel(ata.getPautaAta().getAnalistaResponsavelPauta());
+//            ataResumida.setDataReuniaoAta(ata.getPautaAta().getDataReuniaoPauta());
+//            ataResumida.setHorarioInicioAta(ata.getPautaAta().getHorarioInicioPauta());
+//            ataResumida.setAnalistaResponsavel(ata.getPautaAta().getAnalistaResponsavelPauta());
             atasResumidas.add(ataResumida);
         });
         return atasResumidas;
