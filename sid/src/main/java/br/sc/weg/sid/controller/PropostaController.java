@@ -104,7 +104,10 @@ public class PropostaController {
                     propostaService.save(proposta);
 
 //                    TabelaCusto tabelaCusto = updatePropostaDTO.getTabelaCusto();
+//                    tabelaCusto.set(proposta);
 //                    tabelaCustoService.save(tabelaCusto);
+
+
                 } catch (Exception e) {
                     pdfPropostaService.deleteById(pdfProposta.getIdPdfProposta());
                     e.printStackTrace();
@@ -152,13 +155,13 @@ public class PropostaController {
         }
     }
 
-    @GetMapping("/proposta-finalizada")
+    @GetMapping("/proposta-pronta")
     ResponseEntity<Object> listarPropostaPorStatusDemanda() {
         try{
             List<Proposta> proposta = propostaService.findAll();
             List<Proposta> propostasFiltradas = new ArrayList<>();
             for (Proposta p : proposta) {
-                if (p.getDemandaProposta().getStatusDemanda() == StatusDemanda.PROPOSTA_FINALIZADA) {
+                if (p.getDemandaProposta().getStatusDemanda() == StatusDemanda.PROPOSTA_PRONTA) {
                     propostasFiltradas.add(p);
                 }
             }

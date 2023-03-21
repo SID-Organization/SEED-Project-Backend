@@ -1,9 +1,6 @@
 package br.sc.weg.sid.model.service;
 
-import br.sc.weg.sid.model.entities.Beneficio;
-import br.sc.weg.sid.model.entities.Demanda;
-import br.sc.weg.sid.model.entities.PdfProposta;
-import br.sc.weg.sid.model.entities.Proposta;
+import br.sc.weg.sid.model.entities.*;
 import com.lowagie.text.*;
 import com.lowagie.text.html.simpleparser.HTMLWorker;
 import com.lowagie.text.pdf.ColumnText;
@@ -97,7 +94,6 @@ public class GerarPDFPropostaService {
         Paragraph requesterParagraph = new Paragraph(requesterPhrase);
         requesterParagraph.setSpacingBefore(8);
 
-
         Phrase proposalPhrase = new Phrase("Objetivo: ", fontTitle);
         Chunk objetivoChunk = new Chunk(demanda.get().getPropostaMelhoriaDemanda(), textFont);
         proposalPhrase.add(objetivoChunk);
@@ -114,13 +110,12 @@ public class GerarPDFPropostaService {
         Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", fontTitle);
         projectScopeParagraph.setSpacingBefore(8);
 
-
-
-
-
-
         Paragraph projectScopeParagraphText = new Paragraph(pdfProposta.get().getEscopoPropostaHTML(), textFont);
         projectScopeParagraphText.setSpacingAfter(5);
+
+        HTMLWorker htmlWorker = new HTMLWorker(document);
+
+        String projectScopeParagraphTextHTML = pdfProposta.get().getEscopoPropostaHTML();
 
         Paragraph noPartOfScopeProjectParagraph;
         if(!pdfProposta.get().getNaoFazParteDoEscopoPropostaHTML().isEmpty()){
@@ -130,21 +125,13 @@ public class GerarPDFPropostaService {
             noPartOfScopeProjectParagraph = new Paragraph();
         }
 
-        if(!pdfProposta.get().getNaoFazParteDoEscopoPropostaHTML().isEmpty()){
-
-//            System.out.println("JFDKIAFJÇS: " + pdfProposta.get().getEscopoPropostaHTML());
-//            System.out.println(projectScopeParagraphTextHTML);
-
-        }
-            String projectScopeParagraphTextHTML = "<p> <strong> Exemplo: </strong> Este é um trecho de texto em HTML. </p>";
-            HTMLWorker htmlWorker = new HTMLWorker(document);
-            htmlWorker.parse(new StringReader(projectScopeParagraphTextHTML));
+        String projectNotInScopeParagraphTextHTML = pdfProposta.get().getEscopoPropostaHTML();
 
         Paragraph evaluatedAlternativesParagraph = new Paragraph("Alternativas Avaliadas:", fontTitle);
         evaluatedAlternativesParagraph.setSpacingBefore(13);
 
-        Paragraph evaluatedAlternativesParagraphText = new Paragraph(pdfProposta.get().getAlternativasAvaliadasPropostaHTML(), textFont);
-        evaluatedAlternativesParagraphText.setSpacingAfter(5);
+
+        String evaluatedAlternativesParagraphTextHTML = pdfProposta.get().getAlternativasAvaliadasPropostaHTML();
 
         Paragraph projectCoverageParagraph = new Paragraph("Abrangência do Projeto:", fontTitle);
         projectCoverageParagraph.setSpacingBefore(8);
@@ -155,38 +142,33 @@ public class GerarPDFPropostaService {
         Paragraph mainRisksParagraph = new Paragraph("Riscos Principais/Plano de Mitigação:", fontTitle);
         mainRisksParagraph.setSpacingBefore(8);
 
-        Paragraph mainRisksParagraphText = new Paragraph(pdfProposta.get().getPlanoMitigacaoPropostaHTML(), textFont);
-        mainRisksParagraphText.setSpacingAfter(5);
+        String mainRisksParagraphTextHTML = pdfProposta.get().getPlanoMitigacaoPropostaHTML();
 
         java.util.List<Beneficio> beneficiosDemanda = pdfProposta.get().getProposta().getDemandaProposta().getBeneficiosDemanda();
 
-        Paragraph expectedResultsQualitativeParagraphText = new Paragraph();
-        Paragraph expectedResultsPotentialParagraphText = new Paragraph();
+        String expectedResultsQualitativeParagraphTextHTML = "";
+        String expectedResultsPotentialParagraphTextHTML = "";
         for (Beneficio beneficio : beneficiosDemanda) {
-            if (beneficio.getTipoBeneficio().equals("Qualitativo")) {
-                expectedResultsQualitativeParagraphText = new Paragraph(beneficio.getDescricaoBeneficio(), textFont);
-                expectedResultsQualitativeParagraphText.setSpacingAfter(5);
-            } else if (beneficio.getTipoBeneficio().equals("Potencial")) {
-                expectedResultsPotentialParagraphText = new Paragraph(beneficio.getDescricaoBeneficio(), textFont);
-                expectedResultsPotentialParagraphText.setSpacingAfter(5);
+            if (beneficio.getTipoBeneficio() == TipoBeneficio.QUALITATIVO) {
+                expectedResultsQualitativeParagraphTextHTML = beneficio.getDescricaoBeneficio();
+            } else if (beneficio.getTipoBeneficio() == TipoBeneficio.POTENCIAL) {
+                expectedResultsPotentialParagraphTextHTML = beneficio.getDescricaoBeneficio();
             }
         }
         Paragraph expectedResultsParagraph = null;
-        if (expectedResultsQualitativeParagraphText != null){
+        if (expectedResultsQualitativeParagraphTextHTML != null){
             expectedResultsParagraph = new Paragraph("Resultados Esperados (Qualitativos):", fontTitle);
             expectedResultsParagraph.setSpacingBefore(8);
         }
 
-        Paragraph expectedResultsPotentialParagraph = new Paragraph("Resultados Esperados (Qualitativos):", fontTitle);
+        Paragraph expectedResultsPotentialParagraph = new Paragraph("Resultados Esperados (Ganhos potenciais):", fontTitle);
         expectedResultsPotentialParagraph.setSpacingBefore(8);
-
-
 
         Phrase executionPeriodPhrase = new Phrase("Período de execução: ", fontTitle);
         Chunk executionPeriodChunk = new Chunk(pdfProposta.get().getProposta().getPeriodoExecucaoInicioProposta().toString() + "à" +
                 pdfProposta.get().getProposta().getPeriodoExecucaoFimProposta().toString(), textFont);
         executionPeriodPhrase.add(executionPeriodChunk);
-        Paragraph executionPeriodParagraph = new Paragraph(requesterPhrase);
+        Paragraph executionPeriodParagraph = new Paragraph(executionPeriodPhrase);
         executionPeriodParagraph.setSpacingBefore(8);
 
         Phrase paybackPhrase = new Phrase("Payback: ", fontTitle);
@@ -195,52 +177,50 @@ public class GerarPDFPropostaService {
         Paragraph paybackParagraph = new Paragraph(paybackPhrase);
         paybackParagraph.setSpacingBefore(8);
 
-
-
-
         document.add(paragraph);
         document.add(dateParagraph);
         document.add(listTitle);
         document.add(requesterParagraph);
         document.add(proposalParagraph);
 
-
         document.add(actualSituationParagraph);
         document.add(actualSituationParagraphText);
 
         document.add(projectScopeParagraph);
-        document.add(projectScopeParagraphText);
+        htmlWorker.parse(new StringReader(projectScopeParagraphTextHTML));
 
         if (!pdfProposta.get().getNaoFazParteDoEscopoPropostaHTML().isEmpty()) {
             document.add(noPartOfScopeProjectParagraph);
+            htmlWorker.parse(new StringReader(projectNotInScopeParagraphTextHTML));
         }
 
         document.add(evaluatedAlternativesParagraph);
-        document.add(evaluatedAlternativesParagraphText);
+        htmlWorker.parse(new StringReader(evaluatedAlternativesParagraphTextHTML));
 
         document.add(projectCoverageParagraph);
         document.add(projectCoverageParagraphText);
 
         document.add(mainRisksParagraph);
-        document.add(mainRisksParagraphText);
+        htmlWorker.parse(new StringReader(mainRisksParagraphTextHTML));
 
-        if (expectedResultsQualitativeParagraphText != null){
+        if (expectedResultsQualitativeParagraphTextHTML != null){
             document.add(expectedResultsParagraph);
-            document.add(expectedResultsQualitativeParagraphText);
+            htmlWorker.parse(new StringReader(expectedResultsQualitativeParagraphTextHTML));
         }
 
         document.add(expectedResultsPotentialParagraph);
-        document.add(expectedResultsPotentialParagraphText);
+        htmlWorker.parse(new StringReader(expectedResultsPotentialParagraphTextHTML));
 
+        document.add(executionPeriodParagraph);
+
+        document.add(paybackParagraph);
 
         document.close();
-
 
         byte[] pdfBytes = baos.toByteArray();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("filename", "documento.pdf");
-
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
