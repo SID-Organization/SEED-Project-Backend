@@ -19,6 +19,7 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
     List<Demanda> findByAnalistaResponsavelDemanda(Usuario analistaResponsavelDemanda);
     List<Demanda> findByGerenteDaAreaDemanda(Usuario gerenteDaAreaDemanda);
     List<Demanda> findByGestorResponsavelDemanda(Usuario gestorResponsavelDemanda);
+    List<Demanda> findRascunhosBySolicitanteDemanda(Usuario solicitanteDemanda);
     @Query(value = "select * from demanda order by prazo_elaboracao_demanda ASC;", nativeQuery = true)
     List<Demanda> findByPrazoElaboracaoDemandaAsc();
 
@@ -30,5 +31,8 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
 
     @Query(value = "select * from demanda order by score_demanda DESC;", nativeQuery = true)
     List<Demanda> findByScoreDemandaDesc();
+
+    @Query(value = "select * from demanda where status_demanda = 'RASCUNHO' and solicitante_demanda = ?1", nativeQuery = true)
+    List<Demanda> findRascunhosBySolicitanteDemanda(Integer solicitanteDemanda);
 
 }

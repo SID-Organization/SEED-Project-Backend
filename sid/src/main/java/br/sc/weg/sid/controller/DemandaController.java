@@ -491,6 +491,22 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandaSalva);
     }
 
+    //Buscar demandas com status RASCUNHO pelo numero do cadastro do usuario
+    @GetMapping("/rascunho/{numeroCadastroUsuario}")
+    public ResponseEntity<Object> buscarDemandasRascunho(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
+        try {
+            List<Demanda> demandas = demandaService.findRascunhosBySolicitanteDemanda(numeroCadastroUsuario);
+            if (demandas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhuma demanda com o status rascunho!");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(demandas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao buscar demandas com status rascunho: " + e.getMessage());
+        }
+    }
+
+
+
     //Deleta uma demanda informando seu id
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer idDemanda) {
