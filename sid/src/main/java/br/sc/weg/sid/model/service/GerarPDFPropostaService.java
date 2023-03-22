@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class GerarPDFPropostaService {
 
     private final PdfPropostaService pdfPropostaService;
 
-    public ResponseEntity<byte[]> export(HttpServletResponse response, Integer idDemanda, Proposta proposta) throws IOException {
+    public byte[] export(Integer idDemanda, Proposta proposta) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 40, 25, 15);
         PdfWriter writer = PdfWriter.getInstance(document, baos);
@@ -164,9 +165,13 @@ public class GerarPDFPropostaService {
         Paragraph expectedResultsPotentialParagraph = new Paragraph("Resultados Esperados (Ganhos potenciais):", fontTitle);
         expectedResultsPotentialParagraph.setSpacingBefore(8);
 
+        SimpleDateFormat formatarData = new SimpleDateFormat("dd/MM/yyyy");
+        String dataInicioFormatada = formatarData.format(pdfProposta.get().getProposta().getPeriodoExecucaoFimProposta());
+        String dataFimFormatada = formatarData.format(pdfProposta.get().getProposta().getPeriodoExecucaoFimProposta());
+
         Phrase executionPeriodPhrase = new Phrase("Período de execução: ", fontTitle);
-        Chunk executionPeriodChunk = new Chunk(pdfProposta.get().getProposta().getPeriodoExecucaoInicioProposta().toString() + "à" +
-                pdfProposta.get().getProposta().getPeriodoExecucaoFimProposta().toString(), textFont);
+        Chunk executionPeriodChunk = new Chunk(dataInicioFormatada + " à " +
+                dataFimFormatada, textFont);
         executionPeriodPhrase.add(executionPeriodChunk);
         Paragraph executionPeriodParagraph = new Paragraph(executionPeriodPhrase);
         executionPeriodParagraph.setSpacingBefore(8);
@@ -217,11 +222,6 @@ public class GerarPDFPropostaService {
 
         document.close();
 
-        byte[] pdfBytes = baos.toByteArray();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("filename", "documento.pdf");
-
-        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        return baos.toByteArray();
     }
 }

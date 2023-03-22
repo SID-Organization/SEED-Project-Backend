@@ -43,7 +43,21 @@ public class PropostaUtil {
         return propostasResumidas;
     }
 
-    ;
+
+    public PdfProposta convertJsonToModel(String pdfPropostaJson) {
+        try {
+            CadastroPdfPropostaDTO cadastroPdfPropostaDTO = convertToCadastroPdfPropostaDTO(pdfPropostaJson);
+            return convertToModel(cadastroPdfPropostaDTO);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao converter o itemJson para objeto Item! \n" + e.getMessage());
+        }
+    }
+
+    public PdfProposta convertToModel(CadastroPdfPropostaDTO cadastroPdfPropostaDTO) {
+        PdfProposta pdfProposta = new PdfProposta();
+        BeanUtils.copyProperties(cadastroPdfPropostaDTO, pdfProposta);
+        return pdfProposta;
+    }
 
     public CadastroPdfPropostaDTO convertToCadastroPdfPropostaDTO(String pdfPropostaJson) {
         try {
@@ -51,12 +65,6 @@ public class PropostaUtil {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao converter o pdfPropostaJson para objeto CadastroPdfPropostaDTO! \n" + e.getMessage());
         }
-    }
-
-    public PdfProposta convertPdfDtoToModel(CadastroPdfPropostaDTO cadastroPdfPropostaDTO) {
-        PdfProposta pdfDemanda = new PdfProposta();
-        BeanUtils.copyProperties(cadastroPdfPropostaDTO, pdfDemanda);
-        return pdfDemanda;
     }
 
     public Proposta convertDtoToModel(UpdatePropostaDTO updatePropostaDTO) {

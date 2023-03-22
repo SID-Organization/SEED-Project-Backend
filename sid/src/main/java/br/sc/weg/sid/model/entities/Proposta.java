@@ -52,6 +52,10 @@ public class Proposta {
     @Column(length = 255, name = "LinkJiraProposta", nullable = false)
     private String linkJiraProposta;
 
+    @Column(name = "PdfProposta")
+    @Lob
+    private byte[] pdfProposta;
+
     @Column(name = "AprovadoWorkflowProposta")
     private Integer aprovadoWorkflowProposta;
 

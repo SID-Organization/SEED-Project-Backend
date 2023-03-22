@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 @Controller
 @CrossOrigin
@@ -45,17 +47,22 @@ public class GerarPDFPropostaController {
             if (demandaService.existsById(gerarPDFDTO.getIdDemanda())) {
                 if (propostaService.existsById(gerarPDFDTO.getIdProposta())) {
                     Proposta proposta = propostaService.findById(gerarPDFDTO.getIdProposta()).get();
-                    byte[] pdf = gerarPDFService.export(response, gerarPDFDTO.getIdDemanda(), proposta).getBody();
+                    ByteArrayInputStream pdf = new ByteArrayInputStream(gerarPDFService.export(gerarPDFDTO.getIdDemanda(), proposta));
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.APPLICATION_PDF);
-                    headers.setContentDisposition(ContentDisposition.builder("attachment").filename("pdf_teste.pdf").build());
-    //                if (propostaService.existsById(gerarPDFDTO.getIdProposta())) {
-    //                    Proposta proposta = propostaService.findById(gerarPDFDTO.getIdProposta()).get();
-    //                    proposta.setPropostaPDF(pdf);
-    //                    propostaService.save(proposta);
-    //                }else {
-    //                    return ResponseEntity.badRequest().body("Proposta não encontrada");
-    //                }
+                    headers.setContentDispositionFormData("filename",  "proposta-num" + proposta.getIdProposta() + ".pdf");
+                    if (propostaService.existsById(gerarPDFDTO.getIdProposta())) {
+                        byte[] buffer = new byte[1024];
+                        int length;
+                        while ((length = pdf.read(buffer)) != -1) {
+                            baos.write(buffer, 0, length);
+                        }
+                        proposta.setPdfProposta(baos.toByteArray());
+                        propostaService.save(proposta);
+                    }else {
+                        return ResponseEntity.badRequest().body("Proposta não encontrada");
+                    }
                     return ResponseEntity.ok().headers(headers).body(pdf);
                 }else {
                     return ResponseEntity.badRequest().body("Proposta não encontrada");
@@ -65,8 +72,7 @@ public class GerarPDFPropostaController {
             }
         }catch (Exception e){
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("Erro ao gerar PDF");
+            return ResponseEntity.badRequest().body("Erro ao gerar PDF: " + e.getMessage());
         }
     }
-
 }

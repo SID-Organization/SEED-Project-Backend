@@ -85,14 +85,15 @@ public class PropostaController {
             Optional<Proposta> propostaOptional = propostaService.findById(id);
             if (propostaOptional.isPresent()) {
                 PropostaUtil propostaUtil = new PropostaUtil();
-                PdfProposta pdfProposta = new PdfProposta();
-
+                PdfProposta pdfProposta = propostaUtil.convertJsonToModel(pdfPropostaForm);
 
                 UpdatePropostaDTO updatePropostaDTO = propostaUtil.convertToUpdateProspotaDTO(updatePropostaForm);
 
                 Proposta proposta = propostaOptional.get();
                 BeanUtils.copyProperties(updatePropostaDTO, proposta);
-                    propostaService.save(proposta);
+                Proposta propostaSalva = propostaService.save(proposta);
+                pdfProposta.setProposta(propostaSalva);
+                pdfPropostaService.save(pdfProposta);
                 return ResponseEntity.ok(proposta);
             } else {
                 return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + id);
