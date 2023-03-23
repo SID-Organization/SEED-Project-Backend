@@ -3,6 +3,7 @@ package br.sc.weg.sid.model.service;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.repository.DemandaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -78,7 +79,11 @@ public class DemandaService {
         return demandaRepository.findByTituloDemanda(tituloDemanda);
     }
 
-//    public void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda) {
+    public List<Demanda> findRascunhosBySolicitanteDemanda(Integer solicitanteDemanda) {
+        return demandaRepository.findRascunhosBySolicitanteDemanda(solicitanteDemanda);
+    }
+
+    //    public void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda) {
 //        demandaRepository.updateBusBeneficiadasDemanda(idDemanda, idBusBeneficiadasDemanda);
 //    }
 
