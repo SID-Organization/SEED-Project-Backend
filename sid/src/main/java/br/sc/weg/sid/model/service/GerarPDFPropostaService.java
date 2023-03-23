@@ -3,9 +3,7 @@ package br.sc.weg.sid.model.service;
 import br.sc.weg.sid.model.entities.*;
 import com.lowagie.text.*;
 import com.lowagie.text.html.simpleparser.HTMLWorker;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfPageEventHelper;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -182,6 +180,37 @@ public class GerarPDFPropostaService {
         Paragraph paybackParagraph = new Paragraph(paybackPhrase);
         paybackParagraph.setSpacingBefore(8);
 
+        PdfPTable table = new PdfPTable(2);
+        Font tableFontBold = new Font(Font.TIMES_ROMAN, 10, Font.BOLD);
+        Font tableFont = new Font(Font.TIMES_ROMAN, 10);
+        table.setSpacingBefore(8);
+        table.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
+        table.setWidths(new int[]{5, 5});
+        table.setWidthPercentage(50);
+        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+
+        PdfPCell celulaTabelainicial;
+
+        celulaTabelainicial = new PdfPCell(new Phrase(proposta.getNomeResponsavelNegocio(), tableFont));
+        celulaTabelainicial.setBorder(Rectangle.NO_BORDER);
+        celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        table.addCell(celulaTabelainicial);
+
+        celulaTabelainicial = new PdfPCell(new Phrase(proposta.getDemandaProposta().getGestorResponsavelDemanda().getNomeUsuario(), tableFont));
+        celulaTabelainicial.setBorder(Rectangle.NO_BORDER);
+        celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        table.addCell(celulaTabelainicial);
+
+        celulaTabelainicial = new PdfPCell(new Phrase("Responsável Negócio", tableFontBold));
+        celulaTabelainicial.setBorder(Rectangle.NO_BORDER);
+        celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        table.addCell(celulaTabelainicial);
+
+        celulaTabelainicial = new PdfPCell(new Phrase("Chefe Responsável TI", tableFontBold));
+        celulaTabelainicial.setBorder(Rectangle.NO_BORDER);
+        celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        table.addCell(celulaTabelainicial);
+
         document.add(paragraph);
         document.add(dateParagraph);
         document.add(listTitle);
@@ -219,6 +248,8 @@ public class GerarPDFPropostaService {
         document.add(executionPeriodParagraph);
 
         document.add(paybackParagraph);
+
+        document.add(table);
 
         document.close();
 

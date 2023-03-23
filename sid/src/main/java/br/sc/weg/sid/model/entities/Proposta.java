@@ -49,7 +49,7 @@ public class Proposta {
     @Column(name = "PeriodoExecucaoFimProposta", nullable = false)
     private Date periodoExecucaoFimProposta;
 
-    @Column(length = 255, name = "LinkJiraProposta", nullable = false)
+    @Column(name = "LinkJiraProposta", nullable = false)
     private String linkJiraProposta;
 
     @Column(name = "PdfProposta")
@@ -88,8 +88,8 @@ public class Proposta {
     @OneToMany(mappedBy = "idTabelaCusto")
     private List<TabelaCusto> tabelaCustoProposta;
 
-    @JoinColumn(name = "CentroCusto", referencedColumnName = "IdCentroCusto", nullable = true)
-    @ManyToOne(optional = true)
+    @JoinColumn(name = "CentroCusto", referencedColumnName = "IdCentroCusto")
+    @ManyToOne
     private CentroCusto centroCusto;
 
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")

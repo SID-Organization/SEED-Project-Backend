@@ -31,6 +31,9 @@ public class UsuarioController {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao converter a imagem");
         }
+        if (usuarioService.existsById(usuario.getNumeroCadastroUsuario())){
+            return ResponseEntity.status(400).body("Usuário já cadastrado!");
+        }
 
         return ResponseEntity.ok("Usuário cadastrado com sucesso! \n" + usuarioService.save(usuario));
     }

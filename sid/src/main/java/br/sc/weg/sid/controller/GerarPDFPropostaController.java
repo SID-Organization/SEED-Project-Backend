@@ -36,12 +36,7 @@ public class GerarPDFPropostaController {
     }
 
     @PostMapping("/gerar-pdf")
-    public ResponseEntity<Object> gerarPDF(HttpServletResponse response, @RequestBody GerarPDFDTO gerarPDFDTO) throws Exception {
-
-        response.setContentType("application/pdf");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=pdf_teste.pdf";
-        response.setHeader(headerKey, headerValue);
+    public ResponseEntity<Object> gerarPDF(@RequestBody GerarPDFDTO gerarPDFDTO) throws Exception {
 
         try{
             if (demandaService.existsById(gerarPDFDTO.getIdDemanda())) {
@@ -63,7 +58,10 @@ public class GerarPDFPropostaController {
                     }else {
                         return ResponseEntity.badRequest().body("Proposta não encontrada");
                     }
-                    return ResponseEntity.ok().headers(headers).body(pdf);
+                    System.out.println("DPS PDF");
+                    return ResponseEntity.ok()
+                            .headers(headers)
+                            .body(baos.toByteArray());
                 }else {
                     return ResponseEntity.badRequest().body("Proposta não encontrada");
                 }

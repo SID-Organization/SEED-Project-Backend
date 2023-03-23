@@ -2,6 +2,7 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroPdfPropostaDTO;
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
+import br.sc.weg.sid.DTO.GerarPDFDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.DemandaService;
@@ -15,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +36,13 @@ public class PropostaController {
     private PdfPropostaService pdfPropostaService;
 
     @Autowired
+    private GerarPDFPropostaController gerarPDFPropostaController;
+
+    @Autowired
     private TabelaCustoService tabelaCustoService;
 
     @PostMapping()
+    @Transactional
     ResponseEntity<Object> cadastrarProposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
         try {
             Proposta proposta = new Proposta();
@@ -48,14 +54,20 @@ public class PropostaController {
                 demanda.setLinkJiraDemanda(cadastroPropostaDTO.getLinkJiraProposta());
                 demandaService.save(demanda);
             } else {
-                return ResponseEntity.badRequest().body("ERROR 0006: A demanda inserida não existe ou foi reprovada! ID DEMANDA: " + cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
+                return ResponseEntity.badRequest().body("ERROR 0006: A demanda inserida não existe ou foi reprovada! ID DEMANDA: " +
+                        cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
             }
 
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);
+            System.out.println(proposta);
             Proposta propostaSalva = propostaService.save(proposta);
-
+            GerarPDFDTO gerarPDFDTO = new GerarPDFDTO();
+            gerarPDFDTO.setIdProposta(propostaSalva.getIdProposta());
+            gerarPDFDTO.setIdDemanda(propostaSalva.getDemandaProposta().getIdDemanda());
+            gerarPDFPropostaController.gerarPDF(gerarPDFDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("ERROR 0001: Erro ao cadastrar proposta!" + "\nMessage: " + e.getMessage());
         }
     }
