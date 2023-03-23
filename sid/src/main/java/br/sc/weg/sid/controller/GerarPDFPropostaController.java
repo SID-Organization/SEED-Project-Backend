@@ -36,7 +36,7 @@ public class GerarPDFPropostaController {
     }
 
     @PostMapping("/gerar-pdf")
-    public ResponseEntity<Object> gerarPDF(HttpServletResponse response, @RequestBody GerarPDFDTO gerarPDFDTO) throws Exception {
+    public ResponseEntity<Object> gerarPDF(@RequestBody GerarPDFDTO gerarPDFDTO) throws Exception {
 
         try{
             if (demandaService.existsById(gerarPDFDTO.getIdDemanda())) {
@@ -44,11 +44,9 @@ public class GerarPDFPropostaController {
                     Proposta proposta = propostaService.findById(gerarPDFDTO.getIdProposta()).get();
                     ByteArrayInputStream pdf = new ByteArrayInputStream(gerarPDFService.export(gerarPDFDTO.getIdDemanda(), proposta));
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    System.out.println("AQUI");
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.APPLICATION_PDF);
                     headers.setContentDispositionFormData("filename",  "proposta-num" + proposta.getIdProposta() + ".pdf");
-                    System.out.println("DPS HEADER");
                     if (propostaService.existsById(gerarPDFDTO.getIdProposta())) {
                         byte[] buffer = new byte[1024];
                         int length;
@@ -57,7 +55,6 @@ public class GerarPDFPropostaController {
                         }
                         proposta.setPdfProposta(baos.toByteArray());
                         propostaService.save(proposta);
-                        System.out.println("DPS SAVE");
                     }else {
                         return ResponseEntity.badRequest().body("Proposta não encontrada");
                     }

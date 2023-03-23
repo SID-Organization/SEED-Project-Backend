@@ -2,6 +2,7 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroPdfPropostaDTO;
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
+import br.sc.weg.sid.DTO.GerarPDFDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.DemandaService;
@@ -35,6 +36,9 @@ public class PropostaController {
     private PdfPropostaService pdfPropostaService;
 
     @Autowired
+    private GerarPDFPropostaController gerarPDFPropostaController;
+
+    @Autowired
     private TabelaCustoService tabelaCustoService;
 
     @PostMapping()
@@ -57,7 +61,10 @@ public class PropostaController {
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);
             System.out.println(proposta);
             Proposta propostaSalva = propostaService.save(proposta);
-
+            GerarPDFDTO gerarPDFDTO = new GerarPDFDTO();
+            gerarPDFDTO.setIdProposta(propostaSalva.getIdProposta());
+            gerarPDFDTO.setIdDemanda(propostaSalva.getDemandaProposta().getIdDemanda());
+            gerarPDFPropostaController.gerarPDF(gerarPDFDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
         } catch (Exception e) {
             e.printStackTrace();
