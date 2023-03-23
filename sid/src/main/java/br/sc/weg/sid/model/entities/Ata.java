@@ -19,7 +19,6 @@ public class Ata {
 
     @Column(name = "PdfAta", nullable = false)
     @Lob
-    @NotNull
     private byte[] pdfAta;
 
     @Column(name = "NumeroDgAta", nullable = false)
@@ -27,7 +26,6 @@ public class Ata {
 
     @Column(name = "DocumentoAprovacaoAta", nullable = false)
     @Lob
-    @NotNull
     private byte[] documentoAprovacaoAta;
 
     @Column(name = "PropostasAta", nullable = false)

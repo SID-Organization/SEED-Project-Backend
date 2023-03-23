@@ -36,19 +36,12 @@ public class AtaController {
 
     @PostMapping
     public ResponseEntity<Object> save(
-            @RequestParam("pdfAta") MultipartFile pdfAta,
             @RequestParam("documentoAprovacao") MultipartFile documentoAprovacaoAta,
             @RequestParam("ata") String ataJson
     ) {
         AtaUtil ataUtil = new AtaUtil();
         CadastroAtaDTO cadastroAtaDTO = ataUtil.convertToDto(ataJson);
         Ata ata = ataUtil.convertJsonToModel(ataJson);
-
-        try {
-            ata.setPdfAta(pdfAta.getBytes());
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao converter o pdf");
-        }
 
         try {
             ata.setDocumentoAprovacaoAta(documentoAprovacaoAta.getBytes());

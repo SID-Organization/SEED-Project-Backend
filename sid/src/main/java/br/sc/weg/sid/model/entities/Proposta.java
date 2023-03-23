@@ -85,6 +85,8 @@ public class Proposta {
     @Column(name = "AreaResponsavelNegocio")
     private String areaResponsavelNegocio;
 
+    @OneToMany(mappedBy = "idTabelaCusto")
+    private List<TabelaCusto> tabelaCustoProposta;
 
     @JoinColumn(name = "CentroCusto", referencedColumnName = "IdCentroCusto", nullable = true)
     @ManyToOne(optional = true)
