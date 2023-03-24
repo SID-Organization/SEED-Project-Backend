@@ -3,6 +3,7 @@ package br.sc.weg.sid.model.service;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.repository.TabelaCustoRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class TabelaCustoService {
     @Autowired
     TabelaCustoRepository tabelaCustoRepository;

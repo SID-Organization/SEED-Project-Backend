@@ -25,11 +25,10 @@ public class TabelaCustoController {
         TabelaCusto tabelaCusto = new TabelaCusto();
         BeanUtils.copyProperties(cadastroTabelaCustoDTO, tabelaCusto);
         try {
-            tabelaCustoService.save(tabelaCusto);
+            return ResponseEntity.ok().body(tabelaCustoService.save(tabelaCusto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Tabela de custo não salva! Message: " + e.getMessage());
         }
-        return ResponseEntity.ok().body("Tabela de custo salva com sucesso! \n" + tabelaCusto.toString());
     }
 
     @GetMapping()

@@ -12,11 +12,6 @@ import java.util.Optional;
 public interface TabelaCustoRepository extends JpaRepository<TabelaCusto, Integer> {
 
     @Override
-    default <S extends TabelaCusto> S save(S entity) {
-        return null;
-    }
-
-    @Override
     default Optional<TabelaCusto> findById(Integer integer) {
         return Optional.empty();
     }
