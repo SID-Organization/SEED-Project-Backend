@@ -61,10 +61,6 @@ public class PropostaController {
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);
             System.out.println(proposta);
             Proposta propostaSalva = propostaService.save(proposta);
-            GerarPDFDTO gerarPDFDTO = new GerarPDFDTO();
-            gerarPDFDTO.setIdProposta(propostaSalva.getIdProposta());
-            gerarPDFDTO.setIdDemanda(propostaSalva.getDemandaProposta().getIdDemanda());
-            gerarPDFPropostaController.gerarPDF(gerarPDFDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,6 +102,11 @@ public class PropostaController {
                 Proposta propostaSalva = propostaService.save(proposta);
                 pdfProposta.setProposta(propostaSalva);
                 pdfPropostaService.save(pdfProposta);
+                GerarPDFDTO gerarPDFDTO = new GerarPDFDTO();
+                gerarPDFDTO.setIdProposta(propostaSalva.getIdProposta());
+                gerarPDFDTO.setIdDemanda(propostaSalva.getDemandaProposta().getIdDemanda());
+                System.out.println("AAAAAAAAAA: " + gerarPDFDTO);
+                gerarPDFPropostaController.gerarPDF(gerarPDFDTO);
                 return ResponseEntity.ok(proposta);
             } else {
                 return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + id);
@@ -128,6 +129,28 @@ public class PropostaController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/pdf-proposta/{id}")
+    ResponseEntity<Object> listarPropostaPdf(@PathVariable("id") Integer id) {
+        try {
+            Optional<Proposta> propostaOptional = propostaService.findById(id);
+            if (propostaOptional.isPresent()) {
+                Proposta proposta = propostaOptional.get();
+                byte[] pdfBytes = proposta.getPdfProposta();
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDisposition(ContentDisposition.builder("attachment").filename("pdf-proposta" + proposta.getIdProposta()+".pdf").build());
+
+                return ResponseEntity.ok().headers(headers).body(pdfBytes);
+            } else {
+                return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + id);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + id + "!");
     }
 
     @GetMapping("/{id}")

@@ -74,14 +74,13 @@ public class AtaController {
                 Long diferencaEmHoras = duracao.toHours();
                 propostasLog.setDemandaTempoExecucaoPropostaLog(diferencaEmHoras);
                 propostasLog.setPropostaPropostaLog(proposta);
-                System.out.println("aqui");
                 cadastroAtaDTO.getPropostasLogDTO().forEach(propostaLogDTO -> {
-                    System.out.print("EIEOFJKPIA");
                     Proposta propostaLogFind = propostaService.findById(propostaLogDTO.getPropostaPropostaLogDTO().getIdProposta()).get();
                     if (propostaLogFind.getIdProposta().equals(proposta.getIdProposta())) {
                         propostasLog.setConsideracoesProposta(propostaLogDTO.getConsideracoesPropostaLogDTO());
                         propostasLog.setParecerComissaoPropostaLog(propostaLogDTO.getParecerComissaoPropostaLogDTO());
                         propostasLog.setTipoAta(propostaLogDTO.getTipoAtaPropostaLogDTO());
+                        propostasLog.setPdfPropostaLog(proposta.getPdfProposta());
                     }
                 });
                 propostaLogService.save(propostasLog);

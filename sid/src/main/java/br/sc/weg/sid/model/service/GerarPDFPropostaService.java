@@ -37,7 +37,9 @@ public class GerarPDFPropostaService {
         PdfWriter writer = PdfWriter.getInstance(document, baos);
 
         Optional<Demanda> demanda = demandaService.findById(idDemanda);
-        Optional<PdfProposta> pdfProposta = pdfPropostaService.findByProposta(proposta);
+        java.util.List<PdfProposta> pdfPropostasList = pdfPropostaService.findByProposta(proposta);
+
+        Optional<PdfProposta> pdfProposta = Optional.ofNullable(pdfPropostasList.get(pdfPropostasList.size() - 1));
         writer.setPageEvent(new PdfPageEventHelper() {
             @Override
             public void onStartPage(PdfWriter writer, Document document) {

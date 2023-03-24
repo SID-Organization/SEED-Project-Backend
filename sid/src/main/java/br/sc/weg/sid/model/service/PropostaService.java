@@ -46,4 +46,9 @@ public class PropostaService {
     public List<Proposta> findAllByPaybackProposta(Double paybackProposta) {
         return propostaRepository.findAllByPaybackProposta(paybackProposta);
     }
+
+    public void updatePdfProposta(Integer idProposta) {
+        propostaRepository.updatePdfProposta(idProposta);
+    }
+
 }

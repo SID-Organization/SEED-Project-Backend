@@ -34,6 +34,10 @@ public class PropostasLog {
     @Column(name = "tipoAta", nullable = false)
     private TipoAta tipoAta;
 
+    @Column(name = "pdfPropostaLog")
+    @Lob
+    byte[] pdfPropostaLog;
+
     @OneToOne
     @JsonIgnore
     private Proposta propostaPropostaLog;
