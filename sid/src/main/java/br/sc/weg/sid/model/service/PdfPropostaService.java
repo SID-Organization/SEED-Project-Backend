@@ -6,6 +6,7 @@ import br.sc.weg.sid.repository.PdfPropostaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,7 +31,11 @@ public class PdfPropostaService {
         pdfPropostaRepository.deleteById(integer);
     }
 
-    public Optional<PdfProposta> findByProposta(Proposta proposta){
+    public List<PdfProposta> findByProposta(Proposta proposta){
         return pdfPropostaRepository.findByProposta(proposta);
+    }
+
+    public List<PdfProposta> findAll() {
+        return pdfPropostaRepository.findAll();
     }
 }
