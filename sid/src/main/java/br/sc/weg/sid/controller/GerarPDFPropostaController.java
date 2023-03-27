@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream;
 
 @Controller
 @CrossOrigin
-@RequestMapping("/sid/api/PDF")
+@RequestMapping("/sid/api/proposta-PDF")
 public class GerarPDFPropostaController {
     @Autowired
     private final GerarPDFPropostaService gerarPDFService;

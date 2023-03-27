@@ -105,7 +105,6 @@ public class PropostaController {
                 GerarPDFDTO gerarPDFDTO = new GerarPDFDTO();
                 gerarPDFDTO.setIdProposta(propostaSalva.getIdProposta());
                 gerarPDFDTO.setIdDemanda(propostaSalva.getDemandaProposta().getIdDemanda());
-                System.out.println("AAAAAAAAAA: " + gerarPDFDTO);
                 gerarPDFPropostaController.gerarPDF(gerarPDFDTO);
                 return ResponseEntity.ok(proposta);
             } else {
