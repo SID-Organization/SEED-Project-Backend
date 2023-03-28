@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
@@ -27,7 +28,8 @@ public class GerarPDFAtaService {
     @Autowired
     PdfPropostaService pdfPropostaService;
 
-    public void export(HttpServletResponse response, Integer idAta) throws IOException {
+    public byte[] export(HttpServletResponse response, Integer idAta) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 20, 25, 15);
         PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
 
@@ -282,6 +284,7 @@ public class GerarPDFAtaService {
         });
         document.close();
 
+        return baos.toByteArray();
     }
 
 }

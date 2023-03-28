@@ -1,8 +1,10 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.GerarPDFAtaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,17 +24,18 @@ public class GerarPDFAtaController {
     AtaService ataService;
 
     @GetMapping("/gerar-pdf/{idAta}")
-    public void generatePDF(HttpServletResponse response, @PathVariable("idAta") Integer idAta) throws Exception {
+    public ResponseEntity<Object> generatePDF(HttpServletResponse response, @PathVariable("idAta") Integer idAta) throws Exception {
         response.setContentType("application/pdf");
         if (ataService.existsById(idAta)){
             String headerKey = "Content-Disposition";
             String headerValue = "attachment; filename=pdf_teste.pdf";
             response.setHeader(headerKey, headerValue);
-
-            this.gerarPDFAtaService.export(response, idAta);
+            Ata ata = ataService.findById(idAta).get();
+            byte[] pdfAta = gerarPDFAtaService.export(response, idAta);
+            ata.setPdfAta(pdfAta);
+            return ResponseEntity.ok().body(pdfAta);
         }else {
-            response.setContentType("text/html");
-            response.getWriter().write("Ata não encontrada");
+            return ResponseEntity.badRequest().body("ERROR 0006: A ata inserida não existe! ID ATA: " + idAta);
         }
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -140,7 +141,7 @@ public class PropostaController {
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_PDF);
-                headers.setContentDisposition(ContentDisposition.builder("attachment").filename("pdf-proposta" + proposta.getIdProposta()+".pdf").build());
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-proposta" + proposta.getIdProposta()+".pdf").build());
 
                 return ResponseEntity.ok().headers(headers).body(pdfBytes);
             } else {
@@ -151,6 +152,7 @@ public class PropostaController {
         }
         return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + id + "!");
     }
+
 
     @GetMapping("/{id}")
     ResponseEntity<Object> listarPropostaPorId(@PathVariable("id") Integer id) {
