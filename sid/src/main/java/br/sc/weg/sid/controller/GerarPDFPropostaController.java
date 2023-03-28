@@ -36,7 +36,7 @@ public class GerarPDFPropostaController {
     }
 
     @PostMapping("/gerar-pdf")
-    public ResponseEntity<Object> gerarPDF(@RequestBody GerarPDFDTO gerarPDFDTO) throws Exception {
+    public ResponseEntity<Object> gerarPDF(@RequestBody GerarPDFDTO gerarPDFDTO) {
 
         try{
             if (demandaService.existsById(gerarPDFDTO.getIdDemanda())) {

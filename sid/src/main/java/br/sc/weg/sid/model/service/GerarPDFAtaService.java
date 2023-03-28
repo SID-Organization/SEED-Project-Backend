@@ -28,10 +28,10 @@ public class GerarPDFAtaService {
     @Autowired
     PdfPropostaService pdfPropostaService;
 
-    public byte[] export(HttpServletResponse response, Integer idAta) throws IOException {
+    public byte[] export(Integer idAta) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 20, 25, 15);
-        PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
+        PdfWriter writer = PdfWriter.getInstance(document, baos);
 
         Ata ata = ataService.findById(idAta).get();
         writer.setPageEvent(new PdfPageEventHelper() {
@@ -150,7 +150,6 @@ public class GerarPDFAtaService {
             proposalParagraph.add(proposalPhrase);
             proposalParagraph.add(objetivoPhrase);
             proposalParagraph.setSpacingBefore(8);
-            proposalParagraph.setIndentationLeft(10);
 
             Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", titleFont);
             projectScopeParagraph.setSpacingBefore(8);
