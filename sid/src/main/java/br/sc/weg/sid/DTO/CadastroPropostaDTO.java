@@ -1,6 +1,7 @@
 package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.model.entities.Usuario;
 import lombok.Data;
 
@@ -31,4 +32,5 @@ public class CadastroPropostaDTO {
 
     @NotNull(message = "O campo periodoExecucaoDemandaFim não pode ser nulo")
     private Date periodoExecucaoDemandaFim;
+
 }

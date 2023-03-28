@@ -1,5 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -36,7 +38,8 @@ public class TabelaCusto {
     @Column(name = "ValorHoraTabelaCusto", nullable = false)
     private Double valorHoraTabelaCusto;
 
-    @JoinColumn(name = "IdProposta", nullable = false)
+    @JoinColumn(name = "IdProposta")
     @ManyToOne
+    @JsonIgnore
     private Proposta proposta;
 }
