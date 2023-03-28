@@ -1,6 +1,6 @@
 package br.sc.weg.sid.DTO;
 
-import br.sc.weg.sid.model.entities.TabelaCusto;
+import br.sc.weg.sid.model.entities.TabelaCustoLinha;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -17,5 +17,5 @@ public class CadastroLinhaTabelaDTO {
     @NotNull(message = "Total da linha da tabela de custo é obrigatório")
     private Double totalLinhaTabela;
     @NotNull(message = "Tabela de custo é obrigatório")
-    private TabelaCusto idTabelaCusto;
+    private TabelaCustoLinha idTabelaCustoLinha;
 }

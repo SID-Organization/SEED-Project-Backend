@@ -2,9 +2,7 @@ package br.sc.weg.sid.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;
@@ -85,6 +83,14 @@ public class Proposta {
     @Column(name = "AreaResponsavelNegocio")
     private String areaResponsavelNegocio;
 
+    @JoinColumn(name = "tabelaCustoExterno", referencedColumnName = "IdTabelaCusto")
+    @OneToOne
+    private TabelaCusto tabelaCustoExterno;
+
+    @JoinColumn(name = "tabelaCustoInterno", referencedColumnName = "IdTabelaCusto")
+    @OneToOne
+    private TabelaCusto tabelaCustoInterno;
+
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
     @ManyToOne(optional = false)
     private Demanda demandaProposta;
@@ -101,10 +107,6 @@ public class Proposta {
             joinColumns = @JoinColumn(name = "idProposta"),
             inverseJoinColumns = @JoinColumn(name = "idPauta"))
     private List<Pauta> pautaProposta;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "proposta", cascade = CascadeType.ALL)
-    private List<TabelaCusto> tabelaCusto;
 
 }
 

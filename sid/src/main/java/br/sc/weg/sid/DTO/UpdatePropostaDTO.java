@@ -1,17 +1,10 @@
 package br.sc.weg.sid.DTO;
 
-import br.sc.weg.sid.model.entities.CentroCusto;
-import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.TabelaCusto;
-import br.sc.weg.sid.model.entities.Usuario;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import br.sc.weg.sid.model.entities.TabelaCustoLinha;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.FutureOrPresent;
 import java.util.Date;
 import java.util.List;
 
@@ -29,9 +22,10 @@ public class UpdatePropostaDTO {
     private Double custosTotaisDoProjeto;
     private Double custosInternosDoProjeto;
     private Double custosExternosDoProjeto;
+    private TabelaCusto tabelaCustoInterno;
+    private TabelaCusto tabelaCustoExterno;
     private String nomeResponsavelNegocio;
     private String areaResponsavelNegocio;
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    private List<TabelaCusto> tabelaCusto;
+
 
 }

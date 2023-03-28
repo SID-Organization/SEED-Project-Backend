@@ -2,11 +2,9 @@ package br.sc.weg.sid.utils;
 
 import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +36,6 @@ public class PropostaUtil {
             propostaResumida.setValorDemanda(proposta.getCustosTotaisDoProjeto());
             propostaResumida.setIdDemanda(proposta.getDemandaProposta().getIdDemanda());
             propostaResumida.setLinkPropostaJira(proposta.getLinkJiraProposta());
-            propostaResumida.setTabelaCusto(proposta.getTabelaCusto());
             propostasResumidas.add(propostaResumida);
         });
         return propostasResumidas;
@@ -69,10 +66,10 @@ public class PropostaUtil {
     }
 
     public UpdatePropostaDTO convertToUpdateProspotaDTO(String updatePropostaForm) {
-        try{
+        try {
             return this.mapper.readValue(updatePropostaForm, UpdatePropostaDTO.class);
-        } catch (Exception e){
-            throw  new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

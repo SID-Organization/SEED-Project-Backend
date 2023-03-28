@@ -1,11 +1,10 @@
 package br.sc.weg.sid.model.entities;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@Data
 public class TabelaCusto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IdTabelaCusto", nullable = false, unique = true)
@@ -26,20 +25,11 @@ public class TabelaCusto {
     @Enumerated(EnumType.STRING)
     private TipoDeDespesa tipoDespesa;
 
-    @Column(name = "PerfilDespesaTabelaCusto", nullable = false)
-    private String perfilDespesaTabelaCusto;
-
-    @Column(name = "PeriodoExecucaoTabelaCusto", nullable = false)
-    private Integer periodoExecucaoTabelaCusto;
-
-    @Column(name = "QuantidadeHorasTabelaCusto", nullable = false)
-    private Integer quantidadeHorasTabelaCusto;
-
-    @Column(name = "ValorHoraTabelaCusto", nullable = false)
-    private Double valorHoraTabelaCusto;
-
-    @JoinColumn(name = "IdProposta")
-    @ManyToOne
     @JsonIgnore
-    private Proposta proposta;
+    @OneToMany(mappedBy = "tabelaCusto")
+    private List<TabelaCustoLinha> tabelaCustoLinha;
+
+    @JoinColumn(name = "centroCustoTabelaCusto")
+    @OneToMany
+    private List<CentroCustoTabelaCusto> centroCustoTabelaCusto;
 }

@@ -1,11 +1,9 @@
 package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.Demanda;
-import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.model.entities.Usuario;
 import lombok.Data;
 
-import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

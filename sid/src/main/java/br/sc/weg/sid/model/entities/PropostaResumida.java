@@ -19,5 +19,5 @@ public class PropostaResumida {
 
     String linkPropostaJira;
 
-    List<TabelaCusto> tabelaCusto;
+    List<TabelaCustoLinha> tabelaCustoLinha;
 }

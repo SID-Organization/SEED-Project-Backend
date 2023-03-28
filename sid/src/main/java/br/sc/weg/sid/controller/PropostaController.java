@@ -1,14 +1,10 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.CadastroPdfPropostaDTO;
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
 import br.sc.weg.sid.DTO.GerarPDFDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.*;
-import br.sc.weg.sid.model.service.DemandaService;
-import br.sc.weg.sid.model.service.PdfPropostaService;
-import br.sc.weg.sid.model.service.PropostaService;
-import br.sc.weg.sid.model.service.TabelaCustoService;
+import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +33,12 @@ public class PropostaController {
 
     @Autowired
     private GerarPDFPropostaController gerarPDFPropostaController;
+
+    @Autowired
+    private TabelaCustoLinhaService tabelaCustoLinhaService;
+
+    @Autowired
+    CentroCustoTabelaCustoService centroCustoTabelaCustoService;
 
     @Autowired
     private TabelaCustoService tabelaCustoService;
@@ -97,14 +99,38 @@ public class PropostaController {
 
                 UpdatePropostaDTO updatePropostaDTO = propostaUtil.convertToUpdateProspotaDTO(updatePropostaForm);
 
+                System.out.println(updatePropostaForm);
+
                 Proposta proposta = propostaOptional.get();
                 BeanUtils.copyProperties(updatePropostaDTO, proposta);
                 try {
-                    for (TabelaCusto tabelaCusto : updatePropostaDTO.getTabelaCusto()) {
-                        tabelaCusto.setProposta(proposta);
-                        tabelaCustoService.save(tabelaCusto);
+                    for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCustoExterno().getTabelaCustoLinha()) {
+                        tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCustoExterno());
+                        tabelaCustoLinhaService.save(tabelaCustoLinha);
                     }
+
+                    for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCustoExterno().getCentroCustoTabelaCusto()) {
+                        centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCustoExterno());
+                        centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+                    }
+
+                    for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCustoInterno().getTabelaCustoLinha()) {
+                        tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCustoInterno());
+                        tabelaCustoLinhaService.save(tabelaCustoLinha);
+                    }
+
+                    for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCustoInterno().getCentroCustoTabelaCusto()) {
+                        centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCustoInterno());
+                        centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+                    }
+
+                    TabelaCusto tabelaCustoExterno = proposta.getTabelaCustoExterno();
+                    tabelaCustoService.save(tabelaCustoExterno);
+
+                    TabelaCusto tabelaCustoInterno = proposta.getTabelaCustoInterno();
+                    tabelaCustoService.save(tabelaCustoInterno);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return ResponseEntity.badRequest().body("ERROR 0004: Erro ao atualizar tabela de custo!" + "\nMessage: " + e.getMessage());
                 }
                 Proposta propostaSalva = propostaService.save(proposta);
@@ -149,7 +175,7 @@ public class PropostaController {
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_PDF);
-                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-proposta" + proposta.getIdProposta()+".pdf").build());
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-proposta" + proposta.getIdProposta() + ".pdf").build());
 
                 return ResponseEntity.ok().headers(headers).body(pdfBytes);
             } else {
@@ -183,7 +209,7 @@ public class PropostaController {
 
     @GetMapping("/proposta-pronta")
     ResponseEntity<Object> listarPropostaPorStatusDemanda() {
-        try{
+        try {
             List<Proposta> proposta = propostaService.findAll();
             List<Proposta> propostasFiltradas = new ArrayList<>();
             for (Proposta p : proposta) {
@@ -196,7 +222,7 @@ public class PropostaController {
                 return ResponseEntity.badRequest().body("ERROR 0004: Não existem propostas cadastradas!");
             }
             return ResponseEntity.ok(propostasResumidas);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
     }

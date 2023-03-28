@@ -29,4 +29,8 @@ public class CentroCustoService {
     public void deleteById(Integer integer) {
         centroCustoRepository.deleteById(integer);
     }
+
+    public List<CentroCusto> findAll() {
+        return centroCustoRepository.findAll();
+    }
 }
