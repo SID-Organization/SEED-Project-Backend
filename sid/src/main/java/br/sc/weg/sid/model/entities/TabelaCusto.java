@@ -38,10 +38,6 @@ public class TabelaCusto {
     @Column(name = "ValorHoraTabelaCusto", nullable = false)
     private Double valorHoraTabelaCusto;
 
-    @OneToMany(mappedBy = "tabelaCusto", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("tabelaCusto")
-    private List<CentroCustoTabelaCusto> centroCustoTabelaCusto;
-
     @JoinColumn(name = "IdProposta")
     @ManyToOne
     @JsonIgnore
