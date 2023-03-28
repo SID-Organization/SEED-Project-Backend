@@ -4,14 +4,11 @@ import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.GerarPDFAtaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Controller
 @CrossOrigin
@@ -24,16 +21,17 @@ public class GerarPDFAtaController {
     AtaService ataService;
 
     @GetMapping("/gerar-pdf/{idAta}")
-    public ResponseEntity<Object> generatePDF(HttpServletResponse response, @PathVariable("idAta") Integer idAta) throws Exception {
-        response.setContentType("application/pdf");
+    public ResponseEntity<Object> generatePDF(@PathVariable("idAta") Integer idAta) throws Exception {
+
         if (ataService.existsById(idAta)){
-            String headerKey = "Content-Disposition";
-            String headerValue = "attachment; filename=pdf_teste.pdf";
-            response.setHeader(headerKey, headerValue);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("filename",  "ata-num" + idAta + ".pdf");
             Ata ata = ataService.findById(idAta).get();
-            byte[] pdfAta = gerarPDFAtaService.export(response, idAta);
+            byte[] pdfAta = gerarPDFAtaService.export(idAta);
             ata.setPdfAta(pdfAta);
-            return ResponseEntity.ok().body(pdfAta);
+            ataService.save(ata);
+            return ResponseEntity.ok().headers(headers).body(pdfAta);
         }else {
             return ResponseEntity.badRequest().body("ERROR 0006: A ata inserida não existe! ID ATA: " + idAta);
         }

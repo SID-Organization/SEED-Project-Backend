@@ -8,8 +8,7 @@ import br.sc.weg.sid.model.service.PropostaLogService;
 import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.AtaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @CrossOrigin
@@ -26,13 +26,16 @@ public class AtaController {
     private AtaService ataService;
 
     @Autowired
-    PautaService pautaService;
+    private PautaService pautaService;
 
     @Autowired
-    PropostaLogService propostaLogService;
+    private PropostaLogService propostaLogService;
 
     @Autowired
-    PropostaService propostaService;
+    private PropostaService propostaService;
+
+    @Autowired
+    private GerarPDFAtaController gerarPDFAtaController;
 
     @PostMapping
     public ResponseEntity<Object> save(
@@ -80,10 +83,32 @@ public class AtaController {
             });
             ata.setPropostasLogAta(propostasLogs);
             Ata ataSalva = ataService.save(ata);
+            gerarPDFAtaController.generatePDF(ataSalva.getIdAta());
             return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao cadastrar ata \n Message: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/pdf-ata/{idAta}")
+    ResponseEntity<Object> listarPropostaPdf(@PathVariable("idAta") Integer idAta) {
+        try {
+            if (ataService.existsById(idAta)) {
+                Ata ata = ataService.findById(idAta).get();
+                byte[] pdfBytes = ata.getPdfAta();
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-ata-num-" + ata.getIdAta()+".pdf").build());
+
+                return ResponseEntity.ok().headers(headers).body(pdfBytes);
+            } else {
+                return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + idAta);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idAta + "!");
     }
 
     @DeleteMapping("/{id}")
