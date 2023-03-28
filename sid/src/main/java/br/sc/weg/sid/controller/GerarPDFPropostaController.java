@@ -53,8 +53,8 @@ public class GerarPDFPropostaController {
                         while ((length = pdf.read(buffer)) != -1) {
                             baos.write(buffer, 0, length);
                         }
-                        proposta.setPdfProposta(baos.toByteArray());
-                        propostaService.save(proposta);
+//                        proposta.setPdfProposta(baos.toByteArray());
+//                        propostaService.save(proposta);
                     }else {
                         return ResponseEntity.badRequest().body("Proposta não encontrada");
                     }
