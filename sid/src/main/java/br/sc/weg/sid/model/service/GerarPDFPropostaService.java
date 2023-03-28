@@ -5,14 +5,10 @@ import com.lowagie.text.*;
 import com.lowagie.text.html.simpleparser.HTMLWorker;
 import com.lowagie.text.pdf.*;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.lowagie.text.List;
+import com.itextpdf.layout.element.Cell;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -169,6 +165,162 @@ public class GerarPDFPropostaService {
         Paragraph expectedResultsPotentialParagraph = new Paragraph("Resultados Esperados (Ganhos potenciais):", fontTitle);
         expectedResultsPotentialParagraph.setSpacingBefore(8);
 
+        Phrase totalCostPhrase = new Phrase("Custo Total do Projeto: ", fontTitle);
+        Chunk totalCostChunk = new Chunk("R$ " + "38.902,00", textFont);
+        totalCostPhrase.add(totalCostChunk);
+        Paragraph totalCostParagraph = new Paragraph(totalCostPhrase);
+        totalCostParagraph.setSpacingBefore(8);
+
+        Phrase totalExpensePhrase = new Phrase("Total Despesas (Desembolso): ", textFont);
+        Chunk totalExpenseChunk = new Chunk("R$ " + "38.902,00", textFont);
+        totalExpensePhrase.add(totalExpenseChunk);
+        Paragraph totalExpenseParagraph = new Paragraph(totalExpensePhrase);
+        totalExpenseParagraph.setSpacingBefore(8);
+
+        Phrase totalExpenseInternResourcesPhrase = new Phrase("Total Despesas - Recursos Internos: ", textFont);
+        Chunk totalExpenseInternResourcesChunk = new Chunk("R$ " + "38.902,00", textFont);
+        totalExpenseInternResourcesPhrase.add(totalExpenseInternResourcesChunk);
+        Paragraph totalExpenseInternResourcesParagraph = new Paragraph(totalExpenseInternResourcesPhrase);
+        totalExpenseInternResourcesParagraph.setSpacingBefore(8);
+
+        PdfPTable tableExpenses = new PdfPTable(5);
+        Font tableFontBold = new Font(Font.COURIER, 9, Font.BOLD);
+        Font tableFont = new Font(Font.COURIER, 9);
+        tableExpenses.setSpacingBefore(8);
+        tableExpenses.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
+        tableExpenses.setWidths(new int[]{18, 8, 8, 10});
+        tableExpenses.setWidthPercentage(90);
+        tableExpenses.getDefaultCell().setBorder(Rectangle.BOX);
+        tableExpenses.getDefaultCell().setBorderWidth(0.2f);
+
+        PdfPCell celulaTabelExpenses;
+
+        celulaTabelExpenses = new PdfPCell(new Phrase("Despesas (Com desembolso)", tableFontBold));
+        celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableExpenses.addCell(celulaTabelExpenses);
+
+        celulaTabelExpenses = new PdfPCell(new Phrase("Esforço", tableFontBold));
+        celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableExpenses.addCell(celulaTabelExpenses);
+
+        celulaTabelExpenses = new PdfPCell(new Phrase("Valor Hora", tableFontBold));
+        celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableExpenses.addCell(celulaTabelExpenses);
+
+        celulaTabelExpenses = new PdfPCell(new Phrase("Valor Total", tableFontBold));
+        celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableExpenses.addCell(celulaTabelExpenses);
+
+        celulaTabelExpenses = new PdfPCell(new Phrase("CCs", tableFontBold));
+        celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableExpenses.addCell(celulaTabelExpenses);
+
+        proposta.getTabelaCusto().forEach(tabelaCusto -> {
+            if(tabelaCusto.getTipoDespesa() == TipoDeDespesa.EXTERNA) {
+                PdfPCell celulaTabelExpensesForEach;
+
+                celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getPerfilDespesaTabelaCusto(), tableFontBold));
+                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+                tableExpenses.addCell(celulaTabelExpensesForEach);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+
+                celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getQuantidadeHorasTabelaCusto().toString() + "h", tableFontBold));
+                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+                tableExpenses.addCell(celulaTabelExpensesForEach);
+
+                celulaTabelExpensesForEach = new PdfPCell(new Phrase("R$" + tabelaCusto.getValorHoraTabelaCusto().toString(), tableFontBold));
+                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+                tableExpenses.addCell(celulaTabelExpensesForEach);
+
+                Double valorTotal = tabelaCusto.getQuantidadeHorasTabelaCusto() * tabelaCusto.getValorHoraTabelaCusto();
+
+                celulaTabelExpensesForEach = new PdfPCell(new Phrase(valorTotal.toString(), tableFontBold));
+                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+                tableExpenses.addCell(celulaTabelExpensesForEach);
+
+//                celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.get(), tableFontBold));
+//                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+//                tableExpenses.addCell(celulaTabelExpensesForEach);
+            }
+        });
+
+
+        PdfPTable tableInternResources = new PdfPTable(5);
+        tableInternResources.setSpacingBefore(8);
+        tableInternResources.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
+        tableInternResources.setWidths(new int[]{18, 8, 8, 10});
+        tableInternResources.setWidthPercentage(90);
+        tableInternResources.getDefaultCell().setBorder(Rectangle.BOX);
+        tableInternResources.getDefaultCell().setBorderWidth(0.2f);
+
+        PdfPCell celulaTableInternResources;
+
+        celulaTableInternResources = new PdfPCell(new Phrase("Recursos Internos", tableFontBold));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("Esforço", tableFontBold));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("Total", tableFontBold));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("CCs", tableFontBold));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("Arquiteto Maestro (TI)", tableFont));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("100h", tableFont));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("R$ 5.000", tableFont));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("90100340 - 50%", tableFont));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("Desenvolvedor Front-end", tableFont));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("200h", tableFont));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("R$ 10.000", tableFont));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("90100341 - 30%", tableFont));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("Total Recursos Internos", tableFontBold));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("300h", tableFontBold));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("R$ 15.000", tableFontBold));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
+        celulaTableInternResources = new PdfPCell(new Phrase("90100342 - 20%", tableFontBold));
+        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+        tableInternResources.addCell(celulaTableInternResources);
+
         SimpleDateFormat formatarData = new SimpleDateFormat("dd/MM/yyyy");
         String dataInicioFormatada = formatarData.format(pdfProposta.get().getProposta().getPeriodoExecucaoFimProposta());
         String dataFimFormatada = formatarData.format(pdfProposta.get().getProposta().getPeriodoExecucaoFimProposta());
@@ -187,8 +339,6 @@ public class GerarPDFPropostaService {
         paybackParagraph.setSpacingBefore(8);
 
         PdfPTable table = new PdfPTable(2);
-        Font tableFontBold = new Font(Font.TIMES_ROMAN, 10, Font.BOLD);
-        Font tableFont = new Font(Font.TIMES_ROMAN, 10);
         table.setSpacingBefore(8);
         table.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
         table.setWidths(new int[]{5, 5});
@@ -250,6 +400,13 @@ public class GerarPDFPropostaService {
 
         document.add(expectedResultsPotentialParagraph);
         htmlWorker.parse(new StringReader(expectedResultsPotentialParagraphTextHTML));
+
+        document.add(totalCostParagraph);
+        document.add(totalExpenseParagraph);
+        document.add(totalExpenseInternResourcesParagraph);
+
+        document.add(tableExpenses);
+        document.add(tableInternResources);
 
         document.add(executionPeriodParagraph);
 
