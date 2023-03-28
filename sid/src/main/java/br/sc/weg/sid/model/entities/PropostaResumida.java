@@ -2,6 +2,8 @@ package br.sc.weg.sid.model.entities;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class PropostaResumida {
 
@@ -16,4 +18,6 @@ public class PropostaResumida {
     Integer idDemanda;
 
     String linkPropostaJira;
+
+    List<TabelaCusto> tabelaCusto;
 }

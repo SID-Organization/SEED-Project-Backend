@@ -19,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Proposta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -70,9 +71,6 @@ public class Proposta {
     @Column(name = "CustosExternosDoProjeto")
     private Double custosExternosDoProjeto;
 
-    @Column(name = "MotivoRecusaProposta")
-    private String motivoRecusaWorkflowProposta;
-
     @FutureOrPresent
     @Column(name = "PeriodoExecucaoDemandaInicio")
     private Date periodoExecucaoDemandaInicio;
@@ -104,6 +102,7 @@ public class Proposta {
             inverseJoinColumns = @JoinColumn(name = "idPauta"))
     private List<Pauta> pautaProposta;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "proposta", cascade = CascadeType.ALL)
     private List<TabelaCusto> tabelaCusto;
 

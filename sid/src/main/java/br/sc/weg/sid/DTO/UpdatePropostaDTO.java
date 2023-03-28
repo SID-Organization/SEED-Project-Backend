@@ -4,6 +4,8 @@ import br.sc.weg.sid.model.entities.CentroCusto;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.model.entities.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +21,6 @@ public class UpdatePropostaDTO {
     private String escopoProposta;
     private Double paybackProposta;
     private Integer aprovadoWorkflowProposta;
-    private String motivoRecusaWorkflowProposta;
     private Date periodoExecucaoDemandaInicio;
     private Date periodoExecucaoDemandaFim;
     private String naoFazParteDoEscopoProposta;
@@ -30,6 +31,7 @@ public class UpdatePropostaDTO {
     private Double custosExternosDoProjeto;
     private String nomeResponsavelNegocio;
     private String areaResponsavelNegocio;
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private List<TabelaCusto> tabelaCusto;
 
 }

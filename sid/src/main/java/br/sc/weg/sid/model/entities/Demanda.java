@@ -80,6 +80,9 @@ public class Demanda {
     @Column(length = 6000)
     private String situacaoAtualDemanda;
 
+    @Column()
+    private String motivoRecusaDemanda;
+
     @JoinColumn(name = "idBuSolicitante")
     private String buSolicitanteDemanda;
 

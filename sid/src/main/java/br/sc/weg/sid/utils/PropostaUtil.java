@@ -38,6 +38,7 @@ public class PropostaUtil {
             propostaResumida.setValorDemanda(proposta.getCustosTotaisDoProjeto());
             propostaResumida.setIdDemanda(proposta.getDemandaProposta().getIdDemanda());
             propostaResumida.setLinkPropostaJira(proposta.getLinkJiraProposta());
+            propostaResumida.setTabelaCusto(proposta.getTabelaCusto());
             propostasResumidas.add(propostaResumida);
         });
         return propostasResumidas;
