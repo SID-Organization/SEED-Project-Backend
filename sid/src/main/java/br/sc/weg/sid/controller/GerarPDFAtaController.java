@@ -21,7 +21,7 @@ public class GerarPDFAtaController {
     @Autowired
     AtaService ataService;
 
-    @GetMapping("/pdf/generate/{idAta}")
+    @GetMapping("/gerar-pdf/{idAta}")
     public void generatePDF(HttpServletResponse response, @PathVariable("idAta") Integer idAta) throws Exception {
         response.setContentType("application/pdf");
         if (ataService.existsById(idAta)){

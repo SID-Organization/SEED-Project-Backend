@@ -18,7 +18,7 @@ public class Ata {
     @Column(name = "IdAta", nullable = false, unique = true)
     private Integer idAta;
 
-    @Column(name = "PdfAta", nullable = false)
+    @Column(name = "PdfAta")
     @Lob
     private byte[] pdfAta;
 

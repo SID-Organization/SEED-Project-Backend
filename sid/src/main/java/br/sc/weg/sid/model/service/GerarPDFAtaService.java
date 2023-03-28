@@ -1,8 +1,6 @@
 package br.sc.weg.sid.model.service;
 
-import br.sc.weg.sid.model.entities.Ata;
-import br.sc.weg.sid.model.entities.Demanda;
-import br.sc.weg.sid.model.entities.PdfProposta;
+import br.sc.weg.sid.model.entities.*;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
@@ -16,6 +14,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
+import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 @Service
@@ -58,11 +58,13 @@ public class GerarPDFAtaService {
         document.open();
 
         Color fontFirstTitleColor = new Color(0, 112, 192);
-        Font fontFirstTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, fontFirstTitleColor);
+        Font fontFirstTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, fontFirstTitleColor);
 
         Color fontProposalTitleColor = Color.decode("#4472c4");
-        Font fontProposalTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, fontProposalTitleColor);
-        Font textFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+        Font fontProposalTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, fontProposalTitleColor);
+
+        Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
+        Font textFont = new Font(Font.HELVETICA, 10);
 
 
         Paragraph paragraph = new Paragraph("ATA REUNIÃO COMISSÃO PROCESSOS DE VENDAS E DESENVOLVIMENTO DE PRODUTO\n", fontFirstTitle);
@@ -72,7 +74,7 @@ public class GerarPDFAtaService {
         Font tableFontBold = new Font(Font.TIMES_ROMAN, 10, Font.BOLD);
         Font tableFont = new Font(Font.TIMES_ROMAN, 10);
         table.setHorizontalAlignment(Paragraph.ALIGN_RIGHT);
-        table.setSpacingAfter(5);
+        table.setSpacingBefore(8);
         table.setWidths(new int[]{25, 30});
         table.setWidthPercentage(20);
         table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
@@ -94,7 +96,10 @@ public class GerarPDFAtaService {
         celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_JUSTIFIED);
         table.addCell(celulaTabelainicial);
 
-        celulaTabelainicial = new PdfPCell(new Phrase(ata.getPautaAta().getDataReuniaoPauta().toString(), tableFontBold));
+        SimpleDateFormat formatarData = new SimpleDateFormat("dd/MM/yyyy");
+        String dataReuniaoFormatada = formatarData.format(ata.getPautaAta().getDataReuniaoPauta());
+
+        celulaTabelainicial = new PdfPCell(new Phrase(dataReuniaoFormatada, tableFontBold));
         celulaTabelainicial.setBorder(Rectangle.NO_BORDER);
         celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_RIGHT);
         table.addCell(celulaTabelainicial);
@@ -119,7 +124,13 @@ public class GerarPDFAtaService {
         celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_RIGHT);
         table.addCell(celulaTabelainicial);
 
-        ata.getPautaAta().getPropostasPauta().forEach(proposta -> {
+        document.add(paragraph);
+        document.add(table);
+
+        ata.getPropostasLogAta().forEach(propostaLog -> {
+
+            Proposta proposta = propostaLog.getPropostaPropostaLog();
+
             Demanda demanda = proposta.getDemandaProposta();
 
             java.util.List<PdfProposta> pdfPropostasList = pdfPropostaService.findByProposta(proposta);
@@ -131,13 +142,15 @@ public class GerarPDFAtaService {
             List listTitle = new List(List.ORDERED);
             listTitle.add(new ListItem(titleDemandParagraph));
 
-            Phrase proposalPhrase = new Phrase("Objetivo: ", fontFirstTitle);
-            Chunk objetivoChunk = new Chunk(demanda.getPropostaMelhoriaDemanda(), textFont);
-            proposalPhrase.add(objetivoChunk);
-            Paragraph proposalParagraph = new Paragraph(proposalPhrase);
+            Phrase proposalPhrase = new Phrase("Objetivo: ", titleFont);
+            Phrase objetivoPhrase = new Phrase(demanda.getPropostaMelhoriaDemanda(), textFont);
+            Paragraph proposalParagraph = new Paragraph();
+            proposalParagraph.add(proposalPhrase);
+            proposalParagraph.add(objetivoPhrase);
             proposalParagraph.setSpacingBefore(8);
+            proposalParagraph.setIndentationLeft(10);
 
-            Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", fontFirstTitle);
+            Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", titleFont);
             projectScopeParagraph.setSpacingBefore(8);
 
             Paragraph projectScopeParagraphText = new Paragraph(pdfProposta.get().getEscopoPropostaHTML(), textFont);
@@ -147,60 +160,126 @@ public class GerarPDFAtaService {
 
             String projectScopeParagraphTextHTML = pdfProposta.get().getEscopoPropostaHTML();
 
+            Paragraph noPartOfScopeProjectParagraph;
+            if(!pdfProposta.get().getNaoFazParteDoEscopoPropostaHTML().isEmpty()){
+                noPartOfScopeProjectParagraph = new Paragraph("Não faz parte do escopo do projeto:", titleFont);
+                projectScopeParagraph.setSpacingBefore(8);
+            }else {
+                noPartOfScopeProjectParagraph = new Paragraph();
+            }
+
+            String projectNotInScopeParagraphTextHTML = pdfProposta.get().getEscopoPropostaHTML();
+
+            Paragraph projectCoverageParagraph = new Paragraph("Abrangência do Projeto:", titleFont);
+            projectCoverageParagraph.setSpacingBefore(8);
+
+            Paragraph projectCoverageParagraphText = new Paragraph(pdfProposta.get().getAbrangenciaProjetoPropostaHTML(), textFont);
+            projectCoverageParagraphText.setSpacingAfter(5);
+
+            java.util.List<Beneficio> beneficiosDemanda = pdfProposta.get().getProposta().getDemandaProposta().getBeneficiosDemanda();
+
+            String expectedResultsQualitativeParagraphTextHTML = "";
+            String expectedResultsPotentialParagraphTextHTML = "";
+            for (Beneficio beneficio : beneficiosDemanda) {
+                if (beneficio.getTipoBeneficio() == TipoBeneficio.QUALITATIVO) {
+                    expectedResultsQualitativeParagraphTextHTML = beneficio.getDescricaoBeneficio();
+                } else if (beneficio.getTipoBeneficio() == TipoBeneficio.POTENCIAL) {
+                    expectedResultsPotentialParagraphTextHTML = beneficio.getDescricaoBeneficio();
+                }
+            }
+            Paragraph expectedResultsParagraph = null;
+            if (expectedResultsQualitativeParagraphTextHTML != null){
+                expectedResultsParagraph = new Paragraph("Resultados Esperados (Qualitativos):", titleFont);
+                expectedResultsParagraph.setSpacingBefore(8);
+            }
+
+            Paragraph expectedResultsPotentialParagraph = new Paragraph("Benefícios potenciais:", titleFont);
+            expectedResultsPotentialParagraph.setSpacingBefore(8);
+
+            String dataInicioFormatada = formatarData.format(pdfProposta.get().getProposta().getPeriodoExecucaoFimProposta());
+            String dataFimFormatada = formatarData.format(pdfProposta.get().getProposta().getPeriodoExecucaoFimProposta());
+
+            Phrase executionPeriodPhrase = new Phrase("Período de execução: ", titleFont);
+            Phrase executionPeriodPhraseText = new Phrase(dataInicioFormatada + " à " +
+                    dataFimFormatada, textFont);
+            Paragraph executionPeriodParagraph = new Paragraph();
+            executionPeriodParagraph.add(executionPeriodPhrase);
+            executionPeriodParagraph.add(executionPeriodPhraseText);
+            executionPeriodParagraph.setSpacingBefore(8);
+
+            Phrase paybackPhrase = new Phrase("Payback: ", titleFont);
+            Phrase paybackPhraseText = new Phrase(pdfProposta.get().getProposta().getPaybackProposta().toString(), textFont);
+            Paragraph paybackParagraph = new Paragraph();
+            paybackParagraph.add(paybackPhrase);
+            paybackParagraph.add(paybackPhraseText);
+            paybackParagraph.setSpacingBefore(8);
+
+            Phrase businessResponsable = new Phrase("Responsável Negócio: ", titleFont);
+            Phrase responsablePhraseText = new Phrase(proposta.getNomeResponsavelNegocio() + " - "
+                    + proposta.getAreaResponsavelNegocio(), textFont);
+            Paragraph businessResponsableParagraph = new Paragraph();
+            businessResponsableParagraph.add(businessResponsable);
+            businessResponsableParagraph.add(responsablePhraseText);
+            proposalParagraph.setSpacingBefore(8);
+
+            Font commissionOpinionText = FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLD);
+            commissionOpinionText.setStyle(Font.UNDERLINE);
+
+            Phrase commissionOpinionPhrase = new Phrase("PARECER COMISSÃO", commissionOpinionText);
+            Phrase commissionOpinionPhraseText = new Phrase(": " + propostaLog.getParecerComissaoPropostaLog().toString(), titleFont);
+            Paragraph commissionOpinionParagraph = new Paragraph();
+            commissionOpinionParagraph.add(commissionOpinionPhrase);
+            commissionOpinionParagraph.add(commissionOpinionPhraseText);
+            commissionOpinionParagraph.setSpacingBefore(8);
+
+            document.add(listTitle);
+            document.add(proposalParagraph);
+
+
+            document.add(projectScopeParagraph);
+            try {
+                htmlWorker.parse(new StringReader(projectScopeParagraphTextHTML));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (!pdfProposta.get().getNaoFazParteDoEscopoPropostaHTML().isEmpty()) {
+                document.add(noPartOfScopeProjectParagraph);
+                try {
+                    htmlWorker.parse(new StringReader(projectNotInScopeParagraphTextHTML));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+
+            document.add(projectCoverageParagraph);
+            document.add(projectCoverageParagraphText);
+
+            if (expectedResultsQualitativeParagraphTextHTML != null){
+                document.add(expectedResultsParagraph);
+                try {
+                    htmlWorker.parse(new StringReader(expectedResultsQualitativeParagraphTextHTML));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            document.add(expectedResultsPotentialParagraph);
+            try {
+                htmlWorker.parse(new StringReader(expectedResultsPotentialParagraphTextHTML));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            document.add(executionPeriodParagraph);
+
+            document.add(paybackParagraph);
+
+            document.add(businessResponsableParagraph);
+
+            document.add(commissionOpinionParagraph);
         });
-
-
-        Paragraph titleProposalParagraph = new Paragraph("REPLANEJAMENTO DATA DE ENTREGA DE OVS EM MASSA – 1000025759", fontProposalTitle);
-        titleProposalParagraph.setAlignment(Paragraph.ALIGN_JUSTIFIED);
-        List listTitle = new List(List.ORDERED);
-        listTitle.add(new ListItem(titleProposalParagraph));
-        listTitle.setIndentationLeft(32);
-
-        Paragraph requesterParagraph = new Paragraph("Solicitante:", fontProposalTitle);
-        requesterParagraph.setSpacingBefore(8);
-
-        Paragraph requesterNamesParagraph = new Paragraph("NOME GERENTE SOLICITANTE – Departamento RH / Corporativo\n" +
-                "NOME CHEFE SOLICITANTE - Seção Recrutamento e Remuneração / Corporativo\n", textFont);
-        requesterNamesParagraph.setIndentationLeft(10);
-
-        Paragraph proposalParagraph = new Paragraph("Proposta:", fontProposalTitle);
-        proposalParagraph.setSpacingBefore(8);
-        proposalParagraph.setSpacingAfter(5);
-
-        Paragraph anteriorAprovationsParagraph = new Paragraph("Aprovações Anteriores:", fontProposalTitle);
-        anteriorAprovationsParagraph.setSpacingBefore(8);
-        anteriorAprovationsParagraph.setSpacingAfter(5);
-
-        Paragraph actualSituationParagraph = new Paragraph("Situação Atual:", fontProposalTitle);
-        actualSituationParagraph.setSpacingBefore(8);
-        actualSituationParagraph.setSpacingAfter(5);
-
-
-        Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", fontProposalTitle);
-        projectScopeParagraph.setSpacingBefore(8);
-        projectScopeParagraph.setSpacingAfter(5);
-
-        document.add(paragraph);
-        document.add(table);
-        document.add(listTitle);
-        document.add(requesterParagraph);
-        document.add(requesterNamesParagraph);
-        document.add(proposalParagraph);
-
-        document.add(anteriorAprovationsParagraph);
-
-        document.add(actualSituationParagraph);
-
-        document.add(projectScopeParagraph);
-
-        document.newPage();
-
-        Paragraph evaluatedAlternativesParagraph = new Paragraph("Alternativas Avaliadas:", fontProposalTitle);
-        evaluatedAlternativesParagraph.setSpacingBefore(8);
-        evaluatedAlternativesParagraph.setSpacingAfter(5);
-
-
-        document.add(evaluatedAlternativesParagraph);
         document.close();
 
     }

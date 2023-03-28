@@ -58,7 +58,6 @@ public class GerarPDFPropostaController {
                     }else {
                         return ResponseEntity.badRequest().body("Proposta não encontrada");
                     }
-                    System.out.println("DPS PDF");
                     return ResponseEntity.ok()
                             .headers(headers)
                             .body(baos.toByteArray());
