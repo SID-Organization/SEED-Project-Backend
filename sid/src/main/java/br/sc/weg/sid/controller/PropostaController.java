@@ -89,7 +89,6 @@ public class PropostaController {
             @RequestParam(value = "updatePropostaForm") String updatePropostaForm,
             @RequestParam(value = "pdfPropostaForm", required = false) String pdfPropostaForm
     ) {
-        System.out.println(updatePropostaForm);
         try {
             Optional<Proposta> propostaOptional = propostaService.findById(id);
             if (propostaOptional.isPresent()) {
@@ -97,8 +96,6 @@ public class PropostaController {
                 PdfProposta pdfProposta = propostaUtil.convertJsonToModel(pdfPropostaForm);
 
                 UpdatePropostaDTO updatePropostaDTO = propostaUtil.convertToUpdateProspotaDTO(updatePropostaForm);
-
-                System.out.println("DTO: " + updatePropostaDTO);
 
                 Proposta proposta = propostaOptional.get();
                 BeanUtils.copyProperties(updatePropostaDTO, proposta);
@@ -152,7 +149,7 @@ public class PropostaController {
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_PDF);
-                headers.setContentDisposition(ContentDisposition.builder("attachment").filename("pdf-proposta" + proposta.getIdProposta() + ".pdf").build());
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-proposta" + proposta.getIdProposta()+".pdf").build());
 
                 return ResponseEntity.ok().headers(headers).body(pdfBytes);
             } else {
@@ -163,6 +160,7 @@ public class PropostaController {
         }
         return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + id + "!");
     }
+
 
     @GetMapping("/{id}")
     ResponseEntity<Object> listarPropostaPorId(@PathVariable("id") Integer id) {
@@ -185,7 +183,7 @@ public class PropostaController {
 
     @GetMapping("/proposta-pronta")
     ResponseEntity<Object> listarPropostaPorStatusDemanda() {
-        try {
+        try{
             List<Proposta> proposta = propostaService.findAll();
             List<Proposta> propostasFiltradas = new ArrayList<>();
             for (Proposta p : proposta) {
@@ -198,7 +196,7 @@ public class PropostaController {
                 return ResponseEntity.badRequest().body("ERROR 0004: Não existem propostas cadastradas!");
             }
             return ResponseEntity.ok(propostasResumidas);
-        } catch (Exception e) {
+        }catch (Exception e){
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
     }

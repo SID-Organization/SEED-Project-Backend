@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,7 +18,7 @@ public class Ata {
     @Column(name = "IdAta", nullable = false, unique = true)
     private Integer idAta;
 
-    @Column(name = "PdfAta", nullable = false)
+    @Column(name = "PdfAta")
     @Lob
     private byte[] pdfAta;
 
@@ -32,6 +33,7 @@ public class Ata {
     @OneToMany(mappedBy = "idPropostaLog")
     List<PropostasLog> propostasLogAta;
 
+    @JsonIgnore
     @OneToOne
     Pauta pautaAta;
 }

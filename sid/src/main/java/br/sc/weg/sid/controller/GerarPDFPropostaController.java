@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream;
 
 @Controller
 @CrossOrigin
-@RequestMapping("/sid/api/PDF")
+@RequestMapping("/sid/api/proposta-PDF")
 public class GerarPDFPropostaController {
     @Autowired
     private final GerarPDFPropostaService gerarPDFService;
@@ -58,7 +58,6 @@ public class GerarPDFPropostaController {
                     }else {
                         return ResponseEntity.badRequest().body("Proposta não encontrada");
                     }
-                    System.out.println("DPS PDF");
                     return ResponseEntity.ok()
                             .headers(headers)
                             .body(baos.toByteArray());

@@ -67,10 +67,6 @@ public class PropostaUtil {
         }
     }
 
-    public Proposta convertDtoToModel(UpdatePropostaDTO updatePropostaDTO) {
-        return this.mapper.convertValue(updatePropostaDTO, Proposta.class);
-    }
-
     public UpdatePropostaDTO convertToUpdateProspotaDTO(String updatePropostaForm) {
         try{
             return this.mapper.readValue(updatePropostaForm, UpdatePropostaDTO.class);
