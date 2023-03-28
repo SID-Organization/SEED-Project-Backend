@@ -1,6 +1,8 @@
 package br.sc.weg.sid.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -85,13 +87,6 @@ public class Proposta {
     @Column(name = "AreaResponsavelNegocio")
     private String areaResponsavelNegocio;
 
-    @OneToMany(mappedBy = "idTabelaCusto")
-    private List<TabelaCusto> tabelaCustoProposta;
-
-    @JoinColumn(name = "CentroCusto", referencedColumnName = "IdCentroCusto")
-    @ManyToOne
-    private CentroCusto centroCusto;
-
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
     @ManyToOne(optional = false)
     private Demanda demandaProposta;
@@ -108,6 +103,9 @@ public class Proposta {
             joinColumns = @JoinColumn(name = "idProposta"),
             inverseJoinColumns = @JoinColumn(name = "idPauta"))
     private List<Pauta> pautaProposta;
+
+    @OneToMany(mappedBy = "proposta", cascade = CascadeType.ALL)
+    private List<TabelaCusto> tabelaCusto;
 
 }
 

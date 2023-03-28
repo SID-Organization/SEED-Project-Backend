@@ -10,20 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface TabelaCustoRepository extends JpaRepository<TabelaCusto, Integer> {
-
-    @Override
-    default Optional<TabelaCusto> findById(Integer integer) {
-        return Optional.empty();
-    }
-
-    @Override
-    default boolean existsById(Integer integer) {
-        return false;
-    }
-
-    @Override
-    default void deleteById(Integer integer) {
-    }
-
     List<TabelaCusto> findByProposta(Proposta proposta);
 }

@@ -16,7 +16,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -100,12 +99,21 @@ public class PropostaController {
 
                 Proposta proposta = propostaOptional.get();
                 BeanUtils.copyProperties(updatePropostaDTO, proposta);
+                try {
+                    for (TabelaCusto tabelaCusto : updatePropostaDTO.getTabelaCusto()) {
+                        tabelaCusto.setProposta(proposta);
+                        tabelaCustoService.save(tabelaCusto);
+                    }
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("ERROR 0004: Erro ao atualizar tabela de custo!" + "\nMessage: " + e.getMessage());
+                }
                 Proposta propostaSalva = propostaService.save(proposta);
                 pdfProposta.setProposta(propostaSalva);
                 pdfPropostaService.save(pdfProposta);
                 GerarPDFDTO gerarPDFDTO = new GerarPDFDTO();
                 gerarPDFDTO.setIdProposta(propostaSalva.getIdProposta());
                 gerarPDFDTO.setIdDemanda(propostaSalva.getDemandaProposta().getIdDemanda());
+                System.out.println("AAAAAAAAAA: " + gerarPDFDTO);
                 gerarPDFPropostaController.gerarPDF(gerarPDFDTO);
                 return ResponseEntity.ok(proposta);
             } else {

@@ -3,7 +3,9 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.CadastroChatDTO;
 import br.sc.weg.sid.DTO.CadastroTabelaCustoDTO;
 import br.sc.weg.sid.model.entities.Chat;
+import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.TabelaCusto;
+import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.model.service.TabelaCustoService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +22,35 @@ public class TabelaCustoController {
     @Autowired
     TabelaCustoService tabelaCustoService;
 
-    @PostMapping
-    public ResponseEntity<Object> save(@RequestBody CadastroTabelaCustoDTO cadastroTabelaCustoDTO) {
-        TabelaCusto tabelaCusto = new TabelaCusto();
-        BeanUtils.copyProperties(cadastroTabelaCustoDTO, tabelaCusto);
-        try {
-            return ResponseEntity.ok().body(tabelaCustoService.save(tabelaCusto));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Tabela de custo não salva! Message: " + e.getMessage());
-        }
-    }
+    @Autowired
+    PropostaService propostaService;
 
     @GetMapping()
     ResponseEntity<Object> listarTabelaCusto() {
-        return ResponseEntity.ok().body(tabelaCustoService.findAll());
+        try {
+            return ResponseEntity.ok().body(tabelaCustoService.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não existe tabela de custo");
+        }
     }
 
+    @GetMapping("/{id}")
+    ResponseEntity<Object> listarTabelaCustoPorId(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok().body(tabelaCustoService.findById(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não existe tabela de custo com id: " + id);
+        }
+    }
+
+    @GetMapping("/proposta/{id}")
+    ResponseEntity<Object> listarTabelaCustoPorProposta(@PathVariable Integer id) {
+        Proposta proposta = propostaService.findById(id).get();
+        try {
+            return ResponseEntity.ok().body(tabelaCustoService.findByProposta(proposta));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Não existe tabela de custo para a proposta com id: " + id);
+        }
+    }
 
 }
