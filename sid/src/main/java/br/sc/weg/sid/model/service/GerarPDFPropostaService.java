@@ -215,36 +215,33 @@ public class GerarPDFPropostaService {
         celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableExpenses.addCell(celulaTabelExpenses);
 
-        proposta.getTabelaCusto().forEach(tabelaCusto -> {
-            if(tabelaCusto.getTipoDespesa() == TipoDeDespesa.EXTERNA) {
-                PdfPCell celulaTabelExpensesForEach;
-
-                celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getPerfilDespesaTabelaCusto(), tableFontBold));
-                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                tableExpenses.addCell(celulaTabelExpensesForEach);
-
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-
-                celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getQuantidadeHorasTabelaCusto().toString() + "h", tableFontBold));
-                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                tableExpenses.addCell(celulaTabelExpensesForEach);
-
-                celulaTabelExpensesForEach = new PdfPCell(new Phrase("R$" + tabelaCusto.getValorHoraTabelaCusto().toString(), tableFontBold));
-                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                tableExpenses.addCell(celulaTabelExpensesForEach);
-
-                Double valorTotal = tabelaCusto.getQuantidadeHorasTabelaCusto() * tabelaCusto.getValorHoraTabelaCusto();
-
-                celulaTabelExpensesForEach = new PdfPCell(new Phrase(valorTotal.toString(), tableFontBold));
-                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                tableExpenses.addCell(celulaTabelExpensesForEach);
-
-//                celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.get(), tableFontBold));
+//        proposta.getTabelaCusto().forEach(tabelaCusto -> {
+//            if(tabelaCusto.getTipoDespesa() == TipoDeDespesa.EXTERNA) {
+//                PdfPCell celulaTabelExpensesForEach;
+//
+//                celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getPerfilDespesaTabelaCusto(), tableFontBold));
 //                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
 //                tableExpenses.addCell(celulaTabelExpensesForEach);
-            }
-        });
+//
+//                celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getQuantidadeHorasTabelaCusto().toString() + "h", tableFontBold));
+//                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+//                tableExpenses.addCell(celulaTabelExpensesForEach);
+//
+//                celulaTabelExpensesForEach = new PdfPCell(new Phrase("R$" + tabelaCusto.getValorHoraTabelaCusto().toString(), tableFontBold));
+//                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+//                tableExpenses.addCell(celulaTabelExpensesForEach);
+//
+//                Double valorTotal = tabelaCusto.getQuantidadeHorasTabelaCusto() * tabelaCusto.getValorHoraTabelaCusto();
+//
+//                celulaTabelExpensesForEach = new PdfPCell(new Phrase(valorTotal.toString(), tableFontBold));
+//                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+//                tableExpenses.addCell(celulaTabelExpensesForEach);
+//
+////                celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.get(), tableFontBold));
+////                celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+////                tableExpenses.addCell(celulaTabelExpensesForEach);
+//            }
+//        });
 
 
         PdfPTable tableInternResources = new PdfPTable(5);

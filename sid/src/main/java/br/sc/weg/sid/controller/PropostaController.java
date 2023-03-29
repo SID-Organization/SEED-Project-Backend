@@ -61,7 +61,6 @@ public class PropostaController {
             }
 
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);
-            System.out.println(proposta);
             Proposta propostaSalva = propostaService.save(proposta);
             return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
         } catch (Exception e) {
@@ -97,32 +96,50 @@ public class PropostaController {
                 PropostaUtil propostaUtil = new PropostaUtil();
                 PdfProposta pdfProposta = propostaUtil.convertJsonToModel(pdfPropostaForm);
 
-                UpdatePropostaDTO updatePropostaDTO = propostaUtil.convertToUpdateProspotaDTO(updatePropostaForm);
+                Proposta proposta = propostaUtil.convertJsonToModelUpdate(updatePropostaForm);
 
-                System.out.println(updatePropostaForm);
+                BeanUtils.copyProperties(propostaOptional.get(), proposta);
 
-                Proposta proposta = propostaOptional.get();
-                BeanUtils.copyProperties(updatePropostaDTO, proposta);
+
+                System.out.println(proposta);
+                List<TabelaCustoLinha> tabelaCustoExternoLinhaList = new ArrayList<>();
+                for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCustoExterno().getTabelaCustoLinha()){
+                    TabelaCustoLinha tabelaCustoLinhaSalva = tabelaCustoLinhaService.save(tabelaCustoLinha);
+                    tabelaCustoExternoLinhaList.add(tabelaCustoLinhaSalva);
+                }
+
+                List<CentroCustoTabelaCusto> centroCustoTabelaCustoList = new ArrayList<>();
+                for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCustoExterno().getCentroCustoTabelaCusto()){
+                    System.out.println(centroCustoTabelaCusto.getCentroCusto().getIdCentroCusto());
+                    CentroCustoTabelaCusto centroCustoTabelaCustoSalvo = centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+                    centroCustoTabelaCustoList.add(centroCustoTabelaCustoSalvo);
+                }
+                proposta.getTabelaCustoExterno().setTabelaCustoLinha(tabelaCustoExternoLinhaList);
+                proposta.getTabelaCustoExterno().setCentroCustoTabelaCusto(centroCustoTabelaCustoList);
+
+                tabelaCustoService.save(proposta.getTabelaCustoExterno());
+//                tabelaCustoService.save(proposta.getTabelaCustoInterno());
+
                 try {
-                    for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCustoExterno().getTabelaCustoLinha()) {
-                        tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCustoExterno());
-                        tabelaCustoLinhaService.save(tabelaCustoLinha);
-                    }
+//                    for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCustoExterno().getTabelaCustoLinha()) {
+//                        tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCustoExterno());
+//                        tabelaCustoLinhaService.save(tabelaCustoLinha);
+//                    }
 
-                    for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCustoExterno().getCentroCustoTabelaCusto()) {
-                        centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCustoExterno());
-                        centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
-                    }
+//                    for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCustoExterno().getCentroCustoTabelaCusto()) {
+//                        centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCustoExterno());
+//                        centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+//                    }
 
-                    for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCustoInterno().getTabelaCustoLinha()) {
-                        tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCustoInterno());
-                        tabelaCustoLinhaService.save(tabelaCustoLinha);
-                    }
+//                    for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCustoInterno().getTabelaCustoLinha()) {
+//                        tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCustoInterno());
+//                        tabelaCustoLinhaService.save(tabelaCustoLinha);
+//                    }
 
-                    for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCustoInterno().getCentroCustoTabelaCusto()) {
-                        centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCustoInterno());
-                        centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
-                    }
+//                    for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCustoInterno().getCentroCustoTabelaCusto()) {
+//                        centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCustoInterno());
+//                        centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+//                    }
 
                     TabelaCusto tabelaCustoExterno = proposta.getTabelaCustoExterno();
                     tabelaCustoService.save(tabelaCustoExterno);

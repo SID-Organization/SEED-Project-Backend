@@ -25,11 +25,9 @@ public class TabelaCusto {
     @Enumerated(EnumType.STRING)
     private TipoDeDespesa tipoDespesa;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "tabelaCusto")
+    @OneToMany(mappedBy = "idTabelaCustoLinha")
     private List<TabelaCustoLinha> tabelaCustoLinha;
 
-    @JoinColumn(name = "centroCustoTabelaCusto")
-    @OneToMany
+    @OneToMany(mappedBy = "idCentroCustoTabelaCusto")
     private List<CentroCustoTabelaCusto> centroCustoTabelaCusto;
 }

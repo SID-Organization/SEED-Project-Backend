@@ -19,20 +19,15 @@ public class TabelaCustoLinha {
     @Column(name = "IdTabelaCustoLinha", nullable = false, unique = true)
     private Integer idTabelaCustoLinha;
 
-    @Column(name = "PeriodoExecucaoTabelaCusto", nullable = false)
+    @Column(name = "PeriodoExecucaoTabelaCusto")
     private Integer periodoExecucaoTabelaCusto;
 
-    @Column(name = "QuantidadeHorasTabelaCusto", nullable = false)
+    @Column(name = "QuantidadeHorasTabelaCusto")
     private Integer quantidadeHorasTabelaCusto;
 
-    @Column(name = "ValorHoraTabelaCusto", nullable = false)
+    @Column(name = "ValorHoraTabelaCusto")
     private Double valorHoraTabelaCusto;
 
-    @JoinColumn(name = "IdTabelaCusto")
-    @ManyToOne
-    @JsonIgnore
-    private TabelaCusto tabelaCusto;
-
-    @Column(name = "perfilDespesaTabelaCustoLinha", nullable = false)
+    @Column(name = "perfilDespesaTabelaCustoLinha")
     String perfilDespesaTabelaCustoLinha;
 }
