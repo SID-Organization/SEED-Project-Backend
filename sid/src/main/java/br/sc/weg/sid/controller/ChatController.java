@@ -17,7 +17,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+@RestController
 @CrossOrigin
 @RequestMapping("/sid/api/chat")
 public class ChatController {

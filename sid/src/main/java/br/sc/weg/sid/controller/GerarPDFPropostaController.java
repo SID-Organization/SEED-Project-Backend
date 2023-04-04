@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-@Controller
+@RestController
 @CrossOrigin
 @RequestMapping("/sid/api/proposta-PDF")
 public class GerarPDFPropostaController {

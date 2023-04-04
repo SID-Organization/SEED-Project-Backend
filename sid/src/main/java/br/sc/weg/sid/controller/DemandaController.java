@@ -22,7 +22,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 @CrossOrigin
 @RequestMapping("/sid/api/demanda")
 public class DemandaController {
