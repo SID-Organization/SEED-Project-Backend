@@ -6,7 +6,9 @@ import br.sc.weg.sid.auth.users.UserJpa;
 import br.sc.weg.sid.auth.utils.TokenUtils;
 import br.sc.weg.sid.model.entities.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,12 +47,15 @@ public class AuthController {
         try {
             Authentication authentication = authManager.authenticate(authenticationToken);
             String token = tokenUtils.gerarToken(authentication);
-            Cookie cookie = new Cookie("jwt", token);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(3600);
-            cookie.setHttpOnly(false);
-            response.addCookie(cookie);
+            ResponseCookie cookie = ResponseCookie.from("jwt", token)
+                    .maxAge(3600)
+                    .path("/")
+                    .secure(false)
+                    .sameSite("None")
+                    .domain(".localhost")
+                    .build();
+            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            System.out.println(cookie.getValue());
             UserJpa user = (UserJpa) authentication.getPrincipal();
             Usuario pessoa = user.getUsuario();
             System.out.println(cookie.getValue());

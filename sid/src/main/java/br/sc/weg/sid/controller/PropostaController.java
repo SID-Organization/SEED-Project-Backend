@@ -45,7 +45,7 @@ public class PropostaController {
 
     @PostMapping()
     @Transactional
-    ResponseEntity<Object> cadastrarProposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
+    public ResponseEntity<Object> cadastrarProposta(@RequestBody @Valid CadastroPropostaDTO cadastroPropostaDTO) {
         try {
             Proposta proposta = new Proposta();
 
@@ -100,8 +100,6 @@ public class PropostaController {
 
                 BeanUtils.copyProperties(propostaOptional.get(), proposta);
 
-
-                System.out.println(proposta);
                 List<TabelaCustoLinha> tabelaCustoExternoLinhaList = new ArrayList<>();
                 for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCustoExterno().getTabelaCustoLinha()){
                     TabelaCustoLinha tabelaCustoLinhaSalva = tabelaCustoLinhaService.save(tabelaCustoLinha);
@@ -110,7 +108,6 @@ public class PropostaController {
 
                 List<CentroCustoTabelaCusto> centroCustoTabelaCustoList = new ArrayList<>();
                 for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCustoExterno().getCentroCustoTabelaCusto()){
-                    System.out.println(centroCustoTabelaCusto.getCentroCusto().getIdCentroCusto());
                     CentroCustoTabelaCusto centroCustoTabelaCustoSalvo = centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
                     centroCustoTabelaCustoList.add(centroCustoTabelaCustoSalvo);
                 }
