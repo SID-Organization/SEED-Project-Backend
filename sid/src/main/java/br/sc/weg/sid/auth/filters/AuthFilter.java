@@ -25,10 +25,17 @@ public class AuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getRequestURI().equals("/login") || request.getRequestURI().equals("/login/auth") || request.getRequestURI().startsWith("/sid/api/docs") || request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().equals("/sid/swagger-ui.html")) {
+        if (    request.getRequestURI().equals("/login") ||
+                request.getRequestURI().equals("/login/auth") ||
+                request.getRequestURI().startsWith("/sid/api/docs") ||
+                request.getRequestURI().startsWith("/sid/swagger-ui") ||
+                request.getRequestURI().equals("/sid/swagger-ui.html") ||
+                request.getRequestURI().equals("/favicon.ico")) {
             filterChain.doFilter(request, response);
             return;
         }
+
+        System.out.println("Filtro: " + request.getRequestURI());
         try {
             String token = tokenUtils.buscarCookie(request, "jwt");
             Boolean valido = tokenUtils.validarToken(token);
