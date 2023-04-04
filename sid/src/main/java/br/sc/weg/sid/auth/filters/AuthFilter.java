@@ -25,7 +25,12 @@ public class AuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getRequestURI().equals("/login") || request.getRequestURI().equals("/login/auth")) {
+        if ( request.getRequestURI().equals("/login") ||
+             request.getRequestURI().equals("/login/auth") ||
+             request.getRequestURI().startsWith("/swagger-ui") ||
+             request.getRequestURI().startsWith("/v3/api-docs") ||
+             request.getRequestURI().equals("/webjars") ||
+             request.getRequestURI().equals("/swagger-resources")) {
             filterChain.doFilter(request, response);
             return;
         }

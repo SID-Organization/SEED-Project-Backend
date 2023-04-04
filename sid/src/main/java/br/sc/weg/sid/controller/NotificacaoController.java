@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Controller
+@RestController
 @CrossOrigin
 @RequestMapping("/sid/api/notificacao")
 public class NotificacaoController {

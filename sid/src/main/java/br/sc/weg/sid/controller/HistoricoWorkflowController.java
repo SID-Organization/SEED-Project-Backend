@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+@RestController
 @CrossOrigin
 @RequestMapping("/sid/api/historico-workflow")
 public class HistoricoWorkflowController {
