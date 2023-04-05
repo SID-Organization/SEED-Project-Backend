@@ -11,6 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Data
 public class CentroCusto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

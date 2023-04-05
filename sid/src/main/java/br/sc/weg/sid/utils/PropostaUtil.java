@@ -65,20 +65,20 @@ public class PropostaUtil {
         }
     }
 
-    public Proposta convertJsonToModelUpdate(String updatePropostaForm) {
+    public UpdatePropostaDTO convertJsonToModelUpdate(String updatePropostaForm) {
         try {
             UpdatePropostaDTO updatePropostaDTO = convertToUpdateProspotaDTO(updatePropostaForm);
-            return convertToModelUpdate(updatePropostaDTO);
+            return updatePropostaDTO;
         } catch (Exception e) {
             throw new RuntimeException("Erro ao converter o updatePropostaForm para Proposta! \n" + e.getMessage());
         }
     }
 
-    public Proposta convertToModelUpdate(UpdatePropostaDTO updatePropostaDTO) {
-        Proposta proposta = new Proposta();
-        BeanUtils.copyProperties(updatePropostaDTO, proposta);
-        return proposta;
-    }
+//    public Proposta convertToModelUpdate(UpdatePropostaDTO updatePropostaDTO) {
+//        Proposta proposta = new Proposta();
+//        BeanUtils.copyProperties(updatePropostaDTO, proposta);
+//        return proposta;
+//    }
 
     public UpdatePropostaDTO convertToUpdateProspotaDTO(String updatePropostaForm) {
         try {

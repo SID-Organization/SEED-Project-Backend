@@ -30,4 +30,9 @@ public class TabelaCustoLinha {
 
     @Column(name = "perfilDespesaTabelaCustoLinha")
     String perfilDespesaTabelaCustoLinha;
+
+    @ManyToOne
+    @JoinColumn(name = "tabelaCusto")
+    @JsonIgnore
+    private TabelaCusto tabelaCusto;
 }

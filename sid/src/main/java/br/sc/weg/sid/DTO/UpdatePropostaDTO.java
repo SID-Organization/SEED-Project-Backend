@@ -22,8 +22,7 @@ public class UpdatePropostaDTO {
     private Double custosTotaisDoProjeto;
     private Double custosInternosDoProjeto;
     private Double custosExternosDoProjeto;
-    private TabelaCusto tabelaCustoExterno;
-    private TabelaCusto tabelaCustoInterno;
+    private List<TabelaCusto> tabelaCusto;
     private String nomeResponsavelNegocio;
     private String areaResponsavelNegocio;
 

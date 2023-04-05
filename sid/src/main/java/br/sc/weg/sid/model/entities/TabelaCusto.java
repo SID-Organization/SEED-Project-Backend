@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Data
 public class TabelaCusto {
 
     @Id
@@ -25,9 +26,14 @@ public class TabelaCusto {
     @Enumerated(EnumType.STRING)
     private TipoDeDespesa tipoDespesa;
 
-    @OneToMany(mappedBy = "idTabelaCustoLinha")
+    @OneToMany(mappedBy = "tabelaCusto")
     private List<TabelaCustoLinha> tabelaCustoLinha;
 
-    @OneToMany(mappedBy = "idCentroCustoTabelaCusto")
+    @OneToMany(mappedBy = "tabelaCusto")
     private List<CentroCustoTabelaCusto> centroCustoTabelaCusto;
+
+    @ManyToOne
+    @JoinColumn(name = "proposta")
+    @JsonIgnore
+    private Proposta proposta;
 }

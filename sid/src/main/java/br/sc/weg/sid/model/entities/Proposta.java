@@ -83,13 +83,8 @@ public class Proposta {
     @Column(name = "AreaResponsavelNegocio")
     private String areaResponsavelNegocio;
 
-    @JoinColumn(name = "tabelaCustoExterno", referencedColumnName = "IdTabelaCusto")
-    @OneToOne
-    private TabelaCusto tabelaCustoExterno;
-
-    @JoinColumn(name = "tabelaCustoInterno", referencedColumnName = "IdTabelaCusto")
-    @OneToOne
-    private TabelaCusto tabelaCustoInterno;
+    @OneToMany(mappedBy = "proposta", cascade = CascadeType.ALL)
+    private List<TabelaCusto> tabelaCusto;
 
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
     @ManyToOne(optional = false)

@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Data
 public class CentroCustoTabelaCusto {
 
     @Id
@@ -19,9 +21,14 @@ public class CentroCustoTabelaCusto {
     private Integer idCentroCustoTabelaCusto;
 
     @ManyToOne
-    @JoinColumn(name = "idCentroCusto")
+    @JoinColumn(name = "centroCusto")
     private CentroCusto centroCusto;
 
     @Column(name = "porcentagemDespesa")
     private Double porcentagemDespesa;
+
+    @ManyToOne
+    @JoinColumn(name = "tabelaCusto")
+    @JsonIgnore
+    private TabelaCusto tabelaCusto;
 }
