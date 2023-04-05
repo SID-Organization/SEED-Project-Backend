@@ -35,7 +35,6 @@ public class AuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        System.out.println("Filtro: " + request.getRequestURI());
         try {
             String token = tokenUtils.buscarCookie(request, "jwt");
             Boolean valido = tokenUtils.validarToken(token);
