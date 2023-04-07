@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.service;
 
+import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.repository.TabelaCustoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,16 @@ public class TabelaCustoService {
         return tabelaCustoRepository.existsById(integer);
     }
 
+    public List<TabelaCusto> findByPropostaTabelaCusto(Proposta propostaTabelaCusto) {
+        return tabelaCustoRepository.findByPropostaTabelaCusto(propostaTabelaCusto);
+
+    }
+
     public void deleteById(Integer integer) {
         tabelaCustoRepository.deleteById(integer);
+    }
+
+    public void deleteAll(List<TabelaCusto> tabelaCustoList) {
+        tabelaCustoRepository.deleteAll(tabelaCustoList);
     }
 }

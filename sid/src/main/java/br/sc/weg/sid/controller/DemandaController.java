@@ -47,6 +47,9 @@ public class DemandaController {
     @Autowired
     BeneficioService beneficioService;
 
+    @Autowired
+    ForumService forumService;
+
     //Get all, pega todas as demandas
     @GetMapping()
     public ResponseEntity<Object> findAll() {
@@ -108,7 +111,6 @@ public class DemandaController {
             DemandaUtil demandaUtil = new DemandaUtil();
             CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
             CadastroPdfDemandaDTO cadastroPdfDemandaDTO = demandaUtil.convertToPdfDto(pdfDemandaJson);
-            System.out.println(demandaJson);
             Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
             PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
             try {
@@ -254,18 +256,19 @@ public class DemandaController {
     }
 
     //Busca demandas por Seção
-    @GetMapping("/secao/{secao}")
-    public ResponseEntity<Object> findBySecao(@PathVariable("secao") String secao) {
+    @GetMapping("/secao/{idForum}")
+    public ResponseEntity<Object> findByForum(@PathVariable("idForum") Integer idForum) {
         try {
-            List<Demanda> demandas = demandaService.findBySecaoTIResponsavelDemanda(secao);
+            Forum forum = forumService.findById(idForum).get();
+            List<Demanda> demandas = demandaService.findByForumDemanda(forum);
             if (demandas.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada para a seção: " + secao);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada com o idForum: " + idForum);
             }
             DemandaUtil demandaUtil = new DemandaUtil();
             List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
             return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada para a seção: " + secao);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar por forum: " + e.getMessage());
         }
     }
 
@@ -430,6 +433,7 @@ public class DemandaController {
             @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson
     ) {
         DemandaUtil demandaUtil = new DemandaUtil();
+        Demanda demandaExiste = demandaService.findById(idDemanda).get();
         CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
         CadastroPdfDemandaDTO cadastroPdfDemandaDTO = demandaUtil.convertToPdfDto(pdfDemandaJson);
         if (!demandaService.existsById(idDemanda)) {
@@ -446,7 +450,24 @@ public class DemandaController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda, a mesma não será atualizada!" + e.getMessage());
         }
-        demandaService.save(demanda);
+
+        System.out.println(demanda.getBeneficiosDemanda());
+
+        Demanda demandaSalva = demandaService.save(demanda);
+        beneficioService.findByDemandaBeneficio(demandaExiste).forEach(beneficioExiste -> {
+            demandaSalva.getBeneficiosDemanda().forEach(beneficioDemanda -> {
+                System.out.println(beneficioDemanda);
+                if (beneficioExiste.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio()) {
+                    System.out.println("Entrou no if");
+                    BeanUtils.copyProperties(beneficioDemanda, beneficioExiste );
+                    beneficioService.save(beneficioExiste);
+                }else {
+                    System.out.println("Entrou no else");
+//                    beneficioDemanda.setDemandaBeneficio(demandaSalva);
+//                    beneficioService.save(beneficioDemanda);
+                }
+            });
+        });
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 

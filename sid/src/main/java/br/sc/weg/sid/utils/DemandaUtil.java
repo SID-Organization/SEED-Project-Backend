@@ -5,19 +5,12 @@ import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.DemandaResumida;
 import br.sc.weg.sid.model.entities.PdfDemanda;
-import br.sc.weg.sid.model.entities.Usuario;
-import br.sc.weg.sid.model.service.ArquivoDemandaService;
-import br.sc.weg.sid.model.service.UsuarioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @NoArgsConstructor
 public class DemandaUtil {
@@ -62,6 +55,12 @@ public class DemandaUtil {
             demandaResumida.setScoreDemanda(demanda.getScoreDemanda());
             demandaResumida.setIdDemanda(demanda.getIdDemanda());
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
+            demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
+            demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
+//            demandaResumida.setForumDeAprovacaoDemanda(demanda.get());
+            demandaResumida.setDepartamentoDemanda(demanda.getBuSolicitanteDemanda());
+            demandaResumida.setTamanhoDemanda(demanda.getTamanhoDemanda().getNome());
+            demandaResumida.setCodigoPPMDemanda(demanda.getCodigoPPMDemanda());
             demandasResumidas.add(demandaResumida);
         }
         return demandasResumidas;

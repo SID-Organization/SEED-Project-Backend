@@ -33,7 +33,7 @@ public class TabelaCusto {
     private List<CentroCustoTabelaCusto> centroCustoTabelaCusto;
 
     @ManyToOne
-    @JoinColumn(name = "proposta")
+    @JoinColumn(name = "propostaTabelaCusto")
     @JsonIgnore
-    private Proposta proposta;
+    private Proposta propostaTabelaCusto;
 }

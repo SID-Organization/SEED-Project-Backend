@@ -7,8 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "BENEFICIO")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode

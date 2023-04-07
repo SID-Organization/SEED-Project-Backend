@@ -1,10 +1,11 @@
 package br.sc.weg.sid.DTO;
 
-import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.entities.Beneficio;
+import br.sc.weg.sid.model.entities.Forum;
+import br.sc.weg.sid.model.entities.Usuario;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -18,14 +19,13 @@ public class CadastroDemandaDTO {
 
     public String descricaoQualitativoDemanda;
 
+    public Forum forumDemanda;
+
 //    public String secaoSolicitanteDemanda;
 
 //    public TamanhoDemanda tamanhoDemanda;
 
     public String frequenciaUsoDemanda;
-
-//    @FutureOrPresent
-//    public Date prazoElaboracaoDemanda;
 
 //    public Integer codigoPPMDemanda;
 

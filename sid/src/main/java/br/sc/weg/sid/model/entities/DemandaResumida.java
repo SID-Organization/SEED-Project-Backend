@@ -19,4 +19,16 @@ public class DemandaResumida {
     StatusDemanda statusDemanda;
 
     String nomeSolicitante;
+
+    String nomeAnalistaResponsavel;
+
+    String nomeGerenteResponsavelDemanda;
+
+    String forumDeAprovacaoDemanda;
+
+    String departamentoDemanda;
+
+    String tamanhoDemanda;
+
+    Integer codigoPPMDemanda;
 }

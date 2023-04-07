@@ -11,7 +11,7 @@ import java.util.List;
 public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
 
     List<Demanda> findByTamanhoDemanda(TamanhoDemanda tamanhoDemanda);
-    List<Demanda> findBySecaoTIResponsavelDemanda(String secaoTIResponsavelDemanda);
+    List<Demanda> findByForumDemanda(Forum forumDemanda);
     List<Demanda> findByStatusDemanda(StatusDemanda statusDemanda);
     List<Demanda> findByScoreDemanda(Double scoreDemanda);
     List<Demanda> findBySolicitanteDemanda(Usuario solicitanteDemanda);

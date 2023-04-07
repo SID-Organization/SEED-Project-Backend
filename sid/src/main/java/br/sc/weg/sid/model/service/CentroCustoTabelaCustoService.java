@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.CentroCustoTabelaCusto;
+import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.repository.CentroCustoTabelaCustoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,5 +33,13 @@ public class CentroCustoTabelaCustoService {
 
     public void deleteById(Integer integer) {
         centroCustoTabelaCustoRepository.deleteById(integer);
+    }
+
+    public List<CentroCustoTabelaCusto> findByTabelaCusto(TabelaCusto tabelaCusto) {
+        return centroCustoTabelaCustoRepository.findByTabelaCusto(tabelaCusto);
+    }
+
+    public void deleteAll(List<CentroCustoTabelaCusto> centroCustoTabelaCustoList) {
+        centroCustoTabelaCustoRepository.deleteAll(centroCustoTabelaCustoList);
     }
 }

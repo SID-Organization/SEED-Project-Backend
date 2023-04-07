@@ -9,7 +9,6 @@ import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -101,6 +100,30 @@ public class PropostaController {
             BeanUtils.copyProperties(updatePropostaDTO, proposta);
             try {
                 try {
+//                    List<TabelaCusto> tabelaCustoList = tabelaCustoService.findByPropostaTabelaCusto(proposta);
+//
+//                    if (tabelaCustoList != null){
+//                        if (tabelaCustoList.size() > 2){
+//                            for (TabelaCusto tabelaCusto : tabelaCustoList) {
+//                                List<TabelaCustoLinha> tabelaCustoLinhaList = tabelaCustoLinhaService.findByTabelaCusto(tabelaCusto);
+//                                tabelaCustoLinhaService.deleteAll(tabelaCustoLinhaList);
+//
+//                                List<CentroCustoTabelaCusto> centroCustoTabelaCustoList = centroCustoTabelaCustoService.findByTabelaCusto(tabelaCusto);
+//                                centroCustoTabelaCustoService.deleteAll(centroCustoTabelaCustoList);
+//                            }
+//                            tabelaCustoService.deleteAll(tabelaCustoList);
+//                        }else {
+//                            for (int i = 0; i < proposta.getTabelaCusto().size(); i++){
+//                                for (int j = 0; j < tabelaCustoList.size(); j++){
+//                                    if (proposta.getTabelaCusto().get(i).getTipoDespesa() == tabelaCustoList.get(j).getTipoDespesa()){
+//                                        BeanUtils.copyProperties(tabelaCustoList.get(j), proposta.getTabelaCusto().get(i));
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+
+
                     for (TabelaCusto tabelaCusto : proposta.getTabelaCusto()) {
                         for (TabelaCustoLinha tabelaCustoLinha : tabelaCusto.getTabelaCustoLinha()) {
                             tabelaCustoLinha.setTabelaCusto(tabelaCusto);
@@ -112,7 +135,7 @@ public class PropostaController {
                             centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
                         }
 
-                        tabelaCusto.setProposta(proposta);
+                        tabelaCusto.setPropostaTabelaCusto(proposta);
                         tabelaCustoService.save(tabelaCusto);
                     }
                 } catch (Exception e) {

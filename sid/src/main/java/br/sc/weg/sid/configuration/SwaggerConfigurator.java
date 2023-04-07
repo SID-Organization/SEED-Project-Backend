@@ -16,7 +16,7 @@ public class SwaggerConfigurator {
                 .info(new Info()
                         .title("API SEED - Springdoc OpenAPI")
                         .version("1.0.1")
-                        .description("API SEED - Projeto solicitado pela empresa WEG S.A"));
+                        .description("Projeto solicitado pela empresa WEG S.A"));
     }
 
 
