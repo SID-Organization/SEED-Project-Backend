@@ -34,5 +34,6 @@ public class TabelaCustoLinha {
     @ManyToOne
     @JoinColumn(name = "tabelaCusto")
     @JsonIgnore
+    @ToString.Exclude
     private TabelaCusto tabelaCusto;
 }

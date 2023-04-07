@@ -35,11 +35,11 @@ public class CentroCustoTabelaCustoService {
         centroCustoTabelaCustoRepository.deleteById(integer);
     }
 
-    public List<CentroCustoTabelaCusto> findByTabelaCusto(TabelaCusto tabelaCusto) {
-        return centroCustoTabelaCustoRepository.findByTabelaCusto(tabelaCusto);
+    public void deleteByTabelaCusto(TabelaCusto tabelaCusto) {
+        centroCustoTabelaCustoRepository.deleteByTabelaCusto(tabelaCusto);
     }
 
-    public void deleteAll(List<CentroCustoTabelaCusto> centroCustoTabelaCustoList) {
-        centroCustoTabelaCustoRepository.deleteAll(centroCustoTabelaCustoList);
+    public List<CentroCustoTabelaCusto> findByTabelaCusto(TabelaCusto tabelaCusto) {
+        return centroCustoTabelaCustoRepository.findByTabelaCusto(tabelaCusto);
     }
 }

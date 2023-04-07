@@ -25,13 +25,10 @@ public class Beneficio {
     private Double valorBeneficio;
 
     @Column(name = "MemoriaCalculoBeneficio")
-    private Double memoriaCalculoBeneficio;
+    private String memoriaCalculoBeneficio;
 
-    @Column(length = 4000, name = "DescricaoBeneficio", nullable = false)
-    private String descricaoBeneficio;
-
-    @Column(columnDefinition = "TEXT", name = "DescricaoBeneficioHTML")
-    private String descricaoBeneficioHTML;
+    @Column(name = "MemoriaCalculoBeneficioHTML")
+    private String memoriaCalculoBeneficioHTML;
 
     @Column(name = "TipoBeneficio", nullable = false)
     private TipoBeneficio tipoBeneficio;

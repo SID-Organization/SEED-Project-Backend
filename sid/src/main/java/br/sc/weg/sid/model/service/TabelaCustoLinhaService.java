@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.service;
 
+import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.model.entities.TabelaCustoLinha;
 import br.sc.weg.sid.repository.TabelaCustoLinhaRepository;
@@ -36,12 +37,11 @@ public class TabelaCustoLinhaService {
         tabelaCustoLinhaRepository.deleteById(integer);
     }
 
+    public void deleteByTabelaCusto(TabelaCusto tabelaCusto) {
+        tabelaCustoLinhaRepository.deleteByTabelaCusto(tabelaCusto);
+    }
+
     public List<TabelaCustoLinha> findByTabelaCusto(TabelaCusto tabelaCusto) {
         return tabelaCustoLinhaRepository.findByTabelaCusto(tabelaCusto);
     }
-
-    public void deleteAll(List<TabelaCustoLinha> tabelaCustoLinhaList) {
-        tabelaCustoLinhaRepository.deleteAll(tabelaCustoLinhaList);
-    }
-
 }

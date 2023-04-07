@@ -84,12 +84,11 @@ public class PropostaController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Object> atualizarProposta(
-            @PathVariable("id") Integer id,
-            @RequestParam(value = "updatePropostaForm") String updatePropostaForm,
-            @RequestParam(value = "pdfPropostaForm") String pdfPropostaForm
-    ) {
+    @Transactional
+    public ResponseEntity<Object> atualizarProposta(@PathVariable("id") Integer id, @RequestParam(value = "updatePropostaForm") String updatePropostaForm, @RequestParam(value = "pdfPropostaForm") String pdfPropostaForm) {
         Optional<Proposta> propostaOptional = propostaService.findById(id);
+        Proposta propostaAntiga = propostaOptional.get();
+        propostaService.findById(id).get().getTabelaCusto();
         if (!propostaOptional.isPresent()) {
             return ResponseEntity.badRequest().body("ERROR 0004: A proposta inserida não existe! ID PROPOSTA: " + id);
         }
@@ -97,46 +96,69 @@ public class PropostaController {
         try {
             UpdatePropostaDTO updatePropostaDTO = propostaUtil.convertToUpdateProspotaDTO(updatePropostaForm);
             Proposta proposta = propostaOptional.get();
-            BeanUtils.copyProperties(updatePropostaDTO, proposta);
             try {
                 try {
-//                    List<TabelaCusto> tabelaCustoList = tabelaCustoService.findByPropostaTabelaCusto(proposta);
-//
-//                    if (tabelaCustoList != null){
-//                        if (tabelaCustoList.size() > 2){
-//                            for (TabelaCusto tabelaCusto : tabelaCustoList) {
-//                                List<TabelaCustoLinha> tabelaCustoLinhaList = tabelaCustoLinhaService.findByTabelaCusto(tabelaCusto);
-//                                tabelaCustoLinhaService.deleteAll(tabelaCustoLinhaList);
-//
-//                                List<CentroCustoTabelaCusto> centroCustoTabelaCustoList = centroCustoTabelaCustoService.findByTabelaCusto(tabelaCusto);
-//                                centroCustoTabelaCustoService.deleteAll(centroCustoTabelaCustoList);
-//                            }
-//                            tabelaCustoService.deleteAll(tabelaCustoList);
-//                        }else {
-//                            for (int i = 0; i < proposta.getTabelaCusto().size(); i++){
-//                                for (int j = 0; j < tabelaCustoList.size(); j++){
-//                                    if (proposta.getTabelaCusto().get(i).getTipoDespesa() == tabelaCustoList.get(j).getTipoDespesa()){
-//                                        BeanUtils.copyProperties(tabelaCustoList.get(j), proposta.getTabelaCusto().get(i));
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
+                    System.out.println(propostaService.findById(id).get().getTabelaCusto());
+                    List<TabelaCusto> tabelaCustoList = propostaAntiga.getTabelaCusto();
+                    if (!tabelaCustoList.isEmpty()) {
+                        BeanUtils.copyProperties(updatePropostaDTO, proposta);
+                        System.out.println("tabela custo não está vazia");
+                        tabelaCustoService.deleteById(tabelaCustoList.get(0).getIdTabelaCusto());
+                        tabelaCustoService.deleteById(tabelaCustoList.get(1).getIdTabelaCusto());
 
-
-                    for (TabelaCusto tabelaCusto : proposta.getTabelaCusto()) {
-                        for (TabelaCustoLinha tabelaCustoLinha : tabelaCusto.getTabelaCustoLinha()) {
-                            tabelaCustoLinha.setTabelaCusto(tabelaCusto);
+                        for (TabelaCustoLinha tabelaCustoLinha : updatePropostaDTO.getTabelaCusto().get(0).getTabelaCustoLinha()) {
+                            tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCusto().get(0));
                             tabelaCustoLinhaService.save(tabelaCustoLinha);
                         }
 
-                        for (CentroCustoTabelaCusto centroCustoTabelaCusto : tabelaCusto.getCentroCustoTabelaCusto()) {
-                            centroCustoTabelaCusto.setTabelaCusto(tabelaCusto);
+                        for (TabelaCustoLinha tabelaCustoLinha : updatePropostaDTO.getTabelaCusto().get(1).getTabelaCustoLinha()) {
+                            tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCusto().get(1));
+                            tabelaCustoLinhaService.save(tabelaCustoLinha);
+                        }
+
+                        for (CentroCustoTabelaCusto centroCustoTabelaCusto : updatePropostaDTO.getTabelaCusto().get(0).getCentroCustoTabelaCusto()) {
+                            centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCusto().get(0));
                             centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
                         }
 
-                        tabelaCusto.setPropostaTabelaCusto(proposta);
-                        tabelaCustoService.save(tabelaCusto);
+                        for (CentroCustoTabelaCusto centroCustoTabelaCusto : updatePropostaDTO.getTabelaCusto().get(1).getCentroCustoTabelaCusto()) {
+                            centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCusto().get(1));
+                            centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+                        }
+
+                        proposta.getTabelaCusto().get(0).setProposta(proposta);
+                        proposta.getTabelaCusto().get(1).setProposta(proposta);
+                    } else {
+                        BeanUtils.copyProperties(updatePropostaDTO, proposta);
+                        System.out.println("Tabela custo está vazia");
+                        TabelaCusto tabelaCustoInterna = updatePropostaDTO.getTabelaCusto().get(0);
+                        tabelaCustoInterna.setProposta(proposta);
+                        TabelaCusto tabelaCustoSalva = tabelaCustoService.save(tabelaCustoInterna);
+                        System.out.println(tabelaCustoSalva);
+                        for (int i = 0; i < tabelaCustoInterna.getTabelaCustoLinha().size(); i++) {
+                            System.out.println(tabelaCustoInterna.getTabelaCustoLinha().get(0).toString());
+                            tabelaCustoInterna.getTabelaCustoLinha().get(i).setTabelaCusto(tabelaCustoSalva);
+                            tabelaCustoLinhaService.save(tabelaCustoInterna.getTabelaCustoLinha().get(i));
+                        }
+
+                        for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCusto().get(0).getCentroCustoTabelaCusto()) {
+                            centroCustoTabelaCusto.setTabelaCusto(tabelaCustoSalva);
+                            centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+                        }
+
+                        TabelaCusto tabelaCustoExterna = proposta.getTabelaCusto().get(1);
+                        tabelaCustoExterna.setProposta(proposta);
+                        TabelaCusto tabelaCustoSalva2 = tabelaCustoService.save(tabelaCustoExterna);
+                        for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCusto().get(1).getTabelaCustoLinha()) {
+                            System.out.println("tabela" + " " + tabelaCustoLinha);
+                            tabelaCustoLinha.setTabelaCusto(tabelaCustoSalva2);
+                            tabelaCustoLinhaService.save(tabelaCustoLinha);
+                        }
+
+                        for (CentroCustoTabelaCusto centroCustoTabelaCusto : proposta.getTabelaCusto().get(1).getCentroCustoTabelaCusto()) {
+                            centroCustoTabelaCusto.setTabelaCusto(tabelaCustoSalva2);
+                            centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+                        }
                     }
                 } catch (Exception e) {
                     return ResponseEntity.badRequest().body("ERROR 0008: Erro ao salvar tabela de custo!" + "\nMessage: " + e.getMessage());
@@ -159,6 +181,15 @@ public class PropostaController {
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0005: Erro ao converter JSON para objeto!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    private void deletarDadosRelacionados(Proposta proposta) {
+        if (proposta.getTabelaCusto().size() > 0) {
+            for (int i = 0; i < proposta.getTabelaCusto().size(); i++) {
+                centroCustoTabelaCustoService.deleteByTabelaCusto(proposta.getTabelaCusto().get(i));
+                tabelaCustoLinhaService.deleteByTabelaCusto(proposta.getTabelaCusto().get(i));
+            }
         }
     }
 
