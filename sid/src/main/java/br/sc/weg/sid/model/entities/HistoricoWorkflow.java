@@ -52,6 +52,8 @@ public class HistoricoWorkflow {
     @EqualsAndHashCode.Include
     @JoinColumn(name = "DemandaHistorico", nullable = false)
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     private Demanda demandaHistorico;
 
     @JoinColumn(name = "idUsuario", nullable = false)

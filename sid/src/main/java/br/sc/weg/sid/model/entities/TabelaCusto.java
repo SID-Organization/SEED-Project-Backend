@@ -26,14 +26,16 @@ public class TabelaCusto {
     @Enumerated(EnumType.STRING)
     private TipoDeDespesa tipoDespesa;
 
-    @OneToMany(mappedBy = "tabelaCusto")
+    @OneToMany(mappedBy = "tabelaCusto", cascade = CascadeType.ALL)
     private List<TabelaCustoLinha> tabelaCustoLinha;
 
-    @OneToMany(mappedBy = "tabelaCusto")
+    @OneToMany(mappedBy = "tabelaCusto", cascade = CascadeType.ALL)
     private List<CentroCustoTabelaCusto> centroCustoTabelaCusto;
 
     @ManyToOne
     @JoinColumn(name = "proposta")
     @JsonIgnore
+    @ToString.Exclude
     private Proposta proposta;
+
 }

@@ -74,8 +74,8 @@ public class Demanda {
     private Usuario gestorResponsavelDemanda;
 
     @OneToOne
-    @JsonIgnore
-    HistoricoWorkflow historicoWorkflowUltimaVersao;
+    @ToString.Exclude
+    private HistoricoWorkflow historicoWorkflowUltimaVersao;
 
     @Column(length = 6000)
     private String situacaoAtualDemanda;
@@ -92,12 +92,15 @@ public class Demanda {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "idProposta")
+    @JsonIgnore
+    @ToString.Exclude
     private Proposta propostaElaboradaDemanda;
 
     @ManyToMany()
     @JoinTable(name = "busBeneficiadasDemanda"
             , joinColumns = @JoinColumn(name = "idDemanda")
             , inverseJoinColumns = @JoinColumn(name = "idBusinessUnity"))
+    @ToString.Exclude
     private List<BusinessUnity> busBeneficiadasDemanda;
 
     @OneToMany(mappedBy = "idDemanda",cascade = CascadeType.ALL)

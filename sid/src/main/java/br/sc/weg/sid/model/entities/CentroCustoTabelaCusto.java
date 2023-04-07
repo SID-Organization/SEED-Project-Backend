@@ -30,5 +30,6 @@ public class CentroCustoTabelaCusto {
     @ManyToOne
     @JoinColumn(name = "tabelaCusto")
     @JsonIgnore
+    @ToString.Exclude
     private TabelaCusto tabelaCusto;
 }
