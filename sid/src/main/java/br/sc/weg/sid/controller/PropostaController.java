@@ -97,7 +97,6 @@ public class PropostaController {
             Proposta proposta = propostaOptional.get();
             try {
                 try {
-                    System.out.println(propostaService.findById(id).get().getTabelaCusto());
                     List<TabelaCusto> tabelaCustoList = propostaAntiga.getTabelaCusto();
                     if (!tabelaCustoList.isEmpty()) {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
@@ -127,6 +126,8 @@ public class PropostaController {
 
                         proposta.getTabelaCusto().get(0).setProposta(proposta);
                         proposta.getTabelaCusto().get(1).setProposta(proposta);
+                        proposta.getTabelaCusto().get(0).setIdTabelaCusto(tabelaCustoList.get(0).getIdTabelaCusto());
+                        proposta.getTabelaCusto().get(1).setIdTabelaCusto(tabelaCustoList.get(1).getIdTabelaCusto());
                     } else {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
                         System.out.println("Tabela custo está vazia");
