@@ -20,6 +20,9 @@ public class Forum {
     @Column(name = "nomeForum", nullable = false)
     private String nomeForum;
 
+    @Column(name = "siglaForum", nullable = false)
+    private String siglaForum;
+
     @ManyToOne
     @JoinColumn(name = "numeroCadastroAnalistaResponsavel", nullable = false)
     private Usuario analistaResponsavelForum;

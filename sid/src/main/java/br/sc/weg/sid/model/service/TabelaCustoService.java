@@ -4,7 +4,6 @@ import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.entities.TabelaCusto;
 import br.sc.weg.sid.repository.TabelaCustoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,7 +35,7 @@ public class TabelaCustoService {
         tabelaCustoRepository.deleteById(integer);
     }
 
-    public List<TabelaCusto> findByProposta(Proposta proposta) {
-        return tabelaCustoRepository.findByProposta(proposta);
+    public List<TabelaCusto> findByPropostaTabelaCusto(Proposta propostaTabelaCusto) {
+        return tabelaCustoRepository.findByPropostaTabelaCusto(propostaTabelaCusto);
     }
 }
