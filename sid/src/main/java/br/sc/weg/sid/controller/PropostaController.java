@@ -128,6 +128,8 @@ public class PropostaController {
 
                         proposta.getTabelaCusto().get(0).setPropostaTabelaCusto(proposta);
                         proposta.getTabelaCusto().get(1).setPropostaTabelaCusto(proposta);
+                        proposta.getTabelaCusto().get(0).setIdTabelaCusto(tabelaCustoList.get(0).getIdTabelaCusto());
+                        proposta.getTabelaCusto().get(1).setIdTabelaCusto(tabelaCustoList.get(1).getIdTabelaCusto());
                     } else {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
                         System.out.println("Tabela custo está vazia");
