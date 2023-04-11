@@ -3,7 +3,6 @@ package br.sc.weg.sid.model.service;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.repository.DemandaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,8 +38,8 @@ public class DemandaService {
         return demandaRepository.findByTamanhoDemanda(tamanhoDemanda);
     }
 
-    public List<Demanda> findBySecaoTIResponsavelDemanda(String secaoTIResponsavelDemanda) {
-        return demandaRepository.findBySecaoTIResponsavelDemanda(secaoTIResponsavelDemanda);
+    public List<Demanda> findByForumDemanda(Forum forumDemanda) {
+        return demandaRepository.findByForumDemanda(forumDemanda);
     }
 
     public List<Demanda> findByStatusDemanda(StatusDemanda statusDemanda) {

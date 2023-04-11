@@ -55,7 +55,8 @@ public class PropostaController {
                 demanda.setLinkJiraDemanda(cadastroPropostaDTO.getLinkJiraProposta());
                 demandaService.save(demanda);
             } else {
-                return ResponseEntity.badRequest().body("ERROR 0006: A demanda inserida não existe ou foi reprovada! ID DEMANDA: " + cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
+                return ResponseEntity.badRequest().body("ERROR 0006: A demanda inserida não existe ou foi reprovada! ID DEMANDA: " +
+                        cadastroPropostaDTO.getDemandaProposta().getIdDemanda());
             }
 
             BeanUtils.copyProperties(cadastroPropostaDTO, proposta);

@@ -9,7 +9,8 @@ import java.util.List;
 
 @Repository
 public interface CentroCustoTabelaCustoRepository extends JpaRepository<CentroCustoTabelaCusto, Integer> {
-    public void deleteByTabelaCusto(TabelaCusto tabelaCusto);
+    List<CentroCustoTabelaCusto> findByTabelaCusto(TabelaCusto tabelaCusto);
 
-    public List<CentroCustoTabelaCusto> findByTabelaCusto(TabelaCusto tabelaCusto);
+    void deleteByTabelaCusto(TabelaCusto tabelaCusto);
+
 }

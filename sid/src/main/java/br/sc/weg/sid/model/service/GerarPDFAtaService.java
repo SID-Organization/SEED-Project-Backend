@@ -1,17 +1,16 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.*;
-import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.*;
 import com.lowagie.text.html.simpleparser.HTMLWorker;
 import com.lowagie.text.pdf.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -252,7 +251,6 @@ public class GerarPDFAtaService {
                     throw new RuntimeException(e);
                 }
             }
-
 
             document.add(projectCoverageParagraph);
             document.add(projectCoverageParagraphText);

@@ -40,8 +40,9 @@ public class Demanda {
     @Column(length = 4000)
     private String propostaMelhoriaDemanda;
 
-    @Column()
-    private String secaoTIResponsavelDemanda;
+    @ManyToOne()
+    @JoinColumn(name = "idForum")
+    private Forum forumDemanda;
 
     @Column()
     private String frequenciaUsoDemanda;

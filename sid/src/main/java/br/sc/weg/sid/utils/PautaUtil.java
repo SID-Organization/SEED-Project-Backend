@@ -2,7 +2,6 @@ package br.sc.weg.sid.utils;
 
 import br.sc.weg.sid.model.entities.Pauta;
 import br.sc.weg.sid.model.entities.PautaResumida;
-import br.sc.weg.sid.model.entities.Usuario;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 

@@ -1,6 +1,5 @@
 package br.sc.weg.sid.auth.filters;
 
-import antlr.Token;
 import br.sc.weg.sid.auth.service.JpaService;
 import br.sc.weg.sid.auth.utils.TokenUtils;
 import lombok.AllArgsConstructor;
@@ -34,7 +33,6 @@ public class AuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
         try {
             String token = tokenUtils.buscarCookie(request, "jwt");
             Boolean valido = tokenUtils.validarToken(token);
