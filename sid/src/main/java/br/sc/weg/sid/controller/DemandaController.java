@@ -450,24 +450,21 @@ public class DemandaController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda, a mesma não será atualizada!" + e.getMessage());
         }
-
-        System.out.println(demanda.getBeneficiosDemanda());
-
-        Demanda demandaSalva = demandaService.save(demanda);
         beneficioService.findByDemandaBeneficio(demandaExiste).forEach(beneficioExiste -> {
-            demandaSalva.getBeneficiosDemanda().forEach(beneficioDemanda -> {
+            System.out.println("Beneficio existente: " + beneficioExiste);
+            demanda.getBeneficiosDemanda().forEach(beneficioDemanda -> {
                 System.out.println(beneficioDemanda);
-                if (beneficioExiste.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio()) {
+                if (beneficioExiste.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio()){
                     System.out.println("Entrou no if");
                     BeanUtils.copyProperties(beneficioDemanda, beneficioExiste );
                     beneficioService.save(beneficioExiste);
-                }else {
-                    System.out.println("Entrou no else");
-//                    beneficioDemanda.setDemandaBeneficio(demandaSalva);
-//                    beneficioService.save(beneficioDemanda);
                 }
             });
         });
+
+        Demanda demandaSalva = demandaService.save(demanda);
+        System.out.println("Salva: " + demandaSalva);
+        System.out.println(demandaExiste);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 

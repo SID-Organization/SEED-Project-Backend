@@ -33,9 +33,9 @@ public class TabelaCusto {
     private List<CentroCustoTabelaCusto> centroCustoTabelaCusto;
 
     @ManyToOne
-    @JoinColumn(name = "proposta")
+    @JoinColumn(name = "propostaTabelaCusto")
     @JsonIgnore
     @ToString.Exclude
-    private Proposta proposta;
+    private Proposta propostaTabelaCusto;
 
 }

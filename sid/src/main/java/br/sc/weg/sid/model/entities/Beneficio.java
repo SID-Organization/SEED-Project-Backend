@@ -33,6 +33,12 @@ public class Beneficio {
     @Column(name = "TipoBeneficio", nullable = false)
     private TipoBeneficio tipoBeneficio;
 
+    @Column(name = "DescricaoBeneficio")
+    private String descricaoBeneficio;
+
+    @Column(name = "DescricaoBeneficioHTML")
+    private String descricaoBeneficioHTML;
+
     @ManyToOne()
     @JoinColumn(name = "idDemanda")
     @JsonIgnore

@@ -126,13 +126,13 @@ public class PropostaController {
                             centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
                         }
 
-                        proposta.getTabelaCusto().get(0).setProposta(proposta);
-                        proposta.getTabelaCusto().get(1).setProposta(proposta);
+                        proposta.getTabelaCusto().get(0).setPropostaTabelaCusto(proposta);
+                        proposta.getTabelaCusto().get(1).setPropostaTabelaCusto(proposta);
                     } else {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
                         System.out.println("Tabela custo está vazia");
                         TabelaCusto tabelaCustoInterna = updatePropostaDTO.getTabelaCusto().get(0);
-                        tabelaCustoInterna.setProposta(proposta);
+                        tabelaCustoInterna.setPropostaTabelaCusto(proposta);
                         TabelaCusto tabelaCustoSalva = tabelaCustoService.save(tabelaCustoInterna);
                         System.out.println(tabelaCustoSalva);
                         for (int i = 0; i < tabelaCustoInterna.getTabelaCustoLinha().size(); i++) {
@@ -147,7 +147,7 @@ public class PropostaController {
                         }
 
                         TabelaCusto tabelaCustoExterna = proposta.getTabelaCusto().get(1);
-                        tabelaCustoExterna.setProposta(proposta);
+                        tabelaCustoExterna.setPropostaTabelaCusto(proposta);
                         TabelaCusto tabelaCustoSalva2 = tabelaCustoService.save(tabelaCustoExterna);
                         for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCusto().get(1).getTabelaCustoLinha()) {
                             System.out.println("tabela" + " " + tabelaCustoLinha);
