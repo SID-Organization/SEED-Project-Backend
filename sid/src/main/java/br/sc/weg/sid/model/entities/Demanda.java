@@ -91,12 +91,6 @@ public class Demanda {
     @JoinColumn(name = "numero_cadastro_usuario")
     private Usuario solicitanteDemanda;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "idProposta")
-    @JsonIgnore
-    @ToString.Exclude
-    private Proposta propostaElaboradaDemanda;
-
     @ManyToMany()
     @JoinTable(name = "busBeneficiadasDemanda"
             , joinColumns = @JoinColumn(name = "idDemanda")
