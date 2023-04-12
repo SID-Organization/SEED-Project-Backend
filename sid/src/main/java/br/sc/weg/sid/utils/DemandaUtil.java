@@ -59,7 +59,11 @@ public class DemandaUtil {
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
 //            demandaResumida.setForumDeAprovacaoDemanda(demanda.get());
             demandaResumida.setDepartamentoDemanda(demanda.getBuSolicitanteDemanda());
-            demandaResumida.setTamanhoDemanda(demanda.getTamanhoDemanda().getNome());
+            if (demanda.getTamanhoDemanda() != null) {
+                demandaResumida.setTamanhoDemanda(demanda.getTamanhoDemanda().getNome());
+            } else {
+                demandaResumida.setTamanhoDemanda(null);
+            }
             demandaResumida.setCodigoPPMDemanda(demanda.getCodigoPPMDemanda());
             demandasResumidas.add(demandaResumida);
         }

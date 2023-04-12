@@ -348,7 +348,7 @@ public class DemandaController {
             }
             for (Demanda demanda : demandas) {
                 if (demanda.getSolicitanteDemanda() != analistaDemanda && demanda.getAnalistaResponsavelDemanda() == analistaDemanda &&
-                demanda.getStatusDemanda() != StatusDemanda.RASCUNHO) {
+                        demanda.getStatusDemanda() != StatusDemanda.RASCUNHO) {
                     demandasFiltradas.add(demanda);
                 }
             }
@@ -450,21 +450,33 @@ public class DemandaController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda, a mesma não será atualizada!" + e.getMessage());
         }
-        beneficioService.findByDemandaBeneficio(demandaExiste).forEach(beneficioExiste -> {
-            System.out.println("Beneficio existente: " + beneficioExiste);
+
+        List<Beneficio> beneficiosExistentes = beneficioService.findByDemandaBeneficio(demandaExiste);
+        if (beneficiosExistentes.isEmpty()) {
             demanda.getBeneficiosDemanda().forEach(beneficioDemanda -> {
-                System.out.println(beneficioDemanda);
-                if (beneficioExiste.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio()){
-                    System.out.println("Entrou no if");
-                    BeanUtils.copyProperties(beneficioDemanda, beneficioExiste );
-                    beneficioService.save(beneficioExiste);
-                }
+                beneficioDemanda.setDemandaBeneficio(demanda);
+                beneficioService.save(beneficioDemanda);
             });
-        });
+        } else {
+            demanda.getBeneficiosDemanda().forEach(beneficioDemanda -> {
+                beneficiosExistentes.forEach(beneficioExiste -> {
+                    if (beneficioExiste.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio()) {
+                        System.out.println("Entrou no if");
+                        beneficioExiste.setMoedaBeneficio(beneficioDemanda.getMoedaBeneficio());
+                        beneficioExiste.setMemoriaCalculoBeneficio(beneficioDemanda.getMemoriaCalculoBeneficio());
+                        beneficioExiste.setDescricaoBeneficio(beneficioDemanda.getDescricaoBeneficio());
+                        beneficioExiste.setDescricaoBeneficioHTML(beneficioDemanda.getDescricaoBeneficioHTML());
+                        beneficioService.save(beneficioExiste);
+                    } else {
+                        System.out.println("Entrou no else");
+                        beneficioDemanda.setDemandaBeneficio(demanda);
+                        beneficioService.save(beneficioDemanda);
+                    }
+                });
+            });
+        }
 
         Demanda demandaSalva = demandaService.save(demanda);
-        System.out.println("Salva: " + demandaSalva);
-        System.out.println(demandaExiste);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
@@ -522,7 +534,6 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao buscar demandas com status rascunho: " + e.getMessage());
         }
     }
-
 
 
     //Deleta uma demanda informando seu id

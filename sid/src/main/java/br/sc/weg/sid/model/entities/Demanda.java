@@ -82,6 +82,9 @@ public class Demanda {
     private String situacaoAtualDemanda;
 
     @Column()
+    private String secaoTIResponsavelDemanda;
+
+    @Column()
     private String motivoRecusaDemanda;
 
     @JoinColumn(name = "idBuSolicitante")
@@ -90,12 +93,6 @@ public class Demanda {
     @ManyToOne()
     @JoinColumn(name = "numero_cadastro_usuario")
     private Usuario solicitanteDemanda;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "idProposta")
-    @JsonIgnore
-    @ToString.Exclude
-    private Proposta propostaElaboradaDemanda;
 
     @ManyToMany()
     @JoinTable(name = "busBeneficiadasDemanda"
@@ -110,6 +107,6 @@ public class Demanda {
     @OneToMany(mappedBy = "idCentroCusto")
     private List<CentroCusto> centroCustoDemanda;
 
-    @OneToMany(mappedBy = "demandaBeneficio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "demandaBeneficio", cascade = CascadeType.REMOVE)
     private List<Beneficio> beneficiosDemanda;
 }
