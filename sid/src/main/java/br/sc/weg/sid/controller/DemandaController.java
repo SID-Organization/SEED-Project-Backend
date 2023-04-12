@@ -452,29 +452,28 @@ public class DemandaController {
         }
 
         List<Beneficio> beneficiosExistentes = beneficioService.findByDemandaBeneficio(demandaExiste);
-        if (beneficiosExistentes.isEmpty()) {
-            demanda.getBeneficiosDemanda().forEach(beneficioDemanda -> {
+        for (Beneficio beneficioDemanda : demanda.getBeneficiosDemanda()) {
+            Beneficio beneficioExistente = null;
+            for (Beneficio b : beneficiosExistentes) {
+                if (b.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio()) {
+                    beneficioExistente = b;
+                    break;
+                }
+            }
+            if (beneficioExistente != null) {
+                System.out.println("Entrou no if");
+                beneficioExistente.setMoedaBeneficio(beneficioDemanda.getMoedaBeneficio());
+                beneficioExistente.setMemoriaCalculoBeneficio(beneficioDemanda.getMemoriaCalculoBeneficio());
+                beneficioExistente.setDescricaoBeneficio(beneficioDemanda.getDescricaoBeneficio());
+                beneficioExistente.setDescricaoBeneficioHTML(beneficioDemanda.getDescricaoBeneficioHTML());
+                beneficioService.save(beneficioExistente);
+            } else {
+                System.out.println("Entrou no else");
                 beneficioDemanda.setDemandaBeneficio(demanda);
                 beneficioService.save(beneficioDemanda);
-            });
-        } else {
-            demanda.getBeneficiosDemanda().forEach(beneficioDemanda -> {
-                beneficiosExistentes.forEach(beneficioExiste -> {
-                    if (beneficioExiste.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio()) {
-                        System.out.println("Entrou no if");
-                        beneficioExiste.setMoedaBeneficio(beneficioDemanda.getMoedaBeneficio());
-                        beneficioExiste.setMemoriaCalculoBeneficio(beneficioDemanda.getMemoriaCalculoBeneficio());
-                        beneficioExiste.setDescricaoBeneficio(beneficioDemanda.getDescricaoBeneficio());
-                        beneficioExiste.setDescricaoBeneficioHTML(beneficioDemanda.getDescricaoBeneficioHTML());
-                        beneficioService.save(beneficioExiste);
-                    } else {
-                        System.out.println("Entrou no else");
-                        beneficioDemanda.setDemandaBeneficio(demanda);
-                        beneficioService.save(beneficioDemanda);
-                    }
-                });
-            });
+            }
         }
+
 
         Demanda demandaSalva = demandaService.save(demanda);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
