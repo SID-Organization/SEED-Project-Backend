@@ -110,6 +110,6 @@ public class Demanda {
     @OneToMany(mappedBy = "idCentroCusto")
     private List<CentroCusto> centroCustoDemanda;
 
-    @OneToMany(mappedBy = "demandaBeneficio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "demandaBeneficio", cascade = CascadeType.REMOVE)
     private List<Beneficio> beneficiosDemanda;
 }
