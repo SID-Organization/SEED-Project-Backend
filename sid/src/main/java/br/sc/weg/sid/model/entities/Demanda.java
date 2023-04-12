@@ -82,13 +82,14 @@ public class Demanda {
     private String situacaoAtualDemanda;
 
     @Column()
-    private String secaoTIResponsavelDemanda;
-
-    @Column()
     private String motivoRecusaDemanda;
 
     @JoinColumn(name = "idBuSolicitante")
     private String buSolicitanteDemanda;
+
+    @ManyToOne()
+    @JoinColumn(name = "secaoTIResponsavel")
+    private SecaoTIResponsavel secaoTIResponsavelDemanda;
 
     @ManyToOne()
     @JoinColumn(name = "numero_cadastro_usuario")
@@ -101,7 +102,7 @@ public class Demanda {
     @ToString.Exclude
     private List<BusinessUnity> busBeneficiadasDemanda;
 
-    @OneToMany(mappedBy = "idDemanda",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "idDemanda", cascade = CascadeType.ALL)
     private List<ArquivoDemanda> arquivosDemandas = new ArrayList<>();
 
     @OneToMany(mappedBy = "idCentroCusto")

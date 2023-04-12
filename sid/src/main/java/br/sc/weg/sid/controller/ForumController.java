@@ -7,6 +7,7 @@ import br.sc.weg.sid.model.service.ForumService;
 import br.sc.weg.sid.model.service.UsuarioService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +24,12 @@ public class ForumController {
     private UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseEntity<Object> cadastroForum(@RequestBody CadastroForumDTO cadadastroForumDTO) {
+    public ResponseEntity<Object> cadastroForum(@RequestBody CadastroForumDTO cadastroForumDTO) {
         Forum forum = new Forum();
-        BeanUtils.copyProperties(cadadastroForumDTO, forum);
+        BeanUtils.copyProperties(cadastroForumDTO, forum);
 
         Forum forumSalvo = forumService.save(forum);
-        return ResponseEntity.ok("Fórum cadastrado com sucesso! \n" + forumSalvo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(forumSalvo);
     }
 
     @GetMapping
