@@ -57,7 +57,6 @@ public class DemandaUtil {
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
             demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
-//            demandaResumida.setForumDeAprovacaoDemanda(demanda.get());
             demandaResumida.setDepartamentoDemanda(demanda.getBuSolicitanteDemanda());
             if (demanda.getTamanhoDemanda() != null) {
                 demandaResumida.setTamanhoDemanda(demanda.getTamanhoDemanda().getNome());

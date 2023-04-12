@@ -1,7 +1,6 @@
 package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.Beneficio;
-import br.sc.weg.sid.model.entities.Forum;
 import br.sc.weg.sid.model.entities.Usuario;
 import lombok.Data;
 
@@ -18,8 +17,6 @@ public class CadastroDemandaDTO {
     public String situacaoAtualDemanda;
 
     public String descricaoQualitativoDemanda;
-
-    public Forum forumDemanda;
 
 //    public String secaoSolicitanteDemanda;
 
