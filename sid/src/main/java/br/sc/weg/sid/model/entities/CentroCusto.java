@@ -18,6 +18,9 @@ public class CentroCusto {
     @Column(name = "IdCentroCusto", nullable = false, unique = true)
     private Integer idCentroCusto;
 
+    @Column(name = "NomeCentroCusto", nullable = false)
+    private String nomeCentroCusto;
+
     @Column(name = "NumeroCentroCusto", nullable = false)
     private String numeroCentroCusto;
 }

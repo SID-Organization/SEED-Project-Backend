@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -77,13 +78,14 @@ public class Demanda {
     private String situacaoAtualDemanda;
 
     @Column()
-    private String secaoTIResponsavelDemanda;
-
-    @Column()
     private String motivoRecusaDemanda;
 
     @JoinColumn(name = "idBuSolicitante")
     private String buSolicitanteDemanda;
+
+    @ManyToOne()
+    @JoinColumn(name = "secaoTIResponsavel")
+    private SecaoTIResponsavel secaoTIResponsavelDemanda;
 
     @ManyToOne()
     @JoinColumn(name = "numero_cadastro_usuario")

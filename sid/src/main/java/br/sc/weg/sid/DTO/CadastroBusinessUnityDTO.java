@@ -8,4 +8,6 @@ import javax.validation.constraints.NotNull;
 public class CadastroBusinessUnityDTO {
     @NotNull(message = "O campo nomeBusinessUnity não pode ser nulo")
     private String nomeBusinessUnity;
+    @NotNull(message = "O campo siglaBusinessUnity não pode ser nulo")
+    private String siglaBusinessUnity;
 }

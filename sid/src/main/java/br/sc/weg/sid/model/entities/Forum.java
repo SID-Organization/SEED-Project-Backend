@@ -17,11 +17,9 @@ public class Forum {
     @Column(name = "idForum", nullable = false, unique = true)
     private Integer idForum;
 
-    @Column(name = "nomeForum", nullable = false)
-    private String nomeForum;
-
-    @Column(name = "siglaForum", nullable = false)
-    private String siglaForum;
+    @ManyToOne
+    @JoinColumn(name = "idComissao", nullable = false)
+    private Comissao comissaoForum;
 
     @ManyToOne
     @JoinColumn(name = "numeroCadastroAnalistaResponsavel", nullable = false)

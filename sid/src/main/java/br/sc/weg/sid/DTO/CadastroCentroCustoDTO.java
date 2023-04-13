@@ -8,4 +8,7 @@ import javax.validation.constraints.NotNull;
 public class CadastroCentroCustoDTO {
     @NotNull(message = "O campo numeroCentroCusto não pode ser nulo")
     private String numeroCentroCusto;
+
+    @NotNull(message = "O campo nomeCentroCusto não pode ser nulo")
+    private String nomeCentroCusto;
 }

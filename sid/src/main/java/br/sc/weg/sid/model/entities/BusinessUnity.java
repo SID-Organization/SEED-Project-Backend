@@ -18,4 +18,7 @@ public class BusinessUnity {
 
     @Column(name = "nomeBusinessUnity", nullable = false)
     private String nomeBusinessUnity;
+
+    @Column(name = "siglaBusinessUnity", nullable = false)
+    private String siglaBusinessUnity;
 }
