@@ -1,16 +1,17 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroPautaDTO;
-import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.entities.Pauta;
+import br.sc.weg.sid.model.entities.PautaResumida;
+import br.sc.weg.sid.model.entities.Proposta;
+import br.sc.weg.sid.model.entities.PropostaResumida;
 import br.sc.weg.sid.model.service.PautaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.PautaUtil;
 import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,15 +34,16 @@ public class PautaController {
         Pauta pauta = new Pauta();
         BeanUtils.copyProperties(cadastroPautaDTO, pauta);
         Pauta pautaSalva = pautaService.save(pauta);
+        System.out.println("Pauta salva: " + pautaSalva);
         List<Proposta> propostas = pautaSalva.getPropostasPauta();
         List<Proposta> propostasEncontradas = new ArrayList<>();
         for (Proposta proposta : propostas) {
             propostasEncontradas.add(propostaService.findById(proposta.getIdProposta()).get());
         }
         for (Proposta proposta : propostasEncontradas) {
-//            List<Pauta> pautas = proposta.getPautaProposta();
-//            pautas.add(pautaSalva);
-//            proposta.setPautaProposta(pautas);
+            List<Pauta> pautas = proposta.getPautaProposta();
+            pautas.add(pautaSalva);
+            proposta.setPautaProposta(pautas);
             propostaService.save(proposta);
         }
         return ResponseEntity.ok("Pauta cadastrada com sucesso! \n" + pautaSalva);

@@ -1,7 +1,10 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
-import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.entities.Ata;
+import br.sc.weg.sid.model.entities.AtaResumida;
+import br.sc.weg.sid.model.entities.Proposta;
+import br.sc.weg.sid.model.entities.PropostasLog;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.PautaService;
 import br.sc.weg.sid.model.service.PropostaLogService;
@@ -9,14 +12,12 @@ import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.AtaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -86,6 +87,7 @@ public class AtaController {
             gerarPDFAtaController.generatePDF(ataSalva.getIdAta());
             return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body("Erro ao cadastrar ata \n Message: " + e.getMessage());
         }
     }

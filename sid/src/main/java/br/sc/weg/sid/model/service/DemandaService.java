@@ -38,9 +38,6 @@ public class DemandaService {
         return demandaRepository.findByTamanhoDemanda(tamanhoDemanda);
     }
 
-    public List<Demanda> findByForumDemanda(Forum forumDemanda) {
-        return demandaRepository.findByForumDemanda(forumDemanda);
-    }
 
     public List<Demanda> findByStatusDemanda(StatusDemanda statusDemanda) {
         return demandaRepository.findByStatusDemanda(statusDemanda);

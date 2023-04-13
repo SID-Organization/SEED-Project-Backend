@@ -255,23 +255,6 @@ public class DemandaController {
         }
     }
 
-    //Busca demandas por Seção
-    @GetMapping("/secao/{idForum}")
-    public ResponseEntity<Object> findByForum(@PathVariable("idForum") Integer idForum) {
-        try {
-            Forum forum = forumService.findById(idForum).get();
-            List<Demanda> demandas = demandaService.findByForumDemanda(forum);
-            if (demandas.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada com o idForum: " + idForum);
-            }
-            DemandaUtil demandaUtil = new DemandaUtil();
-            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-            return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar por forum: " + e.getMessage());
-        }
-    }
-
     //Busca demandas por data de criação (mais nova a mais antiga)
     @GetMapping("/data-decrescente")
     public ResponseEntity<Object> findByDataDecrescente() {
@@ -440,8 +423,9 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id " + idDemanda);
         }
-        Demanda demanda = demandaService.findById(idDemanda).get();
+        Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
+        System.out.println(demanda);
         PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
         historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                 demanda.getHistoricoWorkflowUltimaVersao());
@@ -455,27 +439,25 @@ public class DemandaController {
         for (Beneficio beneficioDemanda : demanda.getBeneficiosDemanda()) {
             Beneficio beneficioExistente = null;
             for (Beneficio b : beneficiosExistentes) {
-                if (b.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio()) {
+                if (b.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio() && b.getTipoBeneficio() == TipoBeneficio.QUALITATIVO) {
                     beneficioExistente = b;
                     break;
                 }
             }
             if (beneficioExistente != null) {
-                System.out.println("Entrou no if");
                 beneficioExistente.setMoedaBeneficio(beneficioDemanda.getMoedaBeneficio());
                 beneficioExistente.setMemoriaCalculoBeneficio(beneficioDemanda.getMemoriaCalculoBeneficio());
                 beneficioExistente.setDescricaoBeneficio(beneficioDemanda.getDescricaoBeneficio());
                 beneficioExistente.setDescricaoBeneficioHTML(beneficioDemanda.getDescricaoBeneficioHTML());
                 beneficioService.save(beneficioExistente);
             } else {
-                System.out.println("Entrou no else");
                 beneficioDemanda.setDemandaBeneficio(demanda);
                 beneficioService.save(beneficioDemanda);
             }
         }
 
 
-        Demanda demandaSalva = demandaService.save(demanda);
+        demandaService.save(demanda);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 

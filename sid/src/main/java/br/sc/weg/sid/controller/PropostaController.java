@@ -102,7 +102,6 @@ public class PropostaController {
                     List<TabelaCusto> tabelaCustoList = propostaAntiga.getTabelaCusto();
                     if (!tabelaCustoList.isEmpty()) {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
-                        System.out.println("tabela custo não está vazia");
                         tabelaCustoService.deleteById(tabelaCustoList.get(0).getIdTabelaCusto());
                         tabelaCustoService.deleteById(tabelaCustoList.get(1).getIdTabelaCusto());
 
@@ -152,7 +151,6 @@ public class PropostaController {
                         tabelaCustoExterna.setPropostaTabelaCusto(proposta);
                         TabelaCusto tabelaCustoSalva2 = tabelaCustoService.save(tabelaCustoExterna);
                         for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCusto().get(1).getTabelaCustoLinha()) {
-                            System.out.println("tabela" + " " + tabelaCustoLinha);
                             tabelaCustoLinha.setTabelaCusto(tabelaCustoSalva2);
                             tabelaCustoLinhaService.save(tabelaCustoLinha);
                         }
@@ -171,10 +169,11 @@ public class PropostaController {
                     pdfProposta.setProposta(propostaSalva);
                     pdfPropostaService.save(pdfProposta);
                     GerarPDFDTO gerarPDFDTO = new GerarPDFDTO();
-                    gerarPDFDTO.setIdProposta(propostaSalva.getIdProposta());
+                    gerarPDFDTO.setProposta(propostaSalva);
                     gerarPDFDTO.setIdDemanda(propostaSalva.getDemandaProposta().getIdDemanda());
                     gerarPDFPropostaController.gerarPDF(gerarPDFDTO);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return ResponseEntity.badRequest().body("ERROR 0009: Erro ao gerar PDF!" + "\nMessage: " + e.getMessage());
                 }
                 return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
@@ -193,6 +192,12 @@ public class PropostaController {
                 tabelaCustoLinhaService.deleteByTabelaCusto(proposta.getTabelaCusto().get(i));
             }
         }
+    }
+
+    @GetMapping("/teste")
+    ResponseEntity<Object> teste() {
+        List<PdfProposta> pdfPropostaList = pdfPropostaService.findAll();
+        return ResponseEntity.ok(pdfPropostaList);
     }
 
     @GetMapping

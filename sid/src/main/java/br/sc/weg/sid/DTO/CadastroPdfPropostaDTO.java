@@ -3,8 +3,6 @@ package br.sc.weg.sid.DTO;
 import br.sc.weg.sid.model.entities.Proposta;
 import lombok.Data;
 
-import javax.persistence.Column;
-
 @Data
 public class CadastroPdfPropostaDTO {
 
@@ -15,6 +13,8 @@ public class CadastroPdfPropostaDTO {
     private String alternativasAvaliadasPropostaHTML;
 
     private String planoMitigacaoPropostaHTML;
+
+    private String abrangenciaProjetoPropostaHTML;
 
     private Proposta proposta;
 

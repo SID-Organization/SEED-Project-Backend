@@ -1,6 +1,5 @@
 package br.sc.weg.sid.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,10 +38,6 @@ public class Demanda {
 
     @Column(length = 4000)
     private String propostaMelhoriaDemanda;
-
-    @ManyToOne()
-    @JoinColumn(name = "idForum")
-    private Forum forumDemanda;
 
     @Column()
     private String frequenciaUsoDemanda;
@@ -102,11 +97,13 @@ public class Demanda {
     private List<BusinessUnity> busBeneficiadasDemanda;
 
     @OneToMany(mappedBy = "idDemanda",cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<ArquivoDemanda> arquivosDemandas = new ArrayList<>();
 
     @OneToMany(mappedBy = "idCentroCusto")
     private List<CentroCusto> centroCustoDemanda;
 
-    @OneToMany(mappedBy = "demandaBeneficio", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "demandaBeneficio", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Beneficio> beneficiosDemanda;
 }

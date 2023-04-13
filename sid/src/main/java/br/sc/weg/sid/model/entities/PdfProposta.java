@@ -1,11 +1,9 @@
 package br.sc.weg.sid.model.entities;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.FutureOrPresent;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @Entity
@@ -32,5 +30,6 @@ public class PdfProposta {
 
     @JoinColumn(name = "proposta", referencedColumnName = "idProposta")
     @ManyToOne
+    @ToString.Exclude
     private Proposta proposta;
 }
