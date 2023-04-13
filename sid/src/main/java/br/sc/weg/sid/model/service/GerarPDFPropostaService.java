@@ -260,7 +260,7 @@ public class GerarPDFPropostaService {
         celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableExpenses.addCell(celulaTabelExpenses);
 
-        celulaTabelExpenses = new PdfPCell(new Phrase(totalValueHours.toString(), tableFontBold));
+        celulaTabelExpenses = new PdfPCell(new Phrase("R$" + totalValueHours.toString(), tableFontBold));
         celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableExpenses.addCell(celulaTabelExpenses);
 
@@ -347,7 +347,7 @@ public class GerarPDFPropostaService {
         totalValueHours = 0.0;
 
         for (int i = 0; i < proposta.getTabelaCusto().size(); i++){
-            if (proposta.getTabelaCusto().get(i).getTipoDespesa() == TipoDeDespesa.EXTERNA){
+            if (proposta.getTabelaCusto().get(i).getTipoDespesa() == TipoDeDespesa.INTERNA){
                 for (int j = 0; j < proposta.getTabelaCusto().get(i).getTabelaCustoLinha().size(); j++){
                     totalHoursWorked += proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto();
                     Double valorTotal = proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto() *
@@ -365,7 +365,7 @@ public class GerarPDFPropostaService {
         celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableInternResources.addCell(celulaTableInternResources);
 
-        celulaTableInternResources = new PdfPCell(new Phrase(totalValueHours.toString(), tableFontBold));
+        celulaTableInternResources = new PdfPCell(new Phrase("R$" + totalValueHours.toString(), tableFontBold));
         celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableInternResources.addCell(celulaTableInternResources);
 
