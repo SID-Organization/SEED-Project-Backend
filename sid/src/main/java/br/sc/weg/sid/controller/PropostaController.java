@@ -37,7 +37,7 @@ public class PropostaController {
     private TabelaCustoLinhaService tabelaCustoLinhaService;
 
     @Autowired
-    CentroCustoTabelaCustoService centroCustoTabelaCustoService;
+    private CentroCustoTabelaCustoService centroCustoTabelaCustoService;
 
     @Autowired
     private TabelaCustoService tabelaCustoService;
@@ -183,15 +183,6 @@ public class PropostaController {
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0005: Erro ao converter JSON para objeto!" + "\nMessage: " + e.getMessage());
-        }
-    }
-
-    private void deletarDadosRelacionados(Proposta proposta) {
-        if (proposta.getTabelaCusto().size() > 0) {
-            for (int i = 0; i < proposta.getTabelaCusto().size(); i++) {
-                centroCustoTabelaCustoService.deleteByTabelaCusto(proposta.getTabelaCusto().get(i));
-                tabelaCustoLinhaService.deleteByTabelaCusto(proposta.getTabelaCusto().get(i));
-            }
         }
     }
 
