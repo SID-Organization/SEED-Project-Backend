@@ -136,8 +136,7 @@ public class GerarPDFPropostaService {
         Paragraph projectCoverageParagraph = new Paragraph("Abrangência do Projeto:", fontTitle);
         projectCoverageParagraph.setSpacingBefore(8);
 
-        Paragraph projectCoverageParagraphText = new Paragraph(pdfProposta.getAbrangenciaProjetoPropostaHTML(), textFont);
-        projectCoverageParagraphText.setSpacingAfter(5);
+        String projectCoverageParagraphTextHTML = pdfProposta.getAbrangenciaProjetoPropostaHTML();
 
         Paragraph mainRisksParagraph = new Paragraph("Riscos Principais/Plano de Mitigação:", fontTitle);
         mainRisksParagraph.setSpacingBefore(8);
@@ -461,7 +460,7 @@ public class GerarPDFPropostaService {
         htmlWorker.parse(new StringReader(evaluatedAlternativesParagraphTextHTML));
 
         document.add(projectCoverageParagraph);
-        document.add(projectCoverageParagraphText);
+        htmlWorker.parse(new StringReader(projectCoverageParagraphTextHTML));
 
         document.add(mainRisksParagraph);
         htmlWorker.parse(new StringReader(mainRisksParagraphTextHTML));
