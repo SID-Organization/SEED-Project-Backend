@@ -10,18 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface PdfPropostaRepository extends JpaRepository<PdfProposta, Integer> {
-
-    @Override
-    <S extends PdfProposta> S save(S entity);
-
-    @Override
-    Optional<PdfProposta> findById(Integer integer);
-
     List<PdfProposta> findByProposta(Proposta proposta);
-
-    @Override
-    boolean existsById(Integer integer);
-
-    @Override
-    void deleteById(Integer integer);
 }

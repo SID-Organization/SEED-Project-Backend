@@ -37,7 +37,7 @@ public class PropostaController {
     private TabelaCustoLinhaService tabelaCustoLinhaService;
 
     @Autowired
-    CentroCustoTabelaCustoService centroCustoTabelaCustoService;
+    private CentroCustoTabelaCustoService centroCustoTabelaCustoService;
 
     @Autowired
     private TabelaCustoService tabelaCustoService;
@@ -102,6 +102,7 @@ public class PropostaController {
                     List<TabelaCusto> tabelaCustoList = propostaAntiga.getTabelaCusto();
                     if (!tabelaCustoList.isEmpty()) {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
+                        System.out.println("tabela custo não está vazia");
                         tabelaCustoService.deleteById(tabelaCustoList.get(0).getIdTabelaCusto());
                         tabelaCustoService.deleteById(tabelaCustoList.get(1).getIdTabelaCusto());
 
@@ -151,6 +152,7 @@ public class PropostaController {
                         tabelaCustoExterna.setPropostaTabelaCusto(proposta);
                         TabelaCusto tabelaCustoSalva2 = tabelaCustoService.save(tabelaCustoExterna);
                         for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCusto().get(1).getTabelaCustoLinha()) {
+                            System.out.println("tabela" + " " + tabelaCustoLinha);
                             tabelaCustoLinha.setTabelaCusto(tabelaCustoSalva2);
                             tabelaCustoLinhaService.save(tabelaCustoLinha);
                         }
@@ -183,21 +185,6 @@ public class PropostaController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0005: Erro ao converter JSON para objeto!" + "\nMessage: " + e.getMessage());
         }
-    }
-
-    private void deletarDadosRelacionados(Proposta proposta) {
-        if (proposta.getTabelaCusto().size() > 0) {
-            for (int i = 0; i < proposta.getTabelaCusto().size(); i++) {
-                centroCustoTabelaCustoService.deleteByTabelaCusto(proposta.getTabelaCusto().get(i));
-                tabelaCustoLinhaService.deleteByTabelaCusto(proposta.getTabelaCusto().get(i));
-            }
-        }
-    }
-
-    @GetMapping("/teste")
-    ResponseEntity<Object> teste() {
-        List<PdfProposta> pdfPropostaList = pdfPropostaService.findAll();
-        return ResponseEntity.ok(pdfPropostaList);
     }
 
     @GetMapping
