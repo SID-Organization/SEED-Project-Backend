@@ -171,10 +171,11 @@ public class PropostaController {
                     pdfProposta.setProposta(propostaSalva);
                     pdfPropostaService.save(pdfProposta);
                     GerarPDFDTO gerarPDFDTO = new GerarPDFDTO();
-                    gerarPDFDTO.setIdProposta(propostaSalva.getIdProposta());
+                    gerarPDFDTO.setProposta(propostaSalva);
                     gerarPDFDTO.setIdDemanda(propostaSalva.getDemandaProposta().getIdDemanda());
                     gerarPDFPropostaController.gerarPDF(gerarPDFDTO);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return ResponseEntity.badRequest().body("ERROR 0009: Erro ao gerar PDF!" + "\nMessage: " + e.getMessage());
                 }
                 return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);

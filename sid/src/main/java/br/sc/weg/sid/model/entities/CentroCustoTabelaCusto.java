@@ -21,7 +21,7 @@ public class CentroCustoTabelaCusto {
     private Integer idCentroCustoTabelaCusto;
 
     @ManyToOne
-    @JoinColumn(name = "centroCusto")
+    @JoinColumn(name = "idCentroCusto")
     private CentroCusto centroCusto;
 
     @Column(name = "porcentagemDespesa")
