@@ -1,10 +1,12 @@
 package br.sc.weg.sid.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -29,7 +31,6 @@ public class Ata {
     @Lob
     private byte[] documentoAprovacaoAta;
 
-    @Column(name = "PropostasAta", nullable = false)
     @OneToMany(mappedBy = "idPropostaLog")
     List<PropostasLog> propostasLogAta;
 

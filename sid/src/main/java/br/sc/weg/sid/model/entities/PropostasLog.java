@@ -34,6 +34,10 @@ public class PropostasLog {
     @Column(name = "tipoAta", nullable = false)
     private TipoAta tipoAta;
 
+    @ManyToOne
+    @JoinColumn(name = "idAta")
+    private Ata ataPropostaLog;
+
     @Column(name = "pdfPropostaLog")
     @Lob
     byte[] pdfPropostaLog;

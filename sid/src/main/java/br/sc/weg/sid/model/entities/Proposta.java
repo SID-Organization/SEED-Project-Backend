@@ -94,6 +94,7 @@ public class Proposta {
     @JoinTable(name = "responsaveis_negocio",
             joinColumns = @JoinColumn(name = "idProposta"),
             inverseJoinColumns = @JoinColumn(name = "numeroCadastroUsuario"))
+    @ToString.Exclude
     private List<Usuario> responsaveisNegocio;
 
     @JsonIgnore
@@ -101,6 +102,7 @@ public class Proposta {
     @JoinTable(name = "pauta_proposta",
             joinColumns = @JoinColumn(name = "idProposta"),
             inverseJoinColumns = @JoinColumn(name = "idPauta"))
+    @ToString.Exclude
     private List<Pauta> pautaProposta;
 
 }

@@ -72,16 +72,22 @@ public class AtaController {
                 propostasLog.setDemandaTempoExecucaoPropostaLog(diferencaEmHoras);
                 propostasLog.setPropostaPropostaLog(proposta);
                 cadastroAtaDTO.getPropostasLogDTO().forEach(propostaLogDTO -> {
+                    System.out.println("PROPOSTA LOG DTO: " + propostaLogDTO);
                     Proposta propostaLogFind = propostaService.findById(propostaLogDTO.getPropostaPropostaLogDTO().getIdProposta()).get();
                     if (propostaLogFind.getIdProposta().equals(proposta.getIdProposta())) {
+                        System.out.println("Entrou");
                         propostasLog.setConsideracoesProposta(propostaLogDTO.getConsideracoesPropostaLogDTO());
                         propostasLog.setParecerComissaoPropostaLog(propostaLogDTO.getParecerComissaoPropostaLogDTO());
                         propostasLog.setTipoAta(propostaLogDTO.getTipoAtaPropostaLogDTO());
                         propostasLog.setPdfPropostaLog(proposta.getPdfProposta());
+                        System.out.println("PDF PROPOSTA LOG: " + propostasLog.getParecerComissaoPropostaLog());
+                        System.out.println("PROPOSTAS LOG: " + propostasLogs.size());
+                        propostaLogService.save(propostasLog);
+                        propostasLogs.add(propostasLog);
                     }
                 });
-                propostaLogService.save(propostasLog);
             });
+            System.out.println("PROPOSTAS LOG2: " + propostasLogs.size());
             ata.setPropostasLogAta(propostasLogs);
             Ata ataSalva = ataService.save(ata);
             gerarPDFAtaController.generatePDF(ataSalva.getIdAta());

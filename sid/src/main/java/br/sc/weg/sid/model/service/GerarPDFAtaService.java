@@ -55,6 +55,11 @@ public class GerarPDFAtaService {
                 Phrase phrase = new Phrase(String.format("%d", writer.getPageNumber()), font);
                 phrase.setLeading(10);
                 ColumnText.showTextAligned(writer.getDirectContent(), com.itextpdf.text.Element.ALIGN_RIGHT, phrase, 559, 40, 0);
+
+                Phrase phrase2 = new Phrase("Ata CDVP nº " + ata.getPautaAta().getHorarioInicioPauta() + "   "
+                        + ata.getPautaAta().getHorarioTerminoPauta(), font);
+                phrase2.setLeading(10);
+                ColumnText.showTextAligned(writer.getDirectContent(), com.itextpdf.text.Element.ALIGN_LEFT, phrase2, 40, 40, 0);
             }
         });
 
@@ -238,21 +243,17 @@ public class GerarPDFAtaService {
                     PdfPCell celulaTabelExpensesForEach;
                     boolean centroCustoFeito = false;
                     for (int i = 0; i < tabelaCusto.getTabelaCustoLinha().size(); i++) {
-                        celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFont));
+                        celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFont2));
                         celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableExpenses.addCell(celulaTabelExpensesForEach);
 
-                        celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFont));
-                        celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                        tableExpenses.addCell(celulaTabelExpensesForEach);
-
-                        celulaTabelExpensesForEach = new PdfPCell(new Phrase("R$" + tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto().toString(), tableFont));
+                        celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFont2));
                         celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableExpenses.addCell(celulaTabelExpensesForEach);
 
                         Double valorTotal = tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto() * tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto();
 
-                        celulaTabelExpensesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFont));
+                        celulaTabelExpensesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFont2));
                         celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableExpenses.addCell(celulaTabelExpensesForEach);
 
@@ -273,7 +274,7 @@ public class GerarPDFAtaService {
                             }
 
                             // Cria a célula com a informação dos centros de custo e define o rowspan
-                            PdfPCell celulaTabelExpensesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont));
+                            PdfPCell celulaTabelExpensesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont2));
                             celulaTabelExpensesCentroCusto.setRowspan(tabelaCusto.getTabelaCustoLinha().size());
                             celulaTabelExpensesCentroCusto.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
 
@@ -285,7 +286,7 @@ public class GerarPDFAtaService {
                 }
             });
 
-            celulaTabelExpenses = new PdfPCell(new Phrase("TOTAL Despesas: ", tableFontBold));
+            celulaTabelExpenses = new PdfPCell(new Phrase("TOTAL Despesas: ", tableFontBold2));
             celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableExpenses.addCell(celulaTabelExpenses);
 
@@ -303,11 +304,11 @@ public class GerarPDFAtaService {
                 }
             }
 
-            celulaTotalHoursWorked = new PdfPCell(new Phrase(totalHoursWorked + "h", tableFontBold));
+            celulaTotalHoursWorked = new PdfPCell(new Phrase(totalHoursWorked + "h", tableFontBold2));
             celulaTotalHoursWorked.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableExpenses.addCell(celulaTotalHoursWorked);
 
-            celulaTabelExpenses = new PdfPCell(new Phrase("R$" + totalValueHours.toString(), tableFontBold));
+            celulaTabelExpenses = new PdfPCell(new Phrase("R$" + totalValueHours.toString(), tableFontBold2));
             celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableExpenses.addCell(celulaTabelExpenses);
 
@@ -318,7 +319,7 @@ public class GerarPDFAtaService {
 
             totalValueProject += totalValueHours;
 
-            celulaTabelExpenses = new PdfPCell(new Phrase(" ", tableFontBold));
+            celulaTabelExpenses = new PdfPCell(new Phrase(" ", tableFontBold2));
             celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableExpenses.addCell(celulaTabelExpenses);
 
@@ -332,19 +333,19 @@ public class GerarPDFAtaService {
 
             PdfPCell celulaTableInternResources;
 
-            celulaTableInternResources = new PdfPCell(new Phrase("Recursos Internos", tableFontBold));
+            celulaTableInternResources = new PdfPCell(new Phrase("Recursos Internos", tableFontBold2));
             celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableInternResources.addCell(celulaTableInternResources);
 
-            celulaTableInternResources = new PdfPCell(new Phrase("Esforço", tableFontBold));
+            celulaTableInternResources = new PdfPCell(new Phrase("Esforço", tableFontBold2));
             celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableInternResources.addCell(celulaTableInternResources);
 
-            celulaTableInternResources = new PdfPCell(new Phrase("Total", tableFontBold));
+            celulaTableInternResources = new PdfPCell(new Phrase("Total", tableFontBold2));
             celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableInternResources.addCell(celulaTableInternResources);
 
-            celulaTableInternResources = new PdfPCell(new Phrase("CCs", tableFontBold));
+            celulaTableInternResources = new PdfPCell(new Phrase("CCs", tableFontBold2));
             celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableInternResources.addCell(celulaTableInternResources);
 
@@ -353,24 +354,19 @@ public class GerarPDFAtaService {
                     PdfPCell celulaTableInternResourcesForEach;
                     boolean centroCustoFeito = false;
                     for (int i = 0; i < tabelaCusto.getTabelaCustoLinha().size(); i++) {
-                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFontBold));
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFont2));
                         celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableInternResources.addCell(celulaTableInternResourcesForEach);
 
-                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFontBold));
-                        celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                        tableInternResources.addCell(celulaTableInternResourcesForEach);
-
-                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase("R$" + tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto().toString(), tableFontBold));
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFont2));
                         celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableInternResources.addCell(celulaTableInternResourcesForEach);
 
                         Double valorTotal = tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto() * tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto();
 
-                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFontBold));
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFont2));
                         celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableInternResources.addCell(celulaTableInternResourcesForEach);
-
 
                         if (!centroCustoFeito){
                             centroCustoFeito = true;
@@ -389,7 +385,7 @@ public class GerarPDFAtaService {
                             }
 
                             // Cria a célula com a informação dos centros de custo e define o rowspan
-                            PdfPCell celulaTableInternResourcesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont));
+                            PdfPCell celulaTableInternResourcesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont2));
                             celulaTableInternResourcesCentroCusto.setRowspan(tabelaCusto.getTabelaCustoLinha().size());
                             celulaTableInternResourcesCentroCusto.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
 
@@ -400,7 +396,7 @@ public class GerarPDFAtaService {
                 }
             });
 
-            celulaTableInternResources = new PdfPCell(new Phrase("TOTAL Despesas: ", tableFontBold));
+            celulaTableInternResources = new PdfPCell(new Phrase("TOTAL Despesas: ", tableFontBold2));
             celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableInternResources.addCell(celulaTableInternResources);
 
@@ -477,7 +473,7 @@ public class GerarPDFAtaService {
             Paragraph commissionOpinionParagraph = new Paragraph();
             commissionOpinionParagraph.add(commissionOpinionPhrase);
             commissionOpinionParagraph.add(commissionOpinionPhraseText);
-            commissionOpinionParagraph.setSpacingBefore(8);
+            commissionOpinionParagraph.setSpacingBefore(10);
 
             document.add(titleDemandParagraph);
             document.add(proposalParagraph);
