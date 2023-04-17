@@ -38,7 +38,7 @@ public class GerarPDFPropostaService {
         PdfProposta pdfProposta = new PdfProposta();
         if (pdfPropostasList.size() > 1) {
             pdfProposta = pdfPropostasList.get(pdfPropostasList.size() - 1);
-        }else {
+        } else {
             pdfProposta = pdfPropostasList.get(0);
         }
 
@@ -57,7 +57,7 @@ public class GerarPDFPropostaService {
             }
 
             public void onEndPage(PdfWriter writer, Document document) {
-                Font font = new Font( Font.HELVETICA, 12, Font.NORMAL);
+                Font font = new Font(Font.HELVETICA, 12, Font.NORMAL);
 
                 Phrase phrase = new Phrase(String.format("%d", writer.getPageNumber()), font);
                 phrase.setLeading(10);
@@ -118,10 +118,10 @@ public class GerarPDFPropostaService {
         String projectScopeParagraphTextHTML = pdfProposta.getEscopoPropostaHTML();
 
         Paragraph noPartOfScopeProjectParagraph;
-        if(!pdfProposta.getNaoFazParteDoEscopoPropostaHTML().isEmpty()){
+        if (!pdfProposta.getNaoFazParteDoEscopoPropostaHTML().isEmpty()) {
             noPartOfScopeProjectParagraph = new Paragraph("Não faz parte do escopo do projeto:", fontTitle);
             projectScopeParagraph.setSpacingBefore(8);
-        }else {
+        } else {
             noPartOfScopeProjectParagraph = new Paragraph();
         }
 
@@ -149,13 +149,13 @@ public class GerarPDFPropostaService {
         String expectedResultsPotentialParagraphTextHTML = "";
         for (Beneficio beneficio : beneficiosDemanda) {
             if (beneficio.getTipoBeneficio() == TipoBeneficio.QUALITATIVO) {
-                expectedResultsQualitativeParagraphTextHTML = beneficio.getMemoriaCalculoBeneficio() + " - " +  beneficio.getDescricaoBeneficioHTML();
+                expectedResultsQualitativeParagraphTextHTML = beneficio.getMemoriaCalculoBeneficio() + " - " + beneficio.getDescricaoBeneficioHTML();
             } else if (beneficio.getTipoBeneficio() == TipoBeneficio.POTENCIAL) {
-                expectedResultsPotentialParagraphTextHTML = beneficio.getMemoriaCalculoBeneficio() + " - " +  beneficio.getDescricaoBeneficioHTML();
+                expectedResultsPotentialParagraphTextHTML = beneficio.getMemoriaCalculoBeneficio() + " - " + beneficio.getDescricaoBeneficioHTML();
             }
         }
         Paragraph expectedResultsParagraph = null;
-        if (expectedResultsQualitativeParagraphTextHTML != null){
+        if (expectedResultsQualitativeParagraphTextHTML != null) {
             expectedResultsParagraph = new Paragraph("Resultados Esperados (Qualitativos):", fontTitle);
             expectedResultsParagraph.setSpacingBefore(8);
         }
@@ -200,8 +200,9 @@ public class GerarPDFPropostaService {
         System.out.println(proposta.getTabelaCusto());
 
         proposta.getTabelaCusto().forEach(tabelaCusto -> {
-            if(tabelaCusto.getTipoDespesa() == TipoDeDespesa.EXTERNA) {
+            if (tabelaCusto.getTipoDespesa() == TipoDeDespesa.EXTERNA) {
                 PdfPCell celulaTabelExpensesForEach;
+                boolean centroCustoFeito = false;
                 for (int i = 0; i < tabelaCusto.getTabelaCustoLinha().size(); i++) {
                     celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFont));
                     celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
@@ -221,13 +222,31 @@ public class GerarPDFPropostaService {
                     celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                     tableExpenses.addCell(celulaTabelExpensesForEach);
 
-                    for (int j =0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++){
-                        CentroCusto centroCusto = centroCustoService.findById(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getIdCentroCusto()).get();
-                        celulaTabelExpensesForEach = new PdfPCell(new Phrase(centroCusto.getNumeroCentroCusto() + " - "
-                                + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%", tableFont));
-                        celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                        tableExpenses.addCell(celulaTabelExpensesForEach);
+                    if (!centroCustoFeito){
+                        centroCustoFeito = true;
+                        // Cria uma String para armazenar a informação de todos os centros de custo
+                        String centrosDeCusto = "";
+
+                        // Percorre todos os centros de custo da tabela e adiciona a informação na String
+                        for (int j = 0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++) {
+                            CentroCusto centroCusto = centroCustoService.findById(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getIdCentroCusto()).get();
+                            centrosDeCusto += centroCusto.getNumeroCentroCusto() + " - " + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%";
+
+                            // Adiciona uma quebra de linha, exceto na última iteração do loop
+                            if (j < tabelaCusto.getCentroCustoTabelaCusto().size() - 1) {
+                                centrosDeCusto += "\n";
+                            }
+                        }
+
+                        // Cria a célula com a informação dos centros de custo e define o rowspan
+                        PdfPCell celulaTabelExpensesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont));
+                        celulaTabelExpensesCentroCusto.setRowspan(tabelaCusto.getTabelaCustoLinha().size());
+                        celulaTabelExpensesCentroCusto.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+
+                        // Adiciona a célula à tabela
+                        tableExpenses.addCell(celulaTabelExpensesCentroCusto);
                     }
+
                 }
 
             }
@@ -240,9 +259,9 @@ public class GerarPDFPropostaService {
         Integer totalHoursWorked = 0;
         Double totalValueHours = 0.0;
         Double totalValueProject = 0.0;
-        for (int i = 0; i < proposta.getTabelaCusto().size(); i++){
-            if (proposta.getTabelaCusto().get(i).getTipoDespesa() == TipoDeDespesa.EXTERNA){
-                for (int j = 0; j < proposta.getTabelaCusto().get(i).getTabelaCustoLinha().size(); j++){
+        for (int i = 0; i < proposta.getTabelaCusto().size(); i++) {
+            if (proposta.getTabelaCusto().get(i).getTipoDespesa() == TipoDeDespesa.EXTERNA) {
+                for (int j = 0; j < proposta.getTabelaCusto().get(i).getTabelaCustoLinha().size(); j++) {
                     totalHoursWorked += proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto();
                     Double valorTotal = proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto() *
                             proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getValorHoraTabelaCusto();
@@ -305,8 +324,9 @@ public class GerarPDFPropostaService {
         tableInternResources.addCell(celulaTableInternResources);
 
         proposta.getTabelaCusto().forEach(tabelaCusto -> {
-            if(tabelaCusto.getTipoDespesa() == TipoDeDespesa.INTERNA) {
+            if (tabelaCusto.getTipoDespesa() == TipoDeDespesa.INTERNA) {
                 PdfPCell celulaTableInternResourcesForEach;
+                boolean centroCustoFeito = false;
                 for (int i = 0; i < tabelaCusto.getTabelaCustoLinha().size(); i++) {
                     celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFontBold));
                     celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
@@ -326,13 +346,30 @@ public class GerarPDFPropostaService {
                     celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                     tableInternResources.addCell(celulaTableInternResourcesForEach);
 
-                    for (int j =0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++){
-                        CentroCusto centroCusto = centroCustoService.findById(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getIdCentroCusto()).get();
-                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(centroCusto.getNumeroCentroCusto() + " - "
-                                + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%", tableFontBold));
-                        celulaTableInternResourcesForEach.setRowspan(tabelaCusto.getCentroCustoTabelaCusto().size());
-                        celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                        tableInternResources.addCell(celulaTableInternResourcesForEach);
+
+                    if (!centroCustoFeito){
+                        centroCustoFeito = true;
+                        // Cria uma String para armazenar a informação de todos os centros de custo
+                        String centrosDeCusto = "";
+
+                        // Percorre todos os centros de custo da tabela e adiciona a informação na String
+                        for (int j = 0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++) {
+                            CentroCusto centroCusto = centroCustoService.findById(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getIdCentroCusto()).get();
+                            centrosDeCusto += centroCusto.getNumeroCentroCusto() + " - " + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%";
+
+                            // Adiciona uma quebra de linha, exceto na última iteração do loop
+                            if (j < tabelaCusto.getCentroCustoTabelaCusto().size() - 1) {
+                                centrosDeCusto += "\n";
+                            }
+                        }
+
+                        // Cria a célula com a informação dos centros de custo e define o rowspan
+                        PdfPCell celulaTableInternResourcesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont));
+                        celulaTableInternResourcesCentroCusto.setRowspan(tabelaCusto.getTabelaCustoLinha().size());
+                        celulaTableInternResourcesCentroCusto.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+
+                        // Adiciona a célula à tabela
+                        tableInternResources.addCell(celulaTableInternResourcesCentroCusto);
                     }
                 }
             }
@@ -345,9 +382,9 @@ public class GerarPDFPropostaService {
         totalHoursWorked = 0;
         totalValueHours = 0.0;
 
-        for (int i = 0; i < proposta.getTabelaCusto().size(); i++){
-            if (proposta.getTabelaCusto().get(i).getTipoDespesa() == TipoDeDespesa.INTERNA){
-                for (int j = 0; j < proposta.getTabelaCusto().get(i).getTabelaCustoLinha().size(); j++){
+        for (int i = 0; i < proposta.getTabelaCusto().size(); i++) {
+            if (proposta.getTabelaCusto().get(i).getTipoDespesa() == TipoDeDespesa.INTERNA) {
+                for (int j = 0; j < proposta.getTabelaCusto().get(i).getTabelaCustoLinha().size(); j++) {
                     totalHoursWorked += proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto();
                     Double valorTotal = proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto() *
                             proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getValorHoraTabelaCusto();
@@ -407,10 +444,10 @@ public class GerarPDFPropostaService {
         table.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
         int nomeResponsavelLength = 20;
         int nomeGestorLength = 20;
-        if(pdfProposta.getProposta().getNomeResponsavelNegocio().length() > 19){
+        if (pdfProposta.getProposta().getNomeResponsavelNegocio().length() > 19) {
             nomeResponsavelLength = pdfProposta.getProposta().getNomeResponsavelNegocio().length() + 1;
         }
-        if (pdfProposta.getProposta().getDemandaProposta().getGestorResponsavelDemanda().getNomeUsuario().length() > 20){
+        if (pdfProposta.getProposta().getDemandaProposta().getGestorResponsavelDemanda().getNomeUsuario().length() > 20) {
             nomeGestorLength = pdfProposta.getProposta().getDemandaProposta().getGestorResponsavelDemanda().getNomeUsuario().length() + 1;
         }
         table.setWidths(new int[]{nomeResponsavelLength, nomeGestorLength});
@@ -465,7 +502,7 @@ public class GerarPDFPropostaService {
         document.add(mainRisksParagraph);
         htmlWorker.parse(new StringReader(mainRisksParagraphTextHTML));
 
-        if (expectedResultsQualitativeParagraphTextHTML != null){
+        if (expectedResultsQualitativeParagraphTextHTML != null) {
             document.add(expectedResultsParagraph);
             htmlWorker.parse(new StringReader(expectedResultsQualitativeParagraphTextHTML));
         }

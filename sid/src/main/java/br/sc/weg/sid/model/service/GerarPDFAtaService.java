@@ -27,6 +27,8 @@ public class GerarPDFAtaService {
 
     PautaService pautaService;
 
+    CentroCustoService centroCustoService;
+
     public byte[] export(Integer idAta) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 20, 25, 15);
@@ -234,29 +236,52 @@ public class GerarPDFAtaService {
             proposta.getTabelaCusto().forEach(tabelaCusto -> {
                 if (tabelaCusto.getTipoDespesa() == TipoDeDespesa.EXTERNA) {
                     PdfPCell celulaTabelExpensesForEach;
+                    boolean centroCustoFeito = false;
                     for (int i = 0; i < tabelaCusto.getTabelaCustoLinha().size(); i++) {
-                        celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFont2));
+                        celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFont));
                         celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableExpenses.addCell(celulaTabelExpensesForEach);
 
-                        celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFont2));
+                        celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFont));
+                        celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+                        tableExpenses.addCell(celulaTabelExpensesForEach);
+
+                        celulaTabelExpensesForEach = new PdfPCell(new Phrase("R$" + tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto().toString(), tableFont));
                         celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableExpenses.addCell(celulaTabelExpensesForEach);
 
                         Double valorTotal = tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto() * tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto();
 
-                        celulaTabelExpensesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFont2));
+                        celulaTabelExpensesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFont));
                         celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableExpenses.addCell(celulaTabelExpensesForEach);
 
-                        for (int j = 0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++) {
-                            celulaTabelExpensesForEach = new PdfPCell(new Phrase(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getNumeroCentroCusto() + " - "
-                                    + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%", tableFont2));
-                            celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                            tableExpenses.addCell(celulaTabelExpensesForEach);
-                        }
-                    }
+                        if (!centroCustoFeito){
+                            centroCustoFeito = true;
+                            // Cria uma String para armazenar a informação de todos os centros de custo
+                            String centrosDeCusto = "";
 
+                            // Percorre todos os centros de custo da tabela e adiciona a informação na String
+                            for (int j = 0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++) {
+                                CentroCusto centroCusto = centroCustoService.findById(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getIdCentroCusto()).get();
+                                centrosDeCusto += centroCusto.getNumeroCentroCusto() + " - " + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%";
+
+                                // Adiciona uma quebra de linha, exceto na última iteração do loop
+                                if (j < tabelaCusto.getCentroCustoTabelaCusto().size() - 1) {
+                                    centrosDeCusto += "\n";
+                                }
+                            }
+
+                            // Cria a célula com a informação dos centros de custo e define o rowspan
+                            PdfPCell celulaTabelExpensesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont));
+                            celulaTabelExpensesCentroCusto.setRowspan(tabelaCusto.getTabelaCustoLinha().size());
+                            celulaTabelExpensesCentroCusto.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+
+                            // Adiciona a célula à tabela
+                            tableExpenses.addCell(celulaTabelExpensesCentroCusto);
+                        }
+
+                    }
                 }
             });
 
@@ -326,27 +351,50 @@ public class GerarPDFAtaService {
             proposta.getTabelaCusto().forEach(tabelaCusto -> {
                 if (tabelaCusto.getTipoDespesa() == TipoDeDespesa.INTERNA) {
                     PdfPCell celulaTableInternResourcesForEach;
+                    boolean centroCustoFeito = false;
                     for (int i = 0; i < tabelaCusto.getTabelaCustoLinha().size(); i++) {
-                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFont2));
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFontBold));
                         celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableInternResources.addCell(celulaTableInternResourcesForEach);
 
-                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFont2));
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFontBold));
+                        celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+                        tableInternResources.addCell(celulaTableInternResourcesForEach);
+
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase("R$" + tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto().toString(), tableFontBold));
                         celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableInternResources.addCell(celulaTableInternResourcesForEach);
 
                         Double valorTotal = tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto() * tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto();
 
-                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFont2));
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFontBold));
                         celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableInternResources.addCell(celulaTableInternResourcesForEach);
 
-                        for (int j = 0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++) {
-                            celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getNumeroCentroCusto() + " - "
-                                    + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%", tableFont2));
-                            celulaTableInternResourcesForEach.setRowspan(tabelaCusto.getCentroCustoTabelaCusto().size());
-                            celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                            tableInternResources.addCell(celulaTableInternResourcesForEach);
+
+                        if (!centroCustoFeito){
+                            centroCustoFeito = true;
+                            // Cria uma String para armazenar a informação de todos os centros de custo
+                            String centrosDeCusto = "";
+
+                            // Percorre todos os centros de custo da tabela e adiciona a informação na String
+                            for (int j = 0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++) {
+                                CentroCusto centroCusto = centroCustoService.findById(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getIdCentroCusto()).get();
+                                centrosDeCusto += centroCusto.getNumeroCentroCusto() + " - " + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%";
+
+                                // Adiciona uma quebra de linha, exceto na última iteração do loop
+                                if (j < tabelaCusto.getCentroCustoTabelaCusto().size() - 1) {
+                                    centrosDeCusto += "\n";
+                                }
+                            }
+
+                            // Cria a célula com a informação dos centros de custo e define o rowspan
+                            PdfPCell celulaTableInternResourcesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont));
+                            celulaTableInternResourcesCentroCusto.setRowspan(tabelaCusto.getTabelaCustoLinha().size());
+                            celulaTableInternResourcesCentroCusto.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+
+                            // Adiciona a célula à tabela
+                            tableInternResources.addCell(celulaTableInternResourcesCentroCusto);
                         }
                     }
                 }
