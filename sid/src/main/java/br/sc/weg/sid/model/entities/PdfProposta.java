@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
 import lombok.Data;
+import lombok.Generated;
 import lombok.ToString;
 
 import javax.persistence.*;
