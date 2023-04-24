@@ -432,6 +432,7 @@ public class DemandaController {
                     demanda.getHistoricoWorkflowUltimaVersao());
         }
         try {
+            pdfDemanda.setDemanda(demanda);
             pdfDemandaService.save(pdfDemanda);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda, a mesma não será atualizada!" + e.getMessage());
