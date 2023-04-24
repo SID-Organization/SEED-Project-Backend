@@ -533,7 +533,9 @@ public class GerarPDFAtaService {
 
         document.add(commissionOpinionParagraph);
 
-        document.newPage();
+        if (numeroProposta.get() != ata.getPropostasLog().size()) {
+            document.newPage();
+        }
     });
         document.close();
 
