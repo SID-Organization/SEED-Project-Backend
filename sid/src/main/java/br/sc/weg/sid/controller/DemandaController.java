@@ -433,6 +433,7 @@ public class DemandaController {
                     demanda.getHistoricoWorkflowUltimaVersao());
         }
         try {
+            pdfDemanda.setDemanda(demanda);
             pdfDemandaService.save(pdfDemanda);
         } catch (Exception e) {
             e.printStackTrace();

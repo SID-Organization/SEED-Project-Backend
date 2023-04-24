@@ -31,7 +31,7 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
     @Query(value = "select * from demanda order by score_demanda DESC;", nativeQuery = true)
     List<Demanda> findByScoreDemandaDesc();
 
-    @Query(value = "select * from demanda where status_demanda = 'RASCUNHO' and solicitante_demanda = ?1", nativeQuery = true)
+    @Query(value = "select * from demanda where status_demanda = 'RASCUNHO' and numero_cadastro_usuario = ?1", nativeQuery = true)
     List<Demanda> findRascunhosBySolicitanteDemanda(Integer solicitanteDemanda);
 
 }
