@@ -414,7 +414,7 @@ public class DemandaController {
             @PathVariable("id") Integer idDemanda,
             @RequestParam("demandaForm") @Valid String demandaJson,
             @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson,
-            @RequestParam("atualizaVersaoWorkflow") @Valid String atualizaVersaoWorkflow
+            @RequestParam(value = "atualizaVersaoWorkflow", required = false) @Valid String atualizaVersaoWorkflow
     ) {
         DemandaUtil demandaUtil = new DemandaUtil();
         Demanda demandaExiste = demandaService.findById(idDemanda).get();
