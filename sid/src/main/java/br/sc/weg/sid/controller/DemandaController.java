@@ -428,12 +428,14 @@ public class DemandaController {
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
         if (atualizaVersaoWorkflow != null){
+            System.out.println("Atualizando versão do workflow");
             historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                     demanda.getHistoricoWorkflowUltimaVersao());
         }
         try {
             pdfDemandaService.save(pdfDemanda);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda, a mesma não será atualizada!" + e.getMessage());
         }
 
@@ -441,7 +443,8 @@ public class DemandaController {
         for (Beneficio beneficioDemanda : demanda.getBeneficiosDemanda()) {
             Beneficio beneficioExistente = null;
             for (Beneficio b : beneficiosExistentes) {
-                if (b.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio() && b.getTipoBeneficio() == TipoBeneficio.QUALITATIVO) {
+                if (b.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio() && b.getTipoBeneficio() == TipoBeneficio.QUALITATIVO
+                || beneficioDemanda.getIdBeneficio() == b.getIdBeneficio()) {
                     beneficioExistente = b;
                     break;
                 }
@@ -457,8 +460,6 @@ public class DemandaController {
                 beneficioService.save(beneficioDemanda);
             }
         }
-
-
         demandaService.save(demanda);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }

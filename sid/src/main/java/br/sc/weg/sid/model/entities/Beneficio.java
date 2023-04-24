@@ -13,7 +13,7 @@ import javax.persistence.*;
 @EqualsAndHashCode
 public class Beneficio {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @JoinColumn(name = "idBeneficio", nullable = false)
     private Integer idBeneficio;
 
@@ -40,7 +40,6 @@ public class Beneficio {
     private String descricaoBeneficioHTML;
 
     @ManyToOne()
-    @JoinColumn(name = "idDemanda")
     @JsonIgnore
     private Demanda demandaBeneficio;
 }
