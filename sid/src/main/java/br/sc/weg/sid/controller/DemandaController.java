@@ -426,7 +426,6 @@ public class DemandaController {
         }
         Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
-        System.out.println(demanda);
         PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
         if (atualizaVersaoWorkflow != null){
             historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),

@@ -1,14 +1,12 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroCentroCustoDTO;
-import br.sc.weg.sid.DTO.CadastroTabelaCustoDTO;
 import br.sc.weg.sid.model.entities.CentroCusto;
 import br.sc.weg.sid.model.service.CentroCustoService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,10 +23,8 @@ public class CentroCustoController {
     @PostMapping()
     public ResponseEntity<Object> save(@RequestBody CadastroCentroCustoDTO cadastroCentroCustoDTO) {
         try {
-            System.out.println(cadastroCentroCustoDTO.toString());
             CentroCusto centroCusto = new CentroCusto();
             BeanUtils.copyProperties(cadastroCentroCustoDTO, centroCusto);
-            System.out.println(centroCusto.getNumeroCentroCusto());
             centroCustoService.save(centroCusto);
             return ResponseEntity.status(HttpStatus.CREATED).body(centroCusto);
         } catch (Exception e) {

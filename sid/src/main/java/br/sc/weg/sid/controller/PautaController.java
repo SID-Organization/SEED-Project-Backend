@@ -34,7 +34,6 @@ public class PautaController {
         Pauta pauta = new Pauta();
         BeanUtils.copyProperties(cadastroPautaDTO, pauta);
         Pauta pautaSalva = pautaService.save(pauta);
-        System.out.println("Pauta salva: " + pautaSalva);
         List<Proposta> propostas = pautaSalva.getPropostasPauta();
         List<Proposta> propostasEncontradas = new ArrayList<>();
         for (Proposta proposta : propostas) {

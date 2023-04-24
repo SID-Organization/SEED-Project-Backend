@@ -98,11 +98,9 @@ public class PropostaController {
             Proposta proposta = propostaOptional.get();
             try {
                 try {
-                    System.out.println(propostaService.findById(id).get().getTabelaCusto());
                     List<TabelaCusto> tabelaCustoList = propostaAntiga.getTabelaCusto();
                     if (!tabelaCustoList.isEmpty()) {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
-                        System.out.println("tabela custo não está vazia");
                         tabelaCustoService.deleteById(tabelaCustoList.get(0).getIdTabelaCusto());
                         tabelaCustoService.deleteById(tabelaCustoList.get(1).getIdTabelaCusto());
 
@@ -132,13 +130,11 @@ public class PropostaController {
                         proposta.getTabelaCusto().get(1).setIdTabelaCusto(tabelaCustoList.get(1).getIdTabelaCusto());
                     } else {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
-                        System.out.println("Tabela custo está vazia");
                         TabelaCusto tabelaCustoInterna = updatePropostaDTO.getTabelaCusto().get(0);
                         tabelaCustoInterna.setPropostaTabelaCusto(proposta);
                         TabelaCusto tabelaCustoSalva = tabelaCustoService.save(tabelaCustoInterna);
-                        System.out.println(tabelaCustoSalva);
                         for (int i = 0; i < tabelaCustoInterna.getTabelaCustoLinha().size(); i++) {
-                            System.out.println(tabelaCustoInterna.getTabelaCustoLinha().get(0).toString());
+
                             tabelaCustoInterna.getTabelaCustoLinha().get(i).setTabelaCusto(tabelaCustoSalva);
                             tabelaCustoLinhaService.save(tabelaCustoInterna.getTabelaCustoLinha().get(i));
                         }
@@ -152,7 +148,7 @@ public class PropostaController {
                         tabelaCustoExterna.setPropostaTabelaCusto(proposta);
                         TabelaCusto tabelaCustoSalva2 = tabelaCustoService.save(tabelaCustoExterna);
                         for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCusto().get(1).getTabelaCustoLinha()) {
-                            System.out.println("tabela" + " " + tabelaCustoLinha);
+
                             tabelaCustoLinha.setTabelaCusto(tabelaCustoSalva2);
                             tabelaCustoLinhaService.save(tabelaCustoLinha);
                         }

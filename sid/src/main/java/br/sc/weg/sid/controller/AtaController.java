@@ -43,8 +43,6 @@ public class AtaController {
         AtaUtil ataUtil = new AtaUtil();
         CadastroAtaDTO cadastroAtaDTO = ataUtil.convertToDto(ataJson);
         Ata ata = ataUtil.convertJsonToModel(ataJson);
-        System.out.println("ata: " + ata);
-        System.out.println("dto: " + cadastroAtaDTO);
 
         try {
             ata.setDocumentoAprovacaoAta(documentoAprovacaoAta.getBytes());
@@ -70,7 +68,6 @@ public class AtaController {
 
                         ataPropostaLog.setDemandaTempoExecucaoPropostaLog(diferencaEmHoras);
                         ataPropostaLog.setPropostaPropostaLog(proposta);
-                        System.out.println("Proposta: " + ataPropostaLog);
                     }
                 });
             });

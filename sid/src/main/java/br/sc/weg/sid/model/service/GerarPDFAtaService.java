@@ -185,7 +185,6 @@ public class GerarPDFAtaService {
             Paragraph projectCoverageParagraph = new Paragraph("Abrangência do Projeto:", titleFont);
             projectCoverageParagraph.setSpacingBefore(8);
 
-            System.out.println(pdfProposta);
             String projectCoverageParagraphTextHTML = pdfProposta.getAbrangenciaProjetoPropostaHTML();
 
             java.util.List<Beneficio> beneficiosDemanda = pdfProposta.getProposta().getDemandaProposta().getBeneficiosDemanda();

@@ -197,7 +197,6 @@ public class GerarPDFPropostaService {
         celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableExpenses.addCell(celulaTabelExpenses);
 
-        System.out.println(proposta.getTabelaCusto());
 
         proposta.getTabelaCusto().forEach(tabelaCusto -> {
             if (tabelaCusto.getTipoDespesa() == TipoDeDespesa.EXTERNA) {
