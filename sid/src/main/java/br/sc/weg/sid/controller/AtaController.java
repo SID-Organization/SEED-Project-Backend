@@ -3,8 +3,6 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
 import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.AtaResumida;
-import br.sc.weg.sid.model.entities.Proposta;
-import br.sc.weg.sid.model.entities.PropostasLog;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.PautaService;
 import br.sc.weg.sid.model.service.PropostaLogService;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -46,6 +43,8 @@ public class AtaController {
         AtaUtil ataUtil = new AtaUtil();
         CadastroAtaDTO cadastroAtaDTO = ataUtil.convertToDto(ataJson);
         Ata ata = ataUtil.convertJsonToModel(ataJson);
+        System.out.println("ata: " + ata);
+        System.out.println("dto: " + cadastroAtaDTO);
 
         try {
             ata.setDocumentoAprovacaoAta(documentoAprovacaoAta.getBytes());
@@ -54,41 +53,27 @@ public class AtaController {
         }
 
         try {
-            List<PropostasLog> propostasLogs = new ArrayList<>();
-            cadastroAtaDTO.setPautaAta(pautaService.findById(cadastroAtaDTO.getPautaAta().getIdPauta()).get());
-            cadastroAtaDTO.getPautaAta().getPropostasPauta().forEach(proposta -> {
-                PropostasLog propostasLog = new PropostasLog();
-                propostasLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
-                propostasLog.setDemandaTituloPropostaLog(proposta.getDemandaProposta().getTituloDemanda());
-                Instant periodoExecucaoDemandaInicioInstant = proposta.getPeriodoExecucaoDemandaInicio().toInstant();
-                LocalDate dataInicial = periodoExecucaoDemandaInicioInstant.atZone(ZoneId.systemDefault()).toLocalDate();
-                LocalDateTime dataHoraInicial = LocalDateTime.of(dataInicial, LocalTime.MIN);
+            ata.setPautaAta(pautaService.findById(cadastroAtaDTO.getPautaAta().getIdPauta()).get());
+            ata.getPautaAta().getPropostasPauta().forEach(proposta -> {
+                ata.getPropostasLog().forEach(ataPropostaLog -> {
+                    if (proposta.getIdProposta().equals(ataPropostaLog.getPropostaPropostaLog().getIdProposta())) {
+                        ataPropostaLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
+                        ataPropostaLog.setDemandaTituloPropostaLog(proposta.getDemandaProposta().getTituloDemanda());
+                        Instant periodoExecucaoDemandaInicioInstant = proposta.getPeriodoExecucaoDemandaInicio().toInstant();
+                        LocalDate dataInicial = periodoExecucaoDemandaInicioInstant.atZone(ZoneId.systemDefault()).toLocalDate();
+                        LocalDateTime dataHoraInicial = LocalDateTime.of(dataInicial, LocalTime.MIN);
+                        Instant periodoExecucaoDemandaFimInstant = proposta.getPeriodoExecucaoDemandaFim().toInstant();
+                        LocalDate dataFinal = periodoExecucaoDemandaFimInstant.atZone(ZoneId.systemDefault()).toLocalDate();
+                        LocalDateTime dataHoraFinal = LocalDateTime.of(dataFinal, LocalTime.MIN);
+                        Duration duracao = Duration.between(dataHoraInicial, dataHoraFinal);
+                        Long diferencaEmHoras = duracao.toHours();
 
-                Instant periodoExecucaoDemandaFimInstant = proposta.getPeriodoExecucaoDemandaFim().toInstant();
-                LocalDate dataFinal = periodoExecucaoDemandaFimInstant.atZone(ZoneId.systemDefault()).toLocalDate();
-                LocalDateTime dataHoraFinal = LocalDateTime.of(dataFinal, LocalTime.MIN);
-                Duration duracao = Duration.between(dataHoraInicial, dataHoraFinal);
-                Long diferencaEmHoras = duracao.toHours();
-                propostasLog.setDemandaTempoExecucaoPropostaLog(diferencaEmHoras);
-                propostasLog.setPropostaPropostaLog(proposta);
-                cadastroAtaDTO.getPropostasLogDTO().forEach(propostaLogDTO -> {
-                    System.out.println("PROPOSTA LOG DTO: " + propostaLogDTO);
-                    Proposta propostaLogFind = propostaService.findById(propostaLogDTO.getPropostaPropostaLogDTO().getIdProposta()).get();
-                    if (propostaLogFind.getIdProposta().equals(proposta.getIdProposta())) {
-                        System.out.println("Entrou");
-                        propostasLog.setConsideracoesProposta(propostaLogDTO.getConsideracoesPropostaLogDTO());
-                        propostasLog.setParecerComissaoPropostaLog(propostaLogDTO.getParecerComissaoPropostaLogDTO());
-                        propostasLog.setTipoAta(propostaLogDTO.getTipoAtaPropostaLogDTO());
-                        propostasLog.setPdfPropostaLog(proposta.getPdfProposta());
-                        System.out.println("PDF PROPOSTA LOG: " + propostasLog.getParecerComissaoPropostaLog());
-                        System.out.println("PROPOSTAS LOG: " + propostasLogs.size());
-                        propostaLogService.save(propostasLog);
-                        propostasLogs.add(propostasLog);
+                        ataPropostaLog.setDemandaTempoExecucaoPropostaLog(diferencaEmHoras);
+                        ataPropostaLog.setPropostaPropostaLog(proposta);
+                        System.out.println("Proposta: " + ataPropostaLog);
                     }
                 });
             });
-            System.out.println("PROPOSTAS LOG2: " + propostasLogs.size());
-            ata.setPropostasLogAta(propostasLogs);
             Ata ataSalva = ataService.save(ata);
             gerarPDFAtaController.generatePDF(ataSalva.getIdAta());
             return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);

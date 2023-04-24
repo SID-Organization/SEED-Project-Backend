@@ -31,8 +31,8 @@ public class Ata {
     @Lob
     private byte[] documentoAprovacaoAta;
 
-    @OneToMany(mappedBy = "idPropostaLog")
-    List<PropostasLog> propostasLogAta;
+    @OneToMany(cascade = CascadeType.ALL)
+    List<PropostasLog> propostasLog;
 
     @JsonIgnore
     @OneToOne

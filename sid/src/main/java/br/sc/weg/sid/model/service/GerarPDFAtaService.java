@@ -138,7 +138,7 @@ public class GerarPDFAtaService {
         document.add(table);
 
         AtomicInteger numeroProposta = new AtomicInteger();
-        ata.getPropostasLogAta().forEach(propostaLog -> {
+        ata.getPropostasLog().forEach(propostaLog -> {
 
             Proposta proposta = propostaLog.getPropostaPropostaLog();
 

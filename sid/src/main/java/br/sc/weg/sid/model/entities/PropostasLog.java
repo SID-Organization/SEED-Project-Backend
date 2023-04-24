@@ -29,14 +29,10 @@ public class PropostasLog {
     private ParecerComissao parecerComissaoPropostaLog;
 
     @Column(name = "consideracoesProposta", nullable = false)
-    private String consideracoesProposta;
+    private String consideracoesPropostaLog;
 
     @Column(name = "tipoAta", nullable = false)
-    private TipoAta tipoAta;
-
-    @ManyToOne
-    @JoinColumn(name = "idAta")
-    private Ata ataPropostaLog;
+    private TipoAta tipoAtaPropostaLog;
 
     @Column(name = "pdfPropostaLog")
     @Lob

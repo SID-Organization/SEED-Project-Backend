@@ -8,12 +8,12 @@ import lombok.Data;
 @Data
 public class CadastroPropostaLogDTO {
 
-    Proposta propostaPropostaLogDTO;
+    Proposta propostaPropostaLog;
 
-    ParecerComissao parecerComissaoPropostaLogDTO;
+    ParecerComissao parecerComissaoPropostaLog;
 
-    String consideracoesPropostaLogDTO;
+    String consideracoesPropostaLog;
 
-    TipoAta tipoAtaPropostaLogDTO;
+    TipoAta tipoAtaPropostaLog;
 
 }

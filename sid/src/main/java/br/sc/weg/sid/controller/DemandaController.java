@@ -413,7 +413,8 @@ public class DemandaController {
     public ResponseEntity<Object> atualizarDemanda(
             @PathVariable("id") Integer idDemanda,
             @RequestParam("demandaForm") @Valid String demandaJson,
-            @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson
+            @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson,
+            @RequestParam("atualizaVersaoWorkflow") @Valid String atualizaVersaoWorkflow
     ) {
         DemandaUtil demandaUtil = new DemandaUtil();
         Demanda demandaExiste = demandaService.findById(idDemanda).get();
@@ -427,8 +428,10 @@ public class DemandaController {
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         System.out.println(demanda);
         PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
-        historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
-                demanda.getHistoricoWorkflowUltimaVersao());
+        if (atualizaVersaoWorkflow != null){
+            historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
+                    demanda.getHistoricoWorkflowUltimaVersao());
+        }
         try {
             pdfDemandaService.save(pdfDemanda);
         } catch (Exception e) {
