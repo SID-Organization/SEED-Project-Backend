@@ -426,43 +426,20 @@ public class DemandaController {
         }
         Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
-        PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
-        if (atualizaVersaoWorkflow != null){
-            System.out.println("Atualizando versão do workflow");
+        Demanda demandaAtualizada = demandaService.save(demanda);
+        if (atualizaVersaoWorkflow != null) {
             historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                     demanda.getHistoricoWorkflowUltimaVersao());
         }
         try {
-            pdfDemanda.setDemanda(demanda);
+            PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
+            pdfDemanda.setDemanda(demandaAtualizada);
             pdfDemandaService.save(pdfDemanda);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda, a mesma não será atualizada!" + e.getMessage());
         }
-
-        List<Beneficio> beneficiosExistentes = beneficioService.findByDemandaBeneficio(demandaExiste);
-        for (Beneficio beneficioDemanda : demanda.getBeneficiosDemanda()) {
-            Beneficio beneficioExistente = null;
-            for (Beneficio b : beneficiosExistentes) {
-                if (b.getTipoBeneficio() == beneficioDemanda.getTipoBeneficio() && b.getTipoBeneficio() == TipoBeneficio.QUALITATIVO
-                || beneficioDemanda.getIdBeneficio() == b.getIdBeneficio()) {
-                    beneficioExistente = b;
-                    break;
-                }
-            }
-            if (beneficioExistente != null) {
-                beneficioExistente.setMoedaBeneficio(beneficioDemanda.getMoedaBeneficio());
-                beneficioExistente.setMemoriaCalculoBeneficio(beneficioDemanda.getMemoriaCalculoBeneficio());
-                beneficioExistente.setDescricaoBeneficio(beneficioDemanda.getDescricaoBeneficio());
-                beneficioExistente.setDescricaoBeneficioHTML(beneficioDemanda.getDescricaoBeneficioHTML());
-                beneficioService.save(beneficioExistente);
-            } else {
-                beneficioDemanda.setDemandaBeneficio(demanda);
-                beneficioService.save(beneficioDemanda);
-            }
-        }
-        demandaService.save(demanda);
-        return ResponseEntity.status(HttpStatus.OK).body(demanda);
+        return ResponseEntity.status(HttpStatus.OK).body(demandaAtualizada);
     }
 
     @PutMapping("/atualiza-bus-beneficiadas/{id}")

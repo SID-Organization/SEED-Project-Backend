@@ -1,7 +1,10 @@
 package br.sc.weg.sid.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -13,7 +16,7 @@ import javax.persistence.*;
 @EqualsAndHashCode
 public class Beneficio {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "idBeneficio", nullable = false)
     private Integer idBeneficio;
 
@@ -40,6 +43,6 @@ public class Beneficio {
     private String descricaoBeneficioHTML;
 
     @ManyToOne()
-    @JsonIgnore
+    @JsonIgnoreProperties("beneficiosDemanda")
     private Demanda demandaBeneficio;
 }
