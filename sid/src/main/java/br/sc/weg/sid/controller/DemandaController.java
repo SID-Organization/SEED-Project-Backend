@@ -427,6 +427,7 @@ public class DemandaController {
         Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         Demanda demandaAtualizada = demandaService.save(demanda);
+        demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
         if (atualizaVersaoWorkflow != null) {
             historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                     demanda.getHistoricoWorkflowUltimaVersao());

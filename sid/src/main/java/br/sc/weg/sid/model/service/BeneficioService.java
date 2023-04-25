@@ -2,6 +2,7 @@ package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.Beneficio;
 import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.TipoBeneficio;
 import br.sc.weg.sid.repository.BeneficioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,8 +36,12 @@ public class BeneficioService {
         beneficioRepository.deleteById(integer);
     }
 
-    public List<Beneficio> findByDemandaBeneficio(Demanda demandaBeneficio) {
-        return beneficioRepository.findByDemandaBeneficio(demandaBeneficio);
+    public Optional<Beneficio>findByDemandaBeneficioAndTipoBeneficio(Demanda demandaBeneficio, TipoBeneficio tipoBeneficio) {
+        try{
+            return beneficioRepository.findByDemandaBeneficioAndTipoBeneficio(demandaBeneficio, tipoBeneficio);
+        }catch (Exception e){
+            return Optional.empty();
+        }
     }
 
 }
