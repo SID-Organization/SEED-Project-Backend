@@ -4,8 +4,8 @@ import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,30 +20,26 @@ import java.util.stream.Collectors;
 @RestController
 @CrossOrigin
 @RequestMapping("/sid/api/demanda")
+@AllArgsConstructor
 public class DemandaController {
 
-    @Autowired
     HistoricoWorkflowController historicoWorkflowController;
 
-    @Autowired
     DemandaService demandaService;
 
-    @Autowired
     PdfDemandaService pdfDemandaService;
-    @Autowired
+
     UsuarioService usuarioService;
 
-    @Autowired
     BusinessUnityService businessUnityService;
 
-    @Autowired
     ArquivoDemandaService arquivoDemandaService;
 
-    @Autowired
     BeneficioService beneficioService;
 
-    @Autowired
     ForumService forumService;
+
+    GerarPDFDemandaController gerarPDFDemandaController;
 
     //Get all, pega todas as demandas
     @GetMapping()
@@ -422,7 +418,9 @@ public class DemandaController {
         Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         Demanda demandaAtualizada = demandaService.save(demanda);
-        demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
+        if (demanda.getBeneficiosDemanda() != null){
+            demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
+        }
         if (atualizaVersaoWorkflow != null) {
             historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                     demanda.getHistoricoWorkflowUltimaVersao());
@@ -443,7 +441,7 @@ public class DemandaController {
             @PathVariable("id") Integer id,
             @RequestBody @Valid CadastroBusBeneficiadasDemandaDTO cadastroBusBeneficiadasDemandaDTO,
             @RequestBody @Valid MultipartFile[] additionalFiles
-    ) {
+    ) throws Exception {
         if (!demandaService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id: " + id);
@@ -476,6 +474,7 @@ public class DemandaController {
         }
         historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                 demanda.getHistoricoWorkflowUltimaVersao());
+        gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
         return ResponseEntity.status(HttpStatus.OK).body(demandaSalva);
     }
 
