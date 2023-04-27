@@ -1,9 +1,6 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemandaDTO;
-import br.sc.weg.sid.DTO.CadastroDemandaDTO;
-import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
-import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
+import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
@@ -540,4 +537,28 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao deletar a demanda: " + e.getMessage());
         }
     }
+
+    @PostMapping("/delete-lista-demanda")
+    public ResponseEntity<Object> deletarDemandas(@RequestBody @Valid DeletaListaDemandaDTO demandas) {
+        demandas.getDemandas().forEach(demanda -> {
+            try {
+                if (!demandaService.existsById(demanda.getIdDemanda())) {
+                    throw new Exception("Não foi encontrado a demanda com o id " + demanda.getIdDemanda());
+                }
+                if (demandaService.findById(demanda.getIdDemanda()).get().getStatusDemanda().equals(StatusDemanda.RASCUNHO)) {
+                    List<PdfDemanda> pdfDemanda = pdfDemandaService.findByDemanda(demandaService.findById(demanda.getIdDemanda()).get());
+                    if (!pdfDemanda.isEmpty()) {
+                        pdfDemandaService.deleteAll(pdfDemanda);
+                    }
+                } else {
+                    throw new Exception("Demanda com o id: " + demanda.getIdDemanda() + " não pode ser deletada pois não tem o status rascunho!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+        return ResponseEntity.status(HttpStatus.OK).body("Demandas deletadas com sucesso!");
+    }
+
 }
