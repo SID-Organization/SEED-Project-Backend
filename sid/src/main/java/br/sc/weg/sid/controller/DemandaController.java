@@ -153,11 +153,12 @@ public class DemandaController {
                 }
             }
             //Cadastra os benefícios da demanda
-            for (Beneficio beneficio : demandaSalva.getBeneficiosDemanda()) {
-                beneficio.setDemandaBeneficio(demandaSalva);
-                beneficioService.save(beneficio);
+            if (cadastroDemandaDTO.getBeneficiosDemanda() != null) {
+                for (Beneficio beneficio : cadastroDemandaDTO.getBeneficiosDemanda()) {
+                    beneficio.setDemandaBeneficio(demandaSalva);
+                    beneficioService.save(beneficio);
+                }
             }
-
             //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
             if (demandaSalva.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
                 CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
@@ -558,6 +559,30 @@ public class DemandaController {
             }
         });
         return ResponseEntity.status(HttpStatus.OK).body("Demandas deletadas com sucesso!");
+    }
+
+    @DeleteMapping("/deleta-rascunhos")
+    public ResponseEntity<Object> deletarRascunhos() {
+        try {
+            List<Demanda> demandas = demandaService.findByStatusDemanda(StatusDemanda.RASCUNHO);
+            if (demandas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhuma demanda com o status rascunho!");
+            }
+            demandas.forEach(demanda -> {
+                try {
+                    List<PdfDemanda> pdfDemanda = pdfDemandaService.findByDemanda(demanda);
+                    if (!pdfDemanda.isEmpty()) {
+                        pdfDemandaService.deleteAll(pdfDemanda);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e.getMessage());
+                }
+            });
+            return ResponseEntity.status(HttpStatus.OK).body("Demandas deletadas com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao deletar demandas com status rascunho: " + e.getMessage());
+        }
     }
 
 }
