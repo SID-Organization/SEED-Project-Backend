@@ -1,6 +1,5 @@
 package br.sc.weg.sid.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -79,6 +78,10 @@ public class Demanda {
 
     @Column()
     private String motivoRecusaDemanda;
+
+    @Column(name = "pdfDemanda")
+    @Lob
+    private byte[] pdfDemanda;
 
     @JoinColumn(name = "idBuSolicitante")
     private String buSolicitanteDemanda;

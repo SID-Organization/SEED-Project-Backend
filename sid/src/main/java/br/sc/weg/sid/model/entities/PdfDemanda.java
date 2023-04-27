@@ -1,10 +1,8 @@
 package br.sc.weg.sid.model.entities;
 
 import lombok.Data;
-import lombok.Generated;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Entity
@@ -24,6 +22,6 @@ public class PdfDemanda {
     private String frequenciaUsoDemandaHTML;
 
     @JoinColumn(name = "idDemanda", referencedColumnName = "idDemanda")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Demanda demanda;
 }

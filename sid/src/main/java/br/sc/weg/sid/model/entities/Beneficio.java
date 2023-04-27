@@ -43,6 +43,7 @@ public class Beneficio {
     private String descricaoBeneficioHTML;
 
     @ManyToOne()
+    @JoinColumn(name = "idDemanda")
     @JsonIgnoreProperties("beneficiosDemanda")
     private Demanda demandaBeneficio;
 }

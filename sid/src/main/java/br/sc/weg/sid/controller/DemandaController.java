@@ -9,9 +9,7 @@ import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -498,6 +496,27 @@ public class DemandaController {
         }
     }
 
+    @GetMapping("/pdf-demanda/{idDemanda}")
+    ResponseEntity<Object> listarPropostaPdf(@PathVariable("idDemanda") Integer idDemanda) {
+        try {
+            if (demandaService.existsById(idDemanda)) {
+                Demanda demanda = demandaService.findById(idDemanda).get();
+                byte[] pdfBytes = demanda.getPdfDemanda();
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-ata-num-" + idDemanda + ".pdf").build());
+
+                return ResponseEntity.ok().headers(headers).body(pdfBytes);
+            } else {
+                return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + idDemanda);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idDemanda + "!");
+    }
+
 
     //Deleta uma demanda informando seu id
     @DeleteMapping("/{id}")
@@ -508,7 +527,11 @@ public class DemandaController {
                         .body("Não foi encontrado a demanda com o id " + idDemanda);
             }
             if (demandaService.findById(idDemanda).get().getStatusDemanda().equals(StatusDemanda.RASCUNHO)) {
-                demandaService.deleteById(idDemanda);
+
+                List<PdfDemanda> pdfDemanda = pdfDemandaService.findByDemanda(demandaService.findById(idDemanda).get());
+                if (!pdfDemanda.isEmpty()) {
+                    pdfDemandaService.deleteAll(pdfDemanda);
+                }
                 return ResponseEntity.status(HttpStatus.OK).body("Demanda com o id: " + idDemanda + " deletada com sucesso!");
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Demanda com o id: " + idDemanda + " não pode ser deletada pois não tem o status rascunho!");
