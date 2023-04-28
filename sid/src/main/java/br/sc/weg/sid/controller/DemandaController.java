@@ -406,6 +406,7 @@ public class DemandaController {
             @PathVariable("id") Integer idDemanda,
             @RequestParam("demandaForm") @Valid String demandaJson,
             @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson,
+            @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalFiles,
             @RequestParam(value = "atualizaVersaoWorkflow", required = false) @Valid String atualizaVersaoWorkflow
     ) {
         DemandaUtil demandaUtil = new DemandaUtil();
@@ -425,6 +426,30 @@ public class DemandaController {
         if (atualizaVersaoWorkflow != null) {
             historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                     demanda.getHistoricoWorkflowUltimaVersao());
+        }
+        //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
+        LocalDate localDate = LocalDate.now();
+        Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
+        //Cadastra os arquivos da demanda
+        if (additionalFiles != null) {
+            try {
+                for (MultipartFile additionalImage : additionalFiles) {
+                    ArquivoDemanda arquivoDemanda = new ArquivoDemanda();
+                    arquivoDemanda.setNomeArquivo(additionalImage.getOriginalFilename());
+                    arquivoDemanda.setTipoArquivo(additionalImage.getContentType());
+                    arquivoDemanda.setArquivo(additionalImage.getBytes());
+                    arquivoDemanda.setIdDemanda(demandaAtualizada);
+                    arquivoDemanda.setIdUsuario(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+                    arquivoDemanda.setDataRegistroArquivo(dataRegistroArquivo);
+                    System.out.println("salvou");
+                    arquivoDemandaSalvo = arquivoDemandaService.save(arquivoDemanda);
+                    demandaAtualizada.getArquivosDemandas().add(arquivoDemandaSalvo);
+                }
+            } catch (Exception e) {
+                arquivoDemandaService.deleteById(arquivoDemandaSalvo.getIdArquivoDemanda());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
+            }
         }
         try {
             PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
