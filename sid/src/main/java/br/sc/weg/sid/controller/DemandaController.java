@@ -159,23 +159,6 @@ public class DemandaController {
                     beneficioService.save(beneficio);
                 }
             }
-            //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
-            if (demandaSalva.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
-                CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
-                historicoWorkflowDTO.setDemandaHistorico(demandaSalva);
-                historicoWorkflowDTO.setIdResponsavel(demandaSalva.getSolicitanteDemanda());
-                historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
-                historicoWorkflowDTO.setAcaoFeitaHistorico("Enviar");
-                try {
-                    historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
-                    historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);
-                    historicoWorkflowDTO.setIdResponsavel(demandaSalva.getAnalistaResponsavelDemanda());
-                    historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
-                } catch (Exception e) {
-                    demandaService.deleteById(demandaSalva.getIdDemanda());
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
-                }
-            }
             try {
                 pdfDemanda.setDemanda(demandaSalva);
                 pdfDemandaService.save(pdfDemanda);
@@ -426,6 +409,22 @@ public class DemandaController {
         if (atualizaVersaoWorkflow != null) {
             historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                     demanda.getHistoricoWorkflowUltimaVersao());
+        }
+        //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
+        if (demandaAtualizada.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
+            CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
+            historicoWorkflowDTO.setDemandaHistorico(demandaAtualizada);
+            historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());
+            historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
+            historicoWorkflowDTO.setAcaoFeitaHistorico("Enviar");
+            try {
+                historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+                historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);
+                historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda());
+                historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
+            }
         }
         //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
         LocalDate localDate = LocalDate.now();
