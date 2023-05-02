@@ -144,7 +144,7 @@ public class GerarPDFDemandaService {
                 celulaTableRealBenefitsForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                 tableRealBenefits.addCell(celulaTableRealBenefitsForEach);
 
-                celulaTableRealBenefitsForEach = new PdfPCell(new Phrase(beneficio.getDescricaoBeneficio(), textFont));
+                celulaTableRealBenefitsForEach = new PdfPCell(new Phrase(beneficio.getMemoriaCalculoBeneficio(), textFont));
                 celulaTableRealBenefitsForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                 tableRealBenefits.addCell(celulaTableRealBenefitsForEach);
             }
@@ -180,7 +180,7 @@ public class GerarPDFDemandaService {
                 celulaTablePotentialBenefitsForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                 tablePotentialBenefits.addCell(celulaTablePotentialBenefitsForEach);
 
-                celulaTablePotentialBenefitsForEach = new PdfPCell(new Phrase(beneficio.getDescricaoBeneficio(), textFont));
+                celulaTablePotentialBenefitsForEach = new PdfPCell(new Phrase(beneficio.getMemoriaCalculoBeneficio(), textFont));
                 celulaTablePotentialBenefitsForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                 tablePotentialBenefits.addCell(celulaTablePotentialBenefitsForEach);
             }
@@ -196,7 +196,7 @@ public class GerarPDFDemandaService {
                 qualitativeBenefitParagraph.setSpacingBefore(10);
                 qualitativeBenefitParagraph.setSpacingAfter(10);
 
-                qualitativeBenefitText = new Paragraph(beneficio.getDescricaoBeneficio(), textFont);
+                qualitativeBenefitText = new Paragraph(beneficio.getMemoriaCalculoBeneficio(), textFont);
             }
         }
 
