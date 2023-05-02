@@ -36,6 +36,9 @@ public class ChatUtil {
 
                 Integer idMensagem = 0;
                 for (Mensagem mensagem : mensagens) {
+                    if (mensagem.getArquivoMensagem() != null) {
+                        mensagem.setTextoMensagem("Arquivo");
+                    }
                     if (mensagem.getIdMensagem() > idMensagem) {
                         idMensagem = mensagem.getIdMensagem();
                     }
@@ -66,6 +69,7 @@ public class ChatUtil {
                 mensagemResumida.setTextoMensagem(mensagem.getTextoMensagem());
                 mensagemResumida.setIdChat(mensagem.getIdChat().getIdChat());
                 mensagemResumida.setIdUsuario(mensagem.getIdUsuario().getNumeroCadastroUsuario());
+                mensagemResumida.setArquivoMensagem(mensagem.getArquivoMensagem());
 
                 mensagemResumidaList.add(mensagemResumida);
             }

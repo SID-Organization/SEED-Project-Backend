@@ -1,4 +1,4 @@
-package br.sc.weg.sid.model.entities;
+package br.sc.weg.sid.model.enums;
 
 public enum PerfilDeDespesa {
     TIPO1("Tipo 1"),

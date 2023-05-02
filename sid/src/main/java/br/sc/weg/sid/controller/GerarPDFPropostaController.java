@@ -32,6 +32,12 @@ public class GerarPDFPropostaController {
         this.propostaService = propostaService;
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP POST que gera um PDF da proposta.
+     * @param gerarPDFDTO - Parâmetro que representa o objeto DTO que contém o id da demanda e o objeto proposta.
+     * @return ResponseEntity<?> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o PDF da proposta.
+     * @throws Exception - Retorna uma mensagem de erro caso não exista um objeto Demanda com o id informado.
+     */
     @PostMapping("/gerar-pdf")
     public ResponseEntity<Object> gerarPDF(@RequestBody GerarPDFDTO gerarPDFDTO) {
 

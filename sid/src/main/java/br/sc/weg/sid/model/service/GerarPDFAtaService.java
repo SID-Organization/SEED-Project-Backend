@@ -1,6 +1,8 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.TipoBeneficio;
+import br.sc.weg.sid.model.enums.TipoDeDespesa;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;

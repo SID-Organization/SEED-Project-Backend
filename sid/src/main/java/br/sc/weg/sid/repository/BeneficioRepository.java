@@ -2,7 +2,7 @@ package br.sc.weg.sid.repository;
 
 import br.sc.weg.sid.model.entities.Beneficio;
 import br.sc.weg.sid.model.entities.Demanda;
-import br.sc.weg.sid.model.entities.TipoBeneficio;
+import br.sc.weg.sid.model.enums.TipoBeneficio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -24,16 +24,19 @@ public class AuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println("Iniciando filtro");
         if (    request.getRequestURI().equals("/login") ||
                 request.getRequestURI().equals("/login/auth") ||
                 request.getRequestURI().startsWith("/sid/api/docs") ||
                 request.getRequestURI().startsWith("/sid/swagger-ui") ||
                 request.getRequestURI().equals("/sid/swagger-ui.html") ||
-                request.getRequestURI().equals("/favicon.ico") || true) {
+                request.getRequestURI().equals("/favicon.ico")) {
+            System.out.println("Entrou no primeiro if");
             filterChain.doFilter(request, response);
             return;
         }
         try {
+            System.out.println("Entrou no try");
             String token = tokenUtils.buscarCookie(request, "jwt");
             Boolean valido = tokenUtils.validarToken(token);
             if (valido) {
@@ -41,6 +44,7 @@ public class AuthFilter extends OncePerRequestFilter {
                 String usuarioNumeroCadastro = tokenUtils.getUsuarioNumeroCadastro(token);
                 UserDetails usuario = jpaService.loadUserByUsername(usuarioNumeroCadastro);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario.getUsername(), null, usuario.getAuthorities());
+                System.out.println("final do filtro");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(request, response);

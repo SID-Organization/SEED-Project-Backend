@@ -1,4 +1,4 @@
-package br.sc.weg.sid.model.entities;
+package br.sc.weg.sid.model.enums;
 
 public enum TamanhoDemanda {
     MUITO_PEQUENA("Muito Pequena"), // 1 a 40 horas

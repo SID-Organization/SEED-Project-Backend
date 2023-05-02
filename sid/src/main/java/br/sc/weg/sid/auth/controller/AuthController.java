@@ -36,6 +36,14 @@ public class AuthController {
 
     private TokenUtils tokenUtils = new TokenUtils();
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP POST que autentica um usuário no sistema.
+     * @param usuarioDTO - Objeto DTO que contém os dados do usuário a ser autenticado.
+     * @param response - Objeto HttpServletResponse que contém a resposta da requisição.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o objeto Usuario autenticado.
+     * @throws AuthenticationException - Retorna uma mensagem de erro caso o usuário não seja autenticado.
+     * @throws Exception - Retorna uma mensagem de erro caso ocorra algum erro na autenticação do usuário.
+     */
     @PostMapping("/auth")
     public ResponseEntity<Object> autenticar(
             @RequestBody @Valid UsuarioDTO usuarioDTO,
@@ -58,6 +66,7 @@ public class AuthController {
             System.out.println(cookie.getValue());
             UserJpa user = (UserJpa) authentication.getPrincipal();
             Usuario pessoa = user.getUsuario();
+            System.out.println(user.getAuthorities());
             System.out.println(cookie.getValue());
             return ResponseEntity.status(HttpStatus.OK).body(pessoa);
         } catch (AuthenticationException e) {

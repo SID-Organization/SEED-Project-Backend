@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
 
+import br.sc.weg.sid.model.enums.TipoDeDespesa;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 

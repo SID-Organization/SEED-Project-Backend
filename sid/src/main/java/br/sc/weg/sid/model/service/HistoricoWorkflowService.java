@@ -1,12 +1,12 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.StatusWorkflow;
 import br.sc.weg.sid.repository.HistoricoWorkflowRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 

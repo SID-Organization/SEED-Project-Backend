@@ -5,6 +5,10 @@ import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.Cargo;
+import br.sc.weg.sid.model.enums.StatusDemanda;
+import br.sc.weg.sid.model.enums.TamanhoDemanda;
+import br.sc.weg.sid.model.enums.TarefaWorkflow;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import org.springframework.beans.BeanUtils;
@@ -102,7 +106,6 @@ public class DemandaController {
     //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status de RASCUNHO) e retorna a demanda criada
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Object> cadastroDemanda(
-
             @RequestParam("demandaForm") @Valid String demandaJson,
             @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson,
             @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalFiles

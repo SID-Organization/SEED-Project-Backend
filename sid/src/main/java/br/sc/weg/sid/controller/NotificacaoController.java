@@ -20,6 +20,12 @@ public class NotificacaoController {
     @Autowired
     private NotificacaoService notificacaoService;
 
+    /**
+     * Esta funcao é um mapeamento de requisição HTTP POST que salva um objeto Notificacao no banco de dados.
+     * @param cadastroNotificacaoDTO - Objeto DTO que contém os dados da Notificacao a ser salva.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 201 e o corpo contendo o objeto Notificacao salvo.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível salvar o objeto Notificacao.
+     */
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody @Valid CadastroNotificacaoDTO cadastroNotificacaoDTO) {
         Notificacao notificacao = new Notificacao();
@@ -32,6 +38,11 @@ public class NotificacaoController {
         }
     }
 
+    /**
+     * Esta funcao é um mapeamento de requisição HTTP GET que retorna todos os objetos Notificacao salvos no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma lista de objetos Notificacao.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível retornar os objetos Notificacao.
+     */
     @GetMapping
     public ResponseEntity<Object> findAll() {
         try {
@@ -41,6 +52,12 @@ public class NotificacaoController {
         }
     }
 
+    /**
+     * Esta funcao é um mapeamento de requisição HTTP GET que retorna o objeto Notificacao de acordo com o id informado.
+     * @param id - Parâmetro que representa o id do objeto Notificacao.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o objeto Notificacao.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível retornar o objeto Notificacao.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
@@ -50,6 +67,12 @@ public class NotificacaoController {
         }
     }
 
+    /**
+     * Esta funcao é um mapeamento de requisição HTTP DELETE que exclui o objeto Notificacao de acordo com o id informado.
+     * @param id - Parâmetro que representa o id do objeto Notificacao.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma mensagem de sucesso.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível excluir o objeto Notificacao.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(@PathVariable Integer id) {
         try {
