@@ -1,6 +1,5 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.GerarPDFDTO;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.GerarPDFPropostaService;
