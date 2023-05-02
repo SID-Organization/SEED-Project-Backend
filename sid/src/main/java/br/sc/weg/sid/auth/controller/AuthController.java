@@ -55,14 +55,10 @@ public class AuthController {
         try {
             Authentication authentication = authManager.authenticate(authenticationToken);
             String token = tokenUtils.gerarToken(authentication);
-            ResponseCookie cookie = ResponseCookie.from("jwt", token)
-                    .maxAge(3600)
-                    .path("/")
-                    .secure(false)
-                    .sameSite("None")
-                    .domain(".localhost")
-                    .build();
-            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            Cookie cookie = new Cookie("jwt", token);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
             System.out.println(cookie.getValue());
             UserJpa user = (UserJpa) authentication.getPrincipal();
             Usuario pessoa = user.getUsuario();
