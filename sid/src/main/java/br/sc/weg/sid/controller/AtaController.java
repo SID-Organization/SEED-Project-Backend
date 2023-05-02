@@ -5,10 +5,8 @@ import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.AtaResumida;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.PautaService;
-import br.sc.weg.sid.model.service.PropostaLogService;
-import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.AtaUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,22 +17,37 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/sid/api/ata")
+@AllArgsConstructor
 public class AtaController {
-    @Autowired
+
     private AtaService ataService;
 
-    @Autowired
     private PautaService pautaService;
 
-    @Autowired
-    private PropostaLogService propostaLogService;
-
-    @Autowired
-    private PropostaService propostaService;
-
-    @Autowired
     private GerarPDFAtaController gerarPDFAtaController;
 
+
+    /**
+     * Cria uma nova ata a partir dos dados fornecidos pelo usuário e salva no banco de dados.
+     * <p>
+     * Primeiramente, o método converte os dados da ata em formato JSON para o objeto "CadastroAtaDTO" e para o modelo "Ata" utilizando a
+     * classe utilitária "AtaUtil". Em seguida, o documento de aprovação é convertido para um array de bytes e atribuído à propriedade
+     * "documentoAprovacaoAta" do objeto "ata".
+     * <p>
+     * Em seguida, é realizado um loop nas propostas da pauta da ata e nas propostas da ata (que foram preenchidas pelo usuário),
+     * para que as informações das propostas possam ser atualizadas nas informações de log das propostas da ata. São atualizadas informações como o valor
+     * total da proposta, o título da demanda associada à proposta e o tempo de execução da demanda associada à proposta.
+     * <p>
+     * Por fim, é salva a ata no banco de dados utilizando o serviço "ataService". Caso a operação de salvamento seja bem-sucedida,
+     * é gerado um arquivo PDF da ata utilizando o controlador "gerarPDFAtaController". O método retorna uma ResponseEntity contendo a ata salva ou uma
+     * mensagem de erro, caso a operação de salvamento falhe. Em caso de erro na conversão do documento de aprovação,
+     * será lançada uma exceção do tipo RuntimeException.
+     *
+     * @param documentoAprovacaoAta Arquivo que comprova a aprovação da ata.
+     * @param ataJson               Dados da ata em formato JSON.
+     * @return ResponseEntity contendo a ata salva ou mensagem de erro em caso de falha.
+     * @throws RuntimeException se ocorrer algum erro na conversão do documento de aprovação.
+     */
     @PostMapping
     public ResponseEntity<Object> save(
             @RequestParam("documentoAprovacao") MultipartFile documentoAprovacaoAta,
@@ -80,6 +93,18 @@ public class AtaController {
         }
     }
 
+
+    /**
+     * Retorna um arquivo PDF contendo a ata com o ID fornecido pelo usuário.
+     * <p>
+     * Nessa função, o usuário informa o ID da ata desejada e o método busca e retorna o PDF correspondente.
+     * Se a ata existe, o método constrói um cabeçalho para o PDF e retorna um ResponseEntity contendo o arquivo PDF.
+     * Caso contrário, retorna uma mensagem de erro. O método pode lançar uma exceção em caso de falha na busca do PDF da ata.
+     *
+     * @param idAta ID da ata a ser buscada, passado pela URL.
+     * @return ResponseEntity contendo o arquivo PDF da ata ou mensagem de erro em caso de falha.
+     * @throws RuntimeException se ocorrer algum erro na busca do PDF da ata.
+     */
     @GetMapping("/pdf-ata/{idAta}")
     ResponseEntity<Object> listarPropostaPdf(@PathVariable("idAta") Integer idAta) {
         try {
@@ -89,7 +114,7 @@ public class AtaController {
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_PDF);
-                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-ata-num-" + ata.getIdAta()+".pdf").build());
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-ata-num-" + ata.getIdAta() + ".pdf").build());
 
                 return ResponseEntity.ok().headers(headers).body(pdfBytes);
             } else {
@@ -101,6 +126,12 @@ public class AtaController {
         return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idAta + "!");
     }
 
+    /**
+     * Remove uma ata com base no seu ID.
+     *
+     * @param id ID da ata a ser removida, passado pela URL.
+     * @return ResponseEntity indicando sucesso ou falha na operação.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         try {
@@ -111,6 +142,11 @@ public class AtaController {
         }
     }
 
+    /**
+     * Retorna todas as atas presentes no banco de dados em formato resumido.
+     *
+     * @return ResponseEntity contendo a lista de atas resumidas ou mensagem de erro em caso de falha.
+     */
     @GetMapping
     public ResponseEntity<Object> findAll() {
         try {
@@ -125,6 +161,12 @@ public class AtaController {
         }
     }
 
+    /**
+     * Busca uma ata pelo seu ID.
+     *
+     * @param id ID da ata a ser buscada, passado pela URL.
+     * @return ResponseEntity contendo a ata encontrada ou mensagem de erro em caso de falha.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
@@ -134,6 +176,12 @@ public class AtaController {
         }
     }
 
+    /**
+     * Busca uma ata pelo número do DG.
+     *
+     * @param numeroDgAta Número do DG da ata a ser buscada, passado pela URL.
+     * @return ResponseEntity contendo a ata encontrada ou mensagem de erro em caso de falha.
+     */
     @GetMapping("/numeroDgAta/{numeroDgAta}")
     public ResponseEntity<Object> findByNumeroDgAta(@PathVariable Integer numeroDgAta) {
         try {
