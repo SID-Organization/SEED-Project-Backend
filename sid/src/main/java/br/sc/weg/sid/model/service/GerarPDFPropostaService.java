@@ -150,9 +150,9 @@ public class GerarPDFPropostaService {
         String expectedResultsPotentialParagraphTextHTML = "";
         for (Beneficio beneficio : beneficiosDemanda) {
             if (beneficio.getTipoBeneficio() == TipoBeneficio.QUALITATIVO) {
-                expectedResultsQualitativeParagraphTextHTML = beneficio.getMemoriaCalculoBeneficio() + " - " + beneficio.getDescricaoBeneficioHTML();
+                expectedResultsQualitativeParagraphTextHTML = beneficio.getMemoriaCalculoBeneficio() + " - " + beneficio.getMemoriaCalculoBeneficioHTML();
             } else if (beneficio.getTipoBeneficio() == TipoBeneficio.POTENCIAL) {
-                expectedResultsPotentialParagraphTextHTML = beneficio.getMemoriaCalculoBeneficio() + " - " + beneficio.getDescricaoBeneficioHTML();
+                expectedResultsPotentialParagraphTextHTML = beneficio.getMemoriaCalculoBeneficio() + " - " + beneficio.getMemoriaCalculoBeneficioHTML();
             }
         }
         Paragraph expectedResultsParagraph = null;
