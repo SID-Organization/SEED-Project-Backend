@@ -81,6 +81,10 @@ public class Demanda {
     @Column()
     private String motivoRecusaDemanda;
 
+    @Column(name = "pdfDemanda")
+    @Lob
+    private byte[] pdfDemanda;
+
     @JoinColumn(name = "idBuSolicitante")
     private String buSolicitanteDemanda;
 

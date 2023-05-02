@@ -1,7 +1,6 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
-import br.sc.weg.sid.DTO.GerarPDFDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.StatusDemanda;
@@ -206,10 +205,7 @@ public class PropostaController {
                     PdfProposta pdfProposta = propostaUtil.convertJsonToModel(pdfPropostaForm);
                     pdfProposta.setProposta(propostaSalva);
                     pdfPropostaService.save(pdfProposta);
-                    GerarPDFDTO gerarPDFDTO = new GerarPDFDTO();
-                    gerarPDFDTO.setProposta(propostaSalva);
-                    gerarPDFDTO.setIdDemanda(propostaSalva.getDemandaProposta().getIdDemanda());
-                    gerarPDFPropostaController.gerarPDF(gerarPDFDTO);
+                    gerarPDFPropostaController.gerarPDF(propostaSalva.getIdProposta());
                 } catch (Exception e) {
                     e.printStackTrace();
                     return ResponseEntity.badRequest().body("ERROR 0009: Erro ao gerar PDF!" + "\nMessage: " + e.getMessage());

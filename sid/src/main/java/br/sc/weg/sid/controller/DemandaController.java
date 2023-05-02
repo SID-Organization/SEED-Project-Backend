@@ -1,9 +1,6 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.CadastroBusBeneficiadasDemandaDTO;
-import br.sc.weg.sid.DTO.CadastroDemandaDTO;
-import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
-import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
+import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.Cargo;
 import br.sc.weg.sid.model.enums.StatusDemanda;
@@ -11,11 +8,9 @@ import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import br.sc.weg.sid.model.enums.TarefaWorkflow;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,32 +24,36 @@ import java.util.stream.Collectors;
 @RestController
 @CrossOrigin
 @RequestMapping("/sid/api/demanda")
+@AllArgsConstructor
 public class DemandaController {
 
-    @Autowired
     HistoricoWorkflowController historicoWorkflowController;
 
-    @Autowired
     DemandaService demandaService;
 
-    @Autowired
     PdfDemandaService pdfDemandaService;
-    @Autowired
+
     UsuarioService usuarioService;
 
-    @Autowired
     BusinessUnityService businessUnityService;
 
-    @Autowired
     ArquivoDemandaService arquivoDemandaService;
 
-    @Autowired
     BeneficioService beneficioService;
 
-    @Autowired
     ForumService forumService;
 
-    //Get all, pega todas as demandas
+    GerarPDFDemandaController gerarPDFDemandaController;
+
+    /**
+     * Retorna uma lista de demandas resumidas.
+     *
+     * Este endpoint retorna uma lista de demandas resumidas, filtrando apenas as demandas que não
+     * estão no status "rascunho". Caso não haja demandas a serem retornadas, uma mensagem de erro é exibida falando: Nenhuma demanda encontrada.
+     * As demandas são retornadas como uma lista de objetos do tipo DemandaResumida.
+     *
+     * @return ResponseEntity<List<DemandaResumida>> Lista de demandas resumidas
+     */
     @GetMapping()
     public ResponseEntity<Object> findAll() {
         List<Demanda> demandas = demandaService.findAll();
@@ -72,7 +71,15 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
-    //Get all, pega todas as demandas
+    /**
+     * Retorna uma lista de demandas contendo o ID e o título de todas as demandas.
+     *
+     * Este endpoint retorna uma lista de objetos que contém o ID e o título de todas as demandas cadastradas no sistema, bem como o status
+     * atual de cada demanda. Caso não haja demandas a serem retornadas, uma mensagem de erro é exibida.
+     * As demandas são retornadas como uma lista de objetos do tipo Map<String, Object>.
+     *
+     * @return ResponseEntity<List<Map<String, Object>>> Lista de objetos contendo o ID e o título de todas as demandas.
+     */
     @GetMapping("/titulos-id-demanda")
     public ResponseEntity<Object> findAllTitles() {
         List<Demanda> demandas = demandaService.findAll();
@@ -91,6 +98,15 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
+    /**
+     * Retorna uma lista resumida de todas as demandas que estão no status "Rascunho".
+     *
+     * Este endpoint retorna uma lista resumida de todas as demandas que estão no status "Rascunho".
+     * Caso não haja demandas a serem retornadas, uma mensagem de erro é exibida falando: Nenhuma demanda encontrada.
+     * As demandas são retornadas como uma lista de objetos do tipo DemandaResumida.
+     *
+     * @return ResponseEntity<List<DemandaResumida>> Lista resumida de todas as demandas no status "Rascunho".
+     */
     @GetMapping("/rascunhos")
     public ResponseEntity<Object> findAllRascunhos() {
         List<Demanda> demandas = demandaService.findByStatusDemanda(StatusDemanda.RASCUNHO);
@@ -103,7 +119,21 @@ public class DemandaController {
     }
 
 
-    //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status de RASCUNHO) e retorna a demanda criada
+    /**
+     * Cadastra uma nova demanda.
+     *
+     * Esta função cadastroDemanda é responsável por cadastrar uma nova demanda no sistema.
+     * Ela recebe três parâmetros: demandaJson, pdfDemandaJson e additionalFiles.
+     *
+     * No início da função, são feitas as conversões necessárias das Strings em objetos DTO e em objetos modelo do sistema.
+     * Também é feita a verificação dos atributos da demanda para determinar se ela está completa ou em rascunho.
+     *
+     * @param demandaJson       JSON contendo as informações da demanda a ser cadastrada.
+     * @param pdfDemandaJson    JSON contendo as informações do PDF da demanda a ser cadastrado.
+     * @param additionalFiles   Arquivos adicionais da demanda, se houver, como por exemplo uma imagem ou documento.
+     * @return                  ResponseEntity contendo o objeto Demanda salvo no banco de dados.
+     *                          Em caso de erro, retorna uma mensagem de erro com o respectivo código HTTP.
+     */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Object> cadastroDemanda(
             @RequestParam("demandaForm") @Valid String demandaJson,
@@ -165,26 +195,10 @@ public class DemandaController {
                 }
             }
             //Cadastra os benefícios da demanda
-            for (Beneficio beneficio : demandaSalva.getBeneficiosDemanda()) {
-                beneficio.setDemandaBeneficio(demandaSalva);
-                beneficioService.save(beneficio);
-            }
-
-            //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
-            if (demandaSalva.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
-                CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
-                historicoWorkflowDTO.setDemandaHistorico(demandaSalva);
-                historicoWorkflowDTO.setIdResponsavel(demandaSalva.getSolicitanteDemanda());
-                historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
-                historicoWorkflowDTO.setAcaoFeitaHistorico("Enviar");
-                try {
-                    historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
-                    historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);
-                    historicoWorkflowDTO.setIdResponsavel(demandaSalva.getAnalistaResponsavelDemanda());
-                    historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
-                } catch (Exception e) {
-                    demandaService.deleteById(demandaSalva.getIdDemanda());
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
+            if (cadastroDemandaDTO.getBeneficiosDemanda() != null) {
+                for (Beneficio beneficio : cadastroDemandaDTO.getBeneficiosDemanda()) {
+                    beneficio.setDemandaBeneficio(demandaSalva);
+                    beneficioService.save(beneficio);
                 }
             }
             try {
@@ -417,6 +431,7 @@ public class DemandaController {
             @PathVariable("id") Integer idDemanda,
             @RequestParam("demandaForm") @Valid String demandaJson,
             @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson,
+            @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalFiles,
             @RequestParam(value = "atualizaVersaoWorkflow", required = false) @Valid String atualizaVersaoWorkflow
     ) {
         DemandaUtil demandaUtil = new DemandaUtil();
@@ -430,10 +445,52 @@ public class DemandaController {
         Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         Demanda demandaAtualizada = demandaService.save(demanda);
-        demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
+        if (demanda.getBeneficiosDemanda() != null){
+            demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
+        }
         if (atualizaVersaoWorkflow != null) {
             historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                     demanda.getHistoricoWorkflowUltimaVersao());
+        }
+        //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
+        if (demandaAtualizada.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
+            CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
+            historicoWorkflowDTO.setDemandaHistorico(demandaAtualizada);
+            historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());
+            historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
+            historicoWorkflowDTO.setAcaoFeitaHistorico("Enviar");
+            try {
+                historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+                historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);
+                historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda());
+                historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
+            }
+        }
+        //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
+        LocalDate localDate = LocalDate.now();
+        Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
+        //Cadastra os arquivos da demanda
+        if (additionalFiles != null) {
+            try {
+                for (MultipartFile additionalImage : additionalFiles) {
+                    ArquivoDemanda arquivoDemanda = new ArquivoDemanda();
+                    arquivoDemanda.setNomeArquivo(additionalImage.getOriginalFilename());
+                    arquivoDemanda.setTipoArquivo(additionalImage.getContentType());
+                    arquivoDemanda.setArquivo(additionalImage.getBytes());
+                    arquivoDemanda.setIdDemanda(demandaAtualizada);
+                    arquivoDemanda.setIdUsuario(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+                    arquivoDemanda.setDataRegistroArquivo(dataRegistroArquivo);
+                    System.out.println("salvou");
+                    arquivoDemandaSalvo = arquivoDemandaService.save(arquivoDemanda);
+                    demandaAtualizada.getArquivosDemandas().add(arquivoDemandaSalvo);
+                }
+            } catch (Exception e) {
+                arquivoDemandaService.deleteById(arquivoDemandaSalvo.getIdArquivoDemanda());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
+            }
         }
         try {
             PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
@@ -451,7 +508,7 @@ public class DemandaController {
             @PathVariable("id") Integer id,
             @RequestBody @Valid CadastroBusBeneficiadasDemandaDTO cadastroBusBeneficiadasDemandaDTO,
             @RequestBody @Valid MultipartFile[] additionalFiles
-    ) {
+    ) throws Exception {
         if (!demandaService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id: " + id);
@@ -484,6 +541,7 @@ public class DemandaController {
         }
         historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                 demanda.getHistoricoWorkflowUltimaVersao());
+        gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
         return ResponseEntity.status(HttpStatus.OK).body(demandaSalva);
     }
 
@@ -501,6 +559,27 @@ public class DemandaController {
         }
     }
 
+    @GetMapping("/pdf-demanda/{idDemanda}")
+    ResponseEntity<Object> listarPropostaPdf(@PathVariable("idDemanda") Integer idDemanda) {
+        try {
+            if (demandaService.existsById(idDemanda)) {
+                Demanda demanda = demandaService.findById(idDemanda).get();
+                byte[] pdfBytes = demanda.getPdfDemanda();
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-ata-num-" + idDemanda + ".pdf").build());
+
+                return ResponseEntity.ok().headers(headers).body(pdfBytes);
+            } else {
+                return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + idDemanda);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idDemanda + "!");
+    }
+
 
     //Deleta uma demanda informando seu id
     @DeleteMapping("/{id}")
@@ -511,7 +590,11 @@ public class DemandaController {
                         .body("Não foi encontrado a demanda com o id " + idDemanda);
             }
             if (demandaService.findById(idDemanda).get().getStatusDemanda().equals(StatusDemanda.RASCUNHO)) {
-                demandaService.deleteById(idDemanda);
+
+                List<PdfDemanda> pdfDemanda = pdfDemandaService.findByDemanda(demandaService.findById(idDemanda).get());
+                if (!pdfDemanda.isEmpty()) {
+                    pdfDemandaService.deleteAll(pdfDemanda);
+                }
                 return ResponseEntity.status(HttpStatus.OK).body("Demanda com o id: " + idDemanda + " deletada com sucesso!");
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Demanda com o id: " + idDemanda + " não pode ser deletada pois não tem o status rascunho!");
@@ -520,4 +603,52 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao deletar a demanda: " + e.getMessage());
         }
     }
+
+    @PostMapping("/delete-lista-demanda")
+    public ResponseEntity<Object> deletarDemandas(@RequestBody @Valid DeletaListaDemandaDTO demandas) {
+        demandas.getDemandas().forEach(demanda -> {
+            try {
+                if (!demandaService.existsById(demanda.getIdDemanda())) {
+                    throw new Exception("Não foi encontrado a demanda com o id " + demanda.getIdDemanda());
+                }
+                if (demandaService.findById(demanda.getIdDemanda()).get().getStatusDemanda().equals(StatusDemanda.RASCUNHO)) {
+                    List<PdfDemanda> pdfDemanda = pdfDemandaService.findByDemanda(demandaService.findById(demanda.getIdDemanda()).get());
+                    if (!pdfDemanda.isEmpty()) {
+                        pdfDemandaService.deleteAll(pdfDemanda);
+                    }
+                } else {
+                    throw new Exception("Demanda com o id: " + demanda.getIdDemanda() + " não pode ser deletada pois não tem o status rascunho!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+        return ResponseEntity.status(HttpStatus.OK).body("Demandas deletadas com sucesso!");
+    }
+
+    @DeleteMapping("/deleta-rascunhos")
+    public ResponseEntity<Object> deletarRascunhos() {
+        try {
+            List<Demanda> demandas = demandaService.findByStatusDemanda(StatusDemanda.RASCUNHO);
+            if (demandas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhuma demanda com o status rascunho!");
+            }
+            demandas.forEach(demanda -> {
+                try {
+                    List<PdfDemanda> pdfDemanda = pdfDemandaService.findByDemanda(demanda);
+                    if (!pdfDemanda.isEmpty()) {
+                        pdfDemandaService.deleteAll(pdfDemanda);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e.getMessage());
+                }
+            });
+            return ResponseEntity.status(HttpStatus.OK).body("Demandas deletadas com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao deletar demandas com status rascunho: " + e.getMessage());
+        }
+    }
+
 }

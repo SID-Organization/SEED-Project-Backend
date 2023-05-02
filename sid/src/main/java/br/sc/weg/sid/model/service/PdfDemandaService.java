@@ -34,4 +34,8 @@ public class PdfDemandaService {
     public void deleteById(Integer integer) {
         pdfDemandaRepository.deleteById(integer);
     }
+
+    public void deleteAll(List<PdfDemanda> pdfDemanda) {
+        pdfDemandaRepository.deleteAll(pdfDemanda);
+    }
 }

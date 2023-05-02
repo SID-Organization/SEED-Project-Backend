@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -29,12 +28,12 @@ public class GerarPDFPropostaService {
 
     private final CentroCustoService centroCustoService;
 
-    public byte[] export(Integer idDemanda, Proposta proposta) throws IOException {
+    public byte[] export(Proposta proposta) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 40, 25, 15);
         PdfWriter writer = PdfWriter.getInstance(document, baos);
 
-        Optional<Demanda> demanda = demandaService.findById(idDemanda);
+        Demanda demanda = proposta.getDemandaProposta();
         java.util.List<PdfProposta> pdfPropostasList = pdfPropostaService.findByProposta(proposta);
 
         PdfProposta pdfProposta = new PdfProposta();
@@ -86,21 +85,21 @@ public class GerarPDFPropostaService {
         dateParagraph.setAlignment(Paragraph.ALIGN_RIGHT);
         dateParagraph.setSpacingAfter(5);
 
-        String tituloCaixaAltaDemanda = demanda.get().getTituloDemanda().toUpperCase();
+        String tituloCaixaAltaDemanda = demanda.getTituloDemanda().toUpperCase();
 
-        Paragraph titleDemandParagraph = new Paragraph(tituloCaixaAltaDemanda + " – " + demanda.get().getIdDemanda(), fontTitle);
+        Paragraph titleDemandParagraph = new Paragraph(tituloCaixaAltaDemanda + " – " + demanda.getIdDemanda(), fontTitle);
         List listTitle = new List(List.ORDERED);
         listTitle.add(new ListItem(titleDemandParagraph));
 
         Phrase requesterPhrase = new Phrase("Solicitante: ", fontTitle);
-        Chunk solicitanteChunk = new Chunk(demanda.get().getSolicitanteDemanda().getNomeUsuario() + " - " +
-                demanda.get().getSolicitanteDemanda().getDepartamentoUsuario(), textFont);
+        Chunk solicitanteChunk = new Chunk(demanda.getSolicitanteDemanda().getNomeUsuario() + " - " +
+                demanda.getSolicitanteDemanda().getDepartamentoUsuario(), textFont);
         requesterPhrase.add(solicitanteChunk);
         Paragraph requesterParagraph = new Paragraph(requesterPhrase);
         requesterParagraph.setSpacingBefore(8);
 
         Phrase proposalPhrase = new Phrase("Objetivo: ", fontTitle);
-        Chunk objetivoChunk = new Chunk(demanda.get().getPropostaMelhoriaDemanda(), textFont);
+        Chunk objetivoChunk = new Chunk(demanda.getPropostaMelhoriaDemanda(), textFont);
         proposalPhrase.add(objetivoChunk);
         Paragraph proposalParagraph = new Paragraph(proposalPhrase);
         proposalParagraph.setSpacingBefore(8);
@@ -109,7 +108,7 @@ public class GerarPDFPropostaService {
         Paragraph actualSituationParagraph = new Paragraph("Situação Atual - Problema a ser tratado/ resolvido:", fontTitle);
         actualSituationParagraph.setSpacingBefore(8);
 
-        Paragraph actualSituationParagraphText = new Paragraph(demanda.get().getSituacaoAtualDemanda(), textFont);
+        Paragraph actualSituationParagraphText = new Paragraph(demanda.getSituacaoAtualDemanda(), textFont);
         actualSituationParagraphText.setSpacingAfter(5);
 
         Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", fontTitle);

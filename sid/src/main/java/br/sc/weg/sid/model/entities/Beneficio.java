@@ -22,6 +22,9 @@ public class Beneficio {
     @JoinColumn(name = "idBeneficio", nullable = false)
     private Integer idBeneficio;
 
+    @Column(name = "idFront")
+    private Integer idFront;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "MoedaBeneficio")
     private Moeda moedaBeneficio;
@@ -45,6 +48,7 @@ public class Beneficio {
     private String descricaoBeneficioHTML;
 
     @ManyToOne()
+    @JoinColumn(name = "idDemanda")
     @JsonIgnoreProperties("beneficiosDemanda")
     private Demanda demandaBeneficio;
 }
