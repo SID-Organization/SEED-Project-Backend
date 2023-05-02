@@ -3,7 +3,7 @@ package br.sc.weg.sid.model.service;
 import br.sc.weg.sid.model.entities.Beneficio;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.PdfDemanda;
-import br.sc.weg.sid.model.entities.TipoBeneficio;
+import br.sc.weg.sid.model.enums.TipoBeneficio;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 import lombok.AllArgsConstructor;
