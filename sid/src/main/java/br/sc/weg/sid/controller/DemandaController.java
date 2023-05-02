@@ -41,7 +41,15 @@ public class DemandaController {
 
     GerarPDFDemandaController gerarPDFDemandaController;
 
-    //Get all, pega todas as demandas
+    /**
+     * Retorna uma lista de demandas resumidas.
+     *
+     * Este endpoint retorna uma lista de demandas resumidas, filtrando apenas as demandas que não
+     * estão no status "rascunho". Caso não haja demandas a serem retornadas, uma mensagem de erro é exibida falando: Nenhuma demanda encontrada.
+     * As demandas são retornadas como uma lista de objetos do tipo DemandaResumida.
+     *
+     * @return ResponseEntity<List<DemandaResumida>> Lista de demandas resumidas
+     */
     @GetMapping()
     public ResponseEntity<Object> findAll() {
         List<Demanda> demandas = demandaService.findAll();
@@ -59,7 +67,15 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
-    //Get all, pega todas as demandas
+    /**
+     * Retorna uma lista de demandas contendo o ID e o título de todas as demandas.
+     *
+     * Este endpoint retorna uma lista de objetos que contém o ID e o título de todas as demandas cadastradas no sistema, bem como o status
+     * atual de cada demanda. Caso não haja demandas a serem retornadas, uma mensagem de erro é exibida.
+     * As demandas são retornadas como uma lista de objetos do tipo Map<String, Object>.
+     *
+     * @return ResponseEntity<List<Map<String, Object>>> Lista de objetos contendo o ID e o título de todas as demandas.
+     */
     @GetMapping("/titulos-id-demanda")
     public ResponseEntity<Object> findAllTitles() {
         List<Demanda> demandas = demandaService.findAll();
@@ -78,6 +94,15 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
+    /**
+     * Retorna uma lista resumida de todas as demandas que estão no status "Rascunho".
+     *
+     * Este endpoint retorna uma lista resumida de todas as demandas que estão no status "Rascunho".
+     * Caso não haja demandas a serem retornadas, uma mensagem de erro é exibida falando: Nenhuma demanda encontrada.
+     * As demandas são retornadas como uma lista de objetos do tipo DemandaResumida.
+     *
+     * @return ResponseEntity<List<DemandaResumida>> Lista resumida de todas as demandas no status "Rascunho".
+     */
     @GetMapping("/rascunhos")
     public ResponseEntity<Object> findAllRascunhos() {
         List<Demanda> demandas = demandaService.findByStatusDemanda(StatusDemanda.RASCUNHO);
@@ -90,7 +115,21 @@ public class DemandaController {
     }
 
 
-    //Cria uma demanda(caso a demanda não tenha os campos totalmente preenchidos cadastrará com o status de RASCUNHO) e retorna a demanda criada
+    /**
+     * Cadastra uma nova demanda.
+     *
+     * Esta função cadastroDemanda é responsável por cadastrar uma nova demanda no sistema.
+     * Ela recebe três parâmetros: demandaJson, pdfDemandaJson e additionalFiles.
+     *
+     * No início da função, são feitas as conversões necessárias das Strings em objetos DTO e em objetos modelo do sistema.
+     * Também é feita a verificação dos atributos da demanda para determinar se ela está completa ou em rascunho.
+     *
+     * @param demandaJson       JSON contendo as informações da demanda a ser cadastrada.
+     * @param pdfDemandaJson    JSON contendo as informações do PDF da demanda a ser cadastrado.
+     * @param additionalFiles   Arquivos adicionais da demanda, se houver, como por exemplo uma imagem ou documento.
+     * @return                  ResponseEntity contendo o objeto Demanda salvo no banco de dados.
+     *                          Em caso de erro, retorna uma mensagem de erro com o respectivo código HTTP.
+     */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Object> cadastroDemanda(
 
