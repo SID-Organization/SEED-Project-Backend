@@ -1,6 +1,8 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.StatusDemanda;
+import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import br.sc.weg.sid.repository.DemandaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

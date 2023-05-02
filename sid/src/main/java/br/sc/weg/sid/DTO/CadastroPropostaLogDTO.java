@@ -1,8 +1,8 @@
 package br.sc.weg.sid.DTO;
 
-import br.sc.weg.sid.model.entities.ParecerComissao;
+import br.sc.weg.sid.model.enums.ParecerComissao;
 import br.sc.weg.sid.model.entities.Proposta;
-import br.sc.weg.sid.model.entities.TipoAta;
+import br.sc.weg.sid.model.enums.TipoAta;
 import lombok.Data;
 
 @Data

@@ -1,8 +1,11 @@
 package br.sc.weg.sid.auth.users;
 
 import br.sc.weg.sid.model.entities.Usuario;
+import br.sc.weg.sid.model.enums.Cargo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +15,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserJpa implements UserDetails {
 
     @JsonIgnore
@@ -27,9 +32,9 @@ public class UserJpa implements UserDetails {
 
     private boolean enabled = true;
 
-    public UserJpa(Usuario usuario) {
-        this.usuario = usuario;
-    }
+    private String password;
+
+    private Integer username;
 
     @Override
     public String getPassword() {
@@ -49,6 +54,14 @@ public class UserJpa implements UserDetails {
                         .getCargoUsuario().getNome()
         ));
         return authorities;
+    }
+
+    public UserJpa(Usuario usuario){
+        this.usuario = usuario;
+        this.password = usuario.getSenhaUsuario();
+        this.username = usuario.getNumeroCadastroUsuario();
+        this.authorities = new ArrayList<>();
+        this.authorities.add(new SimpleGrantedAuthority(usuario.getCargoUsuario().getNome()));
     }
 
 }

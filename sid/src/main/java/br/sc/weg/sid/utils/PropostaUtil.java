@@ -2,6 +2,7 @@ package br.sc.weg.sid.utils;
 
 import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 

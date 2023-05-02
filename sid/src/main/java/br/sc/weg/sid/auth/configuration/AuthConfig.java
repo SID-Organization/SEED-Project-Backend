@@ -47,8 +47,12 @@ public class AuthConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests().antMatchers("/login", "/login/auth", "/sid/api/usuario", "/sid/api/docs/**", "/swagger-ui/**", "/sid/swagger-ui.html").permitAll().anyRequest().permitAll();
-        httpSecurity.csrf().disable().cors().configurationSource(corsConfigurationSource()).and().logout().permitAll();
+        httpSecurity.authorizeRequests()
+                .antMatchers("/login", "/login/auth", "/sid/api/usuario", "/sid/api/docs/**", "/swagger-ui/**", "/sid/swagger-ui.html").permitAll()
+                .antMatchers("/sid/api/demanda/**", "/sid/api/pdf-demanda/**", "sid/api/chat/**").hasAnyAuthority("Solicitante", "Gestor TI", "Gerente", "Analista")
+                .antMatchers("/sid/api/proposta/**", "sid/api/pdf-proposta/**", "sid/api/pauta", "sid/api/ata/**", "sid/api/forum/**", "sid/api/tabela-custo/**", "sid/api/historico-workflow/**", "sid/api/decisao-proposta/**", "sid/api/business-unity/**").hasAnyAuthority("Gestor TI", "Analista")
+                .anyRequest().authenticated();
+        httpSecurity.csrf().disable().cors().configurationSource(corsConfigurationSource()).and().logout().deleteCookies("jwt", "user").permitAll();
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         httpSecurity.addFilterBefore(new AuthFilter(new TokenUtils(), jpaService), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();

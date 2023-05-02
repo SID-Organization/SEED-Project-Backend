@@ -1,4 +1,4 @@
-package br.sc.weg.sid.model.entities;
+package br.sc.weg.sid.model.enums;
 
 public enum StatusDemanda {
     CLASSIFICADO_PELO_ANALISTA("Classificado pelo analista"),

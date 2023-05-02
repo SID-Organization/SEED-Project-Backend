@@ -3,7 +3,7 @@ package br.sc.weg.sid.DTO;
 import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.Pauta;
 import br.sc.weg.sid.model.entities.Proposta;
-import br.sc.weg.sid.model.entities.StatusDemanda;
+import br.sc.weg.sid.model.enums.StatusDemanda;
 import lombok.Data;
 
 import javax.validation.constraints.*;

@@ -1,6 +1,6 @@
 package br.sc.weg.sid.DTO;
 
-import br.sc.weg.sid.model.entities.Cargo;
+import br.sc.weg.sid.model.enums.Cargo;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

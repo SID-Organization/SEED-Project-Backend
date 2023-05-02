@@ -1,5 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
+import br.sc.weg.sid.model.enums.StatusDemanda;
+import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import lombok.*;
 
 import javax.persistence.*;

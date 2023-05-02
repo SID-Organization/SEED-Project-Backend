@@ -1,5 +1,6 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.GerarPDFDTO;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.GerarPDFPropostaService;
@@ -31,6 +32,13 @@ public class GerarPDFPropostaController {
         this.propostaService = propostaService;
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP POST que gera um PDF da proposta.
+     *
+     * @param idProposta - Parâmetro que representa o id da proposta no qual será gerado o pdf.
+     * @return ResponseEntity<?> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o PDF da proposta.
+     * @throws Exception - Retorna uma mensagem de erro caso não exista um objeto Demanda com o id informado.
+     */
     @GetMapping("/gerar-pdf/{idProposta}")
     public ResponseEntity<Object> gerarPDF(@PathVariable("idProposta") Integer idProposta) {
         try {

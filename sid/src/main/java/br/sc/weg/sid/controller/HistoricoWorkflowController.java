@@ -2,6 +2,8 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.StatusWorkflow;
+import br.sc.weg.sid.model.enums.TarefaWorkflow;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.HistoricoWorkflowService;
 import br.sc.weg.sid.utils.HistoricoWorkflowUtil;
@@ -9,7 +11,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -36,6 +37,11 @@ public class HistoricoWorkflowController {
         historicoWorkflowService.teste();
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna todos os históricos de workflow cadastrados no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo todos os históricos de workflow cadastrados no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não exista históricos de workflow cadastrados no banco de dados.
+     */
     //Retorna TODOS os históricos de workflow
     @GetMapping()
     public ResponseEntity<Object> findAll() {
@@ -52,8 +58,13 @@ public class HistoricoWorkflowController {
     }
 
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP POST que insere um novo histórico de workflow no banco de dados.
+     * @param historicoWorkflowDTO - Objeto DTO que contém os dados do histórico de workflow que será inserido no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 201 e o corpo contendo o histórico de workflow cadastrado no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível inserir o histórico de workflow no banco de dados.
+     */
     //Insere um novo histórico de workflow no banco de dados
-
     @PostMapping()
     public ResponseEntity<Object> cadastroHistoricoWorkflow(
             @RequestBody CadastroHistoricoWorkflowDTO historicoWorkflowDTO
@@ -100,6 +111,12 @@ public class HistoricoWorkflowController {
         return ResponseEntity.status(HttpStatus.CREATED).body(historicoWorkflowSalvoResumido);
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna um histórico de workflow cadastrado no banco de dados de acordo com o id da demanda.
+     * @param demandaHistorico - Objeto do tipo Demanda que contém o id da demanda que será utilizado para buscar o histórico de workflow no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow cadastrado no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar o histórico de workflow no banco de dados.
+     */
     //Busca um histórico de workflow pelo id de uma demanda
     @GetMapping("/demanda/{id}")
     public ResponseEntity<Object> findByDemandaHistorico(@PathVariable("id") Demanda demandaHistorico) {
@@ -124,8 +141,13 @@ public class HistoricoWorkflowController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna um histórico de workflow cadastrado no banco de dados de acordo com o número de cadastro de um responsável.
+     * @param numeroCadastroResponsavel - Objeto do tipo Usuario que contém o número de cadastro do responsável que será utilizado para buscar o histórico de workflow no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow cadastrado no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar o histórico de workflow no banco de dados.
+     */
     //Busca um histórico de workflow pelo número de cadastro de um responsável
-
     @GetMapping("/responsavel/{numeroCadastroResponsavel}")
     public ResponseEntity<Object> findByResponsavel(@PathVariable("numeroCadastroResponsavel") Usuario numeroCadastroResponsavel) {
         try {
@@ -140,8 +162,13 @@ public class HistoricoWorkflowController {
     }
 
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna um histórico de workflow cadastrado no banco de dados de acordo com o status.
+     * @param statusWorkflow - Objeto do tipo StatusWorkflow que contém o status que será utilizado para buscar o histórico de workflow no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow cadastrado no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar o histórico de workflow no banco de dados.
+     */
     //Busca um histórico de workflow pelo status
-
     @GetMapping("/status-workflow/{statusWorkflow}")
     public ResponseEntity<Object> findByStatusWorkflow(@PathVariable("statusWorkflow") StatusWorkflow statusWorkflow) {
         try {
@@ -155,8 +182,14 @@ public class HistoricoWorkflowController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP PUT que atualiza a versão da demanda de um histórico de workflow.
+     * @param idHistoricoWorkflow - Variável do tipo Integer que contém o id do histórico de workflow que será utilizado para atualizar a versão da demanda.
+     * @param historicoWorkflow - Objeto do tipo HistoricoWorkflow que contém a nova versão da demanda que será atualizada no histórico de workflow.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow com a versão da demanda atualizada.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível atualizar a versão da demanda do histórico de workflow.
+     */
     //Atualiza a versão da demanda de um histórico de workflow
-
     @PutMapping("/atualiza-versao-workflow/{id}")
     public ResponseEntity<Object> atualizaVersaoWorkflow(@PathVariable Integer idHistoricoWorkflow, @RequestBody HistoricoWorkflow historicoWorkflow) {
         try {
@@ -171,6 +204,13 @@ public class HistoricoWorkflowController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP PUT que atualiza o status de um histórico de workflow.
+     * @param idHistoricoWorkflow - Variável do tipo Integer que contém o id do histórico de workflow que será utilizado para atualizar o status.
+     * @param historicoWorkflow - Objeto do tipo HistoricoWorkflow que contém o novo status que será atualizado no histórico de workflow.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow com o status atualizado.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível atualizar o status do histórico de workflow.
+     */
     //Atualiza o status de um histórico de workflow
     @PutMapping("/atualiza-status-workflow/{id}")
     public ResponseEntity<Object> atualizaStatusWorkflow(@PathVariable Integer idHistoricoWorkflow, @RequestBody HistoricoWorkflow historicoWorkflow) {
@@ -190,6 +230,12 @@ public class HistoricoWorkflowController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP DELETE que deleta um histórico de workflow cadastrado no banco de dados de acordo com o id.
+     * @param idHistoricoWorkflow - Variável do tipo Integer que contém o id do histórico de workflow que será utilizado para deletar o histórico de workflow no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma mensagem de sucesso ao deletar o histórico de workflow.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível deletar o histórico de workflow no banco de dados.
+     */
     //Deleta um histórico de workflow pelo id
     @DeleteMapping("/{idHistoricoWorkflow}")
     public ResponseEntity<Object> deleteById(@PathVariable Integer idHistoricoWorkflow) {

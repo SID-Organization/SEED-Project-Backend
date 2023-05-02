@@ -2,7 +2,7 @@ package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.BusinessUnity;
 import br.sc.weg.sid.model.entities.SecaoTIResponsavel;
-import br.sc.weg.sid.model.entities.TamanhoDemanda;
+import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

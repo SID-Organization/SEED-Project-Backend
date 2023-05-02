@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +32,12 @@ public class MensagemController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    /**
+     * Esta funcao é um mapeamento de requisição WebSocket que recebe uma mensagem e a envia para o chat correspondente.
+     * @param mensagemDTO - Parâmetro que representa o objeto MensagemDTO, que contém os dados da mensagem a ser enviada.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma mensagem de sucesso.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível enviar a mensagem.
+     */
     @MessageMapping("/sid/api/mensagem")
     public ResponseEntity<Object> receiveMessage(@RequestBody MensagemDTO mensagemDTO){
         Mensagem mensagem = new Mensagem();

@@ -2,6 +2,10 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.Cargo;
+import br.sc.weg.sid.model.enums.StatusDemanda;
+import br.sc.weg.sid.model.enums.TamanhoDemanda;
+import br.sc.weg.sid.model.enums.TarefaWorkflow;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import lombok.AllArgsConstructor;
@@ -145,7 +149,6 @@ public class DemandaController {
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Object> cadastroDemanda(
-
             @RequestParam("demandaForm") @Valid String demandaJson,
             @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson,
             @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalFiles
