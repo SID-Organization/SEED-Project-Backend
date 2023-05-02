@@ -1,6 +1,5 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.GerarPDFDTO;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.GerarPDFPropostaService;
@@ -32,39 +31,30 @@ public class GerarPDFPropostaController {
         this.propostaService = propostaService;
     }
 
-    @PostMapping("/gerar-pdf")
-    public ResponseEntity<Object> gerarPDF(@RequestBody GerarPDFDTO gerarPDFDTO) {
-
-        try{
-            if (demandaService.existsById(gerarPDFDTO.getIdDemanda())) {
-                if (propostaService.existsById(gerarPDFDTO.getProposta().getIdProposta())) {
-                    Proposta proposta = gerarPDFDTO.getProposta();
-                    ByteArrayInputStream pdf = new ByteArrayInputStream(gerarPDFService.export(gerarPDFDTO.getIdDemanda(), proposta));
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_PDF);
-                    headers.setContentDispositionFormData("filename",  "proposta-num" + proposta.getIdProposta() + ".pdf");
-                    if (propostaService.existsById(gerarPDFDTO.getProposta().getIdProposta())) {
-                        byte[] buffer = new byte[1024];
-                        int length;
-                        while ((length = pdf.read(buffer)) != -1) {
-                            baos.write(buffer, 0, length);
-                        }
-                        proposta.setPdfProposta(baos.toByteArray());
-                        propostaService.save(proposta);
-                    }else {
-                        return ResponseEntity.badRequest().body("Proposta não encontrada");
-                    }
-                    return ResponseEntity.ok()
-                            .headers(headers)
-                            .body(baos.toByteArray());
-                }else {
-                    return ResponseEntity.badRequest().body("Proposta não encontrada");
+    @GetMapping("/gerar-pdf/{idProposta}")
+    public ResponseEntity<Object> gerarPDF(@PathVariable("idProposta") Integer idProposta) {
+        try {
+            Proposta proposta = propostaService.findById(idProposta).get();
+            ByteArrayInputStream pdf = new ByteArrayInputStream(gerarPDFService.export(proposta));
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("filename", "proposta-num" + proposta.getIdProposta() + ".pdf");
+            if (propostaService.existsById(proposta.getIdProposta())) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = pdf.read(buffer)) != -1) {
+                    baos.write(buffer, 0, length);
                 }
+                proposta.setPdfProposta(baos.toByteArray());
+                propostaService.save(proposta);
             } else {
-                return ResponseEntity.badRequest().body("Demanda não encontrada");
+                return ResponseEntity.badRequest().body("Proposta não encontrada");
             }
-        }catch (Exception e){
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(baos.toByteArray());
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Erro ao gerar PDF: " + e.getMessage());
         }
