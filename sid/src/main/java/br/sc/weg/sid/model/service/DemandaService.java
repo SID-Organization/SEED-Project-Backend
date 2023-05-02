@@ -79,6 +79,10 @@ public class DemandaService {
         return demandaRepository.findRascunhosBySolicitanteDemanda(solicitanteDemanda);
     }
 
+    public List<Demanda> findByStatusDemandaAndSolicitanteDemanda(StatusDemanda statusDemanda, Usuario solicitanteDemanda) {
+        return demandaRepository.findByStatusDemandaAndSolicitanteDemanda(statusDemanda, solicitanteDemanda);
+    }
+
     //    public void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda) {
 //        demandaRepository.updateBusBeneficiadasDemanda(idDemanda, idBusBeneficiadasDemanda);
 //    }

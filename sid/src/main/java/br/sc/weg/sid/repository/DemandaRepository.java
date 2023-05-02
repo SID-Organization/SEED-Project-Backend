@@ -18,6 +18,7 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
     List<Demanda> findByAnalistaResponsavelDemanda(Usuario analistaResponsavelDemanda);
     List<Demanda> findByGerenteDaAreaDemanda(Usuario gerenteDaAreaDemanda);
     List<Demanda> findByGestorResponsavelDemanda(Usuario gestorResponsavelDemanda);
+    List<Demanda> findByStatusDemandaAndSolicitanteDemanda(StatusDemanda statusDemanda, Usuario solicitanteDemanda);
     List<Demanda> findRascunhosBySolicitanteDemanda(Usuario solicitanteDemanda);
     @Query(value = "select * from demanda order by prazo_elaboracao_demanda ASC;", nativeQuery = true)
     List<Demanda> findByPrazoElaboracaoDemandaAsc();
