@@ -2,6 +2,10 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.Cargo;
+import br.sc.weg.sid.model.enums.StatusDemanda;
+import br.sc.weg.sid.model.enums.TamanhoDemanda;
+import br.sc.weg.sid.model.enums.TarefaWorkflow;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import lombok.AllArgsConstructor;
@@ -123,6 +127,19 @@ public class DemandaController {
      *
      * No início da função, são feitas as conversões necessárias das Strings em objetos DTO e em objetos modelo do sistema.
      * Também é feita a verificação dos atributos da demanda para determinar se ela está completa ou em rascunho.
+     * Caso a demanda esteja completa, é feita a verificação de se o usuário que está cadastrando a demanda é um usuário
+     *
+     * Após isso, a demanda é salva no banco de dados e, se houver arquivos adicionais, estes também são salvos e associados à demanda.
+     *
+     * A função retorna um objeto do tipo ResponseEntity, que pode ter os seguintes valores:
+     *
+     * 1- HttpStatus.CREATED (código 201): Indica que a demanda foi criada com sucesso e retorna a demanda salva.
+     * 2- HttpStatus.BAD_REQUEST (código 400): Indica que houve algum erro na validação dos parâmetros ou na
+     * tentativa de salvar os arquivos adicionais ou o PDF.
+     * 3- HttpStatus.CONFLICT (código 409): Indica que houve um conflito na criação da demanda, qualquer tipo de erro na criação,
+     * desde não conseguir cadastrar um benefício até não conseguir transformar um JSON em algum objeto.
+     *
+     * Em caso de erro, a função retorna uma mensagem explicativa do erro ocorrido.
      *
      * @param demandaJson       JSON contendo as informações da demanda a ser cadastrada.
      * @param pdfDemandaJson    JSON contendo as informações do PDF da demanda a ser cadastrado.
@@ -132,7 +149,6 @@ public class DemandaController {
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Object> cadastroDemanda(
-
             @RequestParam("demandaForm") @Valid String demandaJson,
             @RequestParam("pdfDemandaForm") @Valid String pdfDemandaJson,
             @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalFiles
@@ -150,7 +166,7 @@ public class DemandaController {
             }
             demanda.setStatusDemanda(StatusDemanda.ABERTA);
 
-            //Verifica se a demanda possui todos os campos preenchidos, se não possuir, o status será RASCUNHO
+            //Verifica se a demanda possui todos os campos preenchidos, caso algum atributo esteja nulo, o status será RASCUNHO
             Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
             List<Field> atributos = Arrays.asList(classe.getDeclaredFields());
             atributos.forEach(atributo -> {
@@ -212,20 +228,13 @@ public class DemandaController {
         }
     }
 
-    //Busca PDF da demanda
-    @GetMapping("/pdf/{id}")
-    public ResponseEntity<Object> findPdfById(@PathVariable("id") Integer id) {
-        try {
-            Demanda demanda = demandaService.findById(id).get();
-            List<PdfDemanda> pdfDemandas = pdfDemandaService.findByDemanda(demanda);
-            PdfDemanda pdfDemanda = pdfDemandas.get(pdfDemandas.size() - 1);
-            return ResponseEntity.status(HttpStatus.OK).body(pdfDemanda);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("PDF da demanda com id: " + id + " não encontrado!");
-        }
-    }
-
-    //Busca demanda por id
+    /**
+     * Busca uma demanda pelo ID.
+     *
+     * @param id o ID da demanda a ser buscada
+     * @return ResponseEntity contendo a demanda encontrada e o status HTTP OK,
+     * ou uma mensagem de erro e o status HTTP NOT_FOUND caso a demanda não seja encontrada
+     */
     @GetMapping("/id/{id}")
     public ResponseEntity<Object> findById(@PathVariable("id") Integer id) {
         try {
@@ -236,7 +245,15 @@ public class DemandaController {
         }
     }
 
-    //Busca demandas por statusDemanda
+    /**
+     * Retorna uma lista de demandas resumidas de acordo com o status de demanda fornecido.
+     *
+     * @param statusDemanda O status de demanda pelo qual as demandas serão filtradas.
+     * @return ResponseEntity com uma lista de demandas resumidas se houverem demandas com o status fornecido,
+     * caso contrário, retorna uma mensagem de erro indicando que não existem demandas com o status fornecido.
+     *
+     * Se ocorrer algum erro ao buscar as demandas, retorna uma mensagem de erro indicando o problema.
+     */
     @GetMapping("/statusDemanda/{statusDemanda}")
     public ResponseEntity<Object> findByStatus(@PathVariable("statusDemanda") StatusDemanda statusDemanda) {
         try {
@@ -252,7 +269,13 @@ public class DemandaController {
         }
     }
 
-    //Busca demanda por solicitante
+    /**
+     * Retorna uma lista de demandas resumidas associadas ao número de cadastro do solicitante fornecido.
+     *
+     * @param numeroCadastroSoliciante O número de cadastro do solicitante pelo qual as demandas serão filtradas.
+     * @return ResponseEntity com uma lista de demandas resumidas se houverem demandas associadas ao solicitante,
+     * caso contrário, retorna uma mensagem de erro indicando que o solicitante não possui demandas.
+     */
     @GetMapping("/solicitante/{numeroCadastroSoliciante}")
     public ResponseEntity<Object> findBySolicitante(@PathVariable("numeroCadastroSoliciante") Integer numeroCadastroSoliciante) {
         try {
@@ -269,7 +292,12 @@ public class DemandaController {
         }
     }
 
-    //Busca demandas por data de criação (mais nova a mais antiga)
+    /**
+     * Retorna uma lista de demandas resumidas em ordem decrescente de data de prazo de elaboração (mais nova a mais antiga).
+     *
+     * @return ResponseEntity com a lista de demandas resumidas, ordenadas por data de prazo de elaboração decrescente,
+     * caso hajam demandas cadastradas, ou uma mensagem de erro indicando que não foram encontradas demandas.
+     */
     @GetMapping("/data-decrescente")
     public ResponseEntity<Object> findByDataDecrescente() {
         DemandaUtil demandaUtil = new DemandaUtil();
@@ -282,6 +310,12 @@ public class DemandaController {
     }
 
     //Busca demanda por data de criação (mais antiga a mais nova)
+    /**
+     * Retorna uma lista de demandas resumidas em ordem crescente de data de prazo de elaboração (mais antiga a mais nova).
+     *
+     * @return ResponseEntity com a lista de demandas resumidas, ordenadas por data de prazo de elaboração crescente,
+     * caso hajam demandas cadastradas, ou uma mensagem de erro indicando que não foram encontradas demandas.
+     */
     @GetMapping("/data-crescente")
     public ResponseEntity<Object> findByDataCrescente() {
         DemandaUtil demandaUtil = new DemandaUtil();
@@ -293,7 +327,14 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
-    //Busca demanda por score
+
+    /**
+     * Retorna uma lista de demandas resumidas de acordo com o score de demanda fornecido.
+     *
+     * @param score O score de demanda pelo qual as demandas serão filtradas.
+     * @return ResponseEntity com uma lista de demandas resumidas se houverem demandas com o score fornecido,
+     * caso contrário, retorna uma mensagem de erro indicando que não existem demandas com o score fornecido.
+     */
     @GetMapping("/score/{score}")
     public ResponseEntity<Object> findByScore(@PathVariable("score") Double score) {
         DemandaUtil demandaUtil = new DemandaUtil();
@@ -305,7 +346,14 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
-    //Busca demandas pelo titulo
+
+    /**
+     * Retorna uma lista de demandas resumidas de acordo com o título da demanda fornecido.
+     *
+     * @param tituloDemanda O título da demanda pelo qual as demandas serão filtradas.
+     * @return ResponseEntity com uma lista de demandas resumidas se houverem demandas com o título fornecido,
+     * caso contrário, retorna uma mensagem de erro indicando que não existem demandas com o título fornecido.
+     */
     @GetMapping("/titulo-demanda/{tituloDemanda}")
     public ResponseEntity<Object> findByTituloDemanda(@PathVariable("tituloDemanda") String tituloDemanda) {
         DemandaUtil demandaUtil = new DemandaUtil();
@@ -317,7 +365,13 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
-    //Busca demandas pelo tamanhoDemanda
+    /**
+     * Retorna uma lista de demandas resumidas de acordo com o tamanho de demanda fornecido.
+     *
+     * @param tamanhoDemanda O tamanho de demanda pelo qual as demandas serão filtradas.
+     * @return ResponseEntity com uma lista de demandas resumidas se houverem demandas com o tamanho fornecido,
+     * caso contrário, retorna uma mensagem de erro indicando que não existem demandas com o tamanho fornecido.
+     */
     @GetMapping("/tamanhoDemanda/{tamanhoDemanda}")
     public ResponseEntity<Object> findByTamanho(@PathVariable("tamanhoDemanda") TamanhoDemanda tamanhoDemanda) {
         DemandaUtil demandaUtil = new DemandaUtil();
@@ -329,7 +383,15 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
-    //Busca demandas de um determinado analista responsável
+    /**
+     * Retorna as demandas associadas a um analista, filtrando as que são de sua responsabilidade e que não estão em status de rascunho.
+     *
+     * Filtra as demandas que são de sua responsabilidade e que não estão em status de rascunho.
+     *
+     * @param numeroCadastroAnalista o número de cadastro do analista.
+     * @return um objeto ResponseEntity contendo a lista de demandas associadas ao analista, com
+     * informações resumidas, ou uma mensagem de erro caso o analista não seja encontrado ou não possua demandas.
+     */
     @GetMapping("/analista/{numeroCadastroAnalista}")
     public ResponseEntity<Object> findByAnalista(@PathVariable("numeroCadastroAnalista") Integer numeroCadastroAnalista) {
         try {
@@ -357,7 +419,15 @@ public class DemandaController {
         }
     }
 
-    //Busca demandas de um determinado gerente da área responsável
+    /**
+     * Retorna as demandas associadas ao gerente da área com o número de cadastro fornecido.
+     *
+     * Filtra as demandas que são de sua responsabilidade e que não estão em status de rascunho.
+     *
+     * @param numeroCadastroGerente o número de cadastro do gerente da área
+     * @return ResponseEntity com a lista de demandas associadas ao gerente da área, com informações resumidas,
+     * ou uma mensagem de erro caso o gerente não seja encontrado ou não possua demandas
+     */
     @GetMapping("/gerente-da-area/{numeroCadastroUsuario}")
     public ResponseEntity<Object> findByGerente(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroGerente) {
         try {
@@ -378,7 +448,15 @@ public class DemandaController {
         }
     }
 
-    //Busca demandas de um determinado gestor de ti responsável
+    /**
+     * Endpoint que busca todas as demandas associadas a um gestor de TI específico.
+     *
+     * Filtra as demandas que são de sua responsabilidade e que não estão em status de rascunho.
+     *
+     * @param numeroCadastroGestor o número de cadastro do gestor de TI
+     * @return uma resposta HTTP contendo as demandas encontradas em formato resumido ou uma mensagem de erro caso não sejam
+     * encontradas ou o usuário não seja um gestor de TI
+     */
     @GetMapping("/gestor-ti/{numeroCadastroUsuario}")
     public ResponseEntity<Object> findByGestor(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroGestor) {
         try {
@@ -399,7 +477,17 @@ public class DemandaController {
         }
     }
 
-    //Atualiza status da demanda
+
+    /**
+     * Atualiza o status de uma demanda com o ID fornecido e retorna a demanda atualizada.
+     *
+     * Se a demanda não for encontrada, retorna uma mensagem de erro.
+     * Se o status da demanda for CANCELADA, o analista responsável pela demanda, o gerente da area e o gestor de t.i serão removidos da demanda.
+     *
+     * @param idDemanda o ID da demanda a ser atualizada
+     * @param requestBody um objeto Map que contém o novo status da demanda
+     * @return um ResponseEntity contendo a demanda atualizada ou uma mensagem de erro se a demanda não foi encontrada
+     */
     @PutMapping("/status/{id}")
     public ResponseEntity<Object> atualizarStatusDemanda(
             @PathVariable("id") Integer idDemanda,
@@ -422,7 +510,19 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
-    //Atualiza uma demanda informando seu id
+    /**
+     * Método responsável por atualizar uma demanda existente através do seu id.
+     *
+     * Caso a demanda não seja encontrada, retorna uma mensagem de erro.
+     * Caso a demanda seja encontrada, atualiza os dados da demanda e retorna a demanda atualizada.
+     *
+     * @param idDemanda Id da demanda a ser atualizada.
+     * @param demandaJson String em formato JSON contendo os dados da demanda a ser atualizada.
+     * @param pdfDemandaJson String em formato JSON contendo os dados do PDF associado à demanda a ser atualizada.
+     * @param additionalFiles Array de arquivos adicionais relacionados à demanda a ser atualizada.
+     * @param atualizaVersaoWorkflow Um String para sabermos se a versão do histórico será atualizado ou não.
+     * @return ResponseEntity contendo a demanda atualizada ou uma mensagem de erro, caso não seja possível atualizar a demanda.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizarDemanda(
             @PathVariable("id") Integer idDemanda,
@@ -500,6 +600,16 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandaAtualizada);
     }
 
+    /**
+     * Atualiza as informações de uma demanda adicionando as bus beneficiados, bu solicitante, tamanho da demanda e a secao de ti responsável.
+     *
+     *
+     * @param id o ID da demanda a ser atualizada
+     * @param cadastroBusBeneficiadasDemandaDTO o DTO contendo as informações atualizadas da demanda
+     * @param additionalFiles os arquivos adicionais a serem salvos junto com a demanda (opcional)
+     * @return um ResponseEntity contendo a demanda atualizada ou uma mensagem de erro, caso ocorra
+     * @throws Exception se ocorrer algum erro durante o processo de atualização da demanda ou salvamento dos arquivos
+     */
     @PutMapping("/atualiza-bus-beneficiadas/{id}")
     public ResponseEntity<Object> atualizaBusBeneficiadas(
             @PathVariable("id") Integer id,
@@ -542,7 +652,15 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandaSalva);
     }
 
-    //Buscar demandas com status RASCUNHO pelo numero do cadastro do usuario
+
+    /**
+     * Busca as demandas em status de rascunho de um determinado solicitante.
+     *
+     * @param numeroCadastroUsuario o número de cadastro do usuário solicitante das demandas em rascunho.
+     * @return um ResponseEntity contendo uma lista de objetos Demanda no corpo da resposta, caso haja demandas em rascunho do solicitante.
+     * Retorna um ResponseEntity com status 404 Not Found e uma mensagem de erro, caso não haja nenhuma demanda em rascunho.
+     * Retorna um ResponseEntity com status 400 Bad Request e uma mensagem de erro, caso ocorra algum erro ao buscar as demandas em rascunho.
+     */
     @GetMapping("/rascunho/{numeroCadastroUsuario}")
     public ResponseEntity<Object> buscarDemandasRascunho(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
         try {
@@ -556,6 +674,12 @@ public class DemandaController {
         }
     }
 
+    /**
+     * Retorna o PDF da demanda com o ID informado.
+     *
+     * @param idDemanda ID da demanda a ser pesquisada.
+     * @return ResponseEntity contendo o PDF da demanda, se encontrada. Caso contrário, retorna uma mensagem de erro.
+     */
     @GetMapping("/pdf-demanda/{idDemanda}")
     ResponseEntity<Object> listarPropostaPdf(@PathVariable("idDemanda") Integer idDemanda) {
         try {
@@ -578,7 +702,11 @@ public class DemandaController {
     }
 
 
-    //Deleta uma demanda informando seu id
+    /**
+     * Método responsável por deletar uma demanda do banco de dados.
+     * @param idDemanda Identificador da demanda a ser deletada.
+     * @return ResponseEntity com status e mensagem de sucesso ou erro.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarDemanda(@PathVariable("id") Integer idDemanda) {
         try {
@@ -601,6 +729,12 @@ public class DemandaController {
         }
     }
 
+    /**
+     * Deleta uma lista de demandas que estejam no status rascunho.
+     *
+     @param demandas DTO contendo uma lista de ids das demandas a serem deletadas.
+     @return ResponseEntity com mensagem de sucesso em caso de sucesso ou exceção em caso de erro.
+     */
     @PostMapping("/delete-lista-demanda")
     public ResponseEntity<Object> deletarDemandas(@RequestBody @Valid DeletaListaDemandaDTO demandas) {
         demandas.getDemandas().forEach(demanda -> {
@@ -624,10 +758,17 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body("Demandas deletadas com sucesso!");
     }
 
-    @DeleteMapping("/deleta-rascunhos")
-    public ResponseEntity<Object> deletarRascunhos() {
+    /**
+     * Deleta todas as demandas com status "rascunho" pertencentes a um determinado usuário.
+     *
+     * @param idUsuario o ID do usuário a quem as demandas pertencem.
+     * @return um objeto ResponseEntity com o status HTTP e uma mensagem indicando o resultado da operação.
+     */
+    @DeleteMapping("/deleta-rascunhos/{idUsuario}")
+    public ResponseEntity<Object> deletarRascunhos(@PathVariable("idUsuario") Integer idUsuario) {
         try {
-            List<Demanda> demandas = demandaService.findByStatusDemanda(StatusDemanda.RASCUNHO);
+            Usuario usuario = usuarioService.findById(idUsuario).get();
+            List<Demanda> demandas = demandaService.findByStatusDemandaAndSolicitanteDemanda(StatusDemanda.RASCUNHO, usuario);
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhuma demanda com o status rascunho!");
             }

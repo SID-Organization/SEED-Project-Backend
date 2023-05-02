@@ -1,5 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
+import br.sc.weg.sid.model.enums.StatusWorkflow;
+import br.sc.weg.sid.model.enums.TarefaWorkflow;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 

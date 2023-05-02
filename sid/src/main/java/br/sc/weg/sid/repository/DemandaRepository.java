@@ -1,6 +1,8 @@
 package br.sc.weg.sid.repository;
 
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.StatusDemanda;
+import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,6 +20,7 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
     List<Demanda> findByAnalistaResponsavelDemanda(Usuario analistaResponsavelDemanda);
     List<Demanda> findByGerenteDaAreaDemanda(Usuario gerenteDaAreaDemanda);
     List<Demanda> findByGestorResponsavelDemanda(Usuario gestorResponsavelDemanda);
+    List<Demanda> findByStatusDemandaAndSolicitanteDemanda(StatusDemanda statusDemanda, Usuario solicitanteDemanda);
     List<Demanda> findRascunhosBySolicitanteDemanda(Usuario solicitanteDemanda);
     @Query(value = "select * from demanda order by prazo_elaboracao_demanda ASC;", nativeQuery = true)
     List<Demanda> findByPrazoElaboracaoDemandaAsc();

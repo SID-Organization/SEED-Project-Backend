@@ -8,16 +8,10 @@ import java.util.List;
 public class PropostaResumida {
 
     Integer idProposta;
-
     String demandaPropostaTitulo;
-
     Integer tempoDeExecucaoDemanda;
-
     Double valorDemanda;
-
     Integer idDemanda;
-
     String linkPropostaJira;
-
     List<TabelaCustoLinha> tabelaCustoLinha;
 }

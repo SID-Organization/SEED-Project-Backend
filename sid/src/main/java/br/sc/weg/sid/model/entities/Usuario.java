@@ -1,10 +1,9 @@
 package br.sc.weg.sid.model.entities;
 
+import br.sc.weg.sid.model.enums.Cargo;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Entity
 @Table(name = "USUARIO")

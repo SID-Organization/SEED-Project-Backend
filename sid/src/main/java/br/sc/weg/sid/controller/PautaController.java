@@ -29,6 +29,14 @@ public class PautaController {
     @Autowired
     PropostaService propostaService;
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP POST que cadastra uma pauta no banco de dados.
+     * @param cadastroPautaDTO - Parâmetro que representa um objeto DTO com os dados da pauta.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo a pauta cadastrada no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível cadastrar a pauta no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar uma proposta cadastrada no banco de dados com o id informado.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar uma pauta cadastrada no banco de dados com o id informado.
+     */
     @PostMapping
     public ResponseEntity<Object> cadastroPauta(@RequestBody @Valid CadastroPautaDTO cadastroPautaDTO) {
         Pauta pauta = new Pauta();
@@ -48,6 +56,11 @@ public class PautaController {
         return ResponseEntity.ok("Pauta cadastrada com sucesso! \n" + pautaSalva);
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que lista todas as pautas cadastradas no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma lista de pautas cadastradas no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível listar as pautas cadastradas no banco de dados.
+     */
     @GetMapping
     public ResponseEntity<Object> listarPautas() {
         try {
@@ -63,6 +76,12 @@ public class PautaController {
         return ResponseEntity.badRequest().body("Erro ao listar pautas!");
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que lista uma pauta cadastrada no banco de dados de acordo com o id informado.
+     * @param id - Parâmetro que representa o id da pauta.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo a pauta cadastrada no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar uma pauta cadastrada no banco de dados com o id informado.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Object> listarPautaPorId(@PathVariable Integer id) {
         try {
@@ -72,6 +91,12 @@ public class PautaController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que lista todas as propostas cadastradas no banco de dados de acordo com o id da pauta informado.
+     * @param id - Parâmetro que representa o id da pauta.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma lista de propostas cadastradas no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar uma pauta cadastrada no banco de dados com o id informado.
+     */
     @GetMapping("/propostas/{id}")
     public ResponseEntity<Object> listarPropostasPorPauta(@PathVariable Integer id) {
         try {
@@ -86,6 +111,12 @@ public class PautaController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP DELETE que deleta uma pauta cadastrada no banco de dados de acordo com o id informado.
+     * @param id - Parâmetro que representa o id da pauta.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma mensagem de sucesso.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar uma pauta cadastrada no banco de dados com o id informado.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPauta(@PathVariable Integer id) {
         try {

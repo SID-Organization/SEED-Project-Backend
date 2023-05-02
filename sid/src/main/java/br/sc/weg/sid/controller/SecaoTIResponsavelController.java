@@ -16,6 +16,12 @@ public class SecaoTIResponsavelController {
     @Autowired
     SecaoTIResponsavelService secaoTIResponsavelService;
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP POST para o cadastro de uma nova seção de TI responsável.
+     * @param cadastroSecaoTIResponsavelDTO este objeto DTO contém os dados necessários para o cadastro de uma nova seção de TI responsável.
+     * @return Se a operação for bem sucedida, retorna um objeto ResponseEntity com o status HTTP 201 CREATED e o objeto SecaoTIResponsavel criado.
+     * Caso contrário, retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro.
+     */
     @PostMapping()
     ResponseEntity<Object> cadastrarSecaoTIResponsavel(
             @RequestBody CadastroSecaoTIResponsavelDTO cadastroSecaoTIResponsavelDTO
@@ -27,6 +33,12 @@ public class SecaoTIResponsavelController {
         return ResponseEntity.status(HttpStatus.CREATED).body(secaoTIResponsavel);
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET para a busca de uma seção de TI responsável por ID.
+     * @param id este parâmetro representa o ID da seção de TI responsável que será buscada.
+     * @return Se a operação for bem sucedida, retorna um objeto ResponseEntity com o status HTTP 200 OK e o objeto SecaoTIResponsavel buscado.
+     * Caso contrário, retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro.
+     */
     @GetMapping("/{id}")
     ResponseEntity<Object> buscarSecaoTIResponsavel(
             @PathVariable Integer id
@@ -34,11 +46,23 @@ public class SecaoTIResponsavelController {
         return ResponseEntity.status(HttpStatus.OK).body(secaoTIResponsavelService.findById(id));
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET para a busca de todas as seções de TI responsáveis.
+     * @return Se a operação for bem sucedida, retorna um objeto ResponseEntity com o status HTTP 200 OK e uma lista de objetos SecaoTIResponsavel.
+     * Caso contrário, retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro.
+     */
     @GetMapping()
     ResponseEntity<Object> buscarSecaoTIResponsavel() {
         return ResponseEntity.status(HttpStatus.OK).body(secaoTIResponsavelService.findAll());
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP PUT para a atualização dos dados de uma seção de TI responsável.
+     * @param id este parâmetro representa o ID da seção de TI responsável que será atualizada.
+     * @param cadastroSecaoTIResponsavelDTO este objeto DTO contém os dados necessários para a atualização da seção de TI responsável.
+     * @return Se a operação for bem sucedida, retorna um objeto ResponseEntity com o status HTTP 200 OK e o objeto SecaoTIResponsavel atualizado.
+     * Caso contrário, retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro.
+     */
     @PutMapping("/{id}")
     ResponseEntity<Object> atualizarSecaoTIResponsavel(
             @PathVariable Integer id,

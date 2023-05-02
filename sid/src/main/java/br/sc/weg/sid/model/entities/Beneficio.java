@@ -1,5 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
+import br.sc.weg.sid.model.enums.Moeda;
+import br.sc.weg.sid.model.enums.TipoBeneficio;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,12 +40,6 @@ public class Beneficio {
 
     @Column(name = "TipoBeneficio", nullable = false)
     private TipoBeneficio tipoBeneficio;
-
-    @Column(name = "DescricaoBeneficio")
-    private String descricaoBeneficio;
-
-    @Column(name = "DescricaoBeneficioHTML")
-    private String descricaoBeneficioHTML;
 
     @ManyToOne()
     @JoinColumn(name = "idDemanda")

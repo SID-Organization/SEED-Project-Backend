@@ -20,6 +20,12 @@ public class GerarPDFAtaController {
     @Autowired
     AtaService ataService;
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna o PDF da ata de acordo com o id da ata informado.
+     * @param idAta - Parâmetro que representa o id da ata.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o PDF da ata.
+     * @throws Exception - Retorna uma mensagem de erro caso não exista uma ata com o id informado.
+     */
     @GetMapping("/gerar-pdf/{idAta}")
     public ResponseEntity<Object> generatePDF(@PathVariable("idAta") Integer idAta) throws Exception {
 

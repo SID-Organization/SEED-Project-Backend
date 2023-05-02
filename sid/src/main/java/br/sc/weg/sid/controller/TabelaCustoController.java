@@ -19,6 +19,11 @@ public class TabelaCustoController {
     @Autowired
     PropostaService propostaService;
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna todas as tabelas de custo cadastradas no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo todas as tabelas de custo cadastradas no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não exista tabelas de custo cadastradas no banco de dados.
+     */
     @GetMapping()
     ResponseEntity<Object> listarTabelaCusto() {
         try {
@@ -28,6 +33,12 @@ public class TabelaCustoController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna uma tabela de custo cadastrada no banco de dados.
+     * @param id - Parâmetro que representa o id da tabela de custo.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo a tabela de custo cadastrada no banco de dados.
+     * @throws Exception - Retorna uma mensagem de erro caso não exista uma tabela de custo cadastrada no banco de dados com o id informado.
+     */
     @GetMapping("/{id}")
     ResponseEntity<Object> listarTabelaCustoPorId(@PathVariable Integer id) {
         try {
@@ -36,15 +47,5 @@ public class TabelaCustoController {
             return ResponseEntity.badRequest().body("Não existe tabela de custo com id: " + id);
         }
     }
-
-//    @GetMapping("/proposta/{id}")
-//    ResponseEntity<Object> listarTabelaCustoPorProposta(@PathVariable Integer id) {
-//        Proposta proposta = propostaService.findById(id).get();
-//        try {
-//            return ResponseEntity.ok().body(tabelaCustoLinhaService.findByProposta(proposta));
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Não existe tabela de custo para a proposta com id: " + id);
-//        }
-//    }
 
 }

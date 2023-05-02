@@ -23,6 +23,12 @@ public class ForumController {
     @Autowired
     private UsuarioService usuarioService;
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP POST que recebe um objeto CadastroForumDTO e retorna um objeto ResponseEntity com status 201 e o corpo contendo o objeto Forum salvo.
+     * @param cadastroForumDTO - Parâmetro que representa um objeto DTO com os dados do fórum a ser salvo.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 201 e o corpo contendo o objeto Forum salvo.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível salvar o objeto Forum.
+     */
     @PostMapping
     public ResponseEntity<Object> cadastroForum(@RequestBody CadastroForumDTO cadastroForumDTO) {
         Forum forum = new Forum();
@@ -32,6 +38,11 @@ public class ForumController {
         return ResponseEntity.status(HttpStatus.CREATED).body(forumSalvo);
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna todos os objetos Forum salvos no banco de dados.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma lista de objetos Forum.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível listar os objetos Forum.
+     */
     @GetMapping
     public ResponseEntity<Object> listarForuns() {
         try {
@@ -41,6 +52,12 @@ public class ForumController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna o objeto Forum de acordo com o id informado.
+     * @param id - Parâmetro que representa o id do objeto Forum.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o objeto Forum.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível listar o objeto Forum.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Object> listarForumPorId(@PathVariable Integer id) {
         try {
@@ -50,6 +67,12 @@ public class ForumController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP DELETE que deleta o objeto Forum de acordo com o id informado.
+     * @param id - Parâmetro que representa o id do objeto Forum.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma mensagem de sucesso.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível deletar o objeto Forum.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarForum(@PathVariable Integer id) {
         try {
@@ -60,6 +83,12 @@ public class ForumController {
         }
     }
 
+    /**
+     * Esta função é um mapeamento de requisição HTTP GET que retorna todos os objetos Forum de acordo com o id do analista informado.
+     * @param id - Parâmetro que representa o id do analista que queremos listar os fóruns.
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma lista de objetos Forum.
+     * @throws Exception - Retorna uma mensagem de erro caso não seja possível listar os objetos Forum.
+     */
     @GetMapping("/analista/{id}")
     public ResponseEntity<Object> listarForumPorAnalista(@PathVariable Integer id) {
         try {
