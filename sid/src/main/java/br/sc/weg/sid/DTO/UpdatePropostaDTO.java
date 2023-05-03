@@ -25,6 +25,7 @@ public class UpdatePropostaDTO {
     private List<TabelaCusto> tabelaCusto;
     private String nomeResponsavelNegocio;
     private String areaResponsavelNegocio;
+    private String abrangenciaProjetoProposta;
 
 
 }

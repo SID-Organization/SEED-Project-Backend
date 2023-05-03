@@ -56,6 +56,7 @@ public class AuthConfig {
 //                .anyRequest().authenticated();
 
         httpSecurity.csrf().disable().cors().configurationSource(corsConfigurationSource()).and().logout().deleteCookies("jwt", "user").permitAll();
+
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         httpSecurity.addFilterBefore(new AuthFilter(new TokenUtils(), jpaService), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
