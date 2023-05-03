@@ -67,7 +67,7 @@ public class AuthController {
             UserJpa user = (UserJpa) authentication.getPrincipal();
             ObjectMapper objectMapper = new ObjectMapper();
             String userJson = URLEncoder.encode(
-                    objectMapper.writeValueAsString(user),
+                    objectMapper.writeValueAsString(user.getUsuario()),
                     StandardCharsets.UTF_8);
             Cookie userCookie = new Cookie("user", userJson);
             userCookie.setPath("/");
@@ -75,7 +75,7 @@ public class AuthController {
             Usuario pessoa = user.getUsuario();
             System.out.println(user.getAuthorities());
             System.out.println(cookie.getValue());
-            return ResponseEntity.status(HttpStatus.OK).body(pessoa);
+            return ResponseEntity.ok().body("Usuário autenticado com sucesso!");
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha inválidos!");
         } catch (JsonProcessingException e) {
