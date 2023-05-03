@@ -509,6 +509,7 @@ public class DemandaController {
         Demanda demandaAtualizada = demandaService.save(demanda);
         //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
         if (statusDemanda.equals(StatusDemanda.ABERTA)) {
+            System.out.println("Entrou no if de histórico de workflow");
             CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
             historicoWorkflowDTO.setDemandaHistorico(demandaAtualizada);
             historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());
