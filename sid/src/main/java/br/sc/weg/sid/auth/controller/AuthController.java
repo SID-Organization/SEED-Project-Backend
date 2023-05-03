@@ -5,6 +5,8 @@ import br.sc.weg.sid.auth.service.JpaService;
 import br.sc.weg.sid.auth.users.UserJpa;
 import br.sc.weg.sid.auth.utils.TokenUtils;
 import br.sc.weg.sid.model.entities.Usuario;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/login")
@@ -55,22 +59,28 @@ public class AuthController {
         try {
             Authentication authentication = authManager.authenticate(authenticationToken);
             String token = tokenUtils.gerarToken(authentication);
-            ResponseCookie cookie = ResponseCookie.from("jwt", token)
-                    .maxAge(3600)
-                    .path("/")
-                    .secure(false)
-                    .sameSite("None")
-                    .domain(".localhost")
-                    .build();
-            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            Cookie cookie = new Cookie("jwt", token);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
             System.out.println(cookie.getValue());
             UserJpa user = (UserJpa) authentication.getPrincipal();
+            ObjectMapper objectMapper = new ObjectMapper();
+            String userJson = URLEncoder.encode(
+                    objectMapper.writeValueAsString(user),
+                    StandardCharsets.UTF_8);
+            Cookie userCookie = new Cookie("user", userJson);
+            userCookie.setPath("/");
+            userCookie.setHttpOnly(true);
+            response.addCookie(userCookie);
             Usuario pessoa = user.getUsuario();
             System.out.println(user.getAuthorities());
             System.out.println(cookie.getValue());
             return ResponseEntity.status(HttpStatus.OK).body(pessoa);
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha inválidos!");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }
