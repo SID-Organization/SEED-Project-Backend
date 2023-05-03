@@ -4,6 +4,7 @@ import br.sc.weg.sid.auth.filters.AuthFilter;
 import br.sc.weg.sid.auth.service.JpaService;
 import br.sc.weg.sid.auth.utils.TokenUtils;
 import lombok.AllArgsConstructor;
+import org.bouncycastle.crypto.generators.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -31,7 +32,7 @@ public class AuthConfig {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder amb) throws Exception {
-        amb.userDetailsService(jpaService).passwordEncoder(NoOpPasswordEncoder.getInstance());
+        amb.userDetailsService(jpaService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
     private CorsConfigurationSource corsConfigurationSource() {
@@ -48,7 +49,7 @@ public class AuthConfig {
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .antMatchers("/login", "/login/auth", "/sid/api/usuario", "/sid/api/docs/**", "/swagger-ui/**", "/sid/swagger-ui.html").permitAll()
+                .antMatchers("/login", "/login/auth", "/sid/api/usuario/**", "/sid/api/docs/**", "/swagger-ui/**", "/sid/swagger-ui.html").permitAll()
                 .antMatchers("/sid/api/demanda/**", "/sid/api/pdf-demanda/**", "sid/api/chat/**").hasAnyAuthority("Solicitante", "Gestor TI", "Gerente", "Analista")
                 .antMatchers("/sid/api/proposta/**", "sid/api/pdf-proposta/**", "sid/api/pauta", "sid/api/ata/**", "sid/api/forum/**", "sid/api/tabela-custo/**", "sid/api/historico-workflow/**", "sid/api/decisao-proposta/**", "sid/api/business-unity/**").hasAnyAuthority("Gestor TI", "Analista")
                 .anyRequest().authenticated();

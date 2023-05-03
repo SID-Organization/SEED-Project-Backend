@@ -2,6 +2,7 @@ package br.sc.weg.sid.model.entities;
 
 import br.sc.weg.sid.model.enums.Cargo;
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 
@@ -37,4 +38,8 @@ public class Usuario {
     @Column(name = "FotoUsuario")
     @Lob
     private byte[] fotoUsuario;
+
+    public void setSenhaUsuario(String senhaUsuario) {
+        this.senhaUsuario = new BCryptPasswordEncoder().encode(senhaUsuario);
+    }
 }
