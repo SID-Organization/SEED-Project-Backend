@@ -33,7 +33,7 @@ public class Proposta {
     @Column(name = "NaoFazParteDoEscopoProposta", length = 4000)
     private String naoFazParteDoEscopoProposta;
 
-    @Column(name = "AbrangenciaProjetoProposta", length = 4000)
+    @Column(name = "AbrangenciaProjetoProposta")
     private String abrangenciaProjetoProposta;
 
     @Column(name = "AlternativasAvaliadasProposta", length = 4000)

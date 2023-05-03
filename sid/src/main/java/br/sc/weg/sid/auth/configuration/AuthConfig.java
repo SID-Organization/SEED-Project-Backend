@@ -14,13 +14,20 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @Configuration
@@ -53,7 +60,15 @@ public class AuthConfig {
                 .antMatchers("/sid/api/demanda/**", "/sid/api/pdf-demanda/**", "sid/api/chat/**").hasAnyAuthority("Solicitante", "Gestor TI", "Gerente", "Analista")
                 .antMatchers("/sid/api/proposta/**", "sid/api/pdf-proposta/**", "sid/api/pauta", "sid/api/ata/**", "sid/api/forum/**", "sid/api/tabela-custo/**", "sid/api/historico-workflow/**", "sid/api/decisao-proposta/**", "sid/api/business-unity/**").hasAnyAuthority("Gestor TI", "Analista")
                 .anyRequest().authenticated();
-        httpSecurity.csrf().disable().cors().configurationSource(corsConfigurationSource()).and().logout().deleteCookies("jwt", "user").logoutSuccessUrl("/login/success").permitAll();
+        httpSecurity
+                .csrf().disable()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(new RedirectLogoutSuccessHandler("http://localhost:8081/login"))
+                .deleteCookies("jwt", "user")
+                .permitAll();
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         httpSecurity.addFilterBefore(new AuthFilter(new TokenUtils(), jpaService), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
@@ -63,4 +78,19 @@ public class AuthConfig {
     public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration ac) throws Exception {
         return ac.getAuthenticationManager();
     }
+
+    private static class RedirectLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
+        private final String targetUrl;
+
+        public RedirectLogoutSuccessHandler(String targetUrl) {
+            this.targetUrl = targetUrl;
+        }
+
+        @Override
+        public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+            super.onLogoutSuccess(request, response, authentication);
+            getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        }
+    }
+
 }
