@@ -17,14 +17,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -82,4 +81,13 @@ public class AuthController {
             throw new RuntimeException(e);
         }
     }
+
+    @GetMapping("/success")
+    public RedirectView localRedirect() {
+        System.out.println("success");
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("http://localhost:8081/login");
+        return redirectView;
+    }
+
 }
