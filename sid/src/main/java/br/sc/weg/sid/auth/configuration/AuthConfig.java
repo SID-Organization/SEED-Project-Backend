@@ -66,7 +66,10 @@ public class AuthConfig {
                 .and()
                 .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessHandler(new RedirectLogoutSuccessHandler("http://localhost:8081/login"))
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.sendRedirect("http://localhost:8081/login");
+                })
                 .deleteCookies("jwt", "user")
                 .permitAll();
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -78,19 +81,4 @@ public class AuthConfig {
     public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration ac) throws Exception {
         return ac.getAuthenticationManager();
     }
-
-    private static class RedirectLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
-        private final String targetUrl;
-
-        public RedirectLogoutSuccessHandler(String targetUrl) {
-            this.targetUrl = targetUrl;
-        }
-
-        @Override
-        public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-            super.onLogoutSuccess(request, response, authentication);
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
-        }
-    }
-
 }
