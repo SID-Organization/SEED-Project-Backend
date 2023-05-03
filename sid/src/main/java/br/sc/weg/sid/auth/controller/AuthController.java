@@ -58,10 +58,10 @@ public class AuthController {
 
         try {
             Authentication authentication = authManager.authenticate(authenticationToken);
+            System.out.println("AUTHEN");
             String token = tokenUtils.gerarToken(authentication);
             Cookie cookie = new Cookie("jwt", token);
             cookie.setPath("/");
-            cookie.setHttpOnly(true);
             response.addCookie(cookie);
             System.out.println(cookie.getValue());
             UserJpa user = (UserJpa) authentication.getPrincipal();
@@ -71,7 +71,6 @@ public class AuthController {
                     StandardCharsets.UTF_8);
             Cookie userCookie = new Cookie("user", userJson);
             userCookie.setPath("/");
-            userCookie.setHttpOnly(true);
             response.addCookie(userCookie);
             Usuario pessoa = user.getUsuario();
             System.out.println(user.getAuthorities());

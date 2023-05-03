@@ -47,12 +47,12 @@ public class DemandaController {
 
     /**
      * Retorna uma lista de demandas resumidas.
-     *
+     * <p>
      * Este endpoint retorna uma lista de demandas resumidas, filtrando apenas as demandas que não
      * estão no status "rascunho". Caso não haja demandas a serem retornadas, uma mensagem de erro é exibida falando: Nenhuma demanda encontrada.
      * As demandas são retornadas como uma lista de objetos do tipo DemandaResumida.
      *
-     * @return ResponseEntity<List<DemandaResumida>> Lista de demandas resumidas
+     * @return ResponseEntity<List < DemandaResumida>> Lista de demandas resumidas
      */
     @GetMapping()
     public ResponseEntity<Object> findAll() {
@@ -73,12 +73,12 @@ public class DemandaController {
 
     /**
      * Retorna uma lista de demandas contendo o ID e o título de todas as demandas.
-     *
+     * <p>
      * Este endpoint retorna uma lista de objetos que contém o ID e o título de todas as demandas cadastradas no sistema, bem como o status
      * atual de cada demanda. Caso não haja demandas a serem retornadas, uma mensagem de erro é exibida.
      * As demandas são retornadas como uma lista de objetos do tipo Map<String, Object>.
      *
-     * @return ResponseEntity<List<Map<String, Object>>> Lista de objetos contendo o ID e o título de todas as demandas.
+     * @return ResponseEntity<List < Map < String, Object>>> Lista de objetos contendo o ID e o título de todas as demandas.
      */
     @GetMapping("/titulos-id-demanda")
     public ResponseEntity<Object> findAllTitles() {
@@ -100,12 +100,12 @@ public class DemandaController {
 
     /**
      * Retorna uma lista resumida de todas as demandas que estão no status "Rascunho".
-     *
+     * <p>
      * Este endpoint retorna uma lista resumida de todas as demandas que estão no status "Rascunho".
      * Caso não haja demandas a serem retornadas, uma mensagem de erro é exibida falando: Nenhuma demanda encontrada.
      * As demandas são retornadas como uma lista de objetos do tipo DemandaResumida.
      *
-     * @return ResponseEntity<List<DemandaResumida>> Lista resumida de todas as demandas no status "Rascunho".
+     * @return ResponseEntity<List < DemandaResumida>> Lista resumida de todas as demandas no status "Rascunho".
      */
     @GetMapping("/rascunhos")
     public ResponseEntity<Object> findAllRascunhos() {
@@ -121,31 +121,31 @@ public class DemandaController {
 
     /**
      * Cadastra uma nova demanda.
-     *
+     * <p>
      * Esta função cadastroDemanda é responsável por cadastrar uma nova demanda no sistema.
      * Ela recebe três parâmetros: demandaJson, pdfDemandaJson e additionalFiles.
-     *
+     * <p>
      * No início da função, são feitas as conversões necessárias das Strings em objetos DTO e em objetos modelo do sistema.
      * Também é feita a verificação dos atributos da demanda para determinar se ela está completa ou em rascunho.
      * Caso a demanda esteja completa, é feita a verificação de se o usuário que está cadastrando a demanda é um usuário
-     *
+     * <p>
      * Após isso, a demanda é salva no banco de dados e, se houver arquivos adicionais, estes também são salvos e associados à demanda.
-     *
+     * <p>
      * A função retorna um objeto do tipo ResponseEntity, que pode ter os seguintes valores:
-     *
+     * <p>
      * 1- HttpStatus.CREATED (código 201): Indica que a demanda foi criada com sucesso e retorna a demanda salva.
      * 2- HttpStatus.BAD_REQUEST (código 400): Indica que houve algum erro na validação dos parâmetros ou na
      * tentativa de salvar os arquivos adicionais ou o PDF.
      * 3- HttpStatus.CONFLICT (código 409): Indica que houve um conflito na criação da demanda, qualquer tipo de erro na criação,
      * desde não conseguir cadastrar um benefício até não conseguir transformar um JSON em algum objeto.
-     *
+     * <p>
      * Em caso de erro, a função retorna uma mensagem explicativa do erro ocorrido.
      *
-     * @param demandaJson       JSON contendo as informações da demanda a ser cadastrada.
-     * @param pdfDemandaJson    JSON contendo as informações do PDF da demanda a ser cadastrado.
-     * @param additionalFiles   Arquivos adicionais da demanda, se houver, como por exemplo uma imagem ou documento.
-     * @return                  ResponseEntity contendo o objeto Demanda salvo no banco de dados.
-     *                          Em caso de erro, retorna uma mensagem de erro com o respectivo código HTTP.
+     * @param demandaJson     JSON contendo as informações da demanda a ser cadastrada.
+     * @param pdfDemandaJson  JSON contendo as informações do PDF da demanda a ser cadastrado.
+     * @param additionalFiles Arquivos adicionais da demanda, se houver, como por exemplo uma imagem ou documento.
+     * @return ResponseEntity contendo o objeto Demanda salvo no banco de dados.
+     * Em caso de erro, retorna uma mensagem de erro com o respectivo código HTTP.
      */
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Object> cadastroDemanda(
@@ -251,7 +251,7 @@ public class DemandaController {
      * @param statusDemanda O status de demanda pelo qual as demandas serão filtradas.
      * @return ResponseEntity com uma lista de demandas resumidas se houverem demandas com o status fornecido,
      * caso contrário, retorna uma mensagem de erro indicando que não existem demandas com o status fornecido.
-     *
+     * <p>
      * Se ocorrer algum erro ao buscar as demandas, retorna uma mensagem de erro indicando o problema.
      */
     @GetMapping("/statusDemanda/{statusDemanda}")
@@ -310,6 +310,7 @@ public class DemandaController {
     }
 
     //Busca demanda por data de criação (mais antiga a mais nova)
+
     /**
      * Retorna uma lista de demandas resumidas em ordem crescente de data de prazo de elaboração (mais antiga a mais nova).
      *
@@ -385,7 +386,7 @@ public class DemandaController {
 
     /**
      * Retorna as demandas associadas a um analista, filtrando as que são de sua responsabilidade e que não estão em status de rascunho.
-     *
+     * <p>
      * Filtra as demandas que são de sua responsabilidade e que não estão em status de rascunho.
      *
      * @param numeroCadastroAnalista o número de cadastro do analista.
@@ -421,7 +422,7 @@ public class DemandaController {
 
     /**
      * Retorna as demandas associadas ao gerente da área com o número de cadastro fornecido.
-     *
+     * <p>
      * Filtra as demandas que são de sua responsabilidade e que não estão em status de rascunho.
      *
      * @param numeroCadastroGerente o número de cadastro do gerente da área
@@ -450,7 +451,7 @@ public class DemandaController {
 
     /**
      * Endpoint que busca todas as demandas associadas a um gestor de TI específico.
-     *
+     * <p>
      * Filtra as demandas que são de sua responsabilidade e que não estão em status de rascunho.
      *
      * @param numeroCadastroGestor o número de cadastro do gestor de TI
@@ -480,11 +481,11 @@ public class DemandaController {
 
     /**
      * Atualiza o status de uma demanda com o ID fornecido e retorna a demanda atualizada.
-     *
+     * <p>
      * Se a demanda não for encontrada, retorna uma mensagem de erro.
      * Se o status da demanda for CANCELADA, o analista responsável pela demanda, o gerente da area e o gestor de t.i serão removidos da demanda.
      *
-     * @param idDemanda o ID da demanda a ser atualizada
+     * @param idDemanda   o ID da demanda a ser atualizada
      * @param requestBody um objeto Map que contém o novo status da demanda
      * @return um ResponseEntity contendo a demanda atualizada ou uma mensagem de erro se a demanda não foi encontrada
      */
@@ -529,14 +530,14 @@ public class DemandaController {
 
     /**
      * Método responsável por atualizar uma demanda existente através do seu id.
-     *
+     * <p>
      * Caso a demanda não seja encontrada, retorna uma mensagem de erro.
      * Caso a demanda seja encontrada, atualiza os dados da demanda e retorna a demanda atualizada.
      *
-     * @param idDemanda Id da demanda a ser atualizada.
-     * @param demandaJson String em formato JSON contendo os dados da demanda a ser atualizada.
-     * @param pdfDemandaJson String em formato JSON contendo os dados do PDF associado à demanda a ser atualizada.
-     * @param additionalFiles Array de arquivos adicionais relacionados à demanda a ser atualizada.
+     * @param idDemanda              Id da demanda a ser atualizada.
+     * @param demandaJson            String em formato JSON contendo os dados da demanda a ser atualizada.
+     * @param pdfDemandaJson         String em formato JSON contendo os dados do PDF associado à demanda a ser atualizada.
+     * @param additionalFiles        Array de arquivos adicionais relacionados à demanda a ser atualizada.
      * @param atualizaVersaoWorkflow Um String para sabermos se a versão do histórico será atualizado ou não.
      * @return ResponseEntity contendo a demanda atualizada ou uma mensagem de erro, caso não seja possível atualizar a demanda.
      */
@@ -559,7 +560,7 @@ public class DemandaController {
         Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         Demanda demandaAtualizada = demandaService.save(demanda);
-        if (demanda.getBeneficiosDemanda() != null){
+        if (demanda.getBeneficiosDemanda() != null) {
             demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
         }
         if (atualizaVersaoWorkflow != null) {
@@ -604,10 +605,9 @@ public class DemandaController {
     /**
      * Atualiza as informações de uma demanda adicionando as bus beneficiados, bu solicitante, tamanho da demanda e a secao de ti responsável.
      *
-     *
-     * @param id o ID da demanda a ser atualizada
+     * @param id                                o ID da demanda a ser atualizada
      * @param cadastroBusBeneficiadasDemandaDTO o DTO contendo as informações atualizadas da demanda
-     * @param additionalFiles os arquivos adicionais a serem salvos junto com a demanda (opcional)
+     * @param additionalFiles                   os arquivos adicionais a serem salvos junto com a demanda (opcional)
      * @return um ResponseEntity contendo a demanda atualizada ou uma mensagem de erro, caso ocorra
      * @throws Exception se ocorrer algum erro durante o processo de atualização da demanda ou salvamento dos arquivos
      */
@@ -705,6 +705,7 @@ public class DemandaController {
 
     /**
      * Método responsável por deletar uma demanda do banco de dados.
+     *
      * @param idDemanda Identificador da demanda a ser deletada.
      * @return ResponseEntity com status e mensagem de sucesso ou erro.
      */
@@ -733,8 +734,8 @@ public class DemandaController {
     /**
      * Deleta uma lista de demandas que estejam no status rascunho.
      *
-     @param demandas DTO contendo uma lista de ids das demandas a serem deletadas.
-     @return ResponseEntity com mensagem de sucesso em caso de sucesso ou exceção em caso de erro.
+     * @param demandas DTO contendo uma lista de ids das demandas a serem deletadas.
+     * @return ResponseEntity com mensagem de sucesso em caso de sucesso ou exceção em caso de erro.
      */
     @PostMapping("/delete-lista-demanda")
     public ResponseEntity<Object> deletarDemandas(@RequestBody @Valid DeletaListaDemandaDTO demandas) {
