@@ -45,16 +45,17 @@ public class PropostaController {
     private TabelaCustoService tabelaCustoService;
 
     /**
-      * Esta função é um mapeamento de requisição HTTP POST para cadastrar uma nova proposta.
-      * O objeto DTO CadastroPropostaDTO contém as informações da proposta a ser cadastrada e é validado.
-      * A anotação @Transactional garante que a operação será executada em uma transação.
-      * Isso significa que todas as operações de banco de dados serão executadas de forma atômica,
-      * ou seja, se ocorrer uma exceção em qualquer parte do método, todas as operações de banco de dados serão revertidas.
-      * Se a operação for bem-sucedida, a função retorna um objeto ResponseEntity com o status HTTP 201 CREATED e o objeto Proposta salvo no banco de dados.
-      * Caso ocorra alguma exceção durante a execução da operação de cadastro de proposta,
-      * a função retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro explicando o que aconteceu.
-      * @param cadastroPropostaDTO Um objeto DTO que contém as informações da proposta a ser cadastrada.
-      * @return ResponseEntity<Object> Um objeto ResponseEntity contendo o status da operação e o objeto Proposta salvo no banco de dados ou uma mensagem de erro.
+     * Esta função é um mapeamento de requisição HTTP POST para cadastrar uma nova proposta.
+     * O objeto DTO CadastroPropostaDTO contém as informações da proposta a ser cadastrada e é validado.
+     * A anotação @Transactional garante que a operação será executada em uma transação.
+     * Isso significa que todas as operações de banco de dados serão executadas de forma atômica,
+     * ou seja, se ocorrer uma exceção em qualquer parte do método, todas as operações de banco de dados serão revertidas.
+     * Se a operação for bem-sucedida, a função retorna um objeto ResponseEntity com o status HTTP 201 CREATED e o objeto Proposta salvo no banco de dados.
+     * Caso ocorra alguma exceção durante a execução da operação de cadastro de proposta,
+     * a função retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro explicando o que aconteceu.
+     *
+     * @param cadastroPropostaDTO Um objeto DTO que contém as informações da proposta a ser cadastrada.
+     * @return ResponseEntity<Object> Um objeto ResponseEntity contendo o status da operação e o objeto Proposta salvo no banco de dados ou uma mensagem de erro.
      */
     @PostMapping()
     @Transactional
@@ -88,6 +89,7 @@ public class PropostaController {
      * Se a proposta existir no banco de dados, a função retorna um objeto ResponseEntity com o status HTTP 200 OK e uma mensagem de sucesso indicando que a proposta foi deletada com sucesso.
      * Caso a proposta não exista no banco de dados, a função retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro explicando que a proposta não existe.
      * Caso ocorra uma exceção durante a operação de deleção, a função retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro explicando o que aconteceu.
+     *
      * @param id O ID da proposta a ser deletada.
      * @return ResponseEntity<Object> Um objeto ResponseEntity contendo o status da operação e uma mensagem de sucesso ou uma mensagem de erro.
      */
@@ -117,9 +119,10 @@ public class PropostaController {
      * Se a operação for bem-sucedida, a função retorna um objeto ResponseEntity com o status HTTP 200 OK e o objeto Proposta atualizado no banco de dados.
      * Caso a proposta não exista no banco de dados, a função retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro explicando que a proposta não existe
      * Caso ocorra uma exceção durante a operação de atualização, a função retorna um objeto ResponseEntity com o status HTTP 400 BAD REQUEST e uma mensagem de erro explicando o que aconteceu.
-     * @param id O ID da proposta a ser atualizada.
+     *
+     * @param id                 O ID da proposta a ser atualizada.
      * @param updatePropostaForm Um objeto DTO que contém as informações da proposta a ser atualizada.
-     * @param pdfPropostaForm Um objeto DTO que contém o PDF da proposta a ser atualizada.
+     * @param pdfPropostaForm    Um objeto DTO que contém o PDF da proposta a ser atualizada.
      * @return ResponseEntity<Object> Um objeto ResponseEntity contendo o status da operação e o objeto Proposta atualizado no banco de dados ou uma mensagem de erro.
      */
     @PutMapping("/{id}")
@@ -167,6 +170,8 @@ public class PropostaController {
                         proposta.getTabelaCusto().get(1).setPropostaTabelaCusto(proposta);
                         proposta.getTabelaCusto().get(0).setIdTabelaCusto(tabelaCustoList.get(0).getIdTabelaCusto());
                         proposta.getTabelaCusto().get(1).setIdTabelaCusto(tabelaCustoList.get(1).getIdTabelaCusto());
+                    } else if (updatePropostaDTO.getTabelaCusto() == null) {
+                        BeanUtils.copyProperties(updatePropostaDTO, proposta);
                     } else {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
                         TabelaCusto tabelaCustoInterna = updatePropostaDTO.getTabelaCusto().get(0);
@@ -221,6 +226,7 @@ public class PropostaController {
 
     /**
      * Esta função é um método HTTP GET que retorna uma lista de todas as propostas cadastradas no banco de dados.
+     *
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com a lista de propostas cadastradas no banco de dados.
      * Caso não existam propostas cadastradas, retorna um objeto ResponseEntity com uma mensagem de erro.
      * Caso ocorra algum erro na execução do método, retorna um objeto ResponseEntity com uma mensagem de erro.
@@ -241,6 +247,7 @@ public class PropostaController {
 
     /**
      * Esta função é um método HTTP GET que retorna o pdf de uma proposta cadastrada no banco de dados.
+     *
      * @param id - Este parâmetro representa o ID da proposta que será buscada no banco de dados.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com o pdf da proposta.
      * Caso a proposta não exista, retorna um objeto ResponseEntity com uma mensagem de erro.
@@ -271,6 +278,7 @@ public class PropostaController {
 
     /**
      * Esta função é um método HTTP GET que retorna uma proposta cadastrada no banco de dados.
+     *
      * @param id - Este parâmetro representa o ID da proposta que será buscada no banco de dados.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com a proposta cadastrada no banco de dados.
      * Caso a proposta não exista, retorna um objeto ResponseEntity com uma mensagem de erro.
@@ -287,6 +295,7 @@ public class PropostaController {
 
     /**
      * Esta função é um método HTTP GET que retorna uma lista de propostas cadastradas no banco de dados de acordo com o ID da demanda.
+     *
      * @param id - Este parâmetro representa o ID da demanda que será buscada no banco de dados.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com a lista de propostas cadastradas no banco de dados.
      * Caso a demanda não exista, retorna um objeto ResponseEntity com uma mensagem de erro.
@@ -305,6 +314,7 @@ public class PropostaController {
 
     /**
      * Esta função é um método HTTP GET que retorna uma lista de propostas cadastradas no banco de dados que estão com o status PROPOSTA_PRONTA.
+     *
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com a lista de propostas cadastradas no banco de dados.
      * Caso não existam propostas cadastradas com o status PROPOSTA_PRONTA, retorna um objeto ResponseEntity com uma mensagem de erro.
      * Caso ocorra algum erro na execução do método, retorna um objeto ResponseEntity com uma mensagem de erro.
@@ -331,6 +341,7 @@ public class PropostaController {
 
     /**
      * Esta função é um método HTTP GET que retorna uma lista de propostas cadastradas no banco de dados de acordo com o payback informado.
+     *
      * @param payback - Este parâmetro representa o payback que será buscado no banco de dados.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com a lista de propostas cadastradas no banco de dados.
      * Caso não existam propostas cadastradas com o payback informado, retorna um objeto ResponseEntity com uma mensagem de erro.
