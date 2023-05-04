@@ -7,9 +7,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -47,6 +49,11 @@ public class AuthFilter extends OncePerRequestFilter {
                 UserDetails usuario = jpaService.loadUserByUsername(usuarioNumeroCadastro);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario.getUsername(), null, usuario.getAuthorities());
                 System.out.println("final do filtro");
+                Cookie cookie = WebUtils.getCookie(request, "jwt");
+                cookie.setPath("/");
+                cookie.setHttpOnly(true);
+                cookie.setMaxAge(1800);
+                response.addCookie(cookie);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(request, response);

@@ -625,6 +625,7 @@ public class DemandaController {
         BeanUtils.copyProperties(cadastroBusBeneficiadasDemandaDTO, demanda);
         demanda.setStatusDemanda(StatusDemanda.CLASSIFICADO_PELO_ANALISTA);
         Demanda demandaSalva = demandaService.save(demanda);
+        gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
         LocalDate localDate = LocalDate.now();
         Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
