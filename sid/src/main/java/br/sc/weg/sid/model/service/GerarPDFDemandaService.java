@@ -5,12 +5,14 @@ import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.PdfDemanda;
 import br.sc.weg.sid.model.enums.TipoBeneficio;
 import com.lowagie.text.*;
+import com.lowagie.text.html.simpleparser.HTMLWorker;
 import com.lowagie.text.pdf.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -96,22 +98,16 @@ public class GerarPDFDemandaService {
         actualSituationParagraph.setAlignment(Paragraph.ALIGN_LEFT);
         actualSituationParagraph.setSpacingBefore(5);
 
-        Paragraph actualSituationText = new Paragraph(pdfDemanda.getSituacaoAtualDemandaHTML(), textFont);
-        actualSituationText.setSpacingAfter(5);
+        HTMLWorker htmlWorker = new HTMLWorker(document);
 
         Paragraph proposalParagraph = new Paragraph("Proposta de Melhoria: ", fontTitle);
         proposalParagraph.setAlignment(Paragraph.ALIGN_LEFT);
         proposalParagraph.setSpacingBefore(5);
 
-        Paragraph proposalText = new Paragraph(pdfDemanda.getPropostaMelhoriaDemandaHTML(), textFont);
-        proposalText.setSpacingAfter(5);
 
         Paragraph frequencyParagraph = new Paragraph("Frequência de Uso: ", fontTitle);
         frequencyParagraph.setAlignment(Paragraph.ALIGN_LEFT);
         frequencyParagraph.setSpacingBefore(5);
-
-        Paragraph frequencyText = new Paragraph(pdfDemanda.getFrequenciaUsoDemandaHTML(), textFont);
-        frequencyText.setSpacingAfter(5);
 
         Paragraph realBenefitParagraph = new Paragraph("Benefícios Reais: ", fontTitle);
         realBenefitParagraph.setAlignment(Paragraph.ALIGN_LEFT);
@@ -209,13 +205,16 @@ public class GerarPDFDemandaService {
         document.add(businessUnitsBenefitedText.get());
 
         document.add(actualSituationParagraph);
-        document.add(actualSituationText);
+        htmlWorker.parse(new StringReader(pdfDemanda.getSituacaoAtualDemandaHTML()));
 
+
+        System.out.println("HTML: " + pdfDemanda.getPropostaMelhoriaDemandaHTML());
         document.add(proposalParagraph);
-        document.add(proposalText);
+
+        htmlWorker.parse(new StringReader(pdfDemanda.getPropostaMelhoriaDemandaHTML()));
 
         document.add(frequencyParagraph);
-        document.add(frequencyText);
+        htmlWorker.parse(new StringReader(pdfDemanda.getFrequenciaUsoDemandaHTML()));
 
         document.add(realBenefitParagraph);
         document.add(tableRealBenefits);
