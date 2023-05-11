@@ -3,10 +3,12 @@ package br.sc.weg.sid.model.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +43,7 @@ public class Pauta {
     @JoinColumn(name = "idForum", nullable = false)
     private Forum forumPauta;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(name = "proposta_pauta",
             joinColumns = @JoinColumn(name = "idPauta"),
             inverseJoinColumns = @JoinColumn(name = "idProposta"))

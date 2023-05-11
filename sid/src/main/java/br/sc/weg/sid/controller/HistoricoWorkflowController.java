@@ -124,7 +124,7 @@ public class HistoricoWorkflowController {
             List<HistoricoWorkflow> historicoWorkflows = historicoWorkflowService.findByDemandaHistorico(demandaHistorico);
             List<HistoricoWorkflowResumido> historicoWorkflowResumidos = HistoricoWorkflowUtil.converterHistoricoWorkflowParaHistoricoWorkflowReumido(historicoWorkflows);
             if (historicoWorkflows.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow de demanda com id: " + demandaHistorico + " encontrado!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow de demanda com id: " + demandaHistorico.getIdDemanda() + " encontrado!");
             }
             LocalDateTime localDateTime = LocalDateTime.now();
             Date verificaData = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());

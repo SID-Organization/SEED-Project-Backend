@@ -1,10 +1,6 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
-import br.sc.weg.sid.exceptions.Ata.ExConversaoDTOAta;
-import br.sc.weg.sid.exceptions.Ata.ExConversaoJsonToModel;
-import br.sc.weg.sid.exceptions.Ata.ExDocumentoAprovacao;
-import br.sc.weg.sid.exceptions.Ata.ExErroSalvarAta;
 import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.AtaResumida;
 import br.sc.weg.sid.model.service.AtaService;
@@ -54,17 +50,13 @@ public class AtaController {
      */
     @PostMapping
     public ResponseEntity<Object> save(
-            @RequestParam("documentoAprovacao") MultipartFile documentoAprovacaoAta,
-            @RequestParam("ata") String ataJson
-    ) {
+            @RequestParam("ata") String ataJson,
+            @RequestParam("documentoAprovacao") MultipartFile documentoAprovacaoAta
+    ) throws Exception {
         AtaUtil ataUtil = new AtaUtil();
-        try {
             CadastroAtaDTO cadastroAtaDTO = ataUtil.convertToDto(ataJson);
-            try {
                 Ata ata = ataUtil.convertJsonToModel(ataJson);
-                try {
                     ata.setDocumentoAprovacaoAta(documentoAprovacaoAta.getBytes());
-                    try {
                         ata.setPautaAta(pautaService.findById(cadastroAtaDTO.getPautaAta().getIdPauta()).get());
                         ata.getPautaAta().getPropostasPauta().forEach(proposta -> {
                             ata.getPropostasLog().forEach(ataPropostaLog -> {
@@ -88,18 +80,6 @@ public class AtaController {
                         Ata ataSalva = ataService.save(ata);
                         gerarPDFAtaController.generatePDF(ataSalva.getIdAta());
                         return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
-                    } catch (Exception e) {
-                        throw new ExErroSalvarAta();
-                    }
-                } catch (Exception ex) {
-                    throw new ExConversaoJsonToModel();
-                }
-            } catch (Exception ex) {
-                throw new ExDocumentoAprovacao();
-            }
-        } catch (Exception ex) {
-            throw new ExConversaoDTOAta();
-        }
     }
 
 
