@@ -50,6 +50,7 @@ public class DemandaUtil {
     public List<DemandaResumida> resumirDemanda(List<Demanda> demandas) {
         List<DemandaResumida> demandasResumidas = new ArrayList<>();
         for (Demanda demanda : demandas) {
+            System.out.println("DEMANDA: " + demanda);
             DemandaResumida demandaResumida = new DemandaResumida();
             demandaResumida.setTituloDemanda(demanda.getTituloDemanda());
             demandaResumida.setStatusDemanda(demanda.getStatusDemanda());
@@ -59,7 +60,12 @@ public class DemandaUtil {
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
             demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
-            demandaResumida.setDepartamentoDemanda(demanda.getBuSolicitanteDemanda().getNomeBusinessUnity());
+
+            if (demanda.getBuSolicitanteDemanda().getNomeBusinessUnity() != null) {
+                demandaResumida.setDepartamentoDemanda(demanda.getBuSolicitanteDemanda().getNomeBusinessUnity());
+            } else {
+                demandaResumida.setDepartamentoDemanda(null);
+            }
             if (demanda.getTamanhoDemanda() != null) {
                 demandaResumida.setTamanhoDemanda(demanda.getTamanhoDemanda().getNome());
             } else {

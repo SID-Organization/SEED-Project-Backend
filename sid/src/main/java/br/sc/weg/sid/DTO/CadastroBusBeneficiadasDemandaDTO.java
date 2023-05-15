@@ -12,8 +12,6 @@ import java.util.List;
 public class CadastroBusBeneficiadasDemandaDTO {
     @NotNull(message = "O campo secaoTIResponsavelDemanda é obrigatório")
     private SecaoTIResponsavel secaoTIResponsavelDemanda;
-    @NotNull(message = "O campo buSolicitanteDemanda não pode estar em branco!")
-    private BusinessUnity buSolicitanteDemanda;
     @NotNull(message = "O campo busBeneficiadasDemanda não pode ser nulo")
     private List<BusinessUnity> busBeneficiadasDemanda;
     @NotNull(message = "O campo tamanhoDemanda não pode ser nulo")

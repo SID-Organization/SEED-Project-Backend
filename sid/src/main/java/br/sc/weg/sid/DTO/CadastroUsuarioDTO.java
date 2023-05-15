@@ -1,5 +1,6 @@
 package br.sc.weg.sid.DTO;
 
+import br.sc.weg.sid.model.entities.BusinessUnity;
 import br.sc.weg.sid.model.enums.Cargo;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ public class CadastroUsuarioDTO {
     @NotBlank(message = "O campo nomeUsuario é obrigatório")
     private String nomeUsuario;
     @NotBlank(message = "O campo departamentoUsuario é obrigatório")
-    private String departamentoUsuario;
+    private BusinessUnity departamentoUsuario;
     @NotBlank(message = "O campo businessUnity é obrigatório")
     private String businessUnity;
     @NotNull(message = "O campo cargoUsuario é obrigatório")
