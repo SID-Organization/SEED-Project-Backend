@@ -33,8 +33,10 @@ public class DemandaUtil {
 
     public CadastroPdfDemandaDTO convertToPdfDto(String pdfDemandaJson) {
         try {
+            System.out.println("PDFFFFFFFFFFFFFFF: " + pdfDemandaJson);
             return this.mapper.readValue(pdfDemandaJson, CadastroPdfDemandaDTO.class);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Erro ao converter o demandaJson para objeto CadastroPdfDemandaDTO! \n" + e.getMessage());
         }
     }
@@ -57,7 +59,7 @@ public class DemandaUtil {
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
             demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
-            demandaResumida.setDepartamentoDemanda(demanda.getBuSolicitanteDemanda());
+            demandaResumida.setDepartamentoDemanda(demanda.getBuSolicitanteDemanda().getNomeBusinessUnity());
             if (demanda.getTamanhoDemanda() != null) {
                 demandaResumida.setTamanhoDemanda(demanda.getTamanhoDemanda().getNome());
             } else {

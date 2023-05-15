@@ -257,6 +257,7 @@ public class DemandaController {
     @GetMapping("/statusDemanda/{statusDemanda}")
     public ResponseEntity<Object> findByStatus(@PathVariable("statusDemanda") StatusDemanda statusDemanda) {
         try {
+            System.out.println("STATSU: " + statusDemanda);
             List<Demanda> demandas = demandaService.findByStatusDemanda(statusDemanda);
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não existem demandas com status: " + statusDemanda);
@@ -625,6 +626,7 @@ public class DemandaController {
         BeanUtils.copyProperties(cadastroBusBeneficiadasDemandaDTO, demanda);
         demanda.setStatusDemanda(StatusDemanda.CLASSIFICADO_PELO_ANALISTA);
         Demanda demandaSalva = demandaService.save(demanda);
+        gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
         LocalDate localDate = LocalDate.now();
         Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
