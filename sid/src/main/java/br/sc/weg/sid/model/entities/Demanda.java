@@ -86,7 +86,8 @@ public class Demanda {
     private byte[] pdfDemanda;
 
     @JoinColumn(name = "idBuSolicitante")
-    private String buSolicitanteDemanda;
+    @ManyToOne()
+    private BusinessUnity buSolicitanteDemanda;
 
     @ManyToOne()
     @JoinColumn(name = "secaoTIResponsavel")

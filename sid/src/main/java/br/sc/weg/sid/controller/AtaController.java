@@ -56,50 +56,34 @@ public class AtaController {
     public ResponseEntity<Object> save(
             @RequestParam("documentoAprovacao") MultipartFile documentoAprovacaoAta,
             @RequestParam("ata") String ataJson
-    ) {
+    ) throws Exception {
         AtaUtil ataUtil = new AtaUtil();
-        try {
-            CadastroAtaDTO cadastroAtaDTO = ataUtil.convertToDto(ataJson);
-            try {
-                Ata ata = ataUtil.convertJsonToModel(ataJson);
-                try {
-                    ata.setDocumentoAprovacaoAta(documentoAprovacaoAta.getBytes());
-                    try {
-                        ata.setPautaAta(pautaService.findById(cadastroAtaDTO.getPautaAta().getIdPauta()).get());
-                        ata.getPautaAta().getPropostasPauta().forEach(proposta -> {
-                            ata.getPropostasLog().forEach(ataPropostaLog -> {
-                                if (proposta.getIdProposta().equals(ataPropostaLog.getPropostaPropostaLog().getIdProposta())) {
-                                    ataPropostaLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
-                                    ataPropostaLog.setDemandaTituloPropostaLog(proposta.getDemandaProposta().getTituloDemanda());
-                                    Instant periodoExecucaoDemandaInicioInstant = proposta.getPeriodoExecucaoDemandaInicio().toInstant();
-                                    LocalDate dataInicial = periodoExecucaoDemandaInicioInstant.atZone(ZoneId.systemDefault()).toLocalDate();
-                                    LocalDateTime dataHoraInicial = LocalDateTime.of(dataInicial, LocalTime.MIN);
-                                    Instant periodoExecucaoDemandaFimInstant = proposta.getPeriodoExecucaoDemandaFim().toInstant();
-                                    LocalDate dataFinal = periodoExecucaoDemandaFimInstant.atZone(ZoneId.systemDefault()).toLocalDate();
-                                    LocalDateTime dataHoraFinal = LocalDateTime.of(dataFinal, LocalTime.MIN);
-                                    Duration duracao = Duration.between(dataHoraInicial, dataHoraFinal);
-                                    Long diferencaEmHoras = duracao.toHours();
+        CadastroAtaDTO cadastroAtaDTO = ataUtil.convertToDto(ataJson);
+        Ata ata = ataUtil.convertJsonToModel(ataJson);
+        ata.setDocumentoAprovacaoAta(documentoAprovacaoAta.getBytes());
+        ata.setPautaAta(pautaService.findById(cadastroAtaDTO.getPautaAta().getIdPauta()).get());
+        ata.getPautaAta().getPropostasPauta().forEach(proposta -> {
+            ata.getPropostasLog().forEach(ataPropostaLog -> {
+                if (proposta.getIdProposta().equals(ataPropostaLog.getPropostaPropostaLog().getIdProposta())) {
+                    ataPropostaLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
+                    ataPropostaLog.setDemandaTituloPropostaLog(proposta.getDemandaProposta().getTituloDemanda());
+                    Instant periodoExecucaoDemandaInicioInstant = proposta.getPeriodoExecucaoDemandaInicio().toInstant();
+                    LocalDate dataInicial = periodoExecucaoDemandaInicioInstant.atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDateTime dataHoraInicial = LocalDateTime.of(dataInicial, LocalTime.MIN);
+                    Instant periodoExecucaoDemandaFimInstant = proposta.getPeriodoExecucaoDemandaFim().toInstant();
+                    LocalDate dataFinal = periodoExecucaoDemandaFimInstant.atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDateTime dataHoraFinal = LocalDateTime.of(dataFinal, LocalTime.MIN);
+                    Duration duracao = Duration.between(dataHoraInicial, dataHoraFinal);
+                    Long diferencaEmHoras = duracao.toHours();
 
-                                    ataPropostaLog.setDemandaTempoExecucaoPropostaLog(diferencaEmHoras);
-                                    ataPropostaLog.setPropostaPropostaLog(proposta);
-                                }
-                            });
-                        });
-                        Ata ataSalva = ataService.save(ata);
-                        gerarPDFAtaController.generatePDF(ataSalva.getIdAta());
-                        return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
-                    } catch (Exception e) {
-                        throw new ExErroSalvarAta();
-                    }
-                } catch (Exception ex) {
-                    throw new ExConversaoJsonToModel();
+                    ataPropostaLog.setDemandaTempoExecucaoPropostaLog(diferencaEmHoras);
+                    ataPropostaLog.setPropostaPropostaLog(proposta);
                 }
-            } catch (Exception ex) {
-                throw new ExDocumentoAprovacao();
-            }
-        } catch (Exception ex) {
-            throw new ExConversaoDTOAta();
-        }
+            });
+        });
+        Ata ataSalva = ataService.save(ata);
+        gerarPDFAtaController.generatePDF(ataSalva.getIdAta());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
     }
 
 

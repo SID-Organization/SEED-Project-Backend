@@ -3,6 +3,9 @@ package br.sc.weg.sid.utils;
 import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.TamanhoDemanda;
+import br.sc.weg.sid.model.service.CentroCustoTabelaCustoService;
+import br.sc.weg.sid.model.service.TabelaCustoLinhaService;
+import br.sc.weg.sid.model.service.TabelaCustoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 
@@ -87,6 +90,43 @@ public class PropostaUtil {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void criacaoTabelaCusto(
+            TabelaCustoService tabelaCustoService,
+            List<TabelaCusto> tabelaCustoList,
+            UpdatePropostaDTO updatePropostaDTO,
+            Proposta proposta,
+            TabelaCustoLinhaService tabelaCustoLinhaService,
+            CentroCustoTabelaCustoService centroCustoTabelaCustoService
+    ) {
+        tabelaCustoService.deleteById(tabelaCustoList.get(0).getIdTabelaCusto());
+        tabelaCustoService.deleteById(tabelaCustoList.get(1).getIdTabelaCusto());
+
+        for (TabelaCustoLinha tabelaCustoLinha : updatePropostaDTO.getTabelaCusto().get(0).getTabelaCustoLinha()) {
+            tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCusto().get(0));
+            tabelaCustoLinhaService.save(tabelaCustoLinha);
+        }
+
+        for (TabelaCustoLinha tabelaCustoLinha : updatePropostaDTO.getTabelaCusto().get(1).getTabelaCustoLinha()) {
+            tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCusto().get(1));
+            tabelaCustoLinhaService.save(tabelaCustoLinha);
+        }
+
+        for (CentroCustoTabelaCusto centroCustoTabelaCusto : updatePropostaDTO.getTabelaCusto().get(0).getCentroCustoTabelaCusto()) {
+            centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCusto().get(0));
+            centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+        }
+
+        for (CentroCustoTabelaCusto centroCustoTabelaCusto : updatePropostaDTO.getTabelaCusto().get(1).getCentroCustoTabelaCusto()) {
+            centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCusto().get(1));
+            centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
+        }
+
+        proposta.getTabelaCusto().get(0).setPropostaTabelaCusto(proposta);
+        proposta.getTabelaCusto().get(1).setPropostaTabelaCusto(proposta);
+        proposta.getTabelaCusto().get(0).setIdTabelaCusto(tabelaCustoList.get(0).getIdTabelaCusto());
+        proposta.getTabelaCusto().get(1).setIdTabelaCusto(tabelaCustoList.get(1).getIdTabelaCusto());
     }
 
 
