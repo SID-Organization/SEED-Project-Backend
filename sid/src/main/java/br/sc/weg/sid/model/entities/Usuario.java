@@ -25,8 +25,9 @@ public class Usuario {
     @Column(name = "SenhaUsuario", nullable = false)
     private String senhaUsuario;
 
-    @Column(name = "DepartamentoUsuario", nullable = false)
-    private String departamentoUsuario;
+    @OneToOne
+    @JoinColumn(name = "DepartamentoUsuario", nullable = false)
+    private BusinessUnity departamentoUsuario;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "CargoUsuario", nullable = false)

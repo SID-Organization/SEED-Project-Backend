@@ -11,6 +11,7 @@ import java.util.Date;
 public class DemandaResumida {
 
     Integer idDemanda;
+
     String tituloDemanda;
 
     Date prazoElaboracaoDemanda;

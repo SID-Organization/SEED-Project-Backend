@@ -181,6 +181,7 @@ public class DemandaController {
                     throw new RuntimeException(e);
                 }
             });
+            demanda.setBuSolicitanteDemanda(demanda.getSolicitanteDemanda().getDepartamentoUsuario());
             Demanda demandaSalva = demandaService.save(demanda);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
@@ -289,6 +290,7 @@ public class DemandaController {
             List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
             return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Solicitante com matrícula: " + numeroCadastroSoliciante + " não encontrado!" + e.getMessage());
         }
     }
