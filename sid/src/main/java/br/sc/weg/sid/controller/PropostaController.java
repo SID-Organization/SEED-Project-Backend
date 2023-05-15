@@ -104,7 +104,7 @@ public class PropostaController {
                 return ResponseEntity.badRequest().body("ERROR 0002: A proposta inserida não existe! ID PROPOSTA: " + id);
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("ERROR 0003: Erro ao deletar proposta!" + "\nMessage: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("ERROR 0003: Erro ao deletar proposta!" + "\nMessage: " + e.getMessage());
         }
     }
 
@@ -143,33 +143,14 @@ public class PropostaController {
                     List<TabelaCusto> tabelaCustoList = propostaAntiga.getTabelaCusto();
                     if (!tabelaCustoList.isEmpty()) {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
-                        tabelaCustoService.deleteById(tabelaCustoList.get(0).getIdTabelaCusto());
-                        tabelaCustoService.deleteById(tabelaCustoList.get(1).getIdTabelaCusto());
-
-                        for (TabelaCustoLinha tabelaCustoLinha : updatePropostaDTO.getTabelaCusto().get(0).getTabelaCustoLinha()) {
-                            tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCusto().get(0));
-                            tabelaCustoLinhaService.save(tabelaCustoLinha);
-                        }
-
-                        for (TabelaCustoLinha tabelaCustoLinha : updatePropostaDTO.getTabelaCusto().get(1).getTabelaCustoLinha()) {
-                            tabelaCustoLinha.setTabelaCusto(proposta.getTabelaCusto().get(1));
-                            tabelaCustoLinhaService.save(tabelaCustoLinha);
-                        }
-
-                        for (CentroCustoTabelaCusto centroCustoTabelaCusto : updatePropostaDTO.getTabelaCusto().get(0).getCentroCustoTabelaCusto()) {
-                            centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCusto().get(0));
-                            centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
-                        }
-
-                        for (CentroCustoTabelaCusto centroCustoTabelaCusto : updatePropostaDTO.getTabelaCusto().get(1).getCentroCustoTabelaCusto()) {
-                            centroCustoTabelaCusto.setTabelaCusto(proposta.getTabelaCusto().get(1));
-                            centroCustoTabelaCustoService.save(centroCustoTabelaCusto);
-                        }
-
-                        proposta.getTabelaCusto().get(0).setPropostaTabelaCusto(proposta);
-                        proposta.getTabelaCusto().get(1).setPropostaTabelaCusto(proposta);
-                        proposta.getTabelaCusto().get(0).setIdTabelaCusto(tabelaCustoList.get(0).getIdTabelaCusto());
-                        proposta.getTabelaCusto().get(1).setIdTabelaCusto(tabelaCustoList.get(1).getIdTabelaCusto());
+                        propostaUtil.criacaoTabelaCusto(
+                                tabelaCustoService,
+                                tabelaCustoList,
+                                updatePropostaDTO,
+                                proposta,
+                                tabelaCustoLinhaService,
+                                centroCustoTabelaCustoService
+                        );
                     } else if (updatePropostaDTO.getTabelaCusto() == null) {
                         BeanUtils.copyProperties(updatePropostaDTO, proposta);
                     } else {
@@ -178,7 +159,6 @@ public class PropostaController {
                         tabelaCustoInterna.setPropostaTabelaCusto(proposta);
                         TabelaCusto tabelaCustoSalva = tabelaCustoService.save(tabelaCustoInterna);
                         for (int i = 0; i < tabelaCustoInterna.getTabelaCustoLinha().size(); i++) {
-
                             tabelaCustoInterna.getTabelaCustoLinha().get(i).setTabelaCusto(tabelaCustoSalva);
                             tabelaCustoLinhaService.save(tabelaCustoInterna.getTabelaCustoLinha().get(i));
                         }
@@ -192,7 +172,6 @@ public class PropostaController {
                         tabelaCustoExterna.setPropostaTabelaCusto(proposta);
                         TabelaCusto tabelaCustoSalva2 = tabelaCustoService.save(tabelaCustoExterna);
                         for (TabelaCustoLinha tabelaCustoLinha : proposta.getTabelaCusto().get(1).getTabelaCustoLinha()) {
-
                             tabelaCustoLinha.setTabelaCusto(tabelaCustoSalva2);
                             tabelaCustoLinhaService.save(tabelaCustoLinha);
                         }
