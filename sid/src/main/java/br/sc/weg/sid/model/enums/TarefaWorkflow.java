@@ -5,8 +5,9 @@ public enum TarefaWorkflow {
     CLASSIFICACAO_APROVACAO("Classificação e Aprovação"),
     APROVACAO_GERENTE_AREA("Aprovação Gerente da Área"),
     ELABORACAO_PROPOSTA("Elaboração da Proposta"),
-    PROPOSTA_PRONTA("Proposta Pronta"),
-    EM_PAUTA("Em Pauta");
+    APROVACAO_COMISSAO("Aprovação Comissão"),
+    EXECUCAO_PROPOSTA("Execução da Proposta");
+
 
     String nome;
 

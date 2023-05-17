@@ -48,10 +48,10 @@ public class AuthController {
         System.out.println("authenticationToken = " + authenticationToken);
         try {
             Authentication authentication = authManager.authenticate(authenticationToken);
+            System.out.println("AUTHEN");
             String token = tokenUtils.gerarToken(authentication);
             Cookie cookie = new Cookie("jwt", token);
             cookie.setPath("/");
-            cookie.setHttpOnly(true);
             response.addCookie(cookie);
             System.out.println(cookie.getValue());
             UserJpa user = (UserJpa) authentication.getPrincipal();

@@ -55,6 +55,7 @@ public class AuthConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
+
         httpSecurity.authorizeRequests()
                 .antMatchers("/logout", "/login", "/login/auth", "/sid/api/usuario/**", "/sid/api/docs/**", "/swagger-ui/**", "/sid/swagger-ui.html").permitAll()
                 .antMatchers("/sid/api/demanda/**", "/sid/api/pdf-demanda/**", "sid/api/chat/**").hasAnyAuthority("Solicitante", "Gestor TI", "Gerente", "Analista")
