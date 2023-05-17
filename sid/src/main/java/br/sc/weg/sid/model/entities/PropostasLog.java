@@ -35,10 +35,10 @@ public class PropostasLog {
     @Column(name = "consideracoesProposta", nullable = false)
     private String consideracoesPropostaLog;
 
-    @Column(name = "parecerDGPropostaLog", nullable = true)
+    @Column(name = "parecerDGPropostaLog")
     private ParecerComissao parecerDGPropostaLog;
 
-    @Column(name = "consideracoesParecerDGPropostaLog", nullable = true)
+    @Column(name = "consideracoesParecerDGPropostaLog")
     private String consideracoesParecerDGPropostaLog;
 
     @Column(name = "tipoAta", nullable = false)
