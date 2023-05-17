@@ -2,8 +2,10 @@ package br.sc.weg.sid.model.entities;
 
 import br.sc.weg.sid.model.enums.ParecerComissao;
 import br.sc.weg.sid.model.enums.TipoAta;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -33,6 +35,12 @@ public class PropostasLog {
     @Column(name = "consideracoesProposta", nullable = false)
     private String consideracoesPropostaLog;
 
+    @Column(name = "parecerDGPropostaLog", nullable = true)
+    private ParecerComissao parecerDGPropostaLog;
+
+    @Column(name = "consideracoesParecerDGPropostaLog", nullable = true)
+    private String consideracoesParecerDGPropostaLog;
+
     @Column(name = "tipoAta", nullable = false)
     private TipoAta tipoAtaPropostaLog;
 
@@ -41,7 +49,6 @@ public class PropostasLog {
     byte[] pdfPropostaLog;
 
     @OneToOne
-    @JsonIgnore
     private Proposta propostaPropostaLog;
 
 }

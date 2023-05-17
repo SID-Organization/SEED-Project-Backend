@@ -81,6 +81,18 @@ public class NotificacaoController {
         }
     }
 
+    @PutMapping("/visualizar/{id}")
+    public ResponseEntity<Object> visualizarNotificacao(@PathVariable Integer id) {
+        try {
+            Notificacao notificacao = notificacaoService.findById(id).get();
+            notificacao.setVisualizada(true);
+            notificacaoService.save(notificacao);
+            return ResponseEntity.status(HttpStatus.OK).body("Notificação visualizada com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     /**
      * Esta funcao é um mapeamento de requisição HTTP DELETE que exclui o objeto Notificacao de acordo com o id informado.
      * @param id - Parâmetro que representa o id do objeto Notificacao.

@@ -1,12 +1,16 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
+import br.sc.weg.sid.DTO.CadastroParecerDGAtaDTO;
 import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.AtaResumida;
+import br.sc.weg.sid.model.entities.PropostasLog;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.PautaService;
+import br.sc.weg.sid.model.service.PropostaLogService;
 import br.sc.weg.sid.utils.AtaUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +29,8 @@ public class AtaController {
     private PautaService pautaService;
 
     private GerarPDFAtaController gerarPDFAtaController;
+
+    private PropostaLogService propostaLogService;
 
 
     /**
@@ -80,6 +86,19 @@ public class AtaController {
         Ata ataSalva = ataService.save(ata);
         gerarPDFAtaController.generatePDF(ataSalva.getIdAta());
         return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
+    }
+
+    @PutMapping("/{idPropostaLog}")
+    public ResponseEntity<Object> update(@PathVariable Integer idPropostaLog, @RequestBody CadastroParecerDGAtaDTO cadastroParecerDGAtaDTO) throws Exception {
+        if (!propostaLogService.existsById(idPropostaLog)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proposta Log com o id: " + idPropostaLog + " não existe!");
+        }
+        PropostasLog propostasLog = propostaLogService.findById(idPropostaLog).get();
+        Ata ata = ataService.findById(cadastroParecerDGAtaDTO.getIdAta()).get();
+        BeanUtils.copyProperties(cadastroParecerDGAtaDTO, propostasLog);
+        PropostasLog propostaSalva = propostaLogService.save(propostasLog);
+        gerarPDFAtaController.generatePDF(ata.getIdAta());
+        return ResponseEntity.status(HttpStatus.OK).body(propostaSalva);
     }
 
 

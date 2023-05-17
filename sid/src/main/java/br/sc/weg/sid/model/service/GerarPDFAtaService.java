@@ -476,6 +476,29 @@ public class GerarPDFAtaService {
         commissionOpinionParagraph.add(commissionOpinionPhraseText);
         commissionOpinionParagraph.setSpacingBefore(10);
 
+            Phrase considerationOpinionPhrase = new Phrase("Considerações: ", titleFont);
+            Phrase considerationOpinionPhraseText = new Phrase(": " + propostaLog.getConsideracoesPropostaLog(), textFont);
+            Paragraph considerationOpinionParagraph = new Paragraph();
+            considerationOpinionParagraph.add(considerationOpinionPhrase);
+            considerationOpinionParagraph.add(considerationOpinionPhraseText);
+            considerationOpinionParagraph.setSpacingBefore(4);
+
+
+            Paragraph dgOpinionParagraph = new Paragraph();
+            Paragraph considerationDGOpinionParagraph = new Paragraph();
+        if (propostaLog.getParecerDGPropostaLog() != null){
+            Phrase dgOpinionPhrase = new Phrase("PARECER DG", commissionOpinionText);
+            Phrase dgOpinionPhraseText = new Phrase(": " + propostaLog.getParecerDGPropostaLog().toString(), titleFont);
+            dgOpinionParagraph.add(dgOpinionPhrase);
+            dgOpinionParagraph.add(dgOpinionPhraseText);
+            dgOpinionParagraph.setSpacingBefore(15);
+            Phrase considerationDGOpinionPhrase = new Phrase("Considerações: ", titleFont);
+            Phrase considerationDGOpinionPhraseText = new Phrase(": " + propostaLog.getConsideracoesParecerDGPropostaLog(), textFont);
+            considerationDGOpinionParagraph.add(considerationDGOpinionPhrase);
+            considerationDGOpinionParagraph.add(considerationDGOpinionPhraseText);
+            considerationDGOpinionParagraph.setSpacingBefore(4);
+        }
+
         document.add(titleDemandParagraph);
         document.add(proposalParagraph);
 
@@ -533,6 +556,12 @@ public class GerarPDFAtaService {
         document.add(businessResponsableParagraph);
 
         document.add(commissionOpinionParagraph);
+        document.add(considerationOpinionParagraph);
+
+        if (propostaLog.getConsideracoesParecerDGPropostaLog() != null){
+            document.add(dgOpinionParagraph);
+            document.add(considerationDGOpinionParagraph);
+        }
 
         if (numeroProposta.get() != ata.getPropostasLog().size()) {
             document.newPage();

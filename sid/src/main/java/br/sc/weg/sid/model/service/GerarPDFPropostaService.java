@@ -93,7 +93,7 @@ public class GerarPDFPropostaService {
 
         Phrase requesterPhrase = new Phrase("Solicitante: ", fontTitle);
         Chunk solicitanteChunk = new Chunk(demanda.getSolicitanteDemanda().getNomeUsuario() + " - " +
-                demanda.getSolicitanteDemanda().getDepartamentoUsuario(), textFont);
+                demanda.getSolicitanteDemanda().getDepartamentoUsuario().getNomeBusinessUnity(), textFont);
         requesterPhrase.add(solicitanteChunk);
         Paragraph requesterParagraph = new Paragraph(requesterPhrase);
         requesterParagraph.setSpacingBefore(8);
