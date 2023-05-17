@@ -11,13 +11,16 @@ import br.sc.weg.sid.utils.DemandaUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,6 +47,10 @@ public class DemandaController {
     ForumService forumService;
 
     GerarPDFDemandaController gerarPDFDemandaController;
+
+    SimpMessagingTemplate simpMessagingTemplate;
+
+    NotificacaoService notificacaoService;
 
     /**
      * Retorna uma lista de demandas resumidas.
@@ -183,6 +190,11 @@ public class DemandaController {
             });
             demanda.setBuSolicitanteDemanda(demanda.getSolicitanteDemanda().getDepartamentoUsuario());
             Demanda demandaSalva = demandaService.save(demanda);
+            Notificacao notificacao = new Notificacao();
+            notificacao.setTextoNotificacao("Demanda " + demandaSalva.getIdDemanda() + " criada com sucesso!");
+//            notificacao.set
+            simpMessagingTemplate.convertAndSend("/notificacao-demanda-cadastro/analista/" +
+                    demandaSalva.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario(), notificacao);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
             LocalDate localDate = LocalDate.now();
@@ -510,6 +522,22 @@ public class DemandaController {
         }
         demanda.setStatusDemanda(statusDemanda);
         Demanda demandaAtualizada = demandaService.save(demanda);
+        Notificacao notificacaoStatus = new Notificacao();
+        notificacaoStatus.setTextoNotificacao("A demanda " + demandaAtualizada.getIdDemanda() + " - "
+                + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome());
+        notificacaoStatus.setTipoNotificacao("edited");
+        notificacaoStatus.setResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda().getNomeUsuario());
+        notificacaoStatus.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
+        notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());
+        LocalDateTime horarioDataNow = LocalDateTime.now();
+        DateTimeFormatter formatar = DateTimeFormatter.ofPattern("HH:mm");
+        String horaFormatada = horarioDataNow.format(formatar);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM");
+        String dataFormatada = horarioDataNow.format(dateFormatter);
+        notificacaoStatus.setTempoNotificacao(horaFormatada + " - " + dataFormatada);
+        simpMessagingTemplate.convertAndSend("/notificacao-usuario-status/" +
+                demandaAtualizada.getSolicitanteDemanda().getNumeroCadastroUsuario(), notificacaoStatus);
+        notificacaoService.save(notificacaoStatus);
         //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
         if (statusDemanda.equals(StatusDemanda.ABERTA)) {
             System.out.println("Entrou no if de histórico de workflow");

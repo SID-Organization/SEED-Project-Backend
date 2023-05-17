@@ -1,10 +1,6 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
-import br.sc.weg.sid.exceptions.Ata.ExConversaoDTOAta;
-import br.sc.weg.sid.exceptions.Ata.ExConversaoJsonToModel;
-import br.sc.weg.sid.exceptions.Ata.ExDocumentoAprovacao;
-import br.sc.weg.sid.exceptions.Ata.ExErroSalvarAta;
 import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.AtaResumida;
 import br.sc.weg.sid.model.service.AtaService;

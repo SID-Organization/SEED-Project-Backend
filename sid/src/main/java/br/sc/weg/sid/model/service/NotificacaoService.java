@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.Notificacao;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.repository.NotificacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,10 @@ public class NotificacaoService {
 
     public Optional<Notificacao> findById(Integer integer) {
         return notificacaoRepository.findById(integer);
+    }
+
+    public List<Notificacao> findByUsuario(Usuario usuario) {
+        return notificacaoRepository.findByUsuario(usuario);
     }
 
     public boolean existsById(Integer integer) {

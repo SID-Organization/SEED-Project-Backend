@@ -2,12 +2,13 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroNotificacaoDTO;
 import br.sc.weg.sid.model.entities.Notificacao;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.service.NotificacaoService;
+import br.sc.weg.sid.model.service.UsuarioService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +20,9 @@ public class NotificacaoController {
 
     @Autowired
     private NotificacaoService notificacaoService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     /**
      * Esta funcao é um mapeamento de requisição HTTP POST que salva um objeto Notificacao no banco de dados.
@@ -62,6 +66,16 @@ public class NotificacaoController {
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(notificacaoService.findById(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<Object> findByUsuario(@PathVariable Integer idUsuario) {
+        try {
+            Usuario usuarioNotificacao = usuarioService.findById(idUsuario).get();
+            return ResponseEntity.status(HttpStatus.OK).body(notificacaoService.findByUsuario(usuarioNotificacao));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
