@@ -41,7 +41,6 @@ public class PropostasLog {
     byte[] pdfPropostaLog;
 
     @OneToOne
-    @JsonIgnore
     private Proposta propostaPropostaLog;
 
 }
