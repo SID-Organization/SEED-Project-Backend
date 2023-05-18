@@ -2,6 +2,7 @@ package br.sc.weg.sid.model.entities;
 
 import br.sc.weg.sid.model.enums.ParecerComissao;
 import br.sc.weg.sid.model.enums.TipoAta;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -48,6 +49,7 @@ public class PropostasLog {
     @Lob
     byte[] pdfPropostaLog;
 
+    @JsonIgnoreProperties({"demandaProposta", "responsaveisNegocio", "pautaProposta"})
     @OneToOne
     private Proposta propostaPropostaLog;
 

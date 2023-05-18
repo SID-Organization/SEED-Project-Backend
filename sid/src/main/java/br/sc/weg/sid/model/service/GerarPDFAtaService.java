@@ -31,12 +31,11 @@ public class GerarPDFAtaService {
 
     CentroCustoService centroCustoService;
 
-    public byte[] export(Integer idAta) throws IOException {
+    public byte[] export(Ata ata) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 20, 25, 15);
         PdfWriter writer = PdfWriter.getInstance(document, baos);
 
-        Ata ata = ataService.findById(idAta).get();
         writer.setPageEvent(new PdfPageEventHelper() {
             @Override
             public void onStartPage(PdfWriter writer, Document document) {

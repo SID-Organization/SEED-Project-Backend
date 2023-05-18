@@ -2,12 +2,12 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
 import br.sc.weg.sid.DTO.CadastroParecerDGAtaDTO;
-import br.sc.weg.sid.model.entities.Ata;
-import br.sc.weg.sid.model.entities.AtaResumida;
-import br.sc.weg.sid.model.entities.PropostasLog;
+import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.TipoAta;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.PautaService;
 import br.sc.weg.sid.model.service.PropostaLogService;
+import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.AtaUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -29,6 +29,8 @@ public class AtaController {
     private PautaService pautaService;
 
     private GerarPDFAtaController gerarPDFAtaController;
+
+    private PropostaService propostaService;
 
     private PropostaLogService propostaLogService;
 
@@ -83,6 +85,10 @@ public class AtaController {
                 }
             });
         });
+        ata.getPropostasLog().forEach(propostaLog -> {
+            Proposta proposta = propostaService.findById(propostaLog.getPropostaPropostaLog().getIdProposta()).get();
+            propostaLog.setPdfPropostaLog(proposta.getPdfProposta());
+        });
         Ata ataSalva = ataService.save(ata);
         gerarPDFAtaController.generatePDF(ataSalva.getIdAta());
         return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
@@ -103,35 +109,90 @@ public class AtaController {
 
 
     /**
-     * Retorna um arquivo PDF contendo a ata com o ID fornecido pelo usuário.
-     * <p>
-     * Nessa função, o usuário informa o ID da ata desejada e o método busca e retorna o PDF correspondente.
-     * Se a ata existe, o método constrói um cabeçalho para o PDF e retorna um ResponseEntity contendo o arquivo PDF.
-     * Caso contrário, retorna uma mensagem de erro. O método pode lançar uma exceção em caso de falha na busca do PDF da ata.
+     * Retorna o arquivo PDF da ata publicada correspondente ao ID fornecido.
      *
-     * @param idAta ID da ata a ser buscada, passado pela URL.
-     * @return ResponseEntity contendo o arquivo PDF da ata ou mensagem de erro em caso de falha.
+     * O método recebe o ID da ata desejada como parâmetro na URL e retorna o PDF correspondente da ata publicada.
+     * Se a ata existir, é construído um cabeçalho para o PDF e retornado um ResponseEntity contendo o arquivo PDF.
+     * Caso contrário, uma mensagem de erro é retornada. O método pode lançar uma exceção em caso de falha na busca do PDF da ata.
+     *
+     * @param idAta ID da ata publicada a ser buscada.
+     * @return ResponseEntity contendo o arquivo PDF da ata publicada ou uma mensagem de erro em caso de falha.
      * @throws RuntimeException se ocorrer algum erro na busca do PDF da ata.
      */
-    @GetMapping("/pdf-ata/{idAta}")
-    ResponseEntity<Object> listarPropostaPdf(@PathVariable("idAta") Integer idAta) {
+    @GetMapping("/pdf-ata-publicada/{idAta}")
+    ResponseEntity<Object> listarAtaPublicadaPdf(@PathVariable("idAta") Integer idAta) {
+        return listarAtaPdf(idAta, TipoAta.PUBLICADA);
+    }
+
+    /**
+     * Retorna o arquivo PDF da ata não publicada correspondente ao ID fornecido.
+     *
+     * O método recebe o ID da ata desejada como parâmetro na URL e retorna o PDF correspondente da ata não publicada.
+     * Se a ata existir, é construído um cabeçalho para o PDF e retornado um ResponseEntity contendo o arquivo PDF.
+     * Caso contrário, uma mensagem de erro é retornada. O método pode lançar uma exceção em caso de falha na busca do PDF da ata.
+     *
+     * @param idAta ID da ata não publicada a ser buscada.
+     * @return ResponseEntity contendo o arquivo PDF da ata não publicada ou uma mensagem de erro em caso de falha.
+     * @throws RuntimeException se ocorrer algum erro na busca do PDF da ata.
+     */
+    @GetMapping("/pdf-ata-nao-publicada/{idAta}")
+    ResponseEntity<Object> listarAtaNaoPublicadaPdf(@PathVariable("idAta") Integer idAta) {
+        return listarAtaPdf(idAta, TipoAta.NAO_PUBLICADA);
+    }
+
+    /**
+     * Este método é responsável por retornar o arquivo PDF correspondente a uma ata específica, seja ela publicada
+     * ou não publicada, com base no ID fornecido. Ele oferece duas variáveis: uma para retornar o PDF da ata publicada
+     * e outra para retornar o PDF da ata não publicada.
+     *
+     * Ao receber o ID da ata desejada como parâmetro na URL, o método busca a ata correspondente no serviço de atendimento.
+     * Em seguida, ele percorre a lista de PDFs associados à ata para encontrar o PDF com o tipo de ata desejado.
+     * Caso seja encontrado um PDF correspondente, o método constrói um cabeçalho adequado para o arquivo PDF e retorna
+     * um ResponseEntity contendo o arquivo.
+     * Se nenhum PDF correspondente for encontrado, uma mensagem de erro é retornada informando que a ata não possui PDF
+     * do tipo solicitado.
+     * Se a ata com o ID fornecido não existir, é retornada uma mensagem de erro indicando que a ata não existe.
+     * Em caso de falha durante o processo de busca do PDF da ata, uma exceção pode ser lançada.
+     *
+     * @param idAta ID da ata desejada.
+     * @param tipoAta Tipo de ata desejado (PUBLICADA ou NAO_PUBLICADA).
+     * @return ResponseEntity contendo o arquivo PDF da ata correspondente ou uma mensagem de erro em caso de falha.
+     * @throws RuntimeException se ocorrer algum erro na busca do PDF da ata.
+     */
+
+    private ResponseEntity<Object> listarAtaPdf(Integer idAta, TipoAta tipoAta) {
         try {
             if (ataService.existsById(idAta)) {
                 Ata ata = ataService.findById(idAta).get();
-                byte[] pdfBytes = ata.getPdfAta();
+                List<PdfAta> pdfAtaList = ata.getPdfAta();
+                PdfAta pdfAta = null;
 
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_PDF);
-                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-ata-num-" + ata.getIdAta() + ".pdf").build());
+                for (PdfAta pdf : pdfAtaList) {
+                    if (pdf.getTipoAta().equals(tipoAta)) {
+                        pdfAta = pdf;
+                        break;
+                    }
+                }
 
-                return ResponseEntity.ok().headers(headers).body(pdfBytes);
+                if (pdfAta != null) {
+                    byte[] pdfBytes = pdfAta.getPdfAta();
+
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_PDF);
+                    headers.setContentDisposition(ContentDisposition.builder("inline")
+                            .filename("pdf-ata-" + tipoAta.name().toLowerCase() + "-" + ata.getIdAta() + ".pdf").build());
+
+                    return ResponseEntity.ok().headers(headers).body(pdfBytes);
+                } else {
+                    return ResponseEntity.badRequest().body("ERROR 0008: A ata " + tipoAta.name().toLowerCase() + " não possui PDF!");
+                }
             } else {
-                return ResponseEntity.badRequest().body("ERROR 0007: A proposta inserida não existe! ID PROPOSTA: " + idAta);
+                return ResponseEntity.badRequest().body("ERROR 0007: A ata inserida não existe! ID ATA: " + idAta);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idAta + "!");
+        return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar PDF da ata de ID: " + idAta + "!");
     }
 
     /**

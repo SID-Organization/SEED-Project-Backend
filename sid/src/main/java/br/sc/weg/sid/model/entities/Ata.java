@@ -20,9 +20,9 @@ public class Ata {
     @Column(name = "IdAta", nullable = false, unique = true)
     private Integer idAta;
 
-    @Column(name = "PdfAta")
-    @Lob
-    private byte[] pdfAta;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<PdfAta> pdfAta;
 
     @Column(name = "NumeroDgAta", nullable = false)
     private Integer numeroDgAta;
@@ -33,6 +33,7 @@ public class Ata {
 
     @OneToMany(cascade = CascadeType.ALL)
     List<PropostasLog> propostasLog;
+
 
     @JsonIgnore
     @OneToOne
