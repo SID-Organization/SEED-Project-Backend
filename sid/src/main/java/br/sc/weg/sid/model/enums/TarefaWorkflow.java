@@ -6,6 +6,7 @@ public enum TarefaWorkflow {
     APROVACAO_GERENTE_AREA("Aprovação Gerente da Área"),
     ELABORACAO_PROPOSTA("Elaboração da Proposta"),
     APROVACAO_COMISSAO("Aprovação Comissão"),
+    APROVACAO_DG("Aprovação DG"),
     EXECUCAO_PROPOSTA("Execução da Proposta");
 
 

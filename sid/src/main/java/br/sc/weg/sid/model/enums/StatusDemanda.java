@@ -7,6 +7,7 @@ public enum StatusDemanda {
     PROPOSTA_EM_ELABORACAO("Proposta em elaboração"),
     PROPOSTA_PRONTA("Proposta pronta"),
     APROVADA_PELA_COMISSAO("Aprovada pela comissão"),
+    APROVADA_PELA_DG("Aprovada pela DG"),
     PROPOSTA_EM_EXECUCAO("Proposta em execução"),
     BUSINESS_CASE("Business Case"),
     PROPOSTA_EM_SUPORTE("Proposta em suporte"),
