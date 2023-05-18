@@ -59,15 +59,15 @@ public class Demanda {
     @Column()
     private Double scoreDemanda;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "analistaResponsavelDemanda")
     private Usuario analistaResponsavelDemanda;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "gerenteDaArea")
     private Usuario gerenteDaAreaDemanda;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "gestorResponsavel")
     private Usuario gestorResponsavelDemanda;
 

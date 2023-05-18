@@ -166,11 +166,6 @@ public class DemandaController {
             CadastroPdfDemandaDTO cadastroPdfDemandaDTO = demandaUtil.convertToPdfDto(pdfDemandaJson);
             Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
             PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
-            try {
-                demanda.setSolicitanteDemanda(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solicitante não encontrado!");
-            }
             demanda.setStatusDemanda(StatusDemanda.ABERTA);
 
             //Verifica se a demanda possui todos os campos preenchidos, caso algum atributo esteja nulo, o status será RASCUNHO
@@ -190,11 +185,6 @@ public class DemandaController {
             });
             demanda.setBuSolicitanteDemanda(demanda.getSolicitanteDemanda().getDepartamentoUsuario());
             Demanda demandaSalva = demandaService.save(demanda);
-            Notificacao notificacao = new Notificacao();
-            notificacao.setTextoNotificacao("Demanda " + demandaSalva.getIdDemanda() + " criada com sucesso!");
-//            notificacao.set
-            simpMessagingTemplate.convertAndSend("/notificacao-demanda-cadastro/analista/" +
-                    demandaSalva.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario(), notificacao);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
             LocalDate localDate = LocalDate.now();
@@ -516,29 +506,44 @@ public class DemandaController {
                     .body("Não foi encontrado a demanda com o id " + idDemanda);
         }
         Demanda demanda = demandaService.findById(idDemanda).get();
-        if (statusDemanda == StatusDemanda.CANCELADA) {
-            demanda.setAnalistaResponsavelDemanda(null);
-            demanda.setGerenteDaAreaDemanda(null);
-            demanda.setGestorResponsavelDemanda(null);
-        }
         demanda.setStatusDemanda(statusDemanda);
         Demanda demandaAtualizada = demandaService.save(demanda);
-        Notificacao notificacaoStatus = new Notificacao();
-        notificacaoStatus.setTextoNotificacao("A demanda " + demandaAtualizada.getIdDemanda() + " - "
-                + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome());
-        notificacaoStatus.setTipoNotificacao("edited");
-        notificacaoStatus.setResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda().getNomeUsuario());
-        notificacaoStatus.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
-        notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());
+        //Esse LocalDateTime serve para adicionarmos nas notificações criadas nessa atualização de status
         LocalDateTime horarioDataNow = LocalDateTime.now();
         DateTimeFormatter formatar = DateTimeFormatter.ofPattern("HH:mm");
-        String horaFormatada = horarioDataNow.format(formatar);
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM");
-        String dataFormatada = horarioDataNow.format(dateFormatter);
-        notificacaoStatus.setTempoNotificacao(horaFormatada + " - " + dataFormatada);
-        simpMessagingTemplate.convertAndSend("/notificacao-usuario-status/" +
-                demandaAtualizada.getSolicitanteDemanda().getNumeroCadastroUsuario(), notificacaoStatus);
-        notificacaoService.save(notificacaoStatus);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String notificacaoHoraData = horarioDataNow.format(formatar) + " - " + horarioDataNow.format(dateFormatter);
+
+        if (demandaAtualizada.getStatusDemanda() == StatusDemanda.ABERTA){
+            Notificacao notificacaoDemandaCriada = new Notificacao();
+            notificacaoDemandaCriada.setTextoNotificacao("Uma demanda foi criada! " + demandaAtualizada.getTituloDemanda() + " criada por: " +
+                    demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
+            notificacaoDemandaCriada.setTipoNotificacao("approved");
+            notificacaoDemandaCriada.setResponsavel(demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
+            notificacaoDemandaCriada.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
+            notificacaoDemandaCriada.setUsuario(demandaAtualizada.getAnalistaResponsavelDemanda());
+            notificacaoDemandaCriada.setTempoNotificacao(notificacaoHoraData);
+            notificacaoDemandaCriada.setVisualizada(false);
+            simpMessagingTemplate.convertAndSend("/notificacao-demanda-cadastro/analista/" +
+                    demandaAtualizada.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario(), notificacaoDemandaCriada);
+            System.out.println("/notificacao-demanda-cadastro/analista/" +
+                    demandaAtualizada.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario());
+            notificacaoService.save(notificacaoDemandaCriada);
+        }else {
+            Notificacao notificacaoStatus = new Notificacao();
+            notificacaoStatus.setTextoNotificacao("A demanda " + demandaAtualizada.getIdDemanda() + " - "
+                    + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome());
+            atualizaTipoNotificacao(demandaAtualizada, notificacaoStatus);
+            notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());
+            notificacaoStatus.setTempoNotificacao(notificacaoHoraData);
+            notificacaoStatus.setResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda().getNomeUsuario());
+            notificacaoStatus.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
+            notificacaoStatus.setVisualizada(false);
+            simpMessagingTemplate.convertAndSend("/notificacao-usuario-status/" +
+                    demandaAtualizada.getSolicitanteDemanda().getNumeroCadastroUsuario(), notificacaoStatus);
+            notificacaoService.save(notificacaoStatus);
+        }
+
         //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
         if (statusDemanda.equals(StatusDemanda.ABERTA)) {
             System.out.println("Entrou no if de histórico de workflow");
@@ -557,6 +562,17 @@ public class DemandaController {
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
+    }
+
+    private void atualizaTipoNotificacao(Demanda demandaAtualizada, Notificacao notificacaoStatus) {
+        if(demandaAtualizada.getStatusDemanda() == StatusDemanda.APROVADO_PELO_GERENTE_DA_AREA ||
+                demandaAtualizada.getStatusDemanda() == StatusDemanda.APROVADA_PELA_COMISSAO){
+            notificacaoStatus.setTipoNotificacao("approved");
+        } else if (demandaAtualizada.getStatusDemanda() == StatusDemanda.CANCELADA) {
+            notificacaoStatus.setTipoNotificacao("rejected");
+        } else {
+            notificacaoStatus.setTipoNotificacao("edited");
+        }
     }
 
     /**

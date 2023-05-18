@@ -33,7 +33,8 @@ public class AuthFilter extends OncePerRequestFilter {
                 request.getRequestURI().startsWith("/sid/api/docs") ||
                 request.getRequestURI().startsWith("/sid/swagger-ui") ||
                 request.getRequestURI().equals("/sid/swagger-ui.html") ||
-                request.getRequestURI().equals("/favicon.ico")) {
+                request.getRequestURI().equals("/favicon.ico") ||
+        request.getRequestURI().equals("/sid/api/usuario/"))   {
 
             System.out.println("Entrou no primeiro if");
             filterChain.doFilter(request, response);

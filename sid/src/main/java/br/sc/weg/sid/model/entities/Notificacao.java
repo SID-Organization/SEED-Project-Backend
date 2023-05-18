@@ -32,6 +32,9 @@ public class Notificacao {
     @Column(name = "responsavel", nullable = false)
     private String responsavel;
 
+    @Column(name = "visualizada", nullable = false)
+    private Boolean visualizada;
+
     @ManyToOne()
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
