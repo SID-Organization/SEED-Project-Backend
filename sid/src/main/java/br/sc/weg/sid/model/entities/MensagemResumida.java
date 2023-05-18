@@ -12,5 +12,5 @@ public class MensagemResumida {
     String dataMensagem;
     Integer idChat;
     Integer idMensagem;
-    byte[] arquivoMensagem;
+    Object arquivoMensagem;
 }

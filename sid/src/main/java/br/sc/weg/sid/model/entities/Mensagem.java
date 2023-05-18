@@ -23,7 +23,6 @@ public class Mensagem {
     private String textoMensagem;
 
     @Column(name = "ArquivoMensagem")
-    @Lob
     private byte[] arquivoMensagem;
 
     @Column(name = "DataMensagem", nullable = false)
