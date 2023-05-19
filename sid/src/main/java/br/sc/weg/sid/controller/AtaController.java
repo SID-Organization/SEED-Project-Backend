@@ -100,10 +100,8 @@ public class AtaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proposta Log com o id: " + idPropostaLog + " não existe!");
         }
         PropostasLog propostasLog = propostaLogService.findById(idPropostaLog).get();
-        Ata ata = ataService.findById(cadastroParecerDGAtaDTO.getIdAta()).get();
         BeanUtils.copyProperties(cadastroParecerDGAtaDTO, propostasLog);
         PropostasLog propostaSalva = propostaLogService.save(propostasLog);
-        gerarPDFAtaController.generatePDF(ata.getIdAta());
         return ResponseEntity.status(HttpStatus.OK).body(propostaSalva);
     }
 

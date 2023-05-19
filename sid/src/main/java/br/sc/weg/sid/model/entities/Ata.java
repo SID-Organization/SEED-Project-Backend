@@ -34,8 +34,10 @@ public class Ata {
     @OneToMany(cascade = CascadeType.ALL)
     List<PropostasLog> propostasLog;
 
-
     @JsonIgnore
     @OneToOne
     Pauta pautaAta;
+
+    @OneToOne(mappedBy = "ataAtaDg")
+    AtaDG ataDg;
 }

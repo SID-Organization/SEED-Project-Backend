@@ -23,8 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @AllArgsConstructor
 public class GerarPDFAtaService {
 
-    AtaService ataService;
-
     PdfPropostaService pdfPropostaService;
 
     PautaService pautaService;
@@ -32,6 +30,7 @@ public class GerarPDFAtaService {
     CentroCustoService centroCustoService;
 
     public byte[] export(Ata ata) throws IOException {
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 20, 25, 15);
         PdfWriter writer = PdfWriter.getInstance(document, baos);

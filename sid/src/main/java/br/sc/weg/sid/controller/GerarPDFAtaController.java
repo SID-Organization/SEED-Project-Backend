@@ -4,10 +4,11 @@ import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.PdfAta;
 import br.sc.weg.sid.model.entities.PropostasLog;
 import br.sc.weg.sid.model.enums.TipoAta;
+import br.sc.weg.sid.model.service.AtaDGService;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.GerarPDFAtaService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,14 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/sid/api/ata-PDF")
+@AllArgsConstructor
 public class GerarPDFAtaController {
-    @Autowired
+
     GerarPDFAtaService gerarPDFAtaService;
 
-    @Autowired
     AtaService ataService;
+
+    AtaDGService ataDGService;
 
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna o PDF da ata de acordo com o id da ata informado.
@@ -76,9 +79,14 @@ public class GerarPDFAtaController {
                 pdfAtaNaoPublicadaClasse.setTipoAta(TipoAta.NAO_PUBLICADA);
                 listaPDFAta.add(pdfAtaNaoPublicadaClasse);
             }
-            ata.setPdfAta(listaPDFAta);
-            ataService.save(ata);
-            return ResponseEntity.ok().headers(headers).body(ata.getPdfAta().get(ata.getPdfAta().size() - 1).getPdfAta());
+            if (ata.getAtaDg() != null){
+                ata.getAtaDg().setPdfAtaDG(listaPDFAta);
+                ataDGService.save(ata.getAtaDg());
+            }else {
+                ata.setPdfAta(listaPDFAta);
+                ataService.save(ata);
+            }
+            return ResponseEntity.ok().headers(headers).body("PDF gerado com sucesso!");
         } else {
             return ResponseEntity.badRequest().body("ERROR 0006: A ata inserida não existe! ID ATA: " + idAta);
         }
