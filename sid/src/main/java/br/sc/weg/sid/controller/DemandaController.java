@@ -551,7 +551,6 @@ public class DemandaController {
             historicoWorkflowDTO.setDemandaHistorico(demandaAtualizada);
             historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());
             historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
-            historicoWorkflowDTO.setAcaoFeitaHistorico("Enviar");
             try {
                 historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
                 historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);

@@ -39,6 +39,7 @@ public class HistoricoWorkflowController {
 
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna todos os históricos de workflow cadastrados no banco de dados.
+     *
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo todos os históricos de workflow cadastrados no banco de dados.
      * @throws Exception - Retorna uma mensagem de erro caso não exista históricos de workflow cadastrados no banco de dados.
      */
@@ -60,6 +61,7 @@ public class HistoricoWorkflowController {
 
     /**
      * Esta função é um mapeamento de requisição HTTP POST que insere um novo histórico de workflow no banco de dados.
+     *
      * @param historicoWorkflowDTO - Objeto DTO que contém os dados do histórico de workflow que será inserido no banco de dados.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 201 e o corpo contendo o histórico de workflow cadastrado no banco de dados.
      * @throws Exception - Retorna uma mensagem de erro caso não seja possível inserir o histórico de workflow no banco de dados.
@@ -73,14 +75,19 @@ public class HistoricoWorkflowController {
         BeanUtils.copyProperties(historicoWorkflowDTO, historicoWorkflow);
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
             historicoWorkflow.setAcaoFeitaHistorico("Enviar");
-            historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);;
+            historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
+            ;
             historicoWorkflow.setVersaoHistorico(0.1);
         } else {
             Demanda demanda = demandaService.findById(historicoWorkflow.getDemandaHistorico().getIdDemanda()).get();
-            HistoricoWorkflow  historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
+            HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
             atualizaStatusWorkflow(historicoWorkflowAnterior.getIdHistoricoWorkflow(), historicoWorkflowAnterior);
+            if (historicoWorkflowAnterior.getTarefaHistoricoWorkflow() != TarefaWorkflow.PREENCHER_DEMANDA) {
+                historicoWorkflowAnterior.setAcaoFeitaHistorico(historicoWorkflowDTO.getAcaoFeitaHistoricoAnterior());
+                historicoWorkflowService.save(historicoWorkflowAnterior);
+            }
             historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
-            if(historicoWorkflow.equals(historicoWorkflowAnterior)) {
+            if (historicoWorkflow.equals(historicoWorkflowAnterior)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Não houveram alterações!");
             }
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
@@ -91,17 +98,17 @@ public class HistoricoWorkflowController {
         //Workflow's com status Preencher demanda não tem prazo de conclusão
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
             historicoWorkflow.setConclusaoHistorico(dataRecebimento);
-        }else {
+        } else {
             localDate = localDate.plusDays(31);
             Date dataPrazo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
             historicoWorkflow.setPrazoHistorico(dataPrazo);
         }
         HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
-        try{
+        try {
             Demanda demandaHistorico = demandaService.findById(historicoWorkflowSalvo.getDemandaHistorico().getIdDemanda()).get();
             demandaHistorico.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
             demandaService.save(demandaHistorico);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao setar último histórico de workflow da demanda: " + e.getMessage());
         }
         List<HistoricoWorkflow> historicoWorkflowSalvoList = new ArrayList<>();
@@ -113,6 +120,7 @@ public class HistoricoWorkflowController {
 
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna um histórico de workflow cadastrado no banco de dados de acordo com o id da demanda.
+     *
      * @param demandaHistorico - Objeto do tipo Demanda que contém o id da demanda que será utilizado para buscar o histórico de workflow no banco de dados.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow cadastrado no banco de dados.
      * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar o histórico de workflow no banco de dados.
@@ -128,9 +136,9 @@ public class HistoricoWorkflowController {
             }
             LocalDateTime localDateTime = LocalDateTime.now();
             Date verificaData = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                historicoWorkflows.forEach(historicoWorkflow -> {
-                if(historicoWorkflow.getConclusaoHistorico() != null){
-                    if(historicoWorkflow.getConclusaoHistorico().before(verificaData)){
+            historicoWorkflows.forEach(historicoWorkflow -> {
+                if (historicoWorkflow.getConclusaoHistorico() != null) {
+                    if (historicoWorkflow.getConclusaoHistorico().before(verificaData)) {
                         historicoWorkflow.setStatusWorkflow(StatusWorkflow.ATRASADO);
                     }
                 }
@@ -143,6 +151,7 @@ public class HistoricoWorkflowController {
 
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna um histórico de workflow cadastrado no banco de dados de acordo com o número de cadastro de um responsável.
+     *
      * @param numeroCadastroResponsavel - Objeto do tipo Usuario que contém o número de cadastro do responsável que será utilizado para buscar o histórico de workflow no banco de dados.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow cadastrado no banco de dados.
      * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar o histórico de workflow no banco de dados.
@@ -164,6 +173,7 @@ public class HistoricoWorkflowController {
 
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna um histórico de workflow cadastrado no banco de dados de acordo com o status.
+     *
      * @param statusWorkflow - Objeto do tipo StatusWorkflow que contém o status que será utilizado para buscar o histórico de workflow no banco de dados.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow cadastrado no banco de dados.
      * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar o histórico de workflow no banco de dados.
@@ -184,8 +194,9 @@ public class HistoricoWorkflowController {
 
     /**
      * Esta função é um mapeamento de requisição HTTP PUT que atualiza a versão da demanda de um histórico de workflow.
+     *
      * @param idHistoricoWorkflow - Variável do tipo Integer que contém o id do histórico de workflow que será utilizado para atualizar a versão da demanda.
-     * @param historicoWorkflow - Objeto do tipo HistoricoWorkflow que contém a nova versão da demanda que será atualizada no histórico de workflow.
+     * @param historicoWorkflow   - Objeto do tipo HistoricoWorkflow que contém a nova versão da demanda que será atualizada no histórico de workflow.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow com a versão da demanda atualizada.
      * @throws Exception - Retorna uma mensagem de erro caso não seja possível atualizar a versão da demanda do histórico de workflow.
      */
@@ -206,8 +217,9 @@ public class HistoricoWorkflowController {
 
     /**
      * Esta função é um mapeamento de requisição HTTP PUT que atualiza o status de um histórico de workflow.
+     *
      * @param idHistoricoWorkflow - Variável do tipo Integer que contém o id do histórico de workflow que será utilizado para atualizar o status.
-     * @param historicoWorkflow - Objeto do tipo HistoricoWorkflow que contém o novo status que será atualizado no histórico de workflow.
+     * @param historicoWorkflow   - Objeto do tipo HistoricoWorkflow que contém o novo status que será atualizado no histórico de workflow.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o histórico de workflow com o status atualizado.
      * @throws Exception - Retorna uma mensagem de erro caso não seja possível atualizar o status do histórico de workflow.
      */
@@ -232,6 +244,7 @@ public class HistoricoWorkflowController {
 
     /**
      * Esta função é um mapeamento de requisição HTTP DELETE que deleta um histórico de workflow cadastrado no banco de dados de acordo com o id.
+     *
      * @param idHistoricoWorkflow - Variável do tipo Integer que contém o id do histórico de workflow que será utilizado para deletar o histórico de workflow no banco de dados.
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo uma mensagem de sucesso ao deletar o histórico de workflow.
      * @throws Exception - Retorna uma mensagem de erro caso não seja possível deletar o histórico de workflow no banco de dados.

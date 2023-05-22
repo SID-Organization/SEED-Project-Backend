@@ -14,7 +14,7 @@ public class CadastroHistoricoWorkflowDTO {
     @NotNull(message = "O campo demandaHistorico não pode ser nulo")
     private Demanda demandaHistorico;
     @NotBlank(message = "O campo acaoFeitaHistorico não pode estar em branco!")
-    private String acaoFeitaHistorico;
+    private String acaoFeitaHistoricoAnterior;
     @NotNull(message = "O campo idResponsavel não pode ser nulo")
     private Usuario idResponsavel;
 
