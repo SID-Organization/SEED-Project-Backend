@@ -565,7 +565,7 @@ public class DemandaController {
 
     private void atualizaTipoNotificacao(Demanda demandaAtualizada, Notificacao notificacaoStatus) {
         if(demandaAtualizada.getStatusDemanda() == StatusDemanda.APROVADO_PELO_GERENTE_DA_AREA ||
-                demandaAtualizada.getStatusDemanda() == StatusDemanda.APROVADA_PELA_COMISSAO){
+                demandaAtualizada.getStatusDemanda() == StatusDemanda.APROVADA_EM_COMISSAO){
             notificacaoStatus.setTipoNotificacao("approved");
         } else if (demandaAtualizada.getStatusDemanda() == StatusDemanda.CANCELADA) {
             notificacaoStatus.setTipoNotificacao("rejected");
