@@ -49,7 +49,7 @@ public class PropostasLog {
     @Lob
     byte[] pdfPropostaLog;
 
-    @JsonIgnoreProperties({"responsaveisNegocio", "pautaProposta"})
+    @JsonIgnoreProperties({"responsaveisNegocio", "pautaProposta", "pdfProposta", "demandaProposta"})
     @OneToOne
     private Proposta propostaPropostaLog;
 

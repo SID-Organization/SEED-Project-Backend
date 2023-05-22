@@ -9,8 +9,6 @@ import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -242,7 +240,7 @@ public class PropostaController {
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_PDF);
-                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-proposta" + proposta.getIdProposta() + ".pdf").build());
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("Proposta " + proposta.getDemandaProposta().getTituloDemanda() + ".pdf").build());
 
                 return ResponseEntity.ok().headers(headers).body(pdfBytes);
             } else {

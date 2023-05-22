@@ -5,7 +5,10 @@ import lombok.Data;
 
 @Data
 public class CadastroParecerDGAtaDTO {
+
     private Integer idAta;
+
+    private Integer idPropostaLog;
 
     private ParecerComissao parecerDGPropostaLog;
 

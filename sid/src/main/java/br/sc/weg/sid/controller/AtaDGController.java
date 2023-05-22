@@ -1,6 +1,5 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.CadastroAtaDGDTO;
 import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.AtaDG;
 import br.sc.weg.sid.model.entities.PdfAta;
@@ -12,7 +11,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -51,10 +49,10 @@ public class AtaDGController {
     }
 
     @PostMapping()
-    public ResponseEntity<Object> save(@RequestBody @Valid CadastroAtaDGDTO ataDGDTO) {
+    public ResponseEntity<Object> save(Integer idAta) {
         try {
             AtaDG ataDG = new AtaDG();
-            Ata ata = ataService.findById(ataDGDTO.getAtaAtaDg().getIdAta()).get();
+            Ata ata = ataService.findById(idAta).get();
             ataDG.setAtaAtaDg(ata);
             AtaDG ataDGSalva = ataDGService.save(ataDG);
             return ResponseEntity.ok(ataDGSalva);
