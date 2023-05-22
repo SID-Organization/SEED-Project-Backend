@@ -34,6 +34,8 @@ public class AtaController {
 
     private PropostaLogService propostaLogService;
 
+    private AtaDGController ataDGController;
+
 
     /**
      * Cria uma nova ata a partir dos dados fornecidos pelo usuário e salva no banco de dados.
@@ -94,15 +96,19 @@ public class AtaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
     }
 
-    @PutMapping("/{idPropostaLog}")
-    public ResponseEntity<Object> update(@PathVariable Integer idPropostaLog, @RequestBody CadastroParecerDGAtaDTO cadastroParecerDGAtaDTO) throws Exception {
-        if (!propostaLogService.existsById(idPropostaLog)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proposta Log com o id: " + idPropostaLog + " não existe!");
+    @PutMapping("/atualiza-proposta-log")
+    public ResponseEntity<Object> update(@RequestBody List<CadastroParecerDGAtaDTO> cadastroParecerDGAtaDTOList) {
+        for(int i =0; i < cadastroParecerDGAtaDTOList.size(); i++){
+            if (propostaLogService.existsById(cadastroParecerDGAtaDTOList.get(i).getIdPropostaLog())){
+                PropostasLog propostasLog = propostaLogService.findById(cadastroParecerDGAtaDTOList.get(i).getIdPropostaLog()).get();
+                BeanUtils.copyProperties(cadastroParecerDGAtaDTOList.get(i), propostasLog);
+                propostaLogService.save(propostasLog);
+            }else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proposta não encontrada");
+            }
         }
-        PropostasLog propostasLog = propostaLogService.findById(idPropostaLog).get();
-        BeanUtils.copyProperties(cadastroParecerDGAtaDTO, propostasLog);
-        PropostasLog propostaSalva = propostaLogService.save(propostasLog);
-        return ResponseEntity.status(HttpStatus.OK).body(propostaSalva);
+        ataDGController.save(cadastroParecerDGAtaDTOList.get(0).getIdAta());
+        return ResponseEntity.status(HttpStatus.OK).body("Propostas atualizadas com sucesso");
     }
 
 
@@ -178,7 +184,7 @@ public class AtaController {
                     HttpHeaders headers = new HttpHeaders();
                     headers.setContentType(MediaType.APPLICATION_PDF);
                     headers.setContentDisposition(ContentDisposition.builder("inline")
-                            .filename("pdf-ata-" + tipoAta.name().toLowerCase() + "-" + ata.getIdAta() + ".pdf").build());
+                            .filename("pdf-ata-" + tipoAta.name().toLowerCase() + "-numero" + ata.getIdAta() + ".pdf").build());
 
                     return ResponseEntity.ok().headers(headers).body(pdfBytes);
                 } else {

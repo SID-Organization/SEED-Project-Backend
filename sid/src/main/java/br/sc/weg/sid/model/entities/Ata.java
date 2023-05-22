@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,7 +35,7 @@ public class Ata {
     @OneToMany(cascade = CascadeType.ALL)
     List<PropostasLog> propostasLog;
 
-    @JsonIgnore
+    @JsonIgnoreProperties({"propostasPauta", "forumPauta", "horarioTerminoPauta"})
     @OneToOne
     Pauta pautaAta;
 

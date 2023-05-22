@@ -738,7 +738,7 @@ public class DemandaController {
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_PDF);
-                headers.setContentDisposition(ContentDisposition.builder("inline").filename("pdf-ata-num-" + idDemanda + ".pdf").build());
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("demanda-" + demanda.getTituloDemanda() + ".pdf").build());
 
                 return ResponseEntity.ok().headers(headers).body(pdfBytes);
             } else {
