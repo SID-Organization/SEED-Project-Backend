@@ -34,7 +34,7 @@ public class AuthFilter extends OncePerRequestFilter {
                 request.getRequestURI().startsWith("/sid/swagger-ui") ||
                 request.getRequestURI().equals("/sid/swagger-ui.html") ||
                 request.getRequestURI().equals("/favicon.ico") ||
-        request.getRequestURI().equals("/sid/api/usuario/"))   {
+                request.getRequestURI().equals("/sid/api/usuario/")) {
 
             System.out.println("Entrou no primeiro if");
             filterChain.doFilter(request, response);
@@ -50,10 +50,14 @@ public class AuthFilter extends OncePerRequestFilter {
                 UserDetails usuario = jpaService.loadUserByUsername(usuarioNumeroCadastro);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario.getUsername(), null, usuario.getAuthorities());
                 System.out.println("final do filtro");
-                Cookie cookie = WebUtils.getCookie(request, "jwt");
+                Cookie antigoCookie = WebUtils.getCookie(request, "jwt");
+                antigoCookie.setMaxAge(0);
+                antigoCookie.setPath("/");
+                response.addCookie(antigoCookie);
+                Cookie cookie = new Cookie("jwt", tokenUtils.renovarToken(token));
                 cookie.setPath("/");
                 cookie.setHttpOnly(true);
-                cookie.setMaxAge(1800);
+                cookie.setMaxAge(3000);
                 response.addCookie(cookie);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

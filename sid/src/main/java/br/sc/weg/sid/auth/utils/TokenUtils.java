@@ -49,4 +49,14 @@ public class TokenUtils {
         throw new RuntimeException("Cookie não encontrado");
     }
 
+    public String renovarToken(String token){
+        return Jwts.builder()
+                .setIssuer("Seed Application")
+                .setSubject(getUsuarioNumeroCadastro(token))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + 1800000))
+                .signWith(SignatureAlgorithm.HS256, senhaForte)
+                .compact();
+    }
+
 }
