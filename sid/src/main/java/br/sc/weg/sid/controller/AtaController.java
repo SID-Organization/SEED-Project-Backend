@@ -114,8 +114,7 @@ public class AtaController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proposta não encontrada");
             }
         }
-        ataDGController.save(cadastroParecerDGAtaDTOList.get(0).getIdAta());
-        return ResponseEntity.status(HttpStatus.OK).body("Propostas atualizadas com sucesso");
+        return ResponseEntity.status(HttpStatus.OK).body(ataDGController.save(cadastroParecerDGAtaDTOList.get(0).getIdAta()).getBody());
     }
 
 

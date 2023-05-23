@@ -14,10 +14,6 @@ public class CadastroPropostaLogDTO {
 
     String consideracoesPropostaLog;
 
-    ParecerComissao parecerDGPropostaLog;
-
-    String consideracoesParecerDGPropostaLog;
-
     TipoAta tipoAtaPropostaLog;
 
 }
