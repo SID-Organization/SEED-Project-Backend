@@ -145,8 +145,8 @@ public class AtaDGController {
 
                     return ResponseEntity.ok().headers(headers).body(pdfBytes);
                 } else {
-                    return ResponseEntity.badRequest().body("ERROR 0008: A ata da DG de número" + ataDG.getIdAtaDG() + " não possui um PDF de tipo "
-                            + tipoAta.getDescricao() + "!");
+                    return ResponseEntity.badRequest().body("ERROR 0008: A ata da DG de número " + ataDG.getIdAtaDG() + " não possui um PDF de tipo "
+                            + tipoAta.getDescricao().toLowerCase() + "!");
                 }
             } else {
                 return ResponseEntity.badRequest().body("ERROR 0007: A ata da DG inserida não existe! ID ATA: " + idAtaDG);
