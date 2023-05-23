@@ -65,9 +65,8 @@ public class AtaDGController {
     @GetMapping("/gera-pdf-ata-dg/{idAtaDG}")
     ResponseEntity<Object> listarAtaPdf(@PathVariable("idAtaDG") Integer idAtaDG) throws Exception {
         AtaDG ataDGSalva = ataDGService.findById(idAtaDG).get();
-        System.out.println("ATAAAAAAAA: " + ataDGSalva.getAtaAtaDg().getIdAta());
         gerarPDFAtaController.generatePDF(ataDGSalva.getAtaAtaDg().getIdAta());
-        return ResponseEntity.ok().body("PDF gerado com sucesso!");
+        return ResponseEntity.ok().body("PDF's gerados com sucesso!");
     }
 
     /**
@@ -146,10 +145,11 @@ public class AtaDGController {
 
                     return ResponseEntity.ok().headers(headers).body(pdfBytes);
                 } else {
-                    return ResponseEntity.badRequest().body("ERROR 0008: A ata " + tipoAta.name().toLowerCase() + " não possui PDF!");
+                    return ResponseEntity.badRequest().body("ERROR 0008: A ata da DG de número" + ataDG.getIdAtaDG() + " não possui um PDF de tipo "
+                            + tipoAta.getDescricao() + "!");
                 }
             } else {
-                return ResponseEntity.badRequest().body("ERROR 0007: A ata inserida não existe! ID ATA: " + idAtaDG);
+                return ResponseEntity.badRequest().body("ERROR 0007: A ata da DG inserida não existe! ID ATA: " + idAtaDG);
             }
         } catch (Exception e) {
             e.printStackTrace();
