@@ -29,6 +29,8 @@ public class Pauta {
     @Column(name = "dataReuniaoPauta", nullable = false)
     private Date dataReuniaoPauta;
 
+    private boolean statusPauta = true;
+
     @JsonFormat(pattern = "HH:mm")
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     @Column(name = "horarioInicioPauta", nullable = false)

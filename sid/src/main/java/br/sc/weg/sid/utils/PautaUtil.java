@@ -15,6 +15,9 @@ public class PautaUtil {
     public static List<PautaResumida> converterPautaParaPautaResumida(List<Pauta> pautas) {
         List<PautaResumida> pautasResumidas = new ArrayList<>();
         pautas.forEach(pauta -> {
+            if (!pauta.isStatusPauta()) {
+                return;
+            }
             PautaResumida pautaResumida = new PautaResumida();
             BeanUtils.copyProperties(pauta, pautaResumida);
             pautaResumida.setIdPauta(pauta.getIdPauta());

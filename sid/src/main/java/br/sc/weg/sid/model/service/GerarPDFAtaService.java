@@ -56,8 +56,8 @@ public class GerarPDFAtaService {
 //                phrase.setLeading(10);
                 ColumnText.showTextAligned(writer.getDirectContent(), com.itextpdf.text.Element.ALIGN_RIGHT, phrase, 559, 40, 0);
 
-                Phrase phrase2 = new Phrase("Ata CDVP nº " + ata.getPautaAta().getHorarioInicioPauta() + "   "
-                        + ata.getPautaAta().getHorarioTerminoPauta(), font);
+                Phrase phrase2 = new Phrase("Ata CDVP nº " + ata.getHorarioInicioPauta() + "   "
+                        + ata.getHorarioTerminoPauta(), font);
 //                phrase2.setLeading(10);
                 ColumnText.showTextAligned(writer.getDirectContent(), com.itextpdf.text.Element.ALIGN_LEFT, phrase2, 40, 40, 0);
             }
@@ -104,10 +104,8 @@ public class GerarPDFAtaService {
         celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_JUSTIFIED);
         table.addCell(celulaTabelainicial);
 
-        Pauta pauta = pautaService.findById(ata.getPautaAta().getIdPauta()).get();
-
         SimpleDateFormat formatarData = new SimpleDateFormat("dd/MM/yyyy");
-        String dataReuniaoFormatada = formatarData.format(pauta.getDataReuniaoPauta());
+        String dataReuniaoFormatada = formatarData.format(ata.getDataReuniaoPauta());
 
         celulaTabelainicial = new PdfPCell(new Phrase(dataReuniaoFormatada, tableFontBold));
         celulaTabelainicial.setBorder(Rectangle.NO_BORDER);
@@ -119,7 +117,7 @@ public class GerarPDFAtaService {
         celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_JUSTIFIED);
         table.addCell(celulaTabelainicial);
 
-        celulaTabelainicial = new PdfPCell(new Phrase(pauta.getHorarioInicioPauta().toString(), tableFont));
+        celulaTabelainicial = new PdfPCell(new Phrase(ata.getHorarioInicioPauta().toString(), tableFont));
         celulaTabelainicial.setBorder(Rectangle.NO_BORDER);
         celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_RIGHT);
         table.addCell(celulaTabelainicial);
@@ -129,7 +127,7 @@ public class GerarPDFAtaService {
         celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_JUSTIFIED);
         table.addCell(celulaTabelainicial);
 
-        celulaTabelainicial = new PdfPCell(new Phrase(pauta.getHorarioTerminoPauta().toString(), tableFont));
+        celulaTabelainicial = new PdfPCell(new Phrase(ata.getHorarioTerminoPauta().toString(), tableFont));
         celulaTabelainicial.setBorder(Rectangle.NO_BORDER);
         celulaTabelainicial.setHorizontalAlignment(Paragraph.ALIGN_RIGHT);
         table.addCell(celulaTabelainicial);

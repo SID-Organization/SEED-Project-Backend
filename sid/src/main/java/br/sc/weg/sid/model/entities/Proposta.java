@@ -101,7 +101,7 @@ public class Proposta {
     private List<Usuario> responsaveisNegocio;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "pauta_proposta",
             joinColumns = @JoinColumn(name = "idProposta"),
             inverseJoinColumns = @JoinColumn(name = "idPauta"))

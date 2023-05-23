@@ -67,8 +67,12 @@ public class AtaController {
         CadastroAtaDTO cadastroAtaDTO = ataUtil.convertToDto(ataJson);
         Ata ata = ataUtil.convertJsonToModel(ataJson);
         ata.setDocumentoAprovacaoAta(documentoAprovacaoAta.getBytes());
-        ata.setPautaAta(pautaService.findById(cadastroAtaDTO.getPautaAta().getIdPauta()).get());
-        ata.getPautaAta().getPropostasPauta().forEach(proposta -> {
+        Pauta pautaAta = pautaService.findById(cadastroAtaDTO.getPautaAta().getIdPauta()).get();
+        ata.setDataReuniaoPauta(pautaAta.getDataReuniaoPauta());
+        ata.setHorarioInicioPauta(pautaAta.getHorarioInicioPauta());
+        ata.setHorarioTerminoPauta(pautaAta.getHorarioTerminoPauta());
+        ata.setAnalistaResponsavelPauta(pautaAta.getAnalistaResponsavelPauta());
+        pautaAta.getPropostasPauta().forEach(proposta -> {
             ata.getPropostasLog().forEach(ataPropostaLog -> {
                 if (proposta.getIdProposta().equals(ataPropostaLog.getPropostaPropostaLog().getIdProposta())) {
                     ataPropostaLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
@@ -92,6 +96,8 @@ public class AtaController {
             propostaLog.setPdfPropostaLog(proposta.getPdfProposta());
         });
         Ata ataSalva = ataService.save(ata);
+        pautaAta.setStatusPauta(false);
+        pautaService.save(pautaAta);
         gerarPDFAtaController.generatePDF(ataSalva.getIdAta());
         return ResponseEntity.status(HttpStatus.CREATED).body(ataSalva);
     }
