@@ -77,6 +77,7 @@ public class AtaController {
                 if (proposta.getIdProposta().equals(ataPropostaLog.getPropostaPropostaLog().getIdProposta())) {
                     ataPropostaLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
                     ataPropostaLog.setDemandaTituloPropostaLog(proposta.getDemandaProposta().getTituloDemanda());
+                    ataPropostaLog.setIdDemanda(proposta.getDemandaProposta().getIdDemanda());
                     Instant periodoExecucaoDemandaInicioInstant = proposta.getPeriodoExecucaoDemandaInicio().toInstant();
                     LocalDate dataInicial = periodoExecucaoDemandaInicioInstant.atZone(ZoneId.systemDefault()).toLocalDate();
                     LocalDateTime dataHoraInicial = LocalDateTime.of(dataInicial, LocalTime.MIN);

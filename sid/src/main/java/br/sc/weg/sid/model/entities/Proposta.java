@@ -90,6 +90,7 @@ public class Proposta {
     private List<TabelaCusto> tabelaCusto;
 
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
+
     @ManyToOne(optional = false)
     private Demanda demandaProposta;
 
