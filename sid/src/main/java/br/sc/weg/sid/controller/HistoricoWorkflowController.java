@@ -1,7 +1,10 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
-import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.HistoricoWorkflow;
+import br.sc.weg.sid.model.entities.HistoricoWorkflowResumido;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.enums.StatusWorkflow;
 import br.sc.weg.sid.model.enums.TarefaWorkflow;
 import br.sc.weg.sid.model.service.DemandaService;
@@ -76,7 +79,6 @@ public class HistoricoWorkflowController {
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
             historicoWorkflow.setAcaoFeitaHistorico("Enviar");
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
-            ;
             historicoWorkflow.setVersaoHistorico(0.1);
         } else {
             Demanda demanda = demandaService.findById(historicoWorkflow.getDemandaHistorico().getIdDemanda()).get();
@@ -92,15 +94,16 @@ public class HistoricoWorkflowController {
             }
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
         }
-        LocalDate localDate = LocalDate.now();
-        Date dataRecebimento = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        LocalDateTime localDate = LocalDateTime.now();
+        Date dataRecebimento = Date.from(localDate.atZone(ZoneId.systemDefault()).toInstant());
+
         historicoWorkflow.setRecebimentoHistorico(dataRecebimento);
         //Workflow's com status Preencher demanda não tem prazo de conclusão
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
             historicoWorkflow.setConclusaoHistorico(dataRecebimento);
         } else {
             localDate = localDate.plusDays(31);
-            Date dataPrazo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Date dataPrazo = Date.from(localDate.atZone(ZoneId.systemDefault()).toInstant());
             historicoWorkflow.setPrazoHistorico(dataPrazo);
         }
         HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
@@ -235,7 +238,6 @@ public class HistoricoWorkflowController {
             Date dataConclusao = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
             historicoWorkflow.setConclusaoHistorico(dataConclusao);
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
-            historicoWorkflow.setAcaoFeitaHistorico("Aprovar");
             return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflowService.save(historicoWorkflow));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao atualizar histórico de workflow: " + e.getMessage());
