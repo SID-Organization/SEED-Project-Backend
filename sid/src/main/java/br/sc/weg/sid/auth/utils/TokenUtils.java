@@ -1,6 +1,7 @@
 package br.sc.weg.sid.auth.utils;
 
 import br.sc.weg.sid.auth.users.UserJpa;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.Authentication;
 import io.jsonwebtoken.Jwts;
@@ -20,7 +21,7 @@ public class TokenUtils {
                 .setIssuer("Seed Application")
                 .setSubject(userJpa.getUsuario().getNumeroCadastroUsuario().toString())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + 1800000))
+                .setExpiration(new Date(new Date().getTime() + 3000000))
                 .signWith(SignatureAlgorithm.HS256, senhaForte)
                 .compact();
     }
@@ -54,9 +55,14 @@ public class TokenUtils {
                 .setIssuer("Seed Application")
                 .setSubject(getUsuarioNumeroCadastro(token))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + 1800000))
+                .setExpiration(new Date(new Date().getTime() + 3000000))
                 .signWith(SignatureAlgorithm.HS256, senhaForte)
                 .compact();
     }
+
+//    public String consultaTempoToken(String token){
+//        Jwts.parser().setSigningKey(senhaForte).parseClaimsJws(token);
+//        return Jwts.parser().setSigningKey(senhaForte).parseClaimsJws(token).getBody().getExpiration().toString();
+//    }
 
 }
