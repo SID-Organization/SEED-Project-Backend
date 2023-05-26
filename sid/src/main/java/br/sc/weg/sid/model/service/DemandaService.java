@@ -66,11 +66,11 @@ public class DemandaService {
     }
 
     public List<Demanda> findByPrazoElaboracaoDemandaAsc() {
-        return demandaRepository.findByPrazoElaboracaoDemandaAsc();
+        return demandaRepository.findAllByOrderByPrazoElaboracaoDemandaAsc();
     }
 
     public List<Demanda> findByPrazoElaboracaoDemandaDesc() {
-        return demandaRepository.findByPrazoElaboracaoDemandaDesc();
+        return demandaRepository.findAllByOrderByPrazoElaboracaoDemandaDesc();
     }
 
     public List<Demanda> findByTituloDemanda(String tituloDemanda) {
@@ -78,7 +78,9 @@ public class DemandaService {
     }
 
     public List<Demanda> findRascunhosBySolicitanteDemanda(Integer solicitanteDemanda) {
-        return demandaRepository.findRascunhosBySolicitanteDemanda(solicitanteDemanda);
+        return demandaRepository
+                .findAllByStatusDemandaIsAndSolicitanteDemandaNumeroCadastroUsuarioIs(
+                        StatusDemanda.RASCUNHO, solicitanteDemanda);
     }
 
     public List<Demanda> findByStatusDemandaAndSolicitanteDemanda(StatusDemanda statusDemanda, Usuario solicitanteDemanda) {

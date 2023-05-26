@@ -14,9 +14,6 @@ public interface PropostaRepository extends JpaRepository<Proposta, Integer> {
 
     List<Proposta> findByDemandaProposta(Demanda idDemanda);
 
-    @Query(value = "UPDATE proposta SET pdf_proposta = NULL WHERE id_proposta = ?", nativeQuery = true)
-    void updatePdfProposta(Integer idProposta);
-
     List<Proposta> findAllByPaybackProposta(Double paybackProposta);
 
 }
