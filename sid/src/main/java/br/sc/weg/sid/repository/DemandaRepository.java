@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Repository
@@ -22,19 +23,13 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
     List<Demanda> findByGestorResponsavelDemanda(Usuario gestorResponsavelDemanda);
     List<Demanda> findByStatusDemandaAndSolicitanteDemanda(StatusDemanda statusDemanda, Usuario solicitanteDemanda);
     List<Demanda> findRascunhosBySolicitanteDemanda(Usuario solicitanteDemanda);
-    @Query(value = "select * from demanda order by prazo_elaboracao_demanda ASC;", nativeQuery = true)
-    List<Demanda> findByPrazoElaboracaoDemandaAsc();
 
-    @Query(value = "select * from demanda order by prazo_elaboracao_demanda DESC;", nativeQuery = true)
-    List<Demanda> findByPrazoElaboracaoDemandaDesc();
+    List<Demanda> findAllByOrderByPrazoElaboracaoDemandaAsc();
+    List<Demanda> findAllByOrderByPrazoElaboracaoDemandaDesc();
 
-    @Query(value = "select * from demanda order by score_demanda ASC;", nativeQuery = true)
-    List<Demanda> findByScoreDemandaAsc();
+    List<Demanda> findAllByOrderByScoreDemandaAsc();
+    List<Demanda> findAllByOrderByScoreDemandaDesc();
 
-    @Query(value = "select * from demanda order by score_demanda DESC;", nativeQuery = true)
-    List<Demanda> findByScoreDemandaDesc();
-
-    @Query(value = "select * from demanda where status_demanda = 'RASCUNHO' and numero_cadastro_usuario = ?1", nativeQuery = true)
-    List<Demanda> findRascunhosBySolicitanteDemanda(Integer solicitanteDemanda);
-
+    List<Demanda> findAllByStatusDemandaIsAndSolicitanteDemandaNumeroCadastroUsuarioIs(StatusDemanda statusDemanda, Integer solicitanteDemanda_numeroCadastroUsuario);
 }
+
