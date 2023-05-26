@@ -57,7 +57,7 @@ public class AuthFilter extends OncePerRequestFilter {
                 Cookie cookie = new Cookie("jwt", tokenUtils.renovarToken(token));
                 cookie.setPath("/");
                 cookie.setHttpOnly(true);
-                cookie.setMaxAge( );
+                cookie.setMaxAge(3000000);
                 response.addCookie(cookie);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
