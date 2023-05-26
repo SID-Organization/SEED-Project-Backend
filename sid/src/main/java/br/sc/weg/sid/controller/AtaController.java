@@ -194,7 +194,8 @@ public class AtaController {
 
                     return ResponseEntity.ok().headers(headers).body(pdfBytes);
                 } else {
-                    return ResponseEntity.badRequest().body("ERROR 0008: A ata " + tipoAta.name().toLowerCase() + " não possui PDF!");
+                    return ResponseEntity.badRequest().body("ERROR 0008: A ata de número " + ata.getIdAta() + " não possui um PDF do tipo " +
+                            tipoAta.getDescricao().toLowerCase() + "!");
                 }
             } else {
                 return ResponseEntity.badRequest().body("ERROR 0007: A ata inserida não existe! ID ATA: " + idAta);

@@ -2,7 +2,7 @@ package br.sc.weg.sid.model.entities;
 
 import br.sc.weg.sid.model.enums.Moeda;
 import br.sc.weg.sid.model.enums.TipoBeneficio;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -43,6 +43,6 @@ public class Beneficio {
 
     @ManyToOne()
     @JoinColumn(name = "idDemanda")
-    @JsonIgnoreProperties("beneficiosDemanda")
+    @JsonIgnore
     private Demanda demandaBeneficio;
 }
