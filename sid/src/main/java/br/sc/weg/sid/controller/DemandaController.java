@@ -837,4 +837,14 @@ public class DemandaController {
         }
     }
 
+    @PutMapping("/devolucao-demanda/{idDemanda}")
+    public ResponseEntity<Object> devolverDemanda(@RequestBody DevolverDemandaDTO devolverDemandaDTO, @RequestParam("idDemanda") Integer idDemanda) {
+        Demanda demanda = demandaService.findById(idDemanda).get();
+        BeanUtils.copyProperties(devolverDemandaDTO, demanda, "idDemanda", "statusDemanda", "motivoRecusaDemanda");
+        demanda.setStatusDemanda(devolverDemandaDTO.getStatusDemanda());
+        demanda.setMotivoRecusaDemanda(devolverDemandaDTO.getMotivoRecusaDemanda());
+        demandaService.save(demanda);
+        return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");
+    }
+
 }
