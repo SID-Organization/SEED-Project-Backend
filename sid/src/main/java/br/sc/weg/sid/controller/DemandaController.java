@@ -52,8 +52,6 @@ public class DemandaController {
 
     NotificacaoService notificacaoService;
 
-    HistoricoWorkflowService historicoWorkflowService;
-
     /**
      * Retorna uma lista de demandas resumidas.
      * <p>
@@ -842,15 +840,16 @@ public class DemandaController {
     }
 
     @PutMapping("/devolucao-demanda/{idDemanda}")
-    public ResponseEntity<Object> devolverDemanda(@RequestBody DevolverDemandaDTO devolverDemandaDTO, @RequestParam("idDemanda") Integer idDemanda) throws Exception {
+    public ResponseEntity<Object> devolverDemanda(@RequestBody DevolverDemandaDTO devolverDemandaDTO, @PathVariable("idDemanda") Integer idDemanda) throws Exception {
         Demanda demanda = demandaService.findById(idDemanda).get();
         BeanUtils.copyProperties(devolverDemandaDTO, demanda, "statusDemanda", "motivoRecusaDemanda", "idResponsavel");
         demanda.setStatusDemanda(devolverDemandaDTO.getStatusDemanda());
         demanda.setMotivoRecusaDemanda(devolverDemandaDTO.getMotivoRecusaDemanda());
         demandaService.save(demanda);
 
-        if (demanda.getStatusDemanda().equals(StatusDemanda.CANCELADA)) {
+        if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA) {
             HistoricoWorkflow historicoWorkflow = demanda.getHistoricoWorkflowUltimaVersao();
+            System.out.println("Historico Workflow: " + historicoWorkflow);
             LocalDateTime localDateTime = LocalDateTime.now();
             Date dataAtual = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             historicoWorkflow.setConclusaoHistorico(dataAtual);
