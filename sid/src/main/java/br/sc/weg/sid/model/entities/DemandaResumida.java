@@ -33,4 +33,6 @@ public class DemandaResumida {
     String tamanhoDemanda;
 
     Integer codigoPPMDemanda;
+
+    String motivoRecusaDemanda;
 }

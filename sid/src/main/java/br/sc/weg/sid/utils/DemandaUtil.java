@@ -60,6 +60,7 @@ public class DemandaUtil {
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
             demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
+            demandaResumida.setMotivoRecusaDemanda(demanda.getMotivoRecusaDemanda());
 
             if (demanda.getBuSolicitanteDemanda() != null && demanda.getBuSolicitanteDemanda().getNomeBusinessUnity() != null) {
                 demandaResumida.setDepartamentoDemanda(demanda.getBuSolicitanteDemanda().getNomeBusinessUnity());
