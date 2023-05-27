@@ -6,6 +6,7 @@ import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import lombok.AllArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 public class DemandaController {
 
     HistoricoWorkflowController historicoWorkflowController;
+
+    HistoricoWorkflowService historicoWorkflowService;
 
     DemandaService demandaService;
 
@@ -513,7 +516,7 @@ public class DemandaController {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String notificacaoHoraData = horarioDataNow.format(formatar) + " - " + horarioDataNow.format(dateFormatter);
 
-        if (demandaAtualizada.getStatusDemanda() == StatusDemanda.ABERTA){
+        if (demandaAtualizada.getStatusDemanda() == StatusDemanda.ABERTA) {
             Notificacao notificacaoDemandaCriada = new Notificacao();
             notificacaoDemandaCriada.setTextoNotificacao("Uma demanda foi criada! " + demandaAtualizada.getTituloDemanda() + " criada por: " +
                     demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
@@ -528,7 +531,7 @@ public class DemandaController {
             System.out.println("/notificacao-demanda-cadastro/analista/" +
                     demandaAtualizada.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario());
             notificacaoService.save(notificacaoDemandaCriada);
-        }else {
+        } else {
             Notificacao notificacaoStatus = new Notificacao();
             notificacaoStatus.setTextoNotificacao("A demanda " + demandaAtualizada.getIdDemanda() + " - "
                     + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome());
@@ -562,8 +565,8 @@ public class DemandaController {
     }
 
     private void atualizaTipoNotificacao(Demanda demandaAtualizada, Notificacao notificacaoStatus) {
-        if(demandaAtualizada.getStatusDemanda() == StatusDemanda.APROVADO_PELO_GERENTE_DA_AREA ||
-                demandaAtualizada.getStatusDemanda() == StatusDemanda.APROVADA_EM_COMISSAO){
+        if (demandaAtualizada.getStatusDemanda() == StatusDemanda.APROVADO_PELO_GERENTE_DA_AREA ||
+                demandaAtualizada.getStatusDemanda() == StatusDemanda.APROVADA_EM_COMISSAO) {
             notificacaoStatus.setTipoNotificacao("approved");
         } else if (demandaAtualizada.getStatusDemanda() == StatusDemanda.CANCELADA) {
             notificacaoStatus.setTipoNotificacao("rejected");
@@ -836,6 +839,42 @@ public class DemandaController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao deletar demandas com status rascunho: " + e.getMessage());
         }
+    }
+
+    @PutMapping("/devolucao-demanda/{idDemanda}")
+    public ResponseEntity<Object> devolverDemanda(@RequestBody DevolverDemandaDTO devolverDemandaDTO, @RequestParam("idDemanda") Integer idDemanda) throws Exception {
+        Demanda demanda = demandaService.findById(idDemanda).get();
+        BeanUtils.copyProperties(devolverDemandaDTO, demanda, "statusDemanda", "motivoRecusaDemanda", "idResponsavel");
+        demanda.setStatusDemanda(devolverDemandaDTO.getStatusDemanda());
+        demanda.setMotivoRecusaDemanda(devolverDemandaDTO.getMotivoRecusaDemanda());
+        demandaService.save(demanda);
+
+        if (demanda.getStatusDemanda().equals(StatusDemanda.CANCELADA)) {
+            HistoricoWorkflow historicoWorkflow = demanda.getHistoricoWorkflowUltimaVersao();
+            LocalDateTime localDateTime = LocalDateTime.now();
+            Date dataAtual = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            historicoWorkflow.setConclusaoHistorico(dataAtual);
+            historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
+            historicoWorkflow.setAcaoFeitaHistorico("Recusar");
+            historicoWorkflow.setIdResponsavel(devolverDemandaDTO.getIdResponsavel());
+            historicoWorkflow.setVersaoHistorico(historicoWorkflow.getVersaoHistorico() + 0.1);
+            historicoWorkflowService.save(historicoWorkflow);
+        } else if (demanda.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
+            HistoricoWorkflow historicoWorkflow = new HistoricoWorkflow();
+            historicoWorkflow.setDemandaHistorico(demanda);
+            historicoWorkflow.setIdResponsavel(devolverDemandaDTO.getIdResponsavel());
+            LocalDateTime localDateTime = LocalDateTime.now();
+            Date dataAtual = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            historicoWorkflow.setRecebimentoHistorico(dataAtual);
+            historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
+            historicoWorkflow.setAcaoFeitaHistorico("Devolver");
+            historicoWorkflow.setVersaoHistorico(demanda.getHistoricoWorkflowUltimaVersao().getVersaoHistorico() + 0.1);
+            historicoWorkflowService.save(historicoWorkflow);
+
+
+            gerarPDFDemandaController.generatePDF(idDemanda);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");
     }
 
 }
