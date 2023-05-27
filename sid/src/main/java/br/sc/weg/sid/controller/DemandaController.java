@@ -2,10 +2,7 @@ package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
-import br.sc.weg.sid.model.enums.Cargo;
-import br.sc.weg.sid.model.enums.StatusDemanda;
-import br.sc.weg.sid.model.enums.TamanhoDemanda;
-import br.sc.weg.sid.model.enums.TarefaWorkflow;
+import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import lombok.AllArgsConstructor;
@@ -51,6 +48,8 @@ public class DemandaController {
     SimpMessagingTemplate simpMessagingTemplate;
 
     NotificacaoService notificacaoService;
+
+    HistoricoWorkflowService historicoWorkflowService;
 
     /**
      * Retorna uma lista de demandas resumidas.

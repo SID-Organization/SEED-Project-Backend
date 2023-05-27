@@ -3,7 +3,6 @@ package br.sc.weg.sid.model.service;
 import br.sc.weg.sid.model.entities.Chat;
 import br.sc.weg.sid.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +34,6 @@ public class ChatService {
         chatRepository.deleteById(integer);
     }
 
-    @Query(value = "select * from chat c right join usuario_chat u on u.id_usuario = ?1", nativeQuery = true)
     public List<Chat> findChatByNumeroCadastroUsuario(Integer numeroCadastroUsuario) {
         return chatRepository.findChatByNumeroCadastroUsuario(numeroCadastroUsuario);
     }

@@ -4,7 +4,6 @@ import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.StatusDemanda;
 import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotNull;

@@ -5,7 +5,6 @@ import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.repository.ForumRepository;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
