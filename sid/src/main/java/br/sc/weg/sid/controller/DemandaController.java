@@ -853,15 +853,18 @@ public class DemandaController {
             historicoWorkflow.setVersaoHistorico(historicoWorkflow.getVersaoHistorico() + 0.1);
             historicoWorkflowService.save(historicoWorkflow);
         } else if (demanda.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
+            HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
+            historicoWorkflowAnterior.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
+            historicoWorkflowAnterior.setAcaoFeitaHistorico("Devolver");
+            historicoWorkflowService.save(historicoWorkflowAnterior);
             HistoricoWorkflow historicoWorkflow = new HistoricoWorkflow();
             historicoWorkflow.setDemandaHistorico(demanda);
-            historicoWorkflow.setIdResponsavel(devolverDemandaDTO.getIdResponsavel());
+            historicoWorkflow.setIdResponsavel(demanda.getSolicitanteDemanda());
             LocalDateTime localDateTime = LocalDateTime.now();
             Date dataAtual = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             historicoWorkflow.setRecebimentoHistorico(dataAtual);
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
-            historicoWorkflow.setAcaoFeitaHistorico("Devolver");
-            historicoWorkflow.setVersaoHistorico(demanda.getHistoricoWorkflowUltimaVersao().getVersaoHistorico() + 0.1);
+            historicoWorkflow.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
             historicoWorkflowService.save(historicoWorkflow);
 
 
