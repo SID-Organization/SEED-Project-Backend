@@ -78,7 +78,7 @@ public class Demanda {
     @Column(length = 6000)
     private String situacaoAtualDemanda;
 
-    @Column()
+    @Column(length = 600)
     private String motivoRecusaDemanda;
 
     @Column(name = "pdfDemanda")
