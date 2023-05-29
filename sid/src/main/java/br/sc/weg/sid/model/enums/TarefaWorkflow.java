@@ -4,7 +4,7 @@ public enum TarefaWorkflow {
     PREENCHER_DEMANDA("Preencher Demanda"),
     CLASSIFICACAO_APROVACAO("Classificação e Aprovação"),
 
-    EDITANDO_DEMANDA("Editando Demanda"),
+    EDITAR_DEMANDA("Editando Demanda"),
     APROVACAO_GERENTE_AREA("Aprovação Gerente da Área"),
     ELABORACAO_PROPOSTA("Elaboração da Proposta"),
     APROVACAO_COMISSAO("Aprovação Comissão"),
