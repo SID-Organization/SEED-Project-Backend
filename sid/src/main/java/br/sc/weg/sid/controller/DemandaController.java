@@ -489,15 +489,14 @@ public class DemandaController {
      * Se o status da demanda for CANCELADA, o analista responsável pela demanda, o gerente da area e o gestor de t.i serão removidos da demanda.
      *
      * @param idDemanda   o ID da demanda a ser atualizada
-     * @param requestBody um objeto Map que contém o novo status da demanda
+     * @param statusDemanda um objeto Map que contém o novo status da demanda
      * @return um ResponseEntity contendo a demanda atualizada ou uma mensagem de erro se a demanda não foi encontrada
      */
     @PutMapping("/status/{id}")
     public ResponseEntity<Object> atualizarStatusDemanda(
             @PathVariable("id") Integer idDemanda,
-            @RequestBody Map<String, String> requestBody) {
+            @RequestBody StatusDemanda statusDemanda) {
 
-        StatusDemanda statusDemanda = StatusDemanda.valueOf(requestBody.get("statusDemanda"));
         boolean edicao;
 
         if (!demandaService.existsById(idDemanda)) {
@@ -565,7 +564,6 @@ public class DemandaController {
                 }catch (Exception e) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
                 }
-                System.out.println("Cadastrou");
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
             }
