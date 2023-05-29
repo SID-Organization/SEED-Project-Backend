@@ -6,23 +6,16 @@ import br.sc.weg.sid.model.entities.Mensagem;
 import br.sc.weg.sid.model.service.ChatService;
 import br.sc.weg.sid.model.service.MensagemService;
 import com.google.gson.Gson;
-import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -46,7 +39,6 @@ public class MensagemController {
      */
     @MessageMapping("/sid/api/mensagem")
     public ResponseEntity<Object> receiveMessage(@RequestBody MensagemDTO mensagemDTO) {
-        System.out.println(mensagemDTO);
         Mensagem mensagem = new Mensagem();
         BeanUtils.copyProperties(mensagemDTO, mensagem);
         String values = mensagemDTO.getArquivoMensagem().toString();
@@ -62,7 +54,6 @@ public class MensagemController {
         Chat chat = chatService.findById(mensagemDTO.getIdChat().getIdChat()).get();
         simpMessagingTemplate.convertAndSendToUser( /*id da demanda*/ chat.getIdDemanda().getIdDemanda().toString(), /*id do chat*/ mensagem.getIdChat().getIdChat().toString(), mensagem);
         try {
-            System.out.println(mensagem);
             mensagemService.save(mensagem);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Mensagem não salva! Message: " + e.getMessage());

@@ -72,7 +72,6 @@ public class PautaController {
                 BeanUtils.copyProperties(notificacaoReuniaoPauta, notificacaoReuniaoPautaForEach);
                 notificacaoReuniaoPautaForEach.setUsuario(responsavel);
                 simpMessagingTemplate.convertAndSend("/reuniao-pauta/" + responsavel.getNumeroCadastroUsuario(), notificacaoReuniaoPautaForEach);
-                System.out.println("/reuniao-pauta/" + responsavel.getNumeroCadastroUsuario());
                 notificacaoService.save(notificacaoReuniaoPautaForEach);
             });
 

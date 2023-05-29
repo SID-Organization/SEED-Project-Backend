@@ -4,6 +4,7 @@ import br.sc.weg.sid.DTO.CadastroPropostaDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.StatusDemanda;
+import br.sc.weg.sid.model.enums.TipoBeneficio;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.PropostaUtil;
 import org.springframework.beans.BeanUtils;
@@ -182,6 +183,14 @@ public class PropostaController {
                 } catch (Exception e) {
                     return ResponseEntity.badRequest().body("ERROR 0008: Erro ao salvar tabela de custo!" + "\nMessage: " + e.getMessage());
                 }
+                double somaValorBeneficios = 0;
+
+                for (Beneficio beneficio : proposta.getDemandaProposta().getBeneficiosDemanda()) {
+                    if (beneficio.getTipoBeneficio() == TipoBeneficio.REAL || beneficio.getTipoBeneficio() == TipoBeneficio.POTENCIAL) {
+                        somaValorBeneficios += beneficio.getValorBeneficio();
+                    }
+                }
+                proposta.setPaybackProposta((proposta.getCustosTotaisDoProjeto() / somaValorBeneficios));
                 Proposta propostaSalva = propostaService.save(proposta);
                 try {
                     PdfProposta pdfProposta = propostaUtil.convertJsonToModel(pdfPropostaForm);

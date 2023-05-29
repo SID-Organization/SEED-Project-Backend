@@ -6,7 +6,6 @@ import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import lombok.AllArgsConstructor;
-import net.bytebuddy.asm.Advice;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -260,7 +259,6 @@ public class DemandaController {
     @GetMapping("/statusDemanda/{statusDemanda}")
     public ResponseEntity<Object> findByStatus(@PathVariable("statusDemanda") StatusDemanda statusDemanda) {
         try {
-            System.out.println("STATSU: " + statusDemanda);
             List<Demanda> demandas = demandaService.findByStatusDemanda(statusDemanda);
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não existem demandas com status: " + statusDemanda);
@@ -526,8 +524,6 @@ public class DemandaController {
             notificacaoDemandaCriada.setVisualizada(false);
             simpMessagingTemplate.convertAndSend("/notificacao-demanda-cadastro/analista/" +
                     demandaAtualizada.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario(), notificacaoDemandaCriada);
-            System.out.println("/notificacao-demanda-cadastro/analista/" +
-                    demandaAtualizada.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario());
             notificacaoService.save(notificacaoDemandaCriada);
         } else {
             Notificacao notificacaoStatus = new Notificacao();
@@ -627,7 +623,6 @@ public class DemandaController {
                     arquivoDemanda.setIdDemanda(demandaAtualizada);
                     arquivoDemanda.setIdUsuario(usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
                     arquivoDemanda.setDataRegistroArquivo(dataRegistroArquivo);
-                    System.out.println("salvou");
                     arquivoDemandaSalvo = arquivoDemandaService.save(arquivoDemanda);
                     demandaAtualizada.getArquivosDemandas().add(arquivoDemandaSalvo);
                 }
@@ -849,7 +844,6 @@ public class DemandaController {
 
         if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA) {
             HistoricoWorkflow historicoWorkflow = demanda.getHistoricoWorkflowUltimaVersao();
-            System.out.println("Historico Workflow: " + historicoWorkflow);
             LocalDateTime localDateTime = LocalDateTime.now();
             Date dataAtual = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             historicoWorkflow.setConclusaoHistorico(dataAtual);
