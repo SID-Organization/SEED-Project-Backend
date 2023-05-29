@@ -3,6 +3,7 @@ package br.sc.weg.sid.model.enums;
 public enum StatusDemanda {
     CLASSIFICADO_PELO_ANALISTA("Classificado pelo analista"),
     ABERTA("Aberta"),
+    EM_EDICAO("Em edição"),
     APROVADO_PELO_GERENTE_DA_AREA("Aprovado pelo gerente da área"),
     PROPOSTA_EM_ELABORACAO("Proposta em elaboração"),
     PROPOSTA_PRONTA("Proposta pronta"),

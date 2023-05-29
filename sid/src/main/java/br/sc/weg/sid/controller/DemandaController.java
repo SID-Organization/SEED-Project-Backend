@@ -852,7 +852,7 @@ public class DemandaController {
             historicoWorkflow.setIdResponsavel(devolverDemandaDTO.getIdResponsavel());
             historicoWorkflow.setVersaoHistorico(historicoWorkflow.getVersaoHistorico() + 0.1);
             historicoWorkflowService.save(historicoWorkflow);
-        } else if (demanda.getStatusDemanda().equals(StatusDemanda.ABERTA)) {
+        } else if (demanda.getStatusDemanda() == StatusDemanda.EM_EDICAO) {
             HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
             historicoWorkflowAnterior.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
             historicoWorkflowAnterior.setAcaoFeitaHistorico("Devolver");
@@ -864,10 +864,9 @@ public class DemandaController {
             Date dataAtual = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             historicoWorkflow.setRecebimentoHistorico(dataAtual);
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
-            historicoWorkflow.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
+            historicoWorkflow.setTarefaHistoricoWorkflow(TarefaWorkflow.EDITANDO_DEMANDA);
+            historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
             historicoWorkflowService.save(historicoWorkflow);
-
-
             gerarPDFDemandaController.generatePDF(idDemanda);
         }
         return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");
