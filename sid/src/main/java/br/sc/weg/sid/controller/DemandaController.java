@@ -498,12 +498,18 @@ public class DemandaController {
             @RequestBody Map<String, String> requestBody) {
 
         StatusDemanda statusDemanda = StatusDemanda.valueOf(requestBody.get("statusDemanda"));
+        boolean edicao;
 
         if (!demandaService.existsById(idDemanda)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id " + idDemanda);
         }
         Demanda demanda = demandaService.findById(idDemanda).get();
+        if(demanda.getStatusDemanda() == StatusDemanda.RASCUNHO){
+            edicao = false;
+        }else{
+            edicao = true;
+        }
         demanda.setStatusDemanda(statusDemanda);
         Demanda demandaAtualizada = demandaService.save(demanda);
         //Esse LocalDateTime serve para adicionarmos nas notificações criadas nessa atualização de status
@@ -542,15 +548,24 @@ public class DemandaController {
 
         //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
         if (statusDemanda.equals(StatusDemanda.ABERTA)) {
-            CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
-            historicoWorkflowDTO.setDemandaHistorico(demandaAtualizada);
-            historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());
-            historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
+                CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
             try {
+                historicoWorkflowDTO.setDemandaHistorico(demandaAtualizada);
+            if (edicao == false){
+                historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
+                historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());
                 historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+            }else {
+                historicoWorkflowDTO.setAcaoFeitaHistoricoAnterior("Enviar");
+            }
                 historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);
                 historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda());
-                historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+                try{
+                    historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+                }catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+                }
+                System.out.println("Cadastrou");
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
             }
@@ -840,7 +855,6 @@ public class DemandaController {
         BeanUtils.copyProperties(devolverDemandaDTO, demanda, "statusDemanda", "motivoRecusaDemanda", "idResponsavel");
         demanda.setStatusDemanda(devolverDemandaDTO.getStatusDemanda());
         demanda.setMotivoRecusaDemanda(devolverDemandaDTO.getMotivoRecusaDemanda());
-        demandaService.save(demanda);
 
         if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA) {
             HistoricoWorkflow historicoWorkflow = demanda.getHistoricoWorkflowUltimaVersao();
@@ -851,7 +865,8 @@ public class DemandaController {
             historicoWorkflow.setAcaoFeitaHistorico("Recusar");
             historicoWorkflow.setIdResponsavel(devolverDemandaDTO.getIdResponsavel());
             historicoWorkflow.setVersaoHistorico(historicoWorkflow.getVersaoHistorico() + 0.1);
-            historicoWorkflowService.save(historicoWorkflow);
+            HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
+            demanda.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
         } else if (demanda.getStatusDemanda() == StatusDemanda.EM_EDICAO) {
             HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
             historicoWorkflowAnterior.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
@@ -866,9 +881,11 @@ public class DemandaController {
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
             historicoWorkflow.setTarefaHistoricoWorkflow(TarefaWorkflow.EDITANDO_DEMANDA);
             historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
-            historicoWorkflowService.save(historicoWorkflow);
+            HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
+            demanda.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
             gerarPDFDemandaController.generatePDF(idDemanda);
         }
+        demandaService.save(demanda);
         return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");
     }
 
