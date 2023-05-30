@@ -60,7 +60,9 @@ public class DemandaUtil {
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
             demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
-            demandaResumida.setMotivoRecusaDemanda(demanda.getMotivosRecusaDemanda().get(demanda.getMotivosRecusaDemanda().size() - 1).getDescricaoMotivoRecusa());
+            if (demanda.getMotivosRecusaDemanda().size() > 0) {
+                demandaResumida.setMotivoRecusaDemanda(demanda.getMotivosRecusaDemanda().get(demanda.getMotivosRecusaDemanda().size() - 1).getDescricaoMotivoRecusa());
+            }
 
             if (demanda.getBuSolicitanteDemanda() != null && demanda.getBuSolicitanteDemanda().getNomeBusinessUnity() != null) {
                 demandaResumida.setDepartamentoDemanda(demanda.getBuSolicitanteDemanda().getNomeBusinessUnity());
