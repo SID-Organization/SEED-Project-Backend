@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.entities;
 
 import br.sc.weg.sid.model.enums.StatusDemanda;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class MotivoRecusa {
 
     @ManyToOne()
     @JoinColumn(name = "idDemanda")
+    @JsonIgnore
     Demanda demandaMotivoRecusa;
 
     StatusDemanda statusDemandaMotivoRecusa;

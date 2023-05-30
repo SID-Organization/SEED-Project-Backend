@@ -33,6 +33,8 @@ public class DemandaController {
 
     DemandaService demandaService;
 
+    MotivoRecusaService motivoRecusaService;
+
     PdfDemandaService pdfDemandaService;
 
     UsuarioService usuarioService;
@@ -651,7 +653,14 @@ public class DemandaController {
             pdfDemandaService.save(pdfDemanda);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda, a mesma não será atualizada!" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda!" + e.getMessage());
+        }
+
+        try{
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível gerar o pdf da demanda!" + e.getMessage());
         }
         return ResponseEntity.status(HttpStatus.OK).body(demandaAtualizada);
     }
@@ -851,12 +860,12 @@ public class DemandaController {
     @PutMapping("/devolucao-demanda/{idDemanda}")
     public ResponseEntity<Object> devolverDemanda(@RequestBody DevolverDemandaDTO devolverDemandaDTO, @PathVariable("idDemanda") Integer idDemanda) throws Exception {
         Demanda demanda = demandaService.findById(idDemanda).get();
-        BeanUtils.copyProperties(devolverDemandaDTO, demanda, "statusDemanda", "motivoRecusaDemanda", "idResponsavel");
+        BeanUtils.copyProperties(devolverDemandaDTO, demanda);
         demanda.setStatusDemanda(devolverDemandaDTO.getStatusDemanda());
         MotivoRecusa motivoRecusa = new MotivoRecusa();
+        motivoRecusa.setDemandaMotivoRecusa(demanda);
         motivoRecusa.setDescricaoMotivoRecusa(devolverDemandaDTO.getMotivoRecusaDemanda());
         motivoRecusa.setStatusDemandaMotivoRecusa(devolverDemandaDTO.getStatusDemanda());
-        List<MotivoRecusa> motivoRecusaList = new ArrayList<>();
 
         if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA) {
             HistoricoWorkflow historicoWorkflow = demanda.getHistoricoWorkflowUltimaVersao();
@@ -894,8 +903,7 @@ public class DemandaController {
                 e.printStackTrace();
                 throw new Exception("Erro ao gerar PDF da demanda: " + e.getMessage());
             }finally {
-                motivoRecusaList.add(motivoRecusa);
-                demanda.setMotivosRecusaDemanda(motivoRecusaList);
+                motivoRecusaService.save(motivoRecusa);
                 demandaService.save(demanda);
             }
         return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");

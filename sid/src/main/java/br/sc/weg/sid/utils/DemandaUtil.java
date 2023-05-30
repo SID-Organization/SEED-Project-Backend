@@ -5,6 +5,7 @@ import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.DemandaResumida;
 import br.sc.weg.sid.model.entities.PdfDemanda;
+import br.sc.weg.sid.model.enums.StatusDemanda;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -50,7 +51,6 @@ public class DemandaUtil {
     public List<DemandaResumida> resumirDemanda(List<Demanda> demandas) {
         List<DemandaResumida> demandasResumidas = new ArrayList<>();
         for (Demanda demanda : demandas) {
-            System.out.println("DEMANDA: " + demanda);
             DemandaResumida demandaResumida = new DemandaResumida();
             demandaResumida.setTituloDemanda(demanda.getTituloDemanda());
             demandaResumida.setStatusDemanda(demanda.getStatusDemanda());
@@ -60,8 +60,12 @@ public class DemandaUtil {
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
             demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
-            if (demanda.getMotivosRecusaDemanda().size() > 0) {
-                demandaResumida.setMotivoRecusaDemanda(demanda.getMotivosRecusaDemanda().get(demanda.getMotivosRecusaDemanda().size() - 1).getDescricaoMotivoRecusa());
+            if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA){
+                demanda.getMotivosRecusaDemanda().forEach(motivoRecusa -> {
+                    if (motivoRecusa.getStatusDemandaMotivoRecusa() == StatusDemanda.CANCELADA){
+                        demandaResumida.setMotivoRecusaDemanda(motivoRecusa.getDescricaoMotivoRecusa());
+                    }
+                });
             }
 
             if (demanda.getBuSolicitanteDemanda() != null && demanda.getBuSolicitanteDemanda().getNomeBusinessUnity() != null) {

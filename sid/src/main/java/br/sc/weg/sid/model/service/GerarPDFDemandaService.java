@@ -75,7 +75,7 @@ public class GerarPDFDemandaService {
 
         Paragraph requesterParagraph = new Paragraph("Solicitante: ", fontTitle);
         requesterParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-        Paragraph requesterNameParagraph = new Paragraph(demanda.getSolicitanteDemanda().getNomeUsuario() + " - " + demanda.getSolicitanteDemanda().getDepartamentoUsuario(), textFont);
+        Paragraph requesterNameParagraph = new Paragraph(demanda.getSolicitanteDemanda().getNomeUsuario() + " - " + demanda.getSolicitanteDemanda().getDepartamentoUsuario().getNomeBusinessUnity(), textFont);
         requesterNameParagraph.setAlignment(Paragraph.ALIGN_LEFT);
         requesterNameParagraph.setIndentationLeft(30);
 
