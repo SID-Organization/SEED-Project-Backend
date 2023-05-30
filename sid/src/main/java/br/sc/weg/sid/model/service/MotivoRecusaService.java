@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.MotivoRecusa;
+import br.sc.weg.sid.model.enums.StatusDemanda;
 import br.sc.weg.sid.repository.MotivoRecusaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,10 @@ public class MotivoRecusaService {
 
     public Optional<MotivoRecusa> findById(Integer integer) {
         return motivoRecusaRepository.findById(integer);
+    }
+
+    public MotivoRecusa findAllByIdHistoricoWorkflowAndStatusDemandaMotivoRecusa(Integer idHistoricoWorkflow, StatusDemanda statusDemandaMotivoRecusa) {
+        return motivoRecusaRepository.findByIdHistoricoWorkflowAndStatusDemandaMotivoRecusa(idHistoricoWorkflow, statusDemandaMotivoRecusa);
     }
 
     public boolean existsById(Integer integer) {
