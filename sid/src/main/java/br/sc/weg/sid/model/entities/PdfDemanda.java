@@ -12,13 +12,16 @@ public class PdfDemanda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idPdfDemanda;
 
-    @Column(columnDefinition = "TEXT", name = "propostaMelhoriaDemandaHTML")
+    @Lob
+    @Column(columnDefinition = "LONGTEXT", name = "propostaMelhoriaDemandaHTML")
     private String propostaMelhoriaDemandaHTML;
 
-    @Column(columnDefinition = "TEXT", name = "situacaoAtualDemandaHTML")
+    @Lob
+    @Column(columnDefinition = "LONGTEXT", name = "situacaoAtualDemandaHTML")
     private String situacaoAtualDemandaHTML;
 
-    @Column(columnDefinition = "TEXT", name = "frequenciaUsoDemandaHTML")
+    @Lob
+    @Column(columnDefinition = "LONGTEXT", name = "frequenciaUsoDemandaHTML")
     private String frequenciaUsoDemandaHTML;
 
     @JoinColumn(name = "idDemanda", referencedColumnName = "idDemanda")

@@ -37,7 +37,7 @@ public class DecisaoProposta {
     @Column(name = "AtaPublicadaDecisaoProposta", nullable = false)
     private Integer ataPublicadaDecisaoProposta;
 
-    @Column(name = "ComentarioDecisaoProposta", nullable = false, length = 4000)
+    @Column(name = "ComentarioDecisaoProposta", nullable = false, length = 999999999)
     private String comentarioDecisaoProposta;
 
     @Column(name = "NumeroSequencialDecisaoProposta", nullable = false)

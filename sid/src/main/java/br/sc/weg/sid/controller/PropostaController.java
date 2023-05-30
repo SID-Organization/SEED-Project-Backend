@@ -127,6 +127,7 @@ public class PropostaController {
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<Object> atualizarProposta(@PathVariable("id") Integer id, @RequestParam(value = "updatePropostaForm") String updatePropostaForm, @RequestParam(value = "pdfPropostaForm") String pdfPropostaForm) {
+        System.out.println("PROPOSTA" + ":  " + updatePropostaForm);
         Optional<Proposta> propostaOptional = propostaService.findById(id);
         Proposta propostaAntiga = propostaOptional.get();
         propostaService.findById(id).get().getTabelaCusto();
@@ -191,6 +192,7 @@ public class PropostaController {
                     }
                 }
                 proposta.setPaybackProposta((proposta.getCustosTotaisDoProjeto() / somaValorBeneficios));
+                System.out.println("PROPOSTA SALVA: " + proposta);
                 Proposta propostaSalva = propostaService.save(proposta);
                 try {
                     PdfProposta pdfProposta = propostaUtil.convertJsonToModel(pdfPropostaForm);

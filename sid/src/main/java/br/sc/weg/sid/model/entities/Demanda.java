@@ -23,10 +23,10 @@ public class Demanda {
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 50, nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private Integer idDemanda;
 
-    @Column(length = 100)
+    @Column()
     private String tituloDemanda;
 
     @NotNull
@@ -38,13 +38,13 @@ public class Demanda {
     @Column()
     private TamanhoDemanda tamanhoDemanda;
 
-    @Column(length = 4000)
+    @Column(length = 999999999)
     private String propostaMelhoriaDemanda;
 
     @Column()
     private String frequenciaUsoDemanda;
 
-    @Column(length = 400)
+    @Column(length = 999999999)
     private String descricaoQualitativoDemanda;
 
     @Column()
@@ -75,7 +75,7 @@ public class Demanda {
     @ToString.Exclude
     private HistoricoWorkflow historicoWorkflowUltimaVersao;
 
-    @Column(length = 6000)
+    @Column(length = 999999999)
     private String situacaoAtualDemanda;
 
     @OneToMany(mappedBy = "demandaMotivoRecusa", cascade = CascadeType.ALL)
