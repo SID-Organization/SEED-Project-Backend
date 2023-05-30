@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
@@ -284,6 +282,7 @@ public class BancoUtils {
         if (listaDemanda.isEmpty()) {
             Demanda demanda = new Demanda();
             demanda.setTituloDemanda("Sala de brinquedos");
+            demanda.setPropostaMelhoriaDemanda("Criar uma sala de brinquedos");
             demanda.setSituacaoAtualDemanda("Brinquedo é bom!");
             demanda.setDescricaoQualitativoDemanda("sim");
             demanda.setFrequenciaUsoDemanda("Muito usada");
@@ -295,7 +294,9 @@ public class BancoUtils {
             demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
             demanda = demandaRepository.save(demanda);
 
-            demandaController.atualizarStatusDemanda(demanda.getIdDemanda(), StatusDemanda.ABERTA);
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("statusDemanda", "ABERTA");
+            demandaController.atualizarStatusDemanda(demanda.getIdDemanda(), requestBody);
         }
     }
 }

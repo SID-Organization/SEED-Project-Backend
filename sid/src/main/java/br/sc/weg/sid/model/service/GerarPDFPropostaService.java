@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -434,7 +435,8 @@ public class GerarPDFPropostaService {
         executionPeriodParagraph.setSpacingBefore(8);
 
         Phrase paybackPhrase = new Phrase("Payback: ", fontTitle);
-        Chunk paybackChunk = new Chunk(pdfProposta.getProposta().getPaybackProposta().toString(), textFont);
+        DecimalFormat df = new DecimalFormat("#.00");
+        Chunk paybackChunk = new Chunk(df.format(pdfProposta.getProposta().getPaybackProposta()), textFont);
         paybackPhrase.add(paybackChunk);
         Paragraph paybackParagraph = new Paragraph(paybackPhrase);
         paybackParagraph.setSpacingBefore(8);

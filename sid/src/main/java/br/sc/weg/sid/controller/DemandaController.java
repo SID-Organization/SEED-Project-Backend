@@ -489,14 +489,15 @@ public class DemandaController {
      * Se o status da demanda for CANCELADA, o analista responsável pela demanda, o gerente da area e o gestor de t.i serão removidos da demanda.
      *
      * @param idDemanda   o ID da demanda a ser atualizada
-     * @param statusDemanda um objeto Map que contém o novo status da demanda
+     * @param requestBody um objeto Map que contém o novo status da demanda
      * @return um ResponseEntity contendo a demanda atualizada ou uma mensagem de erro se a demanda não foi encontrada
      */
     @PutMapping("/status/{id}")
     public ResponseEntity<Object> atualizarStatusDemanda(
             @PathVariable("id") Integer idDemanda,
-            @RequestBody StatusDemanda statusDemanda) {
+            @RequestBody Map<String, String> requestBody) {
 
+        StatusDemanda statusDemanda = StatusDemanda.valueOf(requestBody.get("statusDemanda"));
         boolean edicao;
 
         if (!demandaService.existsById(idDemanda)) {
@@ -504,9 +505,9 @@ public class DemandaController {
                     .body("Não foi encontrado a demanda com o id " + idDemanda);
         }
         Demanda demanda = demandaService.findById(idDemanda).get();
-        if(demanda.getStatusDemanda() == StatusDemanda.RASCUNHO){
+        if (demanda.getStatusDemanda() == StatusDemanda.RASCUNHO) {
             edicao = false;
-        }else{
+        } else {
             edicao = true;
         }
         demanda.setStatusDemanda(statusDemanda);
@@ -547,21 +548,21 @@ public class DemandaController {
 
         //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
         if (statusDemanda.equals(StatusDemanda.ABERTA)) {
-                CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
+            CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
             try {
                 historicoWorkflowDTO.setDemandaHistorico(demandaAtualizada);
-            if (edicao == false){
-                historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
-                historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());
-                historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
-            }else {
-                historicoWorkflowDTO.setAcaoFeitaHistoricoAnterior("Enviar");
-            }
+                if (edicao == false) {
+                    historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
+                    historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());
+                    historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
+                } else {
+                    historicoWorkflowDTO.setAcaoFeitaHistoricoAnterior("Enviar");
+                }
                 historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);
                 historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda());
-                try{
+                try {
                     historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
-                }catch (Exception e) {
+                } catch (Exception e) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
                 }
             } catch (Exception e) {
@@ -852,7 +853,10 @@ public class DemandaController {
         Demanda demanda = demandaService.findById(idDemanda).get();
         BeanUtils.copyProperties(devolverDemandaDTO, demanda, "statusDemanda", "motivoRecusaDemanda", "idResponsavel");
         demanda.setStatusDemanda(devolverDemandaDTO.getStatusDemanda());
-        demanda.setMotivoRecusaDemanda(devolverDemandaDTO.getMotivoRecusaDemanda());
+        MotivoRecusa motivoRecusa = new MotivoRecusa();
+        motivoRecusa.setDescricaoMotivoRecusa(devolverDemandaDTO.getMotivoRecusaDemanda());
+        motivoRecusa.setStatusDemandaMotivoRecusa(devolverDemandaDTO.getStatusDemanda());
+        List<MotivoRecusa> motivoRecusaList = new ArrayList<>();
 
         if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA) {
             HistoricoWorkflow historicoWorkflow = demanda.getHistoricoWorkflowUltimaVersao();
@@ -864,6 +868,7 @@ public class DemandaController {
             historicoWorkflow.setIdResponsavel(devolverDemandaDTO.getIdResponsavel());
             historicoWorkflow.setVersaoHistorico(historicoWorkflow.getVersaoHistorico() + 0.1);
             HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
+            motivoRecusa.setIdHistoricoWorkflow(historicoWorkflowSalvo.getIdHistoricoWorkflow());
             demanda.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
         } else if (demanda.getStatusDemanda() == StatusDemanda.EM_EDICAO) {
             HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
@@ -880,10 +885,19 @@ public class DemandaController {
             historicoWorkflow.setTarefaHistoricoWorkflow(TarefaWorkflow.EDITANDO_DEMANDA);
             historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
             HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
+            motivoRecusa.setIdHistoricoWorkflow(historicoWorkflowSalvo.getIdHistoricoWorkflow());
             demanda.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
-            gerarPDFDemandaController.generatePDF(idDemanda);
         }
-        demandaService.save(demanda);
+            try{
+                gerarPDFDemandaController.generatePDF(idDemanda);
+            }catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception("Erro ao gerar PDF da demanda: " + e.getMessage());
+            }finally {
+                motivoRecusaList.add(motivoRecusa);
+                demanda.setMotivosRecusaDemanda(motivoRecusaList);
+                demandaService.save(demanda);
+            }
         return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");
     }
 

@@ -16,6 +16,7 @@ import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -146,7 +147,7 @@ public class GerarPDFAtaService {
             PdfProposta pdfProposta = new PdfProposta();
             if (pdfPropostasList.size() > 1) {
                 pdfProposta = pdfPropostasList.get(pdfPropostasList.size() - 1);
-            }else {
+            } else {
                 pdfProposta = pdfPropostasList.get(0);
             }
 
@@ -254,7 +255,7 @@ public class GerarPDFAtaService {
                         celulaTabelExpensesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
                         tableExpenses.addCell(celulaTabelExpensesForEach);
 
-                        if (!centroCustoFeito){
+                        if (!centroCustoFeito) {
                             centroCustoFeito = true;
                             // Cria uma String para armazenar a informação de todos os centros de custo
                             String centrosDeCusto = "";
@@ -347,130 +348,131 @@ public class GerarPDFAtaService {
             tableInternResources.addCell(celulaTableInternResources);
 
             proposta.getTabelaCusto().forEach(tabelaCusto -> {
-            if (tabelaCusto.getTipoDespesa() == TipoDeDespesa.INTERNA) {
-                PdfPCell celulaTableInternResourcesForEach;
-                boolean centroCustoFeito = false;
-                for (int i = 0; i < tabelaCusto.getTabelaCustoLinha().size(); i++) {
-                    celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFont2));
-                    celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                    tableInternResources.addCell(celulaTableInternResourcesForEach);
+                if (tabelaCusto.getTipoDespesa() == TipoDeDespesa.INTERNA) {
+                    PdfPCell celulaTableInternResourcesForEach;
+                    boolean centroCustoFeito = false;
+                    for (int i = 0; i < tabelaCusto.getTabelaCustoLinha().size(); i++) {
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getPerfilDespesaTabelaCustoLinha(), tableFont2));
+                        celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+                        tableInternResources.addCell(celulaTableInternResourcesForEach);
 
-                    celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFont2));
-                    celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                    tableInternResources.addCell(celulaTableInternResourcesForEach);
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase(tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto().toString() + "h", tableFont2));
+                        celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+                        tableInternResources.addCell(celulaTableInternResourcesForEach);
 
-                    Double valorTotal = tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto() * tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto();
+                        Double valorTotal = tabelaCusto.getTabelaCustoLinha().get(i).getQuantidadeHorasTabelaCusto() * tabelaCusto.getTabelaCustoLinha().get(i).getValorHoraTabelaCusto();
 
-                    celulaTableInternResourcesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFont2));
-                    celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-                    tableInternResources.addCell(celulaTableInternResourcesForEach);
+                        celulaTableInternResourcesForEach = new PdfPCell(new Phrase("R$" + valorTotal.toString(), tableFont2));
+                        celulaTableInternResourcesForEach.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+                        tableInternResources.addCell(celulaTableInternResourcesForEach);
 
-                    if (!centroCustoFeito){
-                        centroCustoFeito = true;
-                        // Cria uma String para armazenar a informação de todos os centros de custo
-                        String centrosDeCusto = "";
+                        if (!centroCustoFeito) {
+                            centroCustoFeito = true;
+                            // Cria uma String para armazenar a informação de todos os centros de custo
+                            String centrosDeCusto = "";
 
-                        // Percorre todos os centros de custo da tabela e adiciona a informação na String
-                        for (int j = 0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++) {
-                            CentroCusto centroCusto = centroCustoService.findById(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getIdCentroCusto()).get();
-                            centrosDeCusto += centroCusto.getNumeroCentroCusto() + " - " + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%";
+                            // Percorre todos os centros de custo da tabela e adiciona a informação na String
+                            for (int j = 0; j < tabelaCusto.getCentroCustoTabelaCusto().size(); j++) {
+                                CentroCusto centroCusto = centroCustoService.findById(tabelaCusto.getCentroCustoTabelaCusto().get(j).getCentroCusto().getIdCentroCusto()).get();
+                                centrosDeCusto += centroCusto.getNumeroCentroCusto() + " - " + tabelaCusto.getCentroCustoTabelaCusto().get(j).getPorcentagemDespesa() + "%";
 
-                            // Adiciona uma quebra de linha, exceto na última iteração do loop
-                            if (j < tabelaCusto.getCentroCustoTabelaCusto().size() - 1) {
-                                centrosDeCusto += "\n";
+                                // Adiciona uma quebra de linha, exceto na última iteração do loop
+                                if (j < tabelaCusto.getCentroCustoTabelaCusto().size() - 1) {
+                                    centrosDeCusto += "\n";
+                                }
                             }
+
+                            // Cria a célula com a informação dos centros de custo e define o rowspan
+                            PdfPCell celulaTableInternResourcesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont2));
+                            celulaTableInternResourcesCentroCusto.setRowspan(tabelaCusto.getTabelaCustoLinha().size());
+                            celulaTableInternResourcesCentroCusto.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+
+                            // Adiciona a célula à tabela
+                            tableInternResources.addCell(celulaTableInternResourcesCentroCusto);
                         }
+                    }
+                }
+            });
 
-                        // Cria a célula com a informação dos centros de custo e define o rowspan
-                        PdfPCell celulaTableInternResourcesCentroCusto = new PdfPCell(new Phrase(centrosDeCusto, tableFont2));
-                        celulaTableInternResourcesCentroCusto.setRowspan(tabelaCusto.getTabelaCustoLinha().size());
-                        celulaTableInternResourcesCentroCusto.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+            celulaTableInternResources = new PdfPCell(new Phrase("TOTAL Despesas: ", tableFontBold2));
+            celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+            tableInternResources.addCell(celulaTableInternResources);
 
-                        // Adiciona a célula à tabela
-                        tableInternResources.addCell(celulaTableInternResourcesCentroCusto);
+            totalHoursWorked = 0;
+            totalValueHours = 0.0;
+
+            for (int i = 0; i < proposta.getTabelaCusto().size(); i++) {
+                if (proposta.getTabelaCusto().get(i).getTipoDespesa() == TipoDeDespesa.EXTERNA) {
+                    for (int j = 0; j < proposta.getTabelaCusto().get(i).getTabelaCustoLinha().size(); j++) {
+                        totalHoursWorked += proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto();
+                        Double valorTotal = proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto() *
+                                proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getValorHoraTabelaCusto();
+                        totalValueHours += valorTotal;
                     }
                 }
             }
-        });
 
-        celulaTableInternResources = new PdfPCell(new Phrase("TOTAL Despesas: ", tableFontBold2));
-        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-        tableInternResources.addCell(celulaTableInternResources);
+            celulaTotalHoursWorked = new PdfPCell(new Phrase(totalHoursWorked + "h", tableFontBold2));
+            celulaTotalHoursWorked.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+            tableInternResources.addCell(celulaTotalHoursWorked);
 
-        totalHoursWorked = 0;
-        totalValueHours = 0.0;
+            celulaTableInternResources = new PdfPCell(new Phrase(totalValueProject.toString(), tableFontBold2));
+            celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+            tableInternResources.addCell(celulaTableInternResources);
 
-        for (int i = 0; i < proposta.getTabelaCusto().size(); i++) {
-            if (proposta.getTabelaCusto().get(i).getTipoDespesa() == TipoDeDespesa.EXTERNA) {
-                for (int j = 0; j < proposta.getTabelaCusto().get(i).getTabelaCustoLinha().size(); j++) {
-                    totalHoursWorked += proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto();
-                    Double valorTotal = proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getQuantidadeHorasTabelaCusto() *
-                            proposta.getTabelaCusto().get(i).getTabelaCustoLinha().get(j).getValorHoraTabelaCusto();
-                    totalValueHours += valorTotal;
-                }
-            }
-        }
+            Phrase totalExpenseInternResourcesPhrase = new Phrase("Total Despesas - Recursos Internos: ", textFont);
+            Chunk totalExpenseInternResourcesChunk = new Chunk("R$ " + totalValueHours, textFont);
+            totalExpenseInternResourcesPhrase.add(totalExpenseInternResourcesChunk);
+            Paragraph totalExpenseInternResourcesParagraph = new Paragraph(totalExpenseInternResourcesPhrase);
 
-        celulaTotalHoursWorked = new PdfPCell(new Phrase(totalHoursWorked + "h", tableFontBold2));
-        celulaTotalHoursWorked.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-        tableInternResources.addCell(celulaTotalHoursWorked);
+            totalValueProject += totalValueHours;
 
-        celulaTableInternResources = new PdfPCell(new Phrase(totalValueProject.toString(), tableFontBold2));
-        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-        tableInternResources.addCell(celulaTableInternResources);
-
-        Phrase totalExpenseInternResourcesPhrase = new Phrase("Total Despesas - Recursos Internos: ", textFont);
-        Chunk totalExpenseInternResourcesChunk = new Chunk("R$ " + totalValueHours, textFont);
-        totalExpenseInternResourcesPhrase.add(totalExpenseInternResourcesChunk);
-        Paragraph totalExpenseInternResourcesParagraph = new Paragraph(totalExpenseInternResourcesPhrase);
-
-        totalValueProject += totalValueHours;
-
-        celulaTableInternResources = new PdfPCell(new Phrase(" ", tableFontBold2));
-        celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
-        tableInternResources.addCell(celulaTableInternResources);
+            celulaTableInternResources = new PdfPCell(new Phrase(" ", tableFontBold2));
+            celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
+            tableInternResources.addCell(celulaTableInternResources);
 
 
-        Phrase totalCostPhrase = new Phrase("Custo Total do Projeto: ", titleFont);
-        Chunk totalCostChunk = new Chunk("R$ " + totalValueProject, textFont);
-        totalCostPhrase.add(totalCostChunk);
-        Paragraph totalCostParagraph = new Paragraph(totalCostPhrase);
+            Phrase totalCostPhrase = new Phrase("Custo Total do Projeto: ", titleFont);
+            Chunk totalCostChunk = new Chunk("R$ " + totalValueProject, textFont);
+            totalCostPhrase.add(totalCostChunk);
+            Paragraph totalCostParagraph = new Paragraph(totalCostPhrase);
 
-        String dataInicioFormatada = formatarData.format(pdfProposta.getProposta().getPeriodoExecucaoFimProposta());
-        String dataFimFormatada = formatarData.format(pdfProposta.getProposta().getPeriodoExecucaoFimProposta());
+            String dataInicioFormatada = formatarData.format(pdfProposta.getProposta().getPeriodoExecucaoFimProposta());
+            String dataFimFormatada = formatarData.format(pdfProposta.getProposta().getPeriodoExecucaoFimProposta());
 
-        Phrase executionPeriodPhrase = new Phrase("Período de execução: ", titleFont);
-        Phrase executionPeriodPhraseText = new Phrase(dataInicioFormatada + " à " +
-                dataFimFormatada, textFont);
-        Paragraph executionPeriodParagraph = new Paragraph();
-        executionPeriodParagraph.add(executionPeriodPhrase);
-        executionPeriodParagraph.add(executionPeriodPhraseText);
-        executionPeriodParagraph.setSpacingBefore(8);
+            Phrase executionPeriodPhrase = new Phrase("Período de execução: ", titleFont);
+            Phrase executionPeriodPhraseText = new Phrase(dataInicioFormatada + " à " +
+                    dataFimFormatada, textFont);
+            Paragraph executionPeriodParagraph = new Paragraph();
+            executionPeriodParagraph.add(executionPeriodPhrase);
+            executionPeriodParagraph.add(executionPeriodPhraseText);
+            executionPeriodParagraph.setSpacingBefore(8);
 
-        Phrase paybackPhrase = new Phrase("Payback: ", titleFont);
-        Phrase paybackPhraseText = new Phrase(pdfProposta.getProposta().getPaybackProposta().toString(), textFont);
-        Paragraph paybackParagraph = new Paragraph();
-        paybackParagraph.add(paybackPhrase);
-        paybackParagraph.add(paybackPhraseText);
-        paybackParagraph.setSpacingBefore(8);
+            Phrase paybackPhrase = new Phrase("Payback: ", titleFont);
+            DecimalFormat df = new DecimalFormat("#.00");
+            Phrase paybackPhraseText = new Phrase(df.format(pdfProposta.getProposta().getPaybackProposta()), textFont);
+            Paragraph paybackParagraph = new Paragraph();
+            paybackParagraph.add(paybackPhrase);
+            paybackParagraph.add(paybackPhraseText);
+            paybackParagraph.setSpacingBefore(8);
 
-        Phrase businessResponsable = new Phrase("Responsável Negócio: ", titleFont);
-        Phrase responsablePhraseText = new Phrase(proposta.getNomeResponsavelNegocio() + " - "
-                + proposta.getAreaResponsavelNegocio(), textFont);
-        Paragraph businessResponsableParagraph = new Paragraph();
-        businessResponsableParagraph.add(businessResponsable);
-        businessResponsableParagraph.add(responsablePhraseText);
-        proposalParagraph.setSpacingBefore(8);
+            Phrase businessResponsable = new Phrase("Responsável Negócio: ", titleFont);
+            Phrase responsablePhraseText = new Phrase(proposta.getNomeResponsavelNegocio() + " - "
+                    + proposta.getAreaResponsavelNegocio(), textFont);
+            Paragraph businessResponsableParagraph = new Paragraph();
+            businessResponsableParagraph.add(businessResponsable);
+            businessResponsableParagraph.add(responsablePhraseText);
+            proposalParagraph.setSpacingBefore(8);
 
-        Font commissionOpinionText = FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLD);
-        commissionOpinionText.setStyle(Font.UNDERLINE);
+            Font commissionOpinionText = FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLD);
+            commissionOpinionText.setStyle(Font.UNDERLINE);
 
-        Phrase commissionOpinionPhrase = new Phrase("PARECER COMISSÃO", commissionOpinionText);
-        Phrase commissionOpinionPhraseText = new Phrase(": " + propostaLog.getParecerComissaoPropostaLog().toString(), titleFont);
-        Paragraph commissionOpinionParagraph = new Paragraph();
-        commissionOpinionParagraph.add(commissionOpinionPhrase);
-        commissionOpinionParagraph.add(commissionOpinionPhraseText);
-        commissionOpinionParagraph.setSpacingBefore(10);
+            Phrase commissionOpinionPhrase = new Phrase("PARECER COMISSÃO", commissionOpinionText);
+            Phrase commissionOpinionPhraseText = new Phrase(": " + propostaLog.getParecerComissaoPropostaLog().toString(), titleFont);
+            Paragraph commissionOpinionParagraph = new Paragraph();
+            commissionOpinionParagraph.add(commissionOpinionPhrase);
+            commissionOpinionParagraph.add(commissionOpinionPhraseText);
+            commissionOpinionParagraph.setSpacingBefore(10);
 
             Phrase considerationOpinionPhrase = new Phrase("Considerações: ", titleFont);
             Phrase considerationOpinionPhraseText = new Phrase(": " + propostaLog.getConsideracoesPropostaLog(), textFont);
@@ -482,87 +484,87 @@ public class GerarPDFAtaService {
 
             Paragraph dgOpinionParagraph = new Paragraph();
             Paragraph considerationDGOpinionParagraph = new Paragraph();
-        if (propostaLog.getParecerDGPropostaLog() != null){
-            Phrase dgOpinionPhrase = new Phrase("PARECER DG", commissionOpinionText);
-            Phrase dgOpinionPhraseText = new Phrase(": " + propostaLog.getParecerDGPropostaLog().toString(), titleFont);
-            dgOpinionParagraph.add(dgOpinionPhrase);
-            dgOpinionParagraph.add(dgOpinionPhraseText);
-            dgOpinionParagraph.setSpacingBefore(15);
-            Phrase considerationDGOpinionPhrase = new Phrase("Considerações: ", titleFont);
-            Phrase considerationDGOpinionPhraseText = new Phrase(": " + propostaLog.getConsideracoesParecerDGPropostaLog(), textFont);
-            considerationDGOpinionParagraph.add(considerationDGOpinionPhrase);
-            considerationDGOpinionParagraph.add(considerationDGOpinionPhraseText);
-            considerationDGOpinionParagraph.setSpacingBefore(4);
-        }
+            if (propostaLog.getParecerDGPropostaLog() != null) {
+                Phrase dgOpinionPhrase = new Phrase("PARECER DG", commissionOpinionText);
+                Phrase dgOpinionPhraseText = new Phrase(": " + propostaLog.getParecerDGPropostaLog().toString(), titleFont);
+                dgOpinionParagraph.add(dgOpinionPhrase);
+                dgOpinionParagraph.add(dgOpinionPhraseText);
+                dgOpinionParagraph.setSpacingBefore(15);
+                Phrase considerationDGOpinionPhrase = new Phrase("Considerações: ", titleFont);
+                Phrase considerationDGOpinionPhraseText = new Phrase(": " + propostaLog.getConsideracoesParecerDGPropostaLog(), textFont);
+                considerationDGOpinionParagraph.add(considerationDGOpinionPhrase);
+                considerationDGOpinionParagraph.add(considerationDGOpinionPhraseText);
+                considerationDGOpinionParagraph.setSpacingBefore(4);
+            }
 
-        document.add(titleDemandParagraph);
-        document.add(proposalParagraph);
+            document.add(titleDemandParagraph);
+            document.add(proposalParagraph);
 
 
-        document.add(projectScopeParagraph);
-        try {
-            htmlWorker.parse(new StringReader(projectScopeParagraphTextHTML));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (!pdfProposta.getNaoFazParteDoEscopoPropostaHTML().isEmpty()) {
-            document.add(noPartOfScopeProjectParagraph);
+            document.add(projectScopeParagraph);
             try {
-                htmlWorker.parse(new StringReader(projectNotInScopeParagraphTextHTML));
+                htmlWorker.parse(new StringReader(projectScopeParagraphTextHTML));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
 
-        document.add(projectCoverageParagraph);
-        try {
-            htmlWorker.parse(new StringReader(projectCoverageParagraphTextHTML));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            if (!pdfProposta.getNaoFazParteDoEscopoPropostaHTML().isEmpty()) {
+                document.add(noPartOfScopeProjectParagraph);
+                try {
+                    htmlWorker.parse(new StringReader(projectNotInScopeParagraphTextHTML));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
-        if (expectedResultsQualitativeParagraphTextHTML != null) {
-            document.add(expectedResultsParagraph);
+            document.add(projectCoverageParagraph);
             try {
-                htmlWorker.parse(new StringReader(expectedResultsQualitativeParagraphTextHTML));
+                htmlWorker.parse(new StringReader(projectCoverageParagraphTextHTML));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
 
-        document.add(expectedResultsPotentialParagraph);
-        try {
-            htmlWorker.parse(new StringReader(expectedResultsPotentialParagraphTextHTML));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            if (expectedResultsQualitativeParagraphTextHTML != null) {
+                document.add(expectedResultsParagraph);
+                try {
+                    htmlWorker.parse(new StringReader(expectedResultsQualitativeParagraphTextHTML));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
-        document.add(totalCostParagraph);
-        document.add(totalExpenseParagraph);
-        document.add(totalExpenseInternResourcesParagraph);
+            document.add(expectedResultsPotentialParagraph);
+            try {
+                htmlWorker.parse(new StringReader(expectedResultsPotentialParagraphTextHTML));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-        document.add(tableExpenses);
-        document.add(tableInternResources);
+            document.add(totalCostParagraph);
+            document.add(totalExpenseParagraph);
+            document.add(totalExpenseInternResourcesParagraph);
 
-        document.add(executionPeriodParagraph);
+            document.add(tableExpenses);
+            document.add(tableInternResources);
 
-        document.add(paybackParagraph);
+            document.add(executionPeriodParagraph);
 
-        document.add(businessResponsableParagraph);
+            document.add(paybackParagraph);
 
-        document.add(commissionOpinionParagraph);
-        document.add(considerationOpinionParagraph);
+            document.add(businessResponsableParagraph);
 
-        if (propostaLog.getConsideracoesParecerDGPropostaLog() != null){
-            document.add(dgOpinionParagraph);
-            document.add(considerationDGOpinionParagraph);
-        }
+            document.add(commissionOpinionParagraph);
+            document.add(considerationOpinionParagraph);
 
-        if (numeroProposta.get() != ata.getPropostasLog().size()) {
-            document.newPage();
-        }
-    });
+            if (propostaLog.getConsideracoesParecerDGPropostaLog() != null) {
+                document.add(dgOpinionParagraph);
+                document.add(considerationDGOpinionParagraph);
+            }
+
+            if (numeroProposta.get() != ata.getPropostasLog().size()) {
+                document.newPage();
+            }
+        });
         document.close();
 
         return baos.toByteArray();
