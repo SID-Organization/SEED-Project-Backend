@@ -27,19 +27,25 @@ public class Proposta {
     @Column(name = "CodigoPPM", nullable = false)
     private String codigoPPMProposta;
 
-    @Column(name = "EscopoProposta", length = 4000)
+    //deve ser um longtext
+    @Lob
+    @Column(name = "DescricaoProposta", columnDefinition = "LONGTEXT")
     private String escopoProposta;
 
-    @Column(name = "NaoFazParteDoEscopoProposta", length = 4000)
+    @Lob
+    @Column(name = "NaoFazParteDoEscopoProposta", columnDefinition = "LONGTEXT")
     private String naoFazParteDoEscopoProposta;
 
-    @Column(name = "AbrangenciaProjetoProposta")
+    @Lob
+    @Column(name = "AbrangenciaProjetoProposta", columnDefinition = "LONGTEXT")
     private String abrangenciaProjetoProposta;
 
-    @Column(name = "AlternativasAvaliadasProposta", length = 4000)
+    @Lob
+    @Column(name = "AlternativasAvaliadasProposta", columnDefinition = "LONGTEXT")
     private String alternativasAvaliadasProposta;
 
-    @Column(name = "PlanoMitigacaoProposta", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "PlanoMitigacaoProposta", columnDefinition = "LONGTEXT")
     private String planoMitigacaoProposta;
 
     @Column(name = "PaybackProposta")
