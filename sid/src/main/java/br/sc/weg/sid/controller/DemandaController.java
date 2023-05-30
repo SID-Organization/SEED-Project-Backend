@@ -877,7 +877,7 @@ public class DemandaController {
             Date dataAtual = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             historicoWorkflow.setRecebimentoHistorico(dataAtual);
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.EM_ANDAMENTO);
-            historicoWorkflow.setTarefaHistoricoWorkflow(TarefaWorkflow.EDITANDO_DEMANDA);
+            historicoWorkflow.setTarefaHistoricoWorkflow(TarefaWorkflow.EDITAR_DEMANDA);
             historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
             HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
             demanda.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
