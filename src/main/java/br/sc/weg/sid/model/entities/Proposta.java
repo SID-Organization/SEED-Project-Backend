@@ -29,23 +29,23 @@ public class Proposta {
 
     //deve ser um longtext
     @Lob
-    @Column(name = "DescricaoProposta", columnDefinition = "LONGTEXT")
+    @Column(name = "DescricaoProposta", columnDefinition = "TEXT")
     private String escopoProposta;
 
     @Lob
-    @Column(name = "NaoFazParteDoEscopoProposta", columnDefinition = "LONGTEXT")
+    @Column(name = "NaoFazParteDoEscopoProposta", columnDefinition = "TEXT")
     private String naoFazParteDoEscopoProposta;
 
     @Lob
-    @Column(name = "AbrangenciaProjetoProposta", columnDefinition = "LONGTEXT")
+    @Column(name = "AbrangenciaProjetoProposta", columnDefinition = "TEXT")
     private String abrangenciaProjetoProposta;
 
     @Lob
-    @Column(name = "AlternativasAvaliadasProposta", columnDefinition = "LONGTEXT")
+    @Column(name = "AlternativasAvaliadasProposta", columnDefinition = "TEXT")
     private String alternativasAvaliadasProposta;
 
     @Lob
-    @Column(name = "PlanoMitigacaoProposta", columnDefinition = "LONGTEXT")
+    @Column(name = "PlanoMitigacaoProposta", columnDefinition = "TEXT")
     private String planoMitigacaoProposta;
 
     @Column(name = "PaybackProposta")

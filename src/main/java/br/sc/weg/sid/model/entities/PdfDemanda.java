@@ -13,15 +13,15 @@ public class PdfDemanda {
     private Integer idPdfDemanda;
 
     @Lob
-    @Column(columnDefinition = "LONGTEXT", name = "propostaMelhoriaDemandaHTML")
+    @Column(columnDefinition = "TEXT", name = "propostaMelhoriaDemandaHTML")
     private String propostaMelhoriaDemandaHTML;
 
     @Lob
-    @Column(columnDefinition = "LONGTEXT", name = "situacaoAtualDemandaHTML")
+    @Column(columnDefinition = "TEXT", name = "situacaoAtualDemandaHTML")
     private String situacaoAtualDemandaHTML;
 
     @Lob
-    @Column(columnDefinition = "LONGTEXT", name = "frequenciaUsoDemandaHTML")
+    @Column(columnDefinition = "TEXT", name = "frequenciaUsoDemandaHTML")
     private String frequenciaUsoDemandaHTML;
 
     @JoinColumn(name = "idDemanda", referencedColumnName = "idDemanda")
