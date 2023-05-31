@@ -190,9 +190,12 @@ public class PropostaController {
                         somaValorBeneficios += beneficio.getValorBeneficio();
                     }
                 }
-                double payback = proposta.getCustosTotaisDoProjeto() / somaValorBeneficios;
-                proposta.setPaybackProposta(payback);
-                Proposta propostaSalva = propostaService.save(proposta);
+
+                if (proposta.getCustosTotaisDoProjeto() > 0 && proposta.getCustosTotaisDoProjeto() != null){
+                    double payback = proposta.getCustosTotaisDoProjeto() / somaValorBeneficios;
+                    proposta.setPaybackProposta(payback);
+                }
+                    Proposta propostaSalva = propostaService.save(proposta);
                 try {
                     PdfProposta pdfProposta = propostaUtil.convertJsonToModel(pdfPropostaForm);
                     pdfProposta.setProposta(propostaSalva);
