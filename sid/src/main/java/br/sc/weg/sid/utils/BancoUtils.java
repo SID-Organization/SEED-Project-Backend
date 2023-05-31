@@ -40,6 +40,8 @@ public class BancoUtils {
     @Autowired
     private ForumRepository forumRepository;
 
+    @Autowired CentroCustoRepository centroCustoRepository;
+
     @Autowired
     private DemandaController demandaController;
 
@@ -54,6 +56,7 @@ public class BancoUtils {
         List<BusinessUnity> listaBusinessUnity = businessUnityRepository.findAll();
         List<Beneficio> listaBeneficios = beneficioRepository.findAll();
         List<Demanda> listaDemanda = demandaRepository.findAll();
+        List<CentroCusto> listaCentroCusto = centroCustoRepository.findAll();
 
         if (listaSecaoTI.isEmpty()) {
             SecaoTIResponsavel secaoTIResponsavel = new SecaoTIResponsavel();
@@ -297,6 +300,18 @@ public class BancoUtils {
             Map<String, String> requestBody = new HashMap<>();
             requestBody.put("statusDemanda", "ABERTA");
             demandaController.atualizarStatusDemanda(demanda.getIdDemanda(), requestBody);
+        }
+
+        if(listaCentroCusto.isEmpty()){
+            CentroCusto centroCusto = new CentroCusto();
+            centroCusto.setNomeCentroCusto("Depto Sistemas de Engenharia");
+            centroCusto.setNumeroCentroCusto("90100341");
+            centroCustoRepository.save(centroCusto);
+
+            CentroCusto centroCusto2 = new CentroCusto();
+            centroCusto2.setNomeCentroCusto("Depto Sistemas de Fundição");
+            centroCusto2.setNumeroCentroCusto("90100341");
+            centroCustoRepository.save(centroCusto2);
         }
     }
 }
