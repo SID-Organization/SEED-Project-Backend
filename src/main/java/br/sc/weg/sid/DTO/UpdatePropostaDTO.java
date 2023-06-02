@@ -23,6 +23,7 @@ public class UpdatePropostaDTO {
     private String nomeResponsavelNegocio;
     private String areaResponsavelNegocio;
     private String abrangenciaProjetoProposta;
+    private Double paybackProposta;
 
 
 }
