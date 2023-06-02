@@ -29,8 +29,11 @@ public class Ata {
     @JsonIgnore
     private List<PdfAta> pdfAta;
 
-    @Column(name = "NumeroDgAta", nullable = false)
-    private Integer numeroDgAta;
+    @Column(name = "NumeroAtaPublicada")
+    private String numeroAtaPublicada;
+
+    @Column(name = "NumeroAtaNaoPublicada")
+    private String numeroAtaNaoPublicada;
 
     @Column(name = "DocumentoAprovacaoAta", nullable = false)
     @Lob

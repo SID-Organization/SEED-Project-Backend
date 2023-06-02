@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 public class CadastroAtaDGDTO {
 
+    Integer numeroAtaDg;
+
     Ata ataAtaDg;
 
 }

@@ -21,4 +21,8 @@ public class AtaResumida {
 
     List<PropostasLog> propostasLog;
 
+    String numeroAtaPublicada;
+
+    String numeroAtaNaoPublicada;
+
 }

@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @CrossOrigin
@@ -96,7 +97,27 @@ public class AtaController {
             Proposta proposta = propostaService.findById(propostaLog.getPropostaPropostaLog().getIdProposta()).get();
             propostaLog.setPdfPropostaLog(proposta.getPdfProposta());
         });
+        AtomicBoolean existeNaoPublicada = new AtomicBoolean(false);
+        AtomicBoolean existePublicada = new AtomicBoolean(false);
+        ata.getPropostasLog().forEach(propostaLog -> {
+            if (propostaLog.getTipoAtaPropostaLog().equals("NAO_PUBLICADA")) {
+                if (!existeNaoPublicada.get()) {
+                    existeNaoPublicada.set(true);
+                }
+            } else {
+                if (!existePublicada.get()) {
+                    existePublicada.set(true);
+                }
+            }
+        });
         Ata ataSalva = ataService.save(ata);
+        if (existePublicada.get()) {
+            ataSalva.setNumeroAtaPublicada(ataSalva.getIdAta() + "/" + cadastroAtaDTO.getNumeroAtaPublicada());
+        }
+        if (existeNaoPublicada.get()) {
+            ataSalva.setNumeroAtaNaoPublicada(ataSalva.getIdAta() + "/" + LocalDate.now().getYear());
+        }
+        ataService.save(ataSalva);
         pautaAta.setStatusPauta(false);
         pautaService.save(pautaAta);
         gerarPDFAtaController.generatePDF(ataSalva.getIdAta());

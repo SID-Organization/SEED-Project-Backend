@@ -18,6 +18,9 @@ public class AtaDG {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idAtaDG;
 
+    @Column(name = "NumeroAtaDG")
+    private Integer numeroAtaDG;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"ataDg", "documentoAprovacaoAta", "pdfAta"})
     Ata ataAtaDg;
