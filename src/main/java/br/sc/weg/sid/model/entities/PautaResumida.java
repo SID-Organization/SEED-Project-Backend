@@ -18,4 +18,6 @@ public class PautaResumida {
     LocalTime horaReuniao;
 
     String analistaResponsavel;
+
+    LocalTime horaTerminoReuniao;
 }

@@ -24,6 +24,7 @@ public class PautaUtil {
             pautaResumida.setQtdPropostas(pauta.getPropostasPauta().size());
             pautaResumida.setDataReuniao(pauta.getDataReuniaoPauta());
             pautaResumida.setHoraReuniao(pauta.getHorarioInicioPauta());
+            pautaResumida.setHoraTerminoReuniao(pauta.getHorarioTerminoPauta());
             pautaResumida.setAnalistaResponsavel(pauta.getAnalistaResponsavelPauta().getNomeUsuario());
             pautasResumidas.add(pautaResumida);
         });
