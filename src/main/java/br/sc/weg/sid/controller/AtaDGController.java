@@ -1,5 +1,6 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.CadastroAtaDGDTO;
 import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.AtaDG;
 import br.sc.weg.sid.model.entities.PdfAta;
@@ -7,6 +8,7 @@ import br.sc.weg.sid.model.enums.TipoAta;
 import br.sc.weg.sid.model.service.AtaDGService;
 import br.sc.weg.sid.model.service.AtaService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +51,19 @@ public class AtaDGController {
     }
 
     @PostMapping()
-    public ResponseEntity<Object> save(Integer idAta) {
+    public ResponseEntity<Object> save(CadastroAtaDGDTO cadastroAtaDGDTO) {
+        try {
+            AtaDG ataDG = new AtaDG();
+            BeanUtils.copyProperties(cadastroAtaDGDTO, ataDG);
+            AtaDG ataDGSalva = ataDGService.save(ataDG);
+            return ResponseEntity.ok(ataDGSalva);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Erro ao salvar ata: " + e.getMessage());
+        }
+    }
+
+    public ResponseEntity<Object> salvarAtaDgByIdAta(Integer idAta) {
         try {
             AtaDG ataDG = new AtaDG();
             Ata ata = ataService.findById(idAta).get();
@@ -61,6 +75,7 @@ public class AtaDGController {
             return ResponseEntity.badRequest().body("Erro ao salvar ata: " + e.getMessage());
         }
     }
+
 
     @GetMapping("/gera-pdf-ata-dg/{idAtaDG}")
     ResponseEntity<Object> listarAtaPdf(@PathVariable("idAtaDG") Integer idAtaDG) throws Exception {

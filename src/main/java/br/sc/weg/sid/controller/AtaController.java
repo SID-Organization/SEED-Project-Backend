@@ -100,7 +100,7 @@ public class AtaController {
         AtomicBoolean existeNaoPublicada = new AtomicBoolean(false);
         AtomicBoolean existePublicada = new AtomicBoolean(false);
         ata.getPropostasLog().forEach(propostaLog -> {
-            if (propostaLog.getTipoAtaPropostaLog().equals("NAO_PUBLICADA")) {
+            if (propostaLog.getTipoAtaPropostaLog().toString().equals("NAO_PUBLICADA")) {
                 if (!existeNaoPublicada.get()) {
                     existeNaoPublicada.set(true);
                 }
@@ -126,16 +126,16 @@ public class AtaController {
 
     @PutMapping("/atualiza-proposta-log")
     public ResponseEntity<Object> update(@RequestBody List<CadastroParecerDGAtaDTO> cadastroParecerDGAtaDTOList) {
-        for(int i =0; i < cadastroParecerDGAtaDTOList.size(); i++){
-            if (propostaLogService.existsById(cadastroParecerDGAtaDTOList.get(i).getIdPropostaLog())){
-                PropostasLog propostasLog = propostaLogService.findById(cadastroParecerDGAtaDTOList.get(i).getIdPropostaLog()).get();
-                BeanUtils.copyProperties(cadastroParecerDGAtaDTOList.get(i), propostasLog);
+        for (CadastroParecerDGAtaDTO cadastroParecerDGAtaDTO : cadastroParecerDGAtaDTOList) {
+            if (propostaLogService.existsById(cadastroParecerDGAtaDTO.getIdPropostaLog())) {
+                PropostasLog propostasLog = propostaLogService.findById(cadastroParecerDGAtaDTO.getIdPropostaLog()).get();
+                BeanUtils.copyProperties(cadastroParecerDGAtaDTO, propostasLog);
                 propostaLogService.save(propostasLog);
-            }else {
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proposta não encontrada");
             }
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(ataDGController.save(cadastroParecerDGAtaDTOList.get(0).getIdAta()).getBody());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ataDGController.salvarAtaDgByIdAta(cadastroParecerDGAtaDTOList.get(0).getIdAta()).getBody());
     }
 
 
