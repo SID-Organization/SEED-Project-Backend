@@ -277,25 +277,6 @@ public class AtaController {
         }
     }
 
-    /**
-     * Busca uma ata pelo número do DG.
-     *
-     * @param numeroDgAta Número do DG da ata a ser buscada, passado pela URL.
-     * @return ResponseEntity contendo a ata encontrada ou mensagem de erro em caso de falha.
-     */
-    @GetMapping("/numeroDgAta/{numeroDgAta}")
-    public ResponseEntity<Object> findByNumeroDgAta(@PathVariable Integer numeroDgAta) {
-        try {
-            Ata ataNumeroDG = ataService.findByNumeroDgAta(numeroDgAta);
-            if (ataNumeroDG == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ata com numero de DG: " + numeroDgAta + " não encontrada");
-            }
-            return ResponseEntity.ok(ataNumeroDG);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao buscar ata: " + e.getMessage());
-        }
-    }
-
 //    @GetMapping("/pauta-ata/{idPauta}")
 //    public ResponseEntity<Object> findByPautaAta(@PathVariable Integer idPauta) {
 //        try {

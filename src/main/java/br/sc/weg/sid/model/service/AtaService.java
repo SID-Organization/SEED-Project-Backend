@@ -34,10 +34,6 @@ public class AtaService {
         ataRepository.deleteById(integer);
     }
 
-    public Ata findByNumeroDgAta(Integer numeroDgAta) {
-        return ataRepository.findByNumeroDgAta(numeroDgAta);
-    }
-
 //    public List<Ata> findByPautaAta(Pauta pautaAta) {
 //        return ataRepository.findByPautaAta(pautaAta);
 //    }
