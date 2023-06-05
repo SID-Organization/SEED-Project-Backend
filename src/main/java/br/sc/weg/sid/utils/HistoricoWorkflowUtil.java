@@ -16,6 +16,7 @@ public class HistoricoWorkflowUtil {
         historicoWorkflows.forEach(historicoWorkflow -> {
             HistoricoWorkflowResumido historicoWorkflowResumido = new HistoricoWorkflowResumido();
             BeanUtils.copyProperties(historicoWorkflow, historicoWorkflowResumido);
+            historicoWorkflowResumido.setIdHistoricoWorkflow(historicoWorkflow.getIdHistoricoWorkflow());
             historicoWorkflowResumido.setNomeResponsavel(historicoWorkflow.getIdResponsavel().getNomeUsuario());
             historicoWorkflowResumido.setNumeroCadastroResponsavel(historicoWorkflow.getIdResponsavel().getNumeroCadastroUsuario().toString());
             historicoWorkflowResumido.setRecebimentoHistorico(historicoWorkflow.getRecebimentoHistorico());

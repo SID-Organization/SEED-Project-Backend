@@ -894,7 +894,7 @@ public class DemandaController {
             historicoWorkflow.setTarefaHistoricoWorkflow(TarefaWorkflow.EDITAR_DEMANDA);
             historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
             HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
-            motivoRecusa.setIdHistoricoWorkflow(historicoWorkflowSalvo.getIdHistoricoWorkflow());
+            motivoRecusa.setIdHistoricoWorkflow(historicoWorkflowAnterior.getIdHistoricoWorkflow());
             demanda.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
         }
             try{
