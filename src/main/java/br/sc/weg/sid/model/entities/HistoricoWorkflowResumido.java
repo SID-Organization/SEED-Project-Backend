@@ -7,6 +7,8 @@ import java.util.Date;
 @Data
 public class HistoricoWorkflowResumido {
 
+    private Integer idHistoricoWorkflow;
+
     private Date recebimentoHistorico;
 
     private Date conclusaoHistorico;
