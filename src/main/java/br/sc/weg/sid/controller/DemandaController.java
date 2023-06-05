@@ -883,6 +883,7 @@ public class DemandaController {
             HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
             historicoWorkflowAnterior.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
             historicoWorkflowAnterior.setAcaoFeitaHistorico("Devolver");
+            historicoWorkflowAnterior.setMotivoDevolucaoHistorico(devolverDemandaDTO.getMotivoRecusaDemanda());
             historicoWorkflowService.save(historicoWorkflowAnterior);
             HistoricoWorkflow historicoWorkflow = new HistoricoWorkflow();
             historicoWorkflow.setDemandaHistorico(demanda);

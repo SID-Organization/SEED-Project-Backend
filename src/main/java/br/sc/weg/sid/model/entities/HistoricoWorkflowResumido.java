@@ -25,6 +25,8 @@ public class HistoricoWorkflowResumido {
 
     private String statusWorkflow;
 
+    private String motivoDevolucaoHistorico;
+
     private Double versaoHistorico;
 
 }

@@ -21,10 +21,15 @@ public class HistoricoWorkflowUtil {
             historicoWorkflowResumido.setNumeroCadastroResponsavel(historicoWorkflow.getIdResponsavel().getNumeroCadastroUsuario().toString());
             historicoWorkflowResumido.setRecebimentoHistorico(historicoWorkflow.getRecebimentoHistorico());
             historicoWorkflowResumido.setTarefaHistoricoWorkflow(historicoWorkflow.getTarefaHistoricoWorkflow().getNome());
+            if (historicoWorkflow.getMotivoDevolucaoHistorico() != null) {
+                historicoWorkflowResumido.setMotivoDevolucaoHistorico(historicoWorkflow.getMotivoDevolucaoHistorico());
+            }
             historicoWorkflowResumido.setStatusWorkflow(historicoWorkflow.getStatusWorkflow().getDescricao());
             historicoWorkflowResumidos.add(historicoWorkflowResumido);
         });
         return historicoWorkflowResumidos;
-    };
+    }
+
+    ;
 
 }
