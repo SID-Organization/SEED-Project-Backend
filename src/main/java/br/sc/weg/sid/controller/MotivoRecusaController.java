@@ -21,7 +21,7 @@ public class MotivoRecusaController {
         try {
             MotivoRecusa motivoRecusa = motivoRecusaService.findAllByIdHistoricoWorkflowAndStatusDemandaMotivoRecusa(idWorkflow, StatusDemanda.EM_EDICAO);
             if (motivoRecusa == null) {
-                return ResponseEntity.ok("Motivo de recusa não encontrado!");
+                return ResponseEntity.badRequest().body("Motivo de recusa não encontrado!");
             }
             return ResponseEntity.ok(motivoRecusa.getDescricaoMotivoRecusa());
         } catch (Exception e) {
