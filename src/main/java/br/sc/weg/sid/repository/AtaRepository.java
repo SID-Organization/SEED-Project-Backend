@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AtaRepository extends JpaRepository<Ata, Integer> {
-    Ata findByNumeroDgAta(Integer numeroDgAta);
 
 //    List<Ata> findByPautaAta(Pauta pautaAta);
 }
