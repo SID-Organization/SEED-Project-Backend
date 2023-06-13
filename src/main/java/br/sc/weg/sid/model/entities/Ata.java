@@ -29,37 +29,33 @@ public class Ata {
     @JsonIgnore
     private List<PdfAta> pdfAta;
 
-    @Column(name = "NumeroAtaPublicada")
     private String numeroAtaPublicada;
 
-    @Column(name = "NumeroAtaNaoPublicada")
     private String numeroAtaNaoPublicada;
 
-    @Column(name = "DocumentoAprovacaoAta", nullable = false)
+    private Integer numeroAtaDG;
+
+    @Column(nullable = false)
     @Lob
     private byte[] documentoAprovacaoAta;
 
     @OneToMany(cascade = CascadeType.ALL)
     List<PropostasLog> propostasLog;
 
-    @Column(name = "dataReuniaoPauta", nullable = false)
+    @Column(nullable = false)
     private Date dataReuniaoPauta;
 
     @JsonFormat(pattern = "HH:mm")
     @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @Column(name = "horarioInicioPauta", nullable = false)
+    @Column(nullable = false)
     private LocalTime horarioInicioPauta;
 
     @JsonFormat(pattern = "HH:mm")
     @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @Column(name = "horarioTerminoPauta", nullable = false)
+    @Column(nullable = false)
     private LocalTime horarioTerminoPauta;
 
     @ManyToOne()
     @JoinColumn(name = "numero_cadastro_usuario")
     private Usuario analistaResponsavelPauta;
-
-
-    @OneToOne(mappedBy = "ataAtaDg")
-    AtaDG ataDg;
 }

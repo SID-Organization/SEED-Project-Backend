@@ -61,7 +61,7 @@ public class PautaController {
             Notificacao notificacaoReuniaoPauta = new Notificacao();
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String dataFormatada = formatter.format(pauta.getDataReuniaoPauta());
-            notificacaoReuniaoPauta.setTextoNotificacao("Uma reunião para discutir uma pauta foi marcada!");
+            notificacaoReuniaoPauta.setTextoNotificacao("uma reunião para discutir uma pauta foi marcada!");
             notificacaoReuniaoPauta.setTempoNotificacao(dataFormatada + " às " + pauta.getHorarioInicioPauta() + "h");
             notificacaoReuniaoPauta.setResponsavel(proposta.getDemandaProposta().getAnalistaResponsavelDemanda().getNomeUsuario().toString());
             notificacaoReuniaoPauta.setVisualizada(false);
