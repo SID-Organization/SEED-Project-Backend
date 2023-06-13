@@ -9,10 +9,6 @@ import java.util.List;
 @Data
 public class CadastroAtaDTO {
 
-    private String numeroAtaNaoPublicada;
-
-    private String numeroAtaPublicada;
-
     @NotNull(message = "O campo pautaAt a não pode ser nulo")
     private Pauta pautaAta;
 
