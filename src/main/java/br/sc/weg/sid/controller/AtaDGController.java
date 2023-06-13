@@ -63,11 +63,12 @@ public class AtaDGController {
         }
     }
 
-    public ResponseEntity<Object> salvarAtaDgByIdAta(Integer idAta) {
+    public ResponseEntity<Object> salvarAtaDgByIdAta(Integer numeroAtaDG, Integer idAta) {
         try {
             AtaDG ataDG = new AtaDG();
             Ata ata = ataService.findById(idAta).get();
             ataDG.setAtaAtaDg(ata);
+            ataDG.setNumeroAtaDG(numeroAtaDG);
             AtaDG ataDGSalva = ataDGService.save(ataDG);
             return ResponseEntity.ok(ataDGSalva);
         } catch (Exception e) {

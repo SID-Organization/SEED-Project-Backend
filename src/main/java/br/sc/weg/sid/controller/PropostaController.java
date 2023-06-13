@@ -315,7 +315,7 @@ public class PropostaController {
             List<Proposta> proposta = propostaService.findAll();
             List<Proposta> propostasFiltradas = new ArrayList<>();
             for (Proposta p : proposta) {
-                if (p.getDemandaProposta().getStatusDemanda() == StatusDemanda.PROPOSTA_PRONTA && p.getDemandaProposta().getStatusDemanda() == StatusDemanda.EM_PAUTA) {
+                if (p.getDemandaProposta().getStatusDemanda() == StatusDemanda.PROPOSTA_PRONTA || p.getDemandaProposta().getStatusDemanda() == StatusDemanda.EM_PAUTA) {
                     propostasFiltradas.add(p);
                 }
             }
