@@ -536,7 +536,7 @@ public class DemandaController {
         } else {
             Notificacao notificacaoStatus = new Notificacao();
             notificacaoStatus.setTextoNotificacao("a demanda " + demandaAtualizada.getIdDemanda() + " - "
-                    + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome());
+                    + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome().toLowerCase());
             atualizaTipoNotificacao(demandaAtualizada, notificacaoStatus);
             notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());
             notificacaoStatus.setTempoNotificacao(notificacaoHoraData);
