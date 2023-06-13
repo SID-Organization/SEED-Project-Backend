@@ -8,6 +8,8 @@ public class CadastroParecerDGAtaDTO {
 
     private Integer idAta;
 
+    private Integer numeroAtaDG;
+
     private Integer idPropostaLog;
 
     private ParecerComissao parecerDGPropostaLog;

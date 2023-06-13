@@ -522,7 +522,7 @@ public class DemandaController {
 
         if (demandaAtualizada.getStatusDemanda() == StatusDemanda.ABERTA) {
             Notificacao notificacaoDemandaCriada = new Notificacao();
-            notificacaoDemandaCriada.setTextoNotificacao("Uma demanda foi criada! " + demandaAtualizada.getTituloDemanda() + " criada por: " +
+            notificacaoDemandaCriada.setTextoNotificacao("uma demanda foi criada! " + demandaAtualizada.getTituloDemanda() + " criada por: " +
                     demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
             notificacaoDemandaCriada.setTipoNotificacao("approved");
             notificacaoDemandaCriada.setResponsavel(demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
@@ -535,7 +535,7 @@ public class DemandaController {
             notificacaoService.save(notificacaoDemandaCriada);
         } else {
             Notificacao notificacaoStatus = new Notificacao();
-            notificacaoStatus.setTextoNotificacao("A demanda " + demandaAtualizada.getIdDemanda() + " - "
+            notificacaoStatus.setTextoNotificacao("a demanda " + demandaAtualizada.getIdDemanda() + " - "
                     + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome());
             atualizaTipoNotificacao(demandaAtualizada, notificacaoStatus);
             notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());

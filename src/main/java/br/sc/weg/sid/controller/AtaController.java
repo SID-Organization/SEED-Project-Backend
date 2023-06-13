@@ -1,5 +1,6 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.CadastroAtaDGDTO;
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
 import br.sc.weg.sid.DTO.CadastroParecerDGAtaDTO;
 import br.sc.weg.sid.model.entities.*;
@@ -135,7 +136,8 @@ public class AtaController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proposta não encontrada");
             }
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(ataDGController.salvarAtaDgByIdAta(cadastroParecerDGAtaDTOList.get(0).getIdAta()).getBody());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ataDGController.salvarAtaDgByIdAta(cadastroParecerDGAtaDTOList.get(0).getNumeroAtaDG(),
+                cadastroParecerDGAtaDTOList.get(0).getIdAta()).getBody());
     }
 
 
