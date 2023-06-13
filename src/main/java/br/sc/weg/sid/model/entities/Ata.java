@@ -29,10 +29,6 @@ public class Ata {
     @JsonIgnore
     private List<PdfAta> pdfAta;
 
-    private String numeroAtaPublicada;
-
-    private String numeroAtaNaoPublicada;
-
     private Integer numeroAtaDG;
 
     @Column(nullable = false)

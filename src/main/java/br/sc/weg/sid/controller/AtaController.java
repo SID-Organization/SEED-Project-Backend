@@ -1,6 +1,5 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.CadastroAtaDGDTO;
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
 import br.sc.weg.sid.DTO.CadastroParecerDGAtaDTO;
 import br.sc.weg.sid.model.entities.*;
@@ -95,26 +94,7 @@ public class AtaController {
             Proposta proposta = propostaService.findById(propostaLog.getPropostaPropostaLog().getIdProposta()).get();
             propostaLog.setPdfPropostaLog(proposta.getPdfProposta());
         });
-        AtomicBoolean existeNaoPublicada = new AtomicBoolean(false);
-        AtomicBoolean existePublicada = new AtomicBoolean(false);
-        ata.getPropostasLog().forEach(propostaLog -> {
-            if (propostaLog.getTipoAtaPropostaLog().toString().equals("NAO_PUBLICADA")) {
-                if (!existeNaoPublicada.get()) {
-                    existeNaoPublicada.set(true);
-                }
-            } else {
-                if (!existePublicada.get()) {
-                    existePublicada.set(true);
-                }
-            }
-        });
         Ata ataSalva = ataService.save(ata);
-        if (existePublicada.get()) {
-            ataSalva.setNumeroAtaPublicada(ataSalva.getIdAta() + "/" + cadastroAtaDTO.getNumeroAtaPublicada());
-        }
-        if (existeNaoPublicada.get()) {
-            ataSalva.setNumeroAtaNaoPublicada(ataSalva.getIdAta() + "/" + LocalDate.now().getYear());
-        }
         ataService.save(ataSalva);
         pautaAta.setStatusPauta(false);
         pautaService.save(pautaAta);
