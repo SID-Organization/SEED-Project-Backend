@@ -3,6 +3,7 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
+import br.sc.weg.sid.model.exporter.DemandaExcelExporter;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -766,6 +769,23 @@ public class DemandaController {
             e.printStackTrace();
         }
         return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idDemanda + "!");
+    }
+
+    @PostMapping("/tabela-excel")
+    public ResponseEntity<Object> gerarTabelaExcel(HttpServletResponse response, @RequestBody List<Integer> demandasId) throws IOException {
+        List<Demanda> demandas = new ArrayList<>();
+        for (Integer id : demandasId) {
+            demandas.add(demandaService.findById(id).get());
+        }
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=tabela-demandas.xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        DemandaExcelExporter excelExporter = new DemandaExcelExporter(demandas);
+        excelExporter.criarArquivo(response);
+
+        return ResponseEntity.ok().body(response);
     }
 
 

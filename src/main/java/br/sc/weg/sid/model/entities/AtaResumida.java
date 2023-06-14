@@ -17,6 +17,8 @@ public class AtaResumida {
 
     LocalTime horarioInicioAta;
 
+    LocalTime horarioTerminoAta;
+
     String analistaResponsavel;
 
     List<PropostasLog> propostasLog;
