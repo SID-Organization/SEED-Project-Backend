@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -770,8 +771,12 @@ public class DemandaController {
         return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idDemanda + "!");
     }
 
-    @GetMapping("/tabela-excel")
-    public ResponseEntity<Object> gerarTabelaExcel(HttpServletResponse response, @RequestBody List<Demanda> demandas) {
+    @PostMapping("/tabela-excel")
+    public ResponseEntity<Object> gerarTabelaExcel(HttpServletResponse response, @RequestBody List<Integer> demandasId) throws IOException {
+        List<Demanda> demandas = new ArrayList<>();
+        for (Integer id : demandasId) {
+            demandas.add(demandaService.findById(id).get());
+        }
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=tabela-demandas.xlsx";
@@ -780,7 +785,7 @@ public class DemandaController {
         DemandaExcelExporter excelExporter = new DemandaExcelExporter(demandas);
         excelExporter.criarArquivo(response);
 
-        return ResponseEntity.ok().body(demandas);
+        return ResponseEntity.ok().body(response);
     }
 
 
