@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -245,6 +246,28 @@ public class AtaController {
             List<AtaResumida> atasResumidas = AtaUtil.converterAtaParaAtaResumida(atas);
             return ResponseEntity.ok(atasResumidas);
         } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao buscar atas: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/atas-dg")
+    public ResponseEntity<Object> findAtaDG() {
+        try {
+            List<Ata> atas = ataService.findAll();
+            List<Ata> atasDG = new ArrayList<>();
+            if (atas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma ata encontrada");
+            }
+            for(Ata ata : atas) {
+                System.out.println("AKDJLKSFSA: " + ata.getPropostasLog().get(0).getParecerDGPropostaLog());
+                if (ata.getPropostasLog().get(0).getParecerDGPropostaLog() != null) {
+                    atasDG.add(ata);
+                }
+            }
+            List<AtaResumida> atasResumidas = AtaUtil.converterAtaParaAtaResumida(atasDG);
+            return ResponseEntity.ok(atasResumidas);
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Erro ao buscar atas: " + e.getMessage());
         }
     }
