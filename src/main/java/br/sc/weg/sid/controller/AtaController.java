@@ -236,16 +236,23 @@ public class AtaController {
      *
      * @return ResponseEntity contendo a lista de atas resumidas ou mensagem de erro em caso de falha.
      */
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<Object> findAll() {
         try {
             List<Ata> atas = ataService.findAll();
+            List<Ata> atasFiltradas = new ArrayList<>();
             if (atas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma ata encontrada");
             }
-            List<AtaResumida> atasResumidas = AtaUtil.converterAtaParaAtaResumida(atas);
+            for(Ata ata : atas) {
+                if (ata.getPropostasLog().get(0).getParecerDGPropostaLog() == null) {
+                    atasFiltradas.add(ata);
+                }
+            }
+            List<AtaResumida> atasResumidas = AtaUtil.converterAtaParaAtaResumida(atasFiltradas);
             return ResponseEntity.ok(atasResumidas);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Erro ao buscar atas: " + e.getMessage());
         }
     }
@@ -259,7 +266,6 @@ public class AtaController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma ata encontrada");
             }
             for(Ata ata : atas) {
-                System.out.println("AKDJLKSFSA: " + ata.getPropostasLog().get(0).getParecerDGPropostaLog());
                 if (ata.getPropostasLog().get(0).getParecerDGPropostaLog() != null) {
                     atasDG.add(ata);
                 }

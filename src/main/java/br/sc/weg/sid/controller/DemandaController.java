@@ -772,7 +772,7 @@ public class DemandaController {
     }
 
     @PostMapping("/tabela-excel")
-    public ResponseEntity<Object> gerarTabelaExcel(HttpServletResponse response, @RequestBody List<Integer> demandasId) throws IOException {
+    public void gerarTabelaExcel(HttpServletResponse response, @RequestBody List<Integer> demandasId) throws IOException {
         List<Demanda> demandas = new ArrayList<>();
         for (Integer id : demandasId) {
             demandas.add(demandaService.findById(id).get());
@@ -784,8 +784,6 @@ public class DemandaController {
 
         DemandaExcelExporter excelExporter = new DemandaExcelExporter(demandas);
         excelExporter.criarArquivo(response);
-
-        return ResponseEntity.ok().body(response);
     }
 
 

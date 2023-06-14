@@ -27,7 +27,7 @@ public class DemandaExcelExporter {
 
     public void criarHeader() {
         Row row = sheet.createRow(0);
-        row.createCell(0).setCellValue("Demanda Id");
+
         Cell cell = row.createCell(1);
         cell.setCellValue("Demanda ID");
 
@@ -42,6 +42,8 @@ public class DemandaExcelExporter {
     public void criarArquivo(HttpServletResponse response) throws IOException {
         criarHeader();
         setarDadosCelulas();
+
+        System.out.println("Criando arquivo excel");
 
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
