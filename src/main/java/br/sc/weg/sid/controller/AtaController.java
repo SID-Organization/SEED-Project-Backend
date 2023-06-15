@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -34,9 +35,6 @@ public class AtaController {
     private PropostaService propostaService;
 
     private PropostaLogService propostaLogService;
-
-    private AtaDGController ataDGController;
-
 
     /**
      * Cria uma nova ata a partir dos dados fornecidos pelo usuário e salva no banco de dados.
@@ -73,6 +71,7 @@ public class AtaController {
         ata.setHorarioInicioPauta(pautaAta.getHorarioInicioPauta());
         ata.setHorarioTerminoPauta(pautaAta.getHorarioTerminoPauta());
         ata.setAnalistaResponsavelPauta(pautaAta.getAnalistaResponsavelPauta());
+        ata.setForumAta(pautaAta.getForumPauta());
         pautaAta.getPropostasPauta().forEach(proposta -> {
             ata.getPropostasLog().forEach(ataPropostaLog -> {
                 if (proposta.getIdProposta().equals(ataPropostaLog.getPropostaPropostaLog().getIdProposta())) {
@@ -97,26 +96,7 @@ public class AtaController {
             Proposta proposta = propostaService.findById(propostaLog.getPropostaPropostaLog().getIdProposta()).get();
             propostaLog.setPdfPropostaLog(proposta.getPdfProposta());
         });
-        AtomicBoolean existeNaoPublicada = new AtomicBoolean(false);
-        AtomicBoolean existePublicada = new AtomicBoolean(false);
-        ata.getPropostasLog().forEach(propostaLog -> {
-            if (propostaLog.getTipoAtaPropostaLog().toString().equals("NAO_PUBLICADA")) {
-                if (!existeNaoPublicada.get()) {
-                    existeNaoPublicada.set(true);
-                }
-            } else {
-                if (!existePublicada.get()) {
-                    existePublicada.set(true);
-                }
-            }
-        });
         Ata ataSalva = ataService.save(ata);
-        if (existePublicada.get()) {
-            ataSalva.setNumeroAtaPublicada(ataSalva.getIdAta() + "/" + cadastroAtaDTO.getNumeroAtaPublicada());
-        }
-        if (existeNaoPublicada.get()) {
-            ataSalva.setNumeroAtaNaoPublicada(ataSalva.getIdAta() + "/" + LocalDate.now().getYear());
-        }
         ataService.save(ataSalva);
         pautaAta.setStatusPauta(false);
         pautaService.save(pautaAta);
@@ -125,7 +105,7 @@ public class AtaController {
     }
 
     @PutMapping("/atualiza-proposta-log")
-    public ResponseEntity<Object> update(@RequestBody List<CadastroParecerDGAtaDTO> cadastroParecerDGAtaDTOList) {
+    public ResponseEntity<Object> update(@RequestBody List<CadastroParecerDGAtaDTO> cadastroParecerDGAtaDTOList) throws Exception {
         for (CadastroParecerDGAtaDTO cadastroParecerDGAtaDTO : cadastroParecerDGAtaDTOList) {
             if (propostaLogService.existsById(cadastroParecerDGAtaDTO.getIdPropostaLog())) {
                 PropostasLog propostasLog = propostaLogService.findById(cadastroParecerDGAtaDTO.getIdPropostaLog()).get();
@@ -135,13 +115,22 @@ public class AtaController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proposta não encontrada");
             }
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(ataDGController.salvarAtaDgByIdAta(cadastroParecerDGAtaDTOList.get(0).getIdAta()).getBody());
+        Ata ata = ataService.findById(cadastroParecerDGAtaDTOList.get(0).getIdAta()).get();
+        ata.setNumeroAtaDG(cadastroParecerDGAtaDTOList.get(0).getNumeroAtaDG());
+        ataService.save(ata);
+        try {
+            gerarPDFAtaController.generatePDF(ata.getIdAta());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao gerar PDF da ata: " + e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("Propostas atualizadas com sucesso");
     }
 
 
     /**
      * Retorna o arquivo PDF da ata publicada correspondente ao ID fornecido.
-     *
+     * <p>
      * O método recebe o ID da ata desejada como parâmetro na URL e retorna o PDF correspondente da ata publicada.
      * Se a ata existir, é construído um cabeçalho para o PDF e retornado um ResponseEntity contendo o arquivo PDF.
      * Caso contrário, uma mensagem de erro é retornada. O método pode lançar uma exceção em caso de falha na busca do PDF da ata.
@@ -157,7 +146,7 @@ public class AtaController {
 
     /**
      * Retorna o arquivo PDF da ata não publicada correspondente ao ID fornecido.
-     *
+     * <p>
      * O método recebe o ID da ata desejada como parâmetro na URL e retorna o PDF correspondente da ata não publicada.
      * Se a ata existir, é construído um cabeçalho para o PDF e retornado um ResponseEntity contendo o arquivo PDF.
      * Caso contrário, uma mensagem de erro é retornada. O método pode lançar uma exceção em caso de falha na busca do PDF da ata.
@@ -175,7 +164,7 @@ public class AtaController {
      * Este método é responsável por retornar o arquivo PDF correspondente a uma ata específica, seja ela publicada
      * ou não publicada, com base no ID fornecido. Ele oferece duas variáveis: uma para retornar o PDF da ata publicada
      * e outra para retornar o PDF da ata não publicada.
-     *
+     * <p>
      * Ao receber o ID da ata desejada como parâmetro na URL, o método busca a ata correspondente no serviço de atendimento.
      * Em seguida, ele percorre a lista de PDFs associados à ata para encontrar o PDF com o tipo de ata desejado.
      * Caso seja encontrado um PDF correspondente, o método constrói um cabeçalho adequado para o arquivo PDF e retorna
@@ -185,7 +174,7 @@ public class AtaController {
      * Se a ata com o ID fornecido não existir, é retornada uma mensagem de erro indicando que a ata não existe.
      * Em caso de falha durante o processo de busca do PDF da ata, uma exceção pode ser lançada.
      *
-     * @param idAta ID da ata desejada.
+     * @param idAta   ID da ata desejada.
      * @param tipoAta Tipo de ata desejado (PUBLICADA ou NAO_PUBLICADA).
      * @return ResponseEntity contendo o arquivo PDF da ata correspondente ou uma mensagem de erro em caso de falha.
      * @throws RuntimeException se ocorrer algum erro na busca do PDF da ata.
@@ -248,16 +237,44 @@ public class AtaController {
      *
      * @return ResponseEntity contendo a lista de atas resumidas ou mensagem de erro em caso de falha.
      */
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<Object> findAll() {
         try {
             List<Ata> atas = ataService.findAll();
+            List<Ata> atasFiltradas = new ArrayList<>();
             if (atas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma ata encontrada");
             }
-            List<AtaResumida> atasResumidas = AtaUtil.converterAtaParaAtaResumida(atas);
+            for(Ata ata : atas) {
+                if (ata.getPropostasLog().get(0).getParecerDGPropostaLog() == null) {
+                    atasFiltradas.add(ata);
+                }
+            }
+            List<AtaResumida> atasResumidas = AtaUtil.converterAtaParaAtaResumida(atasFiltradas);
             return ResponseEntity.ok(atasResumidas);
         } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Erro ao buscar atas: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/atas-dg")
+    public ResponseEntity<Object> findAtaDG() {
+        try {
+            List<Ata> atas = ataService.findAll();
+            List<Ata> atasDG = new ArrayList<>();
+            if (atas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma ata encontrada");
+            }
+            for(Ata ata : atas) {
+                if (ata.getPropostasLog().get(0).getParecerDGPropostaLog() != null) {
+                    atasDG.add(ata);
+                }
+            }
+            List<AtaResumida> atasResumidas = AtaUtil.converterAtaParaAtaResumida(atasDG);
+            return ResponseEntity.ok(atasResumidas);
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Erro ao buscar atas: " + e.getMessage());
         }
     }

@@ -3,6 +3,7 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
+import br.sc.weg.sid.model.exporter.DemandaExcelExporter;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -522,7 +525,7 @@ public class DemandaController {
 
         if (demandaAtualizada.getStatusDemanda() == StatusDemanda.ABERTA) {
             Notificacao notificacaoDemandaCriada = new Notificacao();
-            notificacaoDemandaCriada.setTextoNotificacao("Uma demanda foi criada! " + demandaAtualizada.getTituloDemanda() + " criada por: " +
+            notificacaoDemandaCriada.setTextoNotificacao("uma demanda foi criada! " + demandaAtualizada.getTituloDemanda() + " criada por: " +
                     demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
             notificacaoDemandaCriada.setTipoNotificacao("approved");
             notificacaoDemandaCriada.setResponsavel(demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
@@ -535,8 +538,8 @@ public class DemandaController {
             notificacaoService.save(notificacaoDemandaCriada);
         } else {
             Notificacao notificacaoStatus = new Notificacao();
-            notificacaoStatus.setTextoNotificacao("A demanda " + demandaAtualizada.getIdDemanda() + " - "
-                    + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome());
+            notificacaoStatus.setTextoNotificacao("a demanda " + demandaAtualizada.getIdDemanda() + " - "
+                    + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome().toLowerCase());
             atualizaTipoNotificacao(demandaAtualizada, notificacaoStatus);
             notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());
             notificacaoStatus.setTempoNotificacao(notificacaoHoraData);
@@ -656,9 +659,9 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda!" + e.getMessage());
         }
 
-        try{
+        try {
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível gerar o pdf da demanda!" + e.getMessage());
         }
@@ -771,6 +774,19 @@ public class DemandaController {
             e.printStackTrace();
         }
         return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idDemanda + "!");
+    }
+
+    @GetMapping("/tabela-excel")
+    public void gerarTabelaExcel(HttpServletResponse response, @RequestBody List<Integer> demandasId) throws IOException {
+        List<Demanda> demandasList = new ArrayList<>();
+        for (Integer id : demandasId) {
+            demandasList.add(demandaService.findById(id).get());
+        }
+        response.setHeader("Content-Disposition", "attachment; filename=tabela-demandas.xlsx");
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+        ExcelExporterService excelExporterService = new ExcelExporterService();
+        excelExporterService.criarTabelaDemandaExcel(response, demandasList);
     }
 
 
@@ -903,15 +919,15 @@ public class DemandaController {
             motivoRecusa.setIdHistoricoWorkflow(historicoWorkflowAnterior.getIdHistoricoWorkflow());
             demanda.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
         }
-            try{
-                gerarPDFDemandaController.generatePDF(idDemanda);
-            }catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception("Erro ao gerar PDF da demanda: " + e.getMessage());
-            }finally {
-                motivoRecusaService.save(motivoRecusa);
-                demandaService.save(demanda);
-            }
+        try {
+            gerarPDFDemandaController.generatePDF(idDemanda);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Erro ao gerar PDF da demanda: " + e.getMessage());
+        } finally {
+            motivoRecusaService.save(motivoRecusa);
+            demandaService.save(demanda);
+        }
         return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");
     }
 

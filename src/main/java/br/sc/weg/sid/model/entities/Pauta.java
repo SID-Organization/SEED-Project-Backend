@@ -1,12 +1,11 @@
 package br.sc.weg.sid.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalTime;
@@ -42,10 +41,12 @@ public class Pauta {
     private LocalTime horarioTerminoPauta;
 
     @ManyToOne()
+    @JsonIgnoreProperties({"analistaResponsavelForum", "usuariosForum"})
     @JoinColumn(name = "idForum", nullable = false)
     private Forum forumPauta;
 
     @ManyToMany()
+    @ToString.Exclude()
     @JoinTable(name = "proposta_pauta",
             joinColumns = @JoinColumn(name = "idPauta"),
             inverseJoinColumns = @JoinColumn(name = "idProposta"))

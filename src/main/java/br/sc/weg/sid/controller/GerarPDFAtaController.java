@@ -4,7 +4,6 @@ import br.sc.weg.sid.model.entities.Ata;
 import br.sc.weg.sid.model.entities.PdfAta;
 import br.sc.weg.sid.model.entities.PropostasLog;
 import br.sc.weg.sid.model.enums.TipoAta;
-import br.sc.weg.sid.model.service.AtaDGService;
 import br.sc.weg.sid.model.service.AtaService;
 import br.sc.weg.sid.model.service.GerarPDFAtaService;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,6 @@ public class GerarPDFAtaController {
 
     AtaService ataService;
 
-    AtaDGService ataDGService;
 
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna o PDF da ata de acordo com o id da ata informado.
@@ -79,13 +77,8 @@ public class GerarPDFAtaController {
                 pdfAtaNaoPublicadaClasse.setTipoAta(TipoAta.NAO_PUBLICADA);
                 listaPDFAta.add(pdfAtaNaoPublicadaClasse);
             }
-            if (ata.getAtaDg() != null){
-                ata.getAtaDg().setPdfAtaDG(listaPDFAta);
-                ataDGService.save(ata.getAtaDg());
-            }else {
-                ata.setPdfAta(listaPDFAta);
-                ataService.save(ata);
-            }
+            ata.setPdfAta(listaPDFAta);
+            ataService.save(ata);
             return ResponseEntity.ok().headers(headers).body("PDF gerado com sucesso!");
         } else {
             return ResponseEntity.badRequest().body("ERROR 0006: A ata inserida não existe! ID ATA: " + idAta);

@@ -11,18 +11,19 @@ public class AtaResumida {
 
     Integer idAta;
 
+    String nomeForumAta;
+
     Integer qtdPropostas;
 
     Date dataReuniaoAta;
 
     LocalTime horarioInicioAta;
 
+    LocalTime horarioTerminoAta;
+
     String analistaResponsavel;
 
     List<PropostasLog> propostasLog;
 
-    String numeroAtaPublicada;
-
-    String numeroAtaNaoPublicada;
 
 }
