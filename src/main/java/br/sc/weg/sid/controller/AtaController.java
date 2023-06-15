@@ -71,6 +71,7 @@ public class AtaController {
         ata.setHorarioInicioPauta(pautaAta.getHorarioInicioPauta());
         ata.setHorarioTerminoPauta(pautaAta.getHorarioTerminoPauta());
         ata.setAnalistaResponsavelPauta(pautaAta.getAnalistaResponsavelPauta());
+        ata.setForumAta(pautaAta.getForumPauta());
         pautaAta.getPropostasPauta().forEach(proposta -> {
             ata.getPropostasLog().forEach(ataPropostaLog -> {
                 if (proposta.getIdProposta().equals(ataPropostaLog.getPropostaPropostaLog().getIdProposta())) {

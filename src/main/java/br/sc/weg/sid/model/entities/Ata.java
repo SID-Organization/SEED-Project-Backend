@@ -54,4 +54,8 @@ public class Ata {
     @ManyToOne()
     @JoinColumn(name = "numero_cadastro_usuario")
     private Usuario analistaResponsavelPauta;
+
+    @ManyToOne
+    @JoinColumn(name = "idForumAta")
+    private Forum forumAta;
 }

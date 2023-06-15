@@ -11,6 +11,8 @@ public class AtaResumida {
 
     Integer idAta;
 
+    String nomeForumAta;
+
     Integer qtdPropostas;
 
     Date dataReuniaoAta;
@@ -23,8 +25,5 @@ public class AtaResumida {
 
     List<PropostasLog> propostasLog;
 
-    String numeroAtaPublicada;
-
-    String numeroAtaNaoPublicada;
 
 }
