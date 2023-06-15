@@ -659,9 +659,9 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda!" + e.getMessage());
         }
 
-        try{
+        try {
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível gerar o pdf da demanda!" + e.getMessage());
         }
@@ -771,19 +771,17 @@ public class DemandaController {
         return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idDemanda + "!");
     }
 
-    @PostMapping("/tabela-excel")
+    @GetMapping("/tabela-excel")
     public void gerarTabelaExcel(HttpServletResponse response, @RequestBody List<Integer> demandasId) throws IOException {
-        List<Demanda> demandas = new ArrayList<>();
+        List<Demanda> demandasList = new ArrayList<>();
         for (Integer id : demandasId) {
-            demandas.add(demandaService.findById(id).get());
+            demandasList.add(demandaService.findById(id).get());
         }
-        response.setContentType("application/octet-stream");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=tabela-demandas.xlsx";
-        response.setHeader(headerKey, headerValue);
+        response.setHeader("Content-Disposition", "attachment; filename=tabela-demandas.xlsx");
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
-        DemandaExcelExporter excelExporter = new DemandaExcelExporter(demandas);
-        excelExporter.criarArquivo(response);
+        ExcelExporterService excelExporterService = new ExcelExporterService();
+        excelExporterService.criarTabelaDemandaExcel(response, demandasList);
     }
 
 
@@ -916,15 +914,15 @@ public class DemandaController {
             motivoRecusa.setIdHistoricoWorkflow(historicoWorkflowAnterior.getIdHistoricoWorkflow());
             demanda.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);
         }
-            try{
-                gerarPDFDemandaController.generatePDF(idDemanda);
-            }catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception("Erro ao gerar PDF da demanda: " + e.getMessage());
-            }finally {
-                motivoRecusaService.save(motivoRecusa);
-                demandaService.save(demanda);
-            }
+        try {
+            gerarPDFDemandaController.generatePDF(idDemanda);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Erro ao gerar PDF da demanda: " + e.getMessage());
+        } finally {
+            motivoRecusaService.save(motivoRecusa);
+            demandaService.save(demanda);
+        }
         return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");
     }
 
