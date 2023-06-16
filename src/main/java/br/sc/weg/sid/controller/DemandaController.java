@@ -670,12 +670,7 @@ public class DemandaController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível gerar o pdf da demanda!" + e.getMessage());
         }
-
-        ReturnUpdateDemandaDTO returnUpdateDemandaDTO = new ReturnUpdateDemandaDTO();
-        returnUpdateDemandaDTO.setDemanda(demandaAtualizada);
-        returnUpdateDemandaDTO.setArquivosDemanda(demandaAtualizada.getArquivosDemandas());
-
-        return ResponseEntity.status(HttpStatus.OK).body(returnUpdateDemandaDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(demandaAtualizada);
     }
 
     /**
