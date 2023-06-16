@@ -56,6 +56,8 @@ public class DemandaController {
 
     NotificacaoService notificacaoService;
 
+    ExcelExporterService excelExporterService;
+
     /**
      * Retorna uma lista de demandas resumidas.
      * <p>
@@ -171,6 +173,9 @@ public class DemandaController {
             Demanda demanda = demandaUtil.convertDtoToModel(cadastroDemandaDTO);
             PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
             demanda.setStatusDemanda(StatusDemanda.ABERTA);
+
+            Date dataAtual = new Date();
+            demanda.setDataCriacaoDemanda(dataAtual);
 
             //Verifica se a demanda possui todos os campos preenchidos, caso algum atributo esteja nulo, o status será RASCUNHO
             Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
@@ -771,18 +776,11 @@ public class DemandaController {
         return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idDemanda + "!");
     }
 
-    @GetMapping("/tabela-excel")
-    public void gerarTabelaExcel(HttpServletResponse response, @RequestBody List<Integer> demandasId) throws IOException {
-        List<Demanda> demandasList = new ArrayList<>();
-        for (Integer id : demandasId) {
-            demandasList.add(demandaService.findById(id).get());
-        }
-        response.setHeader("Content-Disposition", "attachment; filename=tabela-demandas.xlsx");
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-
-        ExcelExporterService excelExporterService = new ExcelExporterService();
-        excelExporterService.criarTabelaDemandaExcel(response, demandasList);
+    @PostMapping("/tabela-excel")
+    public void gerarTabelaExcel(HttpServletResponse response, @RequestParam("demandaIdList") List<Integer> demandasIdList) throws IOException {
+        excelExporterService.criarTabelaDemandaExcel(response, demandasIdList);
     }
+
 
 
     /**

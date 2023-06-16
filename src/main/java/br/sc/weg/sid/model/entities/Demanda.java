@@ -51,6 +51,9 @@ public class Demanda {
     private Date prazoElaboracaoDemanda;
 
     @Column()
+    private Date dataCriacaoDemanda;
+
+    @Column()
     private Integer codigoPPMDemanda;
 
     @Column
