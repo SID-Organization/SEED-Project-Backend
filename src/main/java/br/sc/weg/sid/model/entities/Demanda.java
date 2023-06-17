@@ -74,6 +74,8 @@ public class Demanda {
     @JoinColumn(name = "gestorResponsavel")
     private Usuario gestorResponsavelDemanda;
 
+    Double custoTotalDemanda;
+
     @OneToOne
     @ToString.Exclude
     private HistoricoWorkflow historicoWorkflowUltimaVersao;

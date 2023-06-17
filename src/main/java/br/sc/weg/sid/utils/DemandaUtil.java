@@ -56,6 +56,7 @@ public class DemandaUtil {
             demandaResumida.setStatusDemanda(demanda.getStatusDemanda());
             demandaResumida.setPrazoElaboracaoDemanda(demanda.getPrazoElaboracaoDemanda());
             demandaResumida.setScoreDemanda(demanda.getScoreDemanda());
+            demandaResumida.setCustoTotalDemanda(demanda.getCustoTotalDemanda());
             demandaResumida.setIdDemanda(demanda.getIdDemanda());
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
             demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());

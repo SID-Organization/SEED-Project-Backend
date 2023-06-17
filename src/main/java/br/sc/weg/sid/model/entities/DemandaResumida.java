@@ -18,6 +18,8 @@ public class DemandaResumida {
 
     Double scoreDemanda;
 
+    Double custoTotalDemanda;
+
     StatusDemanda statusDemanda;
 
     String nomeSolicitante;
