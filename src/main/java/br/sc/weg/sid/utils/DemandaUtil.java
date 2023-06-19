@@ -2,19 +2,34 @@ package br.sc.weg.sid.utils;
 
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
+import br.sc.weg.sid.model.entities.Beneficio;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.DemandaResumida;
 import br.sc.weg.sid.model.entities.PdfDemanda;
+import br.sc.weg.sid.model.enums.Moeda;
 import br.sc.weg.sid.model.enums.StatusDemanda;
+import br.sc.weg.sid.model.enums.TamanhoDemanda;
+import br.sc.weg.sid.model.enums.TipoBeneficio;
+import br.sc.weg.sid.model.service.API.client.CotacaoGET;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
-public class DemandaUtil {
+@Service
+public class DemandaUtil{
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -83,6 +98,104 @@ public class DemandaUtil {
             demandasResumidas.add(demandaResumida);
         }
         return demandasResumidas;
+    }
+
+    public Double retornaBeneficioRealSomado(List<Beneficio> beneficioList) {
+        Double valorSomado = 0.0;
+
+        for (Beneficio beneficio : beneficioList){
+            if (beneficio.getTipoBeneficio().equals(TipoBeneficio.REAL)){
+                valorSomado = getaDouble(valorSomado, beneficio);
+            }
+        }
+        System.out.println("VALOR SOMADO: " + valorSomado);
+        return valorSomado;
+    }
+
+    public Double retornaBeneficioPotencialSomado(List<Beneficio> beneficioList) {
+        Double valorSomado = 0.0;
+
+        for (Beneficio beneficio : beneficioList){
+            if (beneficio.getTipoBeneficio().equals(TipoBeneficio.POTENCIAL)){
+                valorSomado = getaDouble(valorSomado, beneficio);
+            }
+        }
+        System.out.println("VALOR SOMADO: " + valorSomado);
+        return valorSomado;
+    }
+
+    @NotNull
+    private Double getaDouble(Double valorSomado, Beneficio beneficio) {
+        if (beneficio.getMoedaBeneficio().equals(Moeda.DOLAR)){
+            CotacaoGET cotacaoGET = new CotacaoGET();
+            double soma = beneficio.getValorBeneficio() / cotacaoGET.getCotacaoDolar();
+            System.out.println("SOMA: " + soma);
+            System.out.println(beneficio.getValorBeneficio());
+            System.out.println("COTACAO: " + cotacaoGET.getCotacaoDolar());
+            valorSomado += soma;
+        } else if (beneficio.getMoedaBeneficio().equals(Moeda.EURO)){
+            CotacaoGET cotacaoGET = new CotacaoGET();
+            double soma = beneficio.getValorBeneficio() / cotacaoGET.getCotacaoEuro();
+            System.out.println("SOMA: " + soma);
+            System.out.println(beneficio.getValorBeneficio());
+            System.out.println("COTACAO: " + cotacaoGET.getCotacaoEuro());
+            valorSomado += soma;
+        } else {
+            valorSomado += beneficio.getValorBeneficio();
+        }
+        return valorSomado;
+    }
+
+    public Integer retornaValorClassificacao(Demanda demanda){
+        if (demanda.getTamanhoDemanda().equals(TamanhoDemanda.MUITO_GRANDE)) {
+            return 5000;
+        } else if (demanda.getTamanhoDemanda().equals(TamanhoDemanda.GRANDE)) {
+            return 3000;
+        } else if (demanda.getTamanhoDemanda().equals(TamanhoDemanda.MEDIA)) {
+            return 1000;
+        } else if (demanda.getTamanhoDemanda().equals(TamanhoDemanda.PEQUENA)) {
+            return 300;
+        } else {
+            return 40;
+        }
+    }
+
+    public long calcularDiasDesdeCriacao(Date dataCriacaoDemanda) {
+        LocalDate dataCriacao = dataCriacaoDemanda.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dataAtual = LocalDate.now();
+        long dias = ChronoUnit.DAYS.between(dataCriacao, dataAtual);
+        if (dias == 0){
+            return 1;
+        }
+        return dias;
+    }
+
+    public Double retornaScoreDemandaCriacao(Demanda demanda) {
+        Double beneficioRealSomado = retornaBeneficioRealSomado(demanda.getBeneficiosDemanda());
+        Double beneficioPotencialSomado = retornaBeneficioPotencialSomado(demanda.getBeneficiosDemanda());
+
+        double score = (((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + 1) * 1) / 1000000000;
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        String formattedScore = df.format(score);
+        String formattedScoreWithDot = formattedScore.replace(",", ".");
+        return Double.valueOf(formattedScoreWithDot);
+    }
+
+    public Double retornaScoreDemandaClassificacao(Demanda demanda) {
+        Double beneficioRealSomado = retornaBeneficioRealSomado(demanda.getBeneficiosDemanda());
+        Double beneficioPotencialSomado = retornaBeneficioPotencialSomado(demanda.getBeneficiosDemanda());
+
+        double score = (((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + 1) * calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda())) / retornaValorClassificacao(demanda);
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        String formattedScore = df.format(score);
+        String formattedScoreWithDot = formattedScore.replace(",", ".");
+        return Double.valueOf(formattedScoreWithDot);
     }
 
 }
