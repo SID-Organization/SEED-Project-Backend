@@ -2,6 +2,7 @@ package br.sc.weg.sid.model.service;
 
 
 import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.Proposta;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -19,6 +20,9 @@ public class ExcelExporterService {
 
     @Autowired
     DemandaService demandaService;
+
+    @Autowired
+    PropostaService propostaService;
 
     public void criarTabelaDemandaExcel(HttpServletResponse response, List<Integer> demandasIdList) throws IOException {
         List<Demanda> demandasList = new ArrayList<>();
@@ -49,37 +53,29 @@ public class ExcelExporterService {
         titleStyle.setBorderLeft(BorderStyle.MEDIUM);
         titleStyle.setBorderRight(BorderStyle.MEDIUM);
 
-        Cell cell = headerRow.createCell(2);
-        cell.setCellValue("Demanda ID");
-        cell.setCellStyle(titleStyle);
-        sheet.setColumnWidth(2, 12 * 256);
+        createCell(headerRow, 2, "Demanda ID", 0 , 0, titleStyle, sheet);
 
+        createCell(headerRow, 3, "Titulo",0 , 0, titleStyle, sheet);
 
-        cell = headerRow.createCell(3);
-        cell.setCellValue("Titulo");
-        cell.setCellStyle(titleStyle);
-        sheet.setColumnWidth(3, 8 * 256);
+        createCell(headerRow, 4, "Status", 0 , 0, titleStyle, sheet);
 
-        cell = headerRow.createCell(4);
-        cell.setCellValue("Status");
-        cell.setCellStyle(titleStyle);
-        sheet.setColumnWidth(4, 8 * 256);
+        createCell(headerRow, 5, "Tamanho", 0 , 0, titleStyle, sheet);
 
-        cell = headerRow.createCell(5);
-        cell.setCellValue("Tamanho");
-        cell.setCellStyle(titleStyle);
-        sheet.setColumnWidth(5, 10 * 256);
+        createCell(headerRow, 6, "Data de Criação", 0 , 0, titleStyle, sheet);
 
-        cell = headerRow.createCell(6);
-        cell.setCellValue("Data de Criação");
-        cell.setCellStyle(titleStyle);
-        sheet.setColumnWidth(6, 17 * 256);
+        createCell(headerRow, 7, "Score", 0 , 0, titleStyle, sheet);
 
-        cell = headerRow.createCell(7);
-        cell.setCellValue("Score");
-        cell.setCellStyle(titleStyle);
-        sheet.setColumnWidth(7, 7 * 256);
+        createCell(headerRow, 8, "Custo Total", 0 , 0, titleStyle, sheet);
 
+        createCell(headerRow, 9, "Bu solicitante", 0 , 0, titleStyle, sheet);
+
+        createCell(headerRow, 10, "Seção de T.I responsável", 0 , 0, titleStyle, sheet);
+
+        createCell(headerRow, 11, "Bu's beneficiadas", 0 , 0, titleStyle, sheet);
+
+        createCell(headerRow, 12, "Beneficios potenciais", 0 , 0, titleStyle, sheet);
+
+        createCell(headerRow, 13, "Beneficios reais", 0 , 0, titleStyle, sheet);
 
         CellStyle dataStyle = workbook.createCellStyle();
         dataStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -91,10 +87,20 @@ public class ExcelExporterService {
 
         int rowNum = 2;
         for (Demanda demanda : demandasList) {
+
+            List<Proposta> propostasList = propostaService.findByDemandaProposta(demanda);
+
+            Proposta proposta = propostasList.get(propostasList.size() - 1);
+
+            createCell(headerRow, 12, "Payback", 0 , 0, titleStyle, sheet);
+
+            createCell(headerRow, 13, "Dias restantes para execução",0 , 0, titleStyle, sheet);
+
             Row dataRow = sheet.createRow(rowNum++);
             Cell dataCell = dataRow.createCell(2);
-            dataCell.setCellValue(demanda.getIdDemanda());
-            dataCell.setCellStyle(dataStyle);
+            createCell(dataRow, 2, null, demanda.getIdDemanda(), 0, dataStyle, sheet);
+//            dataCell.setCellValue(demanda.getIdDemanda());
+//            dataCell.setCellStyle(dataStyle);
 
             dataCell = dataRow.createCell(3);
             dataCell.setCellValue(demanda.getTituloDemanda());
@@ -140,14 +146,15 @@ public class ExcelExporterService {
 
             dataCell = dataRow.createCell(7);
             if (demanda.getScoreDemanda() != null) {
+                dataCell.setCellValue(demanda.getScoreDemanda());
+                dataCell.setCellStyle(dataStyle);
 
                 int scoreLength = (demanda.getScoreDemanda().toString().length() + 3) * 256;
 
                 if (sheet.getColumnWidth(7) < scoreLength) {
                     sheet.setColumnWidth(7, scoreLength);
                 }
-                dataCell.setCellValue(demanda.getScoreDemanda());
-                dataCell.setCellStyle(dataStyle);
+
             }else {
                 dataCell.setCellValue("");
                 dataCell.setCellStyle(dataStyle);
@@ -155,13 +162,45 @@ public class ExcelExporterService {
 
             dataCell = dataRow.createCell(8);
 
+            if (demanda.getCustoTotalDemanda() != null){
+                dataCell.setCellValue(demanda.getCustoTotalDemanda().toString());
+                dataCell.setCellStyle(dataStyle);
+
+                int custoLength = (demanda.getCustoTotalDemanda().toString().length() + 3) * 256;
+
+                if (sheet.getColumnWidth(8) < custoLength) {
+                    sheet.setColumnWidth(8, custoLength);
+                }
+            }else {
+                dataCell.setCellValue("");
+                dataCell.setCellStyle(dataStyle);
+            }
         }
 
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         workbook.close();
         outputStream.close();
-        System.out.println(outputStream);
+    }
+
+
+    public void createCell(Row row, int column, String stringValue, int intValue, double doubleValue, CellStyle style, Sheet sheet) {
+        Cell cell = row.createCell(column);
+        String value = "";
+        if (stringValue != null) {
+            cell.setCellValue(stringValue);
+            value = stringValue;
+        } else if (intValue != 0) {
+            cell.setCellValue(intValue);
+            value = String.valueOf(intValue);
+        } else {
+            cell.setCellValue(doubleValue);
+            value = String.valueOf(doubleValue);
+        }
+        cell.setCellStyle(style);
+        if (sheet.getColumnWidth(column) < (value.length()+2) * 256){
+            sheet.setColumnWidth(column, (value.length()+2) * 256);
+        }
     }
 
 
