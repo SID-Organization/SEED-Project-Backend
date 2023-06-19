@@ -20,4 +20,6 @@ public class PautaResumida {
     String analistaResponsavel;
 
     LocalTime horaTerminoReuniao;
+
+    List<PropostaResumida> propostaResumidas;
 }

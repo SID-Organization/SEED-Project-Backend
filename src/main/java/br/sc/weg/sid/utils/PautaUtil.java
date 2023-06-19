@@ -26,6 +26,7 @@ public class PautaUtil {
             pautaResumida.setHoraReuniao(pauta.getHorarioInicioPauta());
             pautaResumida.setHoraTerminoReuniao(pauta.getHorarioTerminoPauta());
             pautaResumida.setAnalistaResponsavel(pauta.getAnalistaResponsavelPauta().getNomeUsuario());
+            pautaResumida.setPropostaResumidas(PropostaUtil.converterPropostaParaPropostaResumida(pauta.getPropostasPauta()));
             pautasResumidas.add(pautaResumida);
         });
         return pautasResumidas;
