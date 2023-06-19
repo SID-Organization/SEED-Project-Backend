@@ -29,7 +29,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Service
-public class DemandaUtil{
+public class DemandaUtil {
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -76,9 +76,9 @@ public class DemandaUtil{
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
             demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
-            if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA){
+            if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA) {
                 demanda.getMotivosRecusaDemanda().forEach(motivoRecusa -> {
-                    if (motivoRecusa.getStatusDemandaMotivoRecusa() == StatusDemanda.CANCELADA){
+                    if (motivoRecusa.getStatusDemandaMotivoRecusa() == StatusDemanda.CANCELADA) {
                         demandaResumida.setMotivoRecusaDemanda(motivoRecusa.getDescricaoMotivoRecusa());
                     }
                 });
@@ -103,8 +103,8 @@ public class DemandaUtil{
     public Double retornaBeneficioRealSomado(List<Beneficio> beneficioList) {
         Double valorSomado = 0.0;
 
-        for (Beneficio beneficio : beneficioList){
-            if (beneficio.getTipoBeneficio().equals(TipoBeneficio.REAL)){
+        for (Beneficio beneficio : beneficioList) {
+            if (beneficio.getTipoBeneficio().equals(TipoBeneficio.REAL)) {
                 valorSomado = getaDouble(valorSomado, beneficio);
             }
         }
@@ -115,8 +115,8 @@ public class DemandaUtil{
     public Double retornaBeneficioPotencialSomado(List<Beneficio> beneficioList) {
         Double valorSomado = 0.0;
 
-        for (Beneficio beneficio : beneficioList){
-            if (beneficio.getTipoBeneficio().equals(TipoBeneficio.POTENCIAL)){
+        for (Beneficio beneficio : beneficioList) {
+            if (beneficio.getTipoBeneficio().equals(TipoBeneficio.POTENCIAL)) {
                 valorSomado = getaDouble(valorSomado, beneficio);
             }
         }
@@ -126,14 +126,14 @@ public class DemandaUtil{
 
     @NotNull
     private Double getaDouble(Double valorSomado, Beneficio beneficio) {
-        if (beneficio.getMoedaBeneficio().equals(Moeda.DOLAR)){
+        if (beneficio.getMoedaBeneficio().equals(Moeda.DOLAR)) {
             CotacaoGET cotacaoGET = new CotacaoGET();
             double soma = beneficio.getValorBeneficio() / cotacaoGET.getCotacaoDolar();
             System.out.println("SOMA: " + soma);
             System.out.println(beneficio.getValorBeneficio());
             System.out.println("COTACAO: " + cotacaoGET.getCotacaoDolar());
             valorSomado += soma;
-        } else if (beneficio.getMoedaBeneficio().equals(Moeda.EURO)){
+        } else if (beneficio.getMoedaBeneficio().equals(Moeda.EURO)) {
             CotacaoGET cotacaoGET = new CotacaoGET();
             double soma = beneficio.getValorBeneficio() / cotacaoGET.getCotacaoEuro();
             System.out.println("SOMA: " + soma);
@@ -146,7 +146,7 @@ public class DemandaUtil{
         return valorSomado;
     }
 
-    public Integer retornaValorClassificacao(Demanda demanda){
+    public Integer retornaValorClassificacao(Demanda demanda) {
         if (demanda.getTamanhoDemanda().equals(TamanhoDemanda.MUITO_GRANDE)) {
             return 5000;
         } else if (demanda.getTamanhoDemanda().equals(TamanhoDemanda.GRANDE)) {
@@ -161,10 +161,13 @@ public class DemandaUtil{
     }
 
     public long calcularDiasDesdeCriacao(Date dataCriacaoDemanda) {
+        if (dataCriacaoDemanda == null) {
+            return 1;
+        }
         LocalDate dataCriacao = dataCriacaoDemanda.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate dataAtual = LocalDate.now();
         long dias = ChronoUnit.DAYS.between(dataCriacao, dataAtual);
-        if (dias == 0){
+        if (dias == 0) {
             return 1;
         }
         return dias;
@@ -174,7 +177,7 @@ public class DemandaUtil{
         Double beneficioRealSomado = retornaBeneficioRealSomado(demanda.getBeneficiosDemanda());
         Double beneficioPotencialSomado = retornaBeneficioPotencialSomado(demanda.getBeneficiosDemanda());
 
-        double score = (((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + 1) * 1) / 1000000000;
+        double score = (((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda())) * 1) / 1000000000;
 
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -198,4 +201,13 @@ public class DemandaUtil{
         return Double.valueOf(formattedScoreWithDot);
     }
 
+    public Demanda atualizaScoreDiario(Demanda demanda) {
+        if (demanda.getTamanhoDemanda() != null) {
+            demanda.setScoreDemanda(retornaScoreDemandaClassificacao(demanda));
+            return demanda;
+        } else {
+            demanda.setScoreDemanda(retornaScoreDemandaCriacao(demanda));
+            return demanda;
+        }
+    }
 }
