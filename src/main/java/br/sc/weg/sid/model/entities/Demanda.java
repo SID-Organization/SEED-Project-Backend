@@ -51,6 +51,9 @@ public class Demanda {
     private Date prazoElaboracaoDemanda;
 
     @Column()
+    private Date dataCriacaoDemanda;
+
+    @Column()
     private Integer codigoPPMDemanda;
 
     @Column
@@ -70,6 +73,8 @@ public class Demanda {
     @OneToOne()
     @JoinColumn(name = "gestorResponsavel")
     private Usuario gestorResponsavelDemanda;
+
+    Double custoTotalDemanda;
 
     @OneToOne
     @ToString.Exclude

@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.ConstructorProperties;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -39,15 +40,17 @@ public class DemandaExcelExporter {
 
     }
 
-    public void criarArquivo(HttpServletResponse response) throws IOException {
+    public byte[] criarBytes() throws IOException {
         criarHeader();
         setarDadosCelulas();
 
-        System.out.println("Criando arquivo excel");
+        System.out.println("Criando bytes");
 
-        ServletOutputStream outputStream = response.getOutputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
         workbook.close();
-        outputStream.close();
+
+        return outputStream.toByteArray();
     }
+
 }

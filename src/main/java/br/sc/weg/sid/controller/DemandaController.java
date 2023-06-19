@@ -56,6 +56,8 @@ public class DemandaController {
 
     NotificacaoService notificacaoService;
 
+    ExcelExporterService excelExporterService;
+
     /**
      * Retorna uma lista de demandas resumidas.
      * <p>
@@ -172,6 +174,9 @@ public class DemandaController {
             PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
             demanda.setStatusDemanda(StatusDemanda.ABERTA);
 
+            Date dataAtual = new Date();
+            demanda.setDataCriacaoDemanda(dataAtual);
+
             //Verifica se a demanda possui todos os campos preenchidos, caso algum atributo esteja nulo, o status será RASCUNHO
             Class<? extends CadastroDemandaDTO> classe = cadastroDemandaDTO.getClass();
             List<Field> atributos = Arrays.asList(classe.getDeclaredFields());
@@ -188,6 +193,9 @@ public class DemandaController {
                 }
             });
             demanda.setBuSolicitanteDemanda(demanda.getSolicitanteDemanda().getDepartamentoUsuario());
+
+            demanda.setScoreDemanda(demandaUtil.retornaScoreDemandaCriacao(demanda));
+
             Demanda demandaSalva = demandaService.save(demanda);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
@@ -228,6 +236,7 @@ public class DemandaController {
                 demandaService.deleteById(demandaSalva.getIdDemanda());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar pdf: " + e.getMessage());
             }
+
             return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
         } catch (Exception e) {
             e.printStackTrace();
@@ -619,6 +628,12 @@ public class DemandaController {
         }
         Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
+        if (demanda.getTamanhoDemanda() != null) {
+            double score = demandaUtil.retornaScoreDemandaClassificacao(demanda);
+            demanda.setScoreDemanda(score);
+        } else {
+            demanda.setScoreDemanda(demandaUtil.retornaScoreDemandaCriacao(demanda));
+        }
         Demanda demandaAtualizada = demandaService.save(demanda);
         if (demanda.getBeneficiosDemanda() != null) {
             demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
@@ -683,6 +698,7 @@ public class DemandaController {
             @RequestBody @Valid CadastroBusBeneficiadasDemandaDTO cadastroBusBeneficiadasDemandaDTO,
             @RequestBody @Valid MultipartFile[] additionalFiles
     ) throws Exception {
+
         if (!demandaService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id: " + id);
@@ -690,6 +706,9 @@ public class DemandaController {
         Demanda demanda = demandaService.findById(id).get();
         BeanUtils.copyProperties(cadastroBusBeneficiadasDemandaDTO, demanda);
         demanda.setStatusDemanda(StatusDemanda.CLASSIFICADO_PELO_ANALISTA);
+        DemandaUtil demandaUtil = new DemandaUtil();
+        Double valorScore = demandaUtil.retornaScoreDemandaClassificacao(demanda);
+        demanda.setScoreDemanda(valorScore);
         Demanda demandaSalva = demandaService.save(demanda);
         gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
         LocalDate localDate = LocalDate.now();
@@ -771,18 +790,11 @@ public class DemandaController {
         return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf da proposta de id: " + idDemanda + "!");
     }
 
-    @GetMapping("/tabela-excel")
-    public void gerarTabelaExcel(HttpServletResponse response, @RequestBody List<Integer> demandasId) throws IOException {
-        List<Demanda> demandasList = new ArrayList<>();
-        for (Integer id : demandasId) {
-            demandasList.add(demandaService.findById(id).get());
-        }
-        response.setHeader("Content-Disposition", "attachment; filename=tabela-demandas.xlsx");
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-
-        ExcelExporterService excelExporterService = new ExcelExporterService();
-        excelExporterService.criarTabelaDemandaExcel(response, demandasList);
+    @PostMapping("/tabela-excel")
+    public void gerarTabelaExcel(HttpServletResponse response, @RequestParam("demandaIdList") List<Integer> demandasIdList) throws IOException {
+        excelExporterService.criarTabelaDemandaExcel(response, demandasIdList);
     }
+
 
 
     /**
