@@ -98,39 +98,62 @@ public class ExcelExporterService {
 
             dataCell = dataRow.createCell(3);
             dataCell.setCellValue(demanda.getTituloDemanda());
+            dataCell.setCellStyle(dataStyle);
 
-            System.out.println("tamanho titulo demanda: " + demanda.getTituloDemanda().toString());
-            System.out.println("tamanho da coluna: " + sheet.getColumnWidth(3));
+            int titleLength = (demanda.getTituloDemanda().length() + 3) * 256; // Comprimento do título + 2 caracteres de margem e largura necessária para exibir o título corretamente
 
-            if (demanda.getTituloDemanda().length() + 2 > sheet.getColumnWidth(3)) {
-                sheet.setColumnWidth(3, demanda.getTituloDemanda().length() + 2 * 256);
+            int columnWidth = sheet.getColumnWidth(3); // Largura atual da coluna em unidades de 1/256 de um caractere
+
+            if (columnWidth < titleLength) {
+                sheet.setColumnWidth(3, titleLength); // Define a largura da coluna para exibir o título corretamente
             }
 
             dataCell = dataRow.createCell(4);
             dataCell.setCellValue(demanda.getStatusDemanda().getNome());
+            dataCell.setCellStyle(dataStyle);
 
-            if (demanda.getStatusDemanda().getNome().length() + 2 > sheet.getColumnWidth(4)) {
-                sheet.setColumnWidth(4, demanda.getStatusDemanda().getNome().length() + 2 * 256);
+            int statusLength = (demanda.getStatusDemanda().getNome().length() + 3) * 256;
+
+            if (sheet.getColumnWidth(4) < statusLength) {
+                sheet.setColumnWidth(4, statusLength);
             }
 
             dataCell = dataRow.createCell(5);
             dataCell.setCellValue(demanda.getTamanhoDemanda().getNome());
+            dataCell.setCellStyle(dataStyle);
 
-            if (demanda.getTamanhoDemanda().getNome().length() + 2 > sheet.getColumnWidth(5)) {
-                sheet.setColumnWidth(5, demanda.getTamanhoDemanda().getNome().length() + 2 * 256);
+            int tamanhoLength = (demanda.getTamanhoDemanda().getNome().length() + 3) * 256;
+
+            if (sheet.getColumnWidth(5) < tamanhoLength) {
+                sheet.setColumnWidth(5, tamanhoLength);
             }
 
             dataCell = dataRow.createCell(6);
             dataCell.setCellValue(demanda.getDataCriacaoDemanda().toString());
+            dataCell.setCellStyle(dataStyle);
 
-            if (demanda.getDataCriacaoDemanda().toString().length() + 2 > sheet.getColumnWidth(6)) {
-                sheet.setColumnWidth(6, demanda.getDataCriacaoDemanda().toString().length() + 2 * 256);
+            int dataLength = (demanda.getDataCriacaoDemanda().toString().length() + 3) * 256;
+
+            if (sheet.getColumnWidth(6) < dataLength) {
+                sheet.setColumnWidth(6, dataLength);
             }
 
             dataCell = dataRow.createCell(7);
             if (demanda.getScoreDemanda() != null) {
+
+                int scoreLength = (demanda.getScoreDemanda().toString().length() + 3) * 256;
+
+                if (sheet.getColumnWidth(7) < scoreLength) {
+                    sheet.setColumnWidth(7, scoreLength);
+                }
                 dataCell.setCellValue(demanda.getScoreDemanda());
+                dataCell.setCellStyle(dataStyle);
+            }else {
+                dataCell.setCellValue("");
+                dataCell.setCellStyle(dataStyle);
             }
+
+            dataCell = dataRow.createCell(8);
 
         }
 
