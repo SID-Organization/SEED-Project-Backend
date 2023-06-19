@@ -193,6 +193,9 @@ public class DemandaController {
                 }
             });
             demanda.setBuSolicitanteDemanda(demanda.getSolicitanteDemanda().getDepartamentoUsuario());
+
+            demanda.setScoreDemanda(demandaUtil.retornaScoreDemandaCriacao(demanda));
+
             Demanda demandaSalva = demandaService.save(demanda);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
@@ -233,6 +236,7 @@ public class DemandaController {
                 demandaService.deleteById(demandaSalva.getIdDemanda());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar pdf: " + e.getMessage());
             }
+
             return ResponseEntity.status(HttpStatus.CREATED).body(demandaSalva);
         } catch (Exception e) {
             e.printStackTrace();
@@ -624,6 +628,12 @@ public class DemandaController {
         }
         Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
+        if (demanda.getTamanhoDemanda() != null) {
+            double score = demandaUtil.retornaScoreDemandaClassificacao(demanda);
+            demanda.setScoreDemanda(score);
+        } else {
+            demanda.setScoreDemanda(demandaUtil.retornaScoreDemandaCriacao(demanda));
+        }
         Demanda demandaAtualizada = demandaService.save(demanda);
         if (demanda.getBeneficiosDemanda() != null) {
             demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
@@ -670,12 +680,7 @@ public class DemandaController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível gerar o pdf da demanda!" + e.getMessage());
         }
-
-        ReturnUpdateDemandaDTO returnUpdateDemandaDTO = new ReturnUpdateDemandaDTO();
-        returnUpdateDemandaDTO.setDemanda(demandaAtualizada);
-        returnUpdateDemandaDTO.setArquivosDemanda(demandaAtualizada.getArquivosDemandas());
-
-        return ResponseEntity.status(HttpStatus.OK).body(returnUpdateDemandaDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(demandaAtualizada);
     }
 
     /**
@@ -693,6 +698,7 @@ public class DemandaController {
             @RequestBody @Valid CadastroBusBeneficiadasDemandaDTO cadastroBusBeneficiadasDemandaDTO,
             @RequestBody @Valid MultipartFile[] additionalFiles
     ) throws Exception {
+
         if (!demandaService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id: " + id);
@@ -700,6 +706,9 @@ public class DemandaController {
         Demanda demanda = demandaService.findById(id).get();
         BeanUtils.copyProperties(cadastroBusBeneficiadasDemandaDTO, demanda);
         demanda.setStatusDemanda(StatusDemanda.CLASSIFICADO_PELO_ANALISTA);
+        DemandaUtil demandaUtil = new DemandaUtil();
+        Double valorScore = demandaUtil.retornaScoreDemandaClassificacao(demanda);
+        demanda.setScoreDemanda(valorScore);
         Demanda demandaSalva = demandaService.save(demanda);
         gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
         LocalDate localDate = LocalDate.now();

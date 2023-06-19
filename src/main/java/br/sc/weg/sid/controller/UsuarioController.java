@@ -1,18 +1,14 @@
 package br.sc.weg.sid.controller;
 
-import br.sc.weg.sid.DTO.UpdateFotoUsuarioDTO;
 import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.service.UsuarioService;
 import br.sc.weg.sid.utils.UsuarioUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Arrays;
 
 @RestController
 @CrossOrigin
@@ -105,30 +101,10 @@ public class UsuarioController {
         return ResponseEntity.ok("Usuário atualizado com sucesso! \n" + usuarioSalvo);
     }
 
-    @PutMapping("/update-foto/{numeroCadastroUsuario}")
-    public ResponseEntity<Object> updateFoto(
-            @PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario,
-            @RequestBody() byte[] fotoUsuario
-    ) {
-
-        Usuario usuario = usuarioService.findById(numeroCadastroUsuario).get();
-        usuario.setFotoUsuario(fotoUsuario);
-        usuarioService.save(usuario);
-
-        return ResponseEntity.status(HttpStatus.OK).body("Foto atualizada com sucesso!");
-    }
-
-    @GetMapping("/foto/{numeroCadastroUsuario}")
-    public ResponseEntity<Object> getFoto(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
-        Usuario usuario = usuarioService.findById(numeroCadastroUsuario).get();
-        return ResponseEntity.ok(usuario.getFotoUsuario());
-    }
-
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna todos os usuários cadastrados no banco de dados.
      * Caso não exista nenhum usuário cadastrado, retorna uma mensagem de erro.
      * Caso exista, retorna todos os usuários cadastrados.
-     *
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo todos os usuários cadastrados no banco de dados.
      * @throws RuntimeException - Retorna uma mensagem de erro caso não exista nenhum usuário cadastrado no banco de dados.
      * @throws RuntimeException - Retorna uma mensagem de erro caso não seja possível retornar todos os usuários cadastrados no banco de dados.
@@ -145,7 +121,6 @@ public class UsuarioController {
      * Esta função é um mapeamento de requisição HTTP GET que retorna um usuário cadastrado no banco de dados.
      * Caso não exista nenhum usuário cadastrado com o id informado, retorna uma mensagem de erro.
      * Caso exista, retorna o usuário cadastrado com o id informado.
-     *
      * @param numeroCadastro - Parâmetro que representa o id do usuário (numeroCadastroUsuario).
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo o usuário cadastrado com o id informado.
      * @throws RuntimeException - Retorna uma mensagem de erro caso não exista nenhum usuário cadastrado com o id informado.
@@ -165,7 +140,6 @@ public class UsuarioController {
      * Esta função é um mapeamento de requisição HTTP GET que retorna todos os usuários cadastrados no banco de dados com o departamento informado.
      * Caso não exista nenhum usuário cadastrado com o departamento informado, retorna uma mensagem de erro.
      * Caso exista, retorna todos os usuários cadastrados com o departamento informado.
-     *
      * @param departamento - Parâmetro que representa o departamento do usuário (departamentoUsuario).
      * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com status 200 e o corpo contendo todos os usuários cadastrados com o departamento informado.
      * @throws RuntimeException - Retorna uma mensagem de erro caso não exista nenhum usuário cadastrado com o departamento informado.
