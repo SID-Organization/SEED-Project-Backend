@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -42,7 +43,7 @@ public class HistoricoWorkflow {
     private String motivoDevolucaoHistorico;
 
     @Column(name = "VersaoHistorico")
-    private Double versaoHistorico;
+    private BigDecimal versaoHistorico;
 
     @Column(name = "ConclusaoHistorico")
     private Date conclusaoHistorico;
