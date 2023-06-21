@@ -6,10 +6,7 @@ import br.sc.weg.sid.model.entities.Beneficio;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.DemandaResumida;
 import br.sc.weg.sid.model.entities.PdfDemanda;
-import br.sc.weg.sid.model.enums.Moeda;
-import br.sc.weg.sid.model.enums.StatusDemanda;
-import br.sc.weg.sid.model.enums.TamanhoDemanda;
-import br.sc.weg.sid.model.enums.TipoBeneficio;
+import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.service.API.client.CotacaoGET;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
@@ -49,7 +46,7 @@ public class DemandaUtil {
 
     public CadastroPdfDemandaDTO convertToPdfDto(String pdfDemandaJson) {
         try {
-            System.out.println("PDFFFFFFFFFFFFFFF: " + pdfDemandaJson);
+            System.out.println("PDF: " + pdfDemandaJson);
             return this.mapper.readValue(pdfDemandaJson, CadastroPdfDemandaDTO.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,7 +105,6 @@ public class DemandaUtil {
                 valorSomado = getaDouble(valorSomado, beneficio);
             }
         }
-        System.out.println("VALOR SOMADO: " + valorSomado);
         return valorSomado;
     }
 
@@ -120,7 +116,6 @@ public class DemandaUtil {
                 valorSomado = getaDouble(valorSomado, beneficio);
             }
         }
-        System.out.println("VALOR SOMADO: " + valorSomado);
         return valorSomado;
     }
 
@@ -129,16 +124,10 @@ public class DemandaUtil {
         if (beneficio.getMoedaBeneficio().equals(Moeda.DOLAR)) {
             CotacaoGET cotacaoGET = new CotacaoGET();
             double soma = beneficio.getValorBeneficio() / cotacaoGET.getCotacaoDolar();
-            System.out.println("SOMA: " + soma);
-            System.out.println(beneficio.getValorBeneficio());
-            System.out.println("COTACAO: " + cotacaoGET.getCotacaoDolar());
             valorSomado += soma;
         } else if (beneficio.getMoedaBeneficio().equals(Moeda.EURO)) {
             CotacaoGET cotacaoGET = new CotacaoGET();
             double soma = beneficio.getValorBeneficio() / cotacaoGET.getCotacaoEuro();
-            System.out.println("SOMA: " + soma);
-            System.out.println(beneficio.getValorBeneficio());
-            System.out.println("COTACAO: " + cotacaoGET.getCotacaoEuro());
             valorSomado += soma;
         } else {
             valorSomado += beneficio.getValorBeneficio();
@@ -160,6 +149,26 @@ public class DemandaUtil {
         }
     }
 
+    public Integer retornaValorImportancia(Demanda demanda) {
+        if (demanda.getImportanciaDemanda() == null) {
+            return 1;
+        }
+
+        if (demanda.getImportanciaDemanda().equals(ImportanciaDemanda.TRIVIAL)) {
+            return 1;
+        } else if (demanda.getImportanciaDemanda().equals(ImportanciaDemanda.MINOR)) {
+            return 2;
+        } else if (demanda.getImportanciaDemanda().equals(ImportanciaDemanda.MAJOR)) {
+            return 4;
+        } else if (demanda.getImportanciaDemanda().equals(ImportanciaDemanda.CRITICAL)) {
+            return 16;
+        } else if (demanda.getImportanciaDemanda().equals(ImportanciaDemanda.BLOCKER)) {
+            return 100000;
+        } else {
+            return 1;
+        }
+    }
+
     public long calcularDiasDesdeCriacao(Date dataCriacaoDemanda) {
         if (dataCriacaoDemanda == null) {
             return 1;
@@ -177,7 +186,7 @@ public class DemandaUtil {
         Double beneficioRealSomado = retornaBeneficioRealSomado(demanda.getBeneficiosDemanda());
         Double beneficioPotencialSomado = retornaBeneficioPotencialSomado(demanda.getBeneficiosDemanda());
 
-        double score = (((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda())) * 1) / 1000000000;
+        double score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / 1000000000) * retornaValorImportancia(demanda);
 
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -191,7 +200,7 @@ public class DemandaUtil {
         Double beneficioRealSomado = retornaBeneficioRealSomado(demanda.getBeneficiosDemanda());
         Double beneficioPotencialSomado = retornaBeneficioPotencialSomado(demanda.getBeneficiosDemanda());
 
-        double score = (((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + 1) * calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda())) / retornaValorClassificacao(demanda);
+        double score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / retornaValorClassificacao(demanda)) * retornaValorImportancia(demanda);
 
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -209,5 +218,26 @@ public class DemandaUtil {
             demanda.setScoreDemanda(retornaScoreDemandaCriacao(demanda));
             return demanda;
         }
+    }
+
+    public Double retornaScoreDemandaImportancia(Demanda demanda) {
+        Double beneficioRealSomado = retornaBeneficioRealSomado(demanda.getBeneficiosDemanda());
+        Double beneficioPotencialSomado = retornaBeneficioPotencialSomado(demanda.getBeneficiosDemanda());
+
+        double score;
+
+        if (demanda.getTamanhoDemanda() != null) {
+            score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / retornaValorClassificacao(demanda)) * retornaValorImportancia(demanda);
+        } else {
+            score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / 1000000000) * retornaValorImportancia(demanda);
+        }
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        String formattedScore = df.format(score);
+        String formattedScoreWithDot = formattedScore.replace(",", ".");
+        System.out.println("Importância demanda: " + demanda.getImportanciaDemanda());
+        return Double.valueOf(formattedScoreWithDot);
     }
 }

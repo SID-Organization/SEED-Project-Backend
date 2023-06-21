@@ -2,10 +2,7 @@ package br.sc.weg.sid.utils;
 
 import br.sc.weg.sid.controller.DemandaController;
 import br.sc.weg.sid.model.entities.*;
-import br.sc.weg.sid.model.enums.Cargo;
-import br.sc.weg.sid.model.enums.Moeda;
-import br.sc.weg.sid.model.enums.StatusDemanda;
-import br.sc.weg.sid.model.enums.TipoBeneficio;
+import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -295,6 +292,7 @@ public class BancoUtils {
             demanda.setGestorResponsavelDemanda(gestorTI);
             demanda.setBeneficiosDemanda(listaBeneficios);
             demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
+            demanda.setImportanciaDemanda(ImportanciaDemanda.TRIVIAL);
             demanda = demandaRepository.save(demanda);
 
             Map<String, String> requestBody = new HashMap<>();
