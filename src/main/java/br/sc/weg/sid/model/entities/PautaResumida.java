@@ -17,7 +17,11 @@ public class PautaResumida {
 
     LocalTime horaReuniao;
 
+    String nomeComissao;
+
     String analistaResponsavel;
 
     LocalTime horaTerminoReuniao;
+
+    List<PropostaResumida> propostaResumidas;
 }

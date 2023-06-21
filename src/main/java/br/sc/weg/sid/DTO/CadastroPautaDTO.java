@@ -14,10 +14,13 @@ import java.util.List;
 
 @Data
 public class CadastroPautaDTO {
+
     @FutureOrPresent(message = "A data de inicio não pode ser no passado")
     private Date dataReuniaoPauta;
+
     @NotNull(message = "O campo forumPauta não pode ser nulo")
     private Forum forumPauta;
+
     @NotNull(message = "O campo propostasPauta não pode ser nulo")
     private List<Proposta> propostasPauta;
 

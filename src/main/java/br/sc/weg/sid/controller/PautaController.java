@@ -110,7 +110,10 @@ public class PautaController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> listarPautaPorId(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(pautaService.findById(id));
+            List<Pauta> pautas = new ArrayList<>();
+            pautas.add(pautaService.findById(id).get());
+            List<PautaResumida> pautasResumidas = PautaUtil.converterPautaParaPautaResumida(pautas);
+            return ResponseEntity.ok(pautasResumidas.get(0));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao listar pauta: " + e.getMessage());
         }

@@ -192,7 +192,8 @@ public class DemandaController {
                     throw new RuntimeException(e);
                 }
             });
-            demanda.setBuSolicitanteDemanda(demanda.getSolicitanteDemanda().getDepartamentoUsuario());
+            demanda.setBuSolicitanteDemanda(businessUnityService.findById(
+                    cadastroDemandaDTO.getSolicitanteDemanda().getDepartamentoUsuario().getIdBusinessUnity()).get());
 
             demanda.setScoreDemanda(demandaUtil.retornaScoreDemandaCriacao(demanda));
 
