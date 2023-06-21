@@ -886,6 +886,23 @@ public class DemandaController {
         }
     }
 
+    @PutMapping("/alterar-importancia/{idDemanda}")
+    public ResponseEntity<Object> alterarImportancia(@RequestBody AlterarImportanciaDTO alterarImportanciaDTO, @PathVariable("idDemanda") Integer idDemanda) {
+        try {
+            Demanda demanda = demandaService.findById(idDemanda).get();
+            demanda.setImportanciaDemanda(alterarImportanciaDTO.getImportanciaDemanda());
+
+            DemandaUtil demandaUtil = new DemandaUtil();
+            double scoreDemanda = demandaUtil.retornaScoreDemandaImportancia(demanda);
+            demanda.setScoreDemanda(scoreDemanda);
+
+            demandaService.save(demanda);
+            return ResponseEntity.status(HttpStatus.OK).body("Importância da demanda alterada com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao alterar a importância da demanda: " + e.getMessage());
+        }
+    }
+
     @PutMapping("/devolucao-demanda/{idDemanda}")
     public ResponseEntity<Object> devolverDemanda(@RequestBody DevolverDemandaDTO devolverDemandaDTO, @PathVariable("idDemanda") Integer idDemanda) throws Exception {
         Demanda demanda = demandaService.findById(idDemanda).get();
@@ -934,6 +951,10 @@ public class DemandaController {
             throw new Exception("Erro ao gerar PDF da demanda: " + e.getMessage());
         } finally {
             motivoRecusaService.save(motivoRecusa);
+
+            DemandaUtil demandaUtil = new DemandaUtil();
+            double scoreDemanda = demandaUtil.retornaScoreDemandaCriacao(demanda);
+            demanda.setScoreDemanda(scoreDemanda);
             demandaService.save(demanda);
         }
         return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");

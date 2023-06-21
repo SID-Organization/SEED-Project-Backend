@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import br.sc.weg.sid.model.enums.ImportanciaDemanda;
 import br.sc.weg.sid.model.enums.StatusDemanda;
 import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import lombok.*;
@@ -33,6 +34,10 @@ public class Demanda {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusDemanda statusDemanda;
+
+    @Enumerated(EnumType.STRING)
+    @Column()
+    private ImportanciaDemanda importanciaDemanda;
 
     @Enumerated(EnumType.STRING)
     @Column()
