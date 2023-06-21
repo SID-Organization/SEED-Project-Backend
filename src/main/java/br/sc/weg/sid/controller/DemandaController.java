@@ -192,8 +192,8 @@ public class DemandaController {
                     throw new RuntimeException(e);
                 }
             });
-            demanda.setBuSolicitanteDemanda(businessUnityService.findById(
-                    cadastroDemandaDTO.getSolicitanteDemanda().getDepartamentoUsuario().getIdBusinessUnity()).get());
+            Usuario usuarioDemanda = usuarioService.findById(cadastroDemandaDTO.getSolicitanteDemanda().getNumeroCadastroUsuario()).get();
+            demanda.setBuSolicitanteDemanda(businessUnityService.findById(usuarioDemanda.getDepartamentoUsuario().getIdBusinessUnity()).get());
 
             demanda.setScoreDemanda(demandaUtil.retornaScoreDemandaCriacao(demanda));
 
