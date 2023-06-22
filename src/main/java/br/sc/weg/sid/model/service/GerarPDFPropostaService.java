@@ -417,9 +417,6 @@ public class GerarPDFPropostaService {
         celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableInternResources.addCell(celulaTableInternResources);
 
-        demanda.setCustoTotalDemanda(totalValueProject);
-        demandaService.save(demanda);
-
         Phrase totalCostPhrase = new Phrase("Custo Total do Projeto: ", fontTitle);
         Chunk totalCostChunk = new Chunk("R$ " + totalValueProject, textFont);
         totalCostPhrase.add(totalCostChunk);
