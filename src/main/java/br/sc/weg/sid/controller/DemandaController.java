@@ -990,6 +990,12 @@ public class DemandaController {
                 filtroDemandaDTO.setValue(filtroDemanda.getCodigoPPMDemanda());
                 filtroDemandaDTO.setType("number");
                 filtroDemandaDTOList.add(filtroDemandaDTO);
+            } else {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("codigoPPMDemanda");
+                filtroDemandaDTO.setValue("");
+                filtroDemandaDTO.setType("number");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
             }
             if (filtroDemanda.getDepartamentoDemanda() != null) {
                 FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
@@ -1043,6 +1049,13 @@ public class DemandaController {
                 }
 
                 filtroDemandaDTOList.add(filtroDemandaDTO);
+            } else {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("custoTotalDemanda");
+                filtroDemandaDTO.setType("beetween");
+                filtroDemandaDTO.setValue(null);
+                filtroDemandaDTO.setEndValue(null);
+                filtroDemandaDTOList.add(filtroDemandaDTO);
             }
             if (filtroDemanda.getScoreDemandaValorInicial() != null || filtroDemanda.getScoreDemandaValorFinal() != null) {
                 FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
@@ -1061,6 +1074,27 @@ public class DemandaController {
                 }
 
                 filtroDemandaDTOList.add(filtroDemandaDTO);
+            } else {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("scoreDemanda");
+                filtroDemandaDTO.setValue(null);
+                filtroDemandaDTO.setEndValue(null);
+                filtroDemandaDTO.setType("beetween");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+
+            if (filtroDemanda.getIdDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("idDemanda");
+                filtroDemandaDTO.setValue(filtroDemanda.getIdDemanda());
+                filtroDemandaDTO.setType("number");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            } else {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("idDemanda");
+                filtroDemandaDTO.setValue(null);
+                filtroDemandaDTO.setType("number");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
             }
 
             CadastroFiltroDemandaDTO cadastroFiltroDemandaDTO = new CadastroFiltroDemandaDTO();
@@ -1068,6 +1102,7 @@ public class DemandaController {
             cadastroFiltroDemandaDTO.setNomeFiltro(filtroDemanda.getNomeFiltroDemanda());
             cadastroFiltroDemandaDTO.setUsuario(null);
             cadastroFiltroDemandaDTOList.add(cadastroFiltroDemandaDTO);
+            cadastroFiltroDemandaDTO.setIdFiltroDemanda(filtroDemanda.getIdFiltroDemanda());
         }
 
         return ResponseEntity.ok(cadastroFiltroDemandaDTOList);
