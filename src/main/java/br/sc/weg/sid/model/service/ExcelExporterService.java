@@ -7,10 +7,9 @@ import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.enums.TipoBeneficio;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.charts.ChartLegend;
-import org.apache.poi.xddf.usermodel.chart.LegendPosition;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xddf.usermodel.chart.*;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletOutputStream;
@@ -272,6 +271,48 @@ public class ExcelExporterService {
             }
         }
 
+        XSSFSheet demandaChartSheet = (XSSFSheet) workbook.createSheet("Gráficos das demandas");
+
+        // Create a row and put some cells in it. Rows are 0 based.
+        Row row = demandaChartSheet.createRow((short) 0);
+
+        Row dataChartRow = demandaChartSheet.createRow(1);
+        for (int i = 0; i < demandasList.size(); i++) {
+            // Create a cell and put a value in it.
+            if (demandasList.get(i).getCustoTotalDemanda() != null) {
+                createCell(row, i, demandasList.get(i).getTituloDemanda(), 0, 0, titleStyle, demandaChartSheet);
+                createCell(dataChartRow, i, null, 0, demandasList.get(i).getCustoTotalDemanda(), dataStyle, demandaChartSheet);
+            }
+        }
+
+        XSSFDrawing drawing = demandaChartSheet.createDrawingPatriarch();
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 13, 7, 35     );
+
+        XSSFChart chart = drawing.createChart(anchor);
+        chart.setTitleText("Comparação de custo para cada demanda!");
+        chart.setTitleOverlay(false);
+
+        XDDFChartLegend legend = chart.getOrAddLegend();
+        legend.setPosition(LegendPosition.TOP);
+
+        XDDFCategoryAxis bottomAxis = chart.createCategoryAxis(AxisPosition.BOTTOM);
+        bottomAxis.setTitle("Custos");
+        XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
+        leftAxis.setTitle("Titulos das demandas");
+
+        XDDFDataSource<String> demandTitle = XDDFDataSourcesFactory.fromStringCellRange(demandaChartSheet,
+                new CellRangeAddress(0, 0, 0, demandasList.size() - 1));
+
+        XDDFNumericalDataSource<Double> demandTotalCoast = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
+                new CellRangeAddress(1, 1, 0, demandasList.size() - 1));
+
+        XDDFBarChartData data = (XDDFBarChartData) chart.createData(ChartTypes.BAR, bottomAxis, leftAxis);
+
+        XDDFBarChartData.Series series1 = (XDDFBarChartData.Series) data.addSeries(demandTitle, demandTotalCoast);
+        chart.plot(data);
+
+        XDDFBarChartData bar = (XDDFBarChartData) data;
+        bar.setBarDirection(BarDirection.COL);
 
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
@@ -295,7 +336,7 @@ public class ExcelExporterService {
         }
         cell.setCellStyle(style);
         if (sheet.getColumnWidth(column) < (value.length() + 2) * 256) {
-            sheet.setColumnWidth(column, (value.length() + 2) * 256);
+            sheet.setColumnWidth(column, (value.length() + 6) * 256);
         }
     }
 
