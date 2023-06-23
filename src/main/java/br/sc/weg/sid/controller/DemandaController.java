@@ -1073,7 +1073,7 @@ public class DemandaController {
         return ResponseEntity.ok(cadastroFiltroDemandaDTOList);
     }
 
-    @DeleteMapping("/deleta-filtro/{idFiltro}")
+    @DeleteMapping("/filtrar-demanda/{idFiltro}")
     public ResponseEntity<Object> deletarFiltro(@PathVariable("idFiltro") Integer idFiltro) {
         try {
             filtroDemandaService.deleteById(idFiltro);
@@ -1083,7 +1083,7 @@ public class DemandaController {
         }
     }
 
-    @DeleteMapping("/deleta-filtros/usuario/{numeroCadastroUsuario}")
+    @DeleteMapping("/filtrar-demanda/usuario/{numeroCadastroUsuario}")
     public ResponseEntity<Object> deletarFiltrosUsuario(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
         try {
             if (usuarioService.findByNumeroCadastroUsuario(numeroCadastroUsuario).isEmpty()) {
