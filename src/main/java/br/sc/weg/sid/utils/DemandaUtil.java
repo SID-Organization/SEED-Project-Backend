@@ -226,10 +226,14 @@ public class DemandaUtil {
 
         double score;
 
-        if (demanda.getTamanhoDemanda() != null) {
+        if (demanda.getTamanhoDemanda() != null && demanda.getImportanciaDemanda() != ImportanciaDemanda.BLOCKER) {
             score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / retornaValorClassificacao(demanda)) * retornaValorImportancia(demanda);
-        } else {
+        } else if(demanda.getImportanciaDemanda() != ImportanciaDemanda.BLOCKER) {
             score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / 1000000000) * retornaValorImportancia(demanda);
+        } else if (demanda.getTamanhoDemanda() != null) {
+            score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / retornaValorClassificacao(demanda)) + retornaValorImportancia(demanda);
+        } else {
+            score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / 1000000000) + retornaValorImportancia(demanda);
         }
 
         DecimalFormat df = new DecimalFormat("#.##");
