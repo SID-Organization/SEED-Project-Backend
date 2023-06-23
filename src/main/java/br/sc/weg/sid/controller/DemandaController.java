@@ -1,6 +1,8 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.*;
+import br.sc.weg.sid.DTO.filtro.demanda.CadastroFiltroDemandaDTO;
+import br.sc.weg.sid.DTO.filtro.demanda.FiltroDemandaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.exporter.DemandaExcelExporter;
@@ -58,6 +60,8 @@ public class DemandaController {
     NotificacaoService notificacaoService;
 
     ExcelExporterService excelExporterService;
+
+    FiltroDemandaService filtroDemandaService;
 
     /**
      * Retorna uma lista de demandas resumidas.
@@ -798,7 +802,6 @@ public class DemandaController {
     }
 
 
-
     /**
      * Método responsável por deletar uma demanda do banco de dados.
      *
@@ -854,6 +857,291 @@ public class DemandaController {
             }
         });
         return ResponseEntity.status(HttpStatus.OK).body("Demandas deletadas com sucesso!");
+    }
+
+    @PostMapping("/filtrar-demanda")
+    public ResponseEntity<FiltroDemanda> filtrarDemanda(@RequestBody CadastroFiltroDemandaDTO cadastroFiltroDemandaDTO) {
+
+        // Acessar os valores do DTO e inseri-los na classe FiltroDemanda
+        FiltroDemanda filtroDemanda = new FiltroDemanda();
+
+        filtroDemanda.setUsuario(cadastroFiltroDemandaDTO.getUsuario());
+
+        for (FiltroDemandaDTO filtroDTO : cadastroFiltroDemandaDTO.getFiltros()) {
+            String filterBy = filtroDTO.getFilterBy();
+            Object value = filtroDTO.getValue();
+            Object endValue = filtroDTO.getEndValue();
+
+            // Identificar o tipo de filtro com base nos campos
+            if ("nomeSolicitante".equals(filterBy)) {
+                filtroDemanda.setNomeSolicitanteFiltroDemanda((String) value);
+            }
+            if ("nomeGerenteResponsavelDemanda".equals(filterBy)) {
+                filtroDemanda.setNomeGerenteResponsavelDemanda((String) value);
+            }
+            if ("nomeAnalistaResponsavel".equals(filterBy)) {
+                filtroDemanda.setNomeAnalistaResponsavel((String) value);
+            }
+            if ("codigoPPMDemanda".equals(filterBy)) {
+                if (value != null && !value.equals("")) {
+                    Integer codigoPPM = Integer.parseInt(value.toString());
+                    filtroDemanda.setCodigoPPMDemanda(codigoPPM);
+                }
+            }
+            if ("departamentoDemanda".equals(filterBy)) {
+                filtroDemanda.setDepartamentoDemanda((String) value);
+            }
+            if ("forumDeAprovacaoDemanda".equals(filterBy)) {
+                filtroDemanda.setForumDeAprovacaoDemanda((String) value);
+            }
+            if ("tamanhoDemanda".equals(filterBy)) {
+                filtroDemanda.setTamanhoDemanda((String) value);
+            }
+            if ("tituloDemanda".equals(filterBy)) {
+                filtroDemanda.setTituloDemanda((String) value);
+            }
+            if ("statusDemanda".equals(filterBy)) {
+                filtroDemanda.setStatusDemanda((String) value);
+            }
+            if ("custoTotalDemanda".equals(filterBy)) {
+
+                if (value.equals("")) {
+                    value = null;
+                }
+                if (endValue.equals("")) {
+                    endValue = null;
+                }
+
+                if (endValue != null) {
+                    filtroDemanda.setCustoDemandaValorFinal(Double.parseDouble(endValue.toString()));
+                }
+                if (value != null) {
+                    filtroDemanda.setCustoDemandaValorInicial(Double.parseDouble(value.toString()));
+                }
+            }
+            if ("scoreDemanda".equals(filterBy)) {
+
+                if (value.equals("")) {
+                    value = null;
+                }
+
+                if (endValue.equals("")) {
+                    endValue = null;
+                }
+
+                if (endValue != null) {
+                    filtroDemanda.setScoreDemandaValorFinal(Double.parseDouble(endValue.toString()));
+                }
+                if (value != null) {
+                    filtroDemanda.setScoreDemandaValorInicial(Double.parseDouble(value.toString()));
+                }
+            }
+            if ("idDemanda".equals(filterBy)) {
+                if (!value.equals("") ) {
+                    Integer idDemanda = Integer.parseInt(value.toString());
+                    filtroDemanda.setIdDemanda(idDemanda);
+                }
+            }
+        }
+
+        if (cadastroFiltroDemandaDTO.getNomeFiltro() != null) {
+            filtroDemanda.setNomeFiltroDemanda(cadastroFiltroDemandaDTO.getNomeFiltro());
+        } else {
+            filtroDemanda.setNomeFiltroDemanda("Filtro sem nome");
+        }
+
+        FiltroDemanda filtroDemandaSalva = filtroDemandaService.save(filtroDemanda);
+
+        // Retornar a instância da classe FiltroDemanda como resposta
+        return ResponseEntity.ok(filtroDemandaSalva);
+    }
+
+    @GetMapping("/filtrar-demanda/{numeroCadastroUsuario}")
+    public ResponseEntity<List<CadastroFiltroDemandaDTO>> listarFiltrosDemanda(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
+        Usuario usuario = usuarioService.findById(numeroCadastroUsuario).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        List<FiltroDemanda> filtrosDemanda = filtroDemandaService.findAllByUsuario(usuario);
+        List<CadastroFiltroDemandaDTO> cadastroFiltroDemandaDTOList = new ArrayList<>();
+
+        for (FiltroDemanda filtroDemanda : filtrosDemanda) {
+            List<FiltroDemandaDTO> filtroDemandaDTOList = new ArrayList<>();
+
+            if (filtroDemanda.getNomeSolicitanteFiltroDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("nomeSolicitante");
+                filtroDemandaDTO.setValue(filtroDemanda.getNomeSolicitanteFiltroDemanda());
+                filtroDemandaDTO.setType("text");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getNomeGerenteResponsavelDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("nomeGerenteResponsavelDemanda");
+                filtroDemandaDTO.setValue(filtroDemanda.getNomeGerenteResponsavelDemanda());
+                filtroDemandaDTO.setType("text");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getNomeAnalistaResponsavel() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("nomeAnalistaResponsavel");
+                filtroDemandaDTO.setValue(filtroDemanda.getNomeAnalistaResponsavel());
+                filtroDemandaDTO.setType("text");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getCodigoPPMDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("codigoPPMDemanda");
+                filtroDemandaDTO.setValue(filtroDemanda.getCodigoPPMDemanda());
+                filtroDemandaDTO.setType("number");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            } else {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("codigoPPMDemanda");
+                filtroDemandaDTO.setValue("");
+                filtroDemandaDTO.setType("number");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getDepartamentoDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("departamentoDemanda");
+                filtroDemandaDTO.setValue(filtroDemanda.getDepartamentoDemanda());
+                filtroDemandaDTO.setType("text");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getForumDeAprovacaoDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("forumDeAprovacaoDemanda");
+                filtroDemandaDTO.setValue(filtroDemanda.getForumDeAprovacaoDemanda());
+                filtroDemandaDTO.setType("text");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getTamanhoDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("tamanhoDemanda");
+                filtroDemandaDTO.setValue(filtroDemanda.getTamanhoDemanda());
+                filtroDemandaDTO.setType("text");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getTituloDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("tituloDemanda");
+                filtroDemandaDTO.setValue(filtroDemanda.getTituloDemanda());
+                filtroDemandaDTO.setType("text");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getStatusDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("statusDemanda");
+                filtroDemandaDTO.setValue(filtroDemanda.getStatusDemanda());
+                filtroDemandaDTO.setType("text");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getCustoDemandaValorFinal() != null || filtroDemanda.getCustoDemandaValorInicial() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("custoTotalDemanda");
+                filtroDemandaDTO.setType("beetween");
+
+                if (filtroDemanda.getCustoDemandaValorInicial() != null && filtroDemanda.getCustoDemandaValorFinal() != null) {
+                    filtroDemandaDTO.setValue(filtroDemanda.getCustoDemandaValorInicial());
+                    filtroDemandaDTO.setEndValue(filtroDemanda.getCustoDemandaValorFinal());
+                } else if (filtroDemanda.getCustoDemandaValorInicial() != null) {
+                    filtroDemandaDTO.setValue(filtroDemanda.getCustoDemandaValorInicial());
+                    filtroDemandaDTO.setEndValue(null);
+                } else if (filtroDemanda.getCustoDemandaValorFinal() != null) {
+                    filtroDemandaDTO.setValue(null);
+                    filtroDemandaDTO.setEndValue(filtroDemanda.getCustoDemandaValorFinal());
+                }
+
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            } else {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("custoTotalDemanda");
+                filtroDemandaDTO.setType("beetween");
+                filtroDemandaDTO.setValue(null);
+                filtroDemandaDTO.setEndValue(null);
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+            if (filtroDemanda.getScoreDemandaValorInicial() != null || filtroDemanda.getScoreDemandaValorFinal() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("scoreDemanda");
+                filtroDemandaDTO.setType("beetween");
+
+                if (filtroDemanda.getScoreDemandaValorInicial() != null && filtroDemanda.getScoreDemandaValorFinal() != null) {
+                    filtroDemandaDTO.setValue(filtroDemanda.getScoreDemandaValorInicial());
+                    filtroDemandaDTO.setEndValue(filtroDemanda.getScoreDemandaValorFinal());
+                } else if (filtroDemanda.getScoreDemandaValorInicial() != null) {
+                    filtroDemandaDTO.setValue(filtroDemanda.getScoreDemandaValorInicial());
+                    filtroDemandaDTO.setEndValue(null);
+                } else if (filtroDemanda.getScoreDemandaValorFinal() != null) {
+                    filtroDemandaDTO.setValue(null);
+                    filtroDemandaDTO.setEndValue(filtroDemanda.getScoreDemandaValorFinal());
+                }
+
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            } else {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("scoreDemanda");
+                filtroDemandaDTO.setValue(null);
+                filtroDemandaDTO.setEndValue(null);
+                filtroDemandaDTO.setType("beetween");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+
+            if (filtroDemanda.getIdDemanda() != null) {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("idDemanda");
+                filtroDemandaDTO.setValue(filtroDemanda.getIdDemanda());
+                filtroDemandaDTO.setType("number");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            } else {
+                FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
+                filtroDemandaDTO.setFilterBy("idDemanda");
+                filtroDemandaDTO.setValue(null);
+                filtroDemandaDTO.setType("number");
+                filtroDemandaDTOList.add(filtroDemandaDTO);
+            }
+
+            CadastroFiltroDemandaDTO cadastroFiltroDemandaDTO = new CadastroFiltroDemandaDTO();
+            cadastroFiltroDemandaDTO.setFiltros(filtroDemandaDTOList);
+            cadastroFiltroDemandaDTO.setNomeFiltro(filtroDemanda.getNomeFiltroDemanda());
+            cadastroFiltroDemandaDTO.setUsuario(null);
+            cadastroFiltroDemandaDTOList.add(cadastroFiltroDemandaDTO);
+            cadastroFiltroDemandaDTO.setIdFiltroDemanda(filtroDemanda.getIdFiltroDemanda());
+        }
+
+        return ResponseEntity.ok(cadastroFiltroDemandaDTOList);
+    }
+
+    @DeleteMapping("/filtrar-demanda/{idFiltro}")
+    public ResponseEntity<Object> deletarFiltro(@PathVariable("idFiltro") Integer idFiltro) {
+        try {
+            filtroDemandaService.deleteById(idFiltro);
+            return ResponseEntity.ok("Filtro deletado com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar filtro!");
+        }
+    }
+
+    @DeleteMapping("/filtrar-demanda/usuario/{numeroCadastroUsuario}")
+    public ResponseEntity<Object> deletarFiltrosUsuario(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
+        try {
+            if (usuarioService.findByNumeroCadastroUsuario(numeroCadastroUsuario).isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado!");
+            }
+            Usuario usuario = usuarioService.findByNumeroCadastroUsuario(numeroCadastroUsuario).get();
+            List<FiltroDemanda> filtros = filtroDemandaService.findAllByUsuario(usuario);
+            if (filtros.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhum filtro para o usuário!");
+            }
+            filtros.forEach(filtro -> {
+                try {
+                    filtroDemandaService.deleteById(filtro.getIdFiltroDemanda());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            return ResponseEntity.ok("Filtros deletados com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar filtros!");
+        }
     }
 
     /**
