@@ -3,7 +3,7 @@ package br.sc.weg.sid.model.enums;
 public enum Cargo {
     ANALISTA("Analista"),
     SOLICITANTE("Solicitante"),
-    GESTOR_TI("Gestor de TI"),
+    GESTOR_TI("Gestor TI"),
     GERENTE("Gerente");
 
     String nome;

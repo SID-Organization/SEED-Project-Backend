@@ -2,6 +2,7 @@ package br.sc.weg.sid.model.entities;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -27,6 +28,6 @@ public class HistoricoWorkflowResumido {
 
     private String motivoDevolucaoHistorico;
 
-    private Double versaoHistorico;
+    private BigDecimal versaoHistorico;
 
 }

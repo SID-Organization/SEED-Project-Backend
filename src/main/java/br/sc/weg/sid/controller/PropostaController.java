@@ -196,6 +196,9 @@ public class PropostaController {
                     proposta.setPaybackProposta(payback);
                 }
                     Proposta propostaSalva = propostaService.save(proposta);
+                    Demanda demanda = demandaService.findById(propostaSalva.getDemandaProposta().getIdDemanda()).get();
+                    demanda.setCustoTotalDemanda(propostaSalva.getCustosTotaisDoProjeto());
+                    demandaService.save(demanda);
                 try {
                     PdfProposta pdfProposta = propostaUtil.convertJsonToModel(pdfPropostaForm);
                     pdfProposta.setProposta(propostaSalva);

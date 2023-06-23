@@ -7,6 +7,8 @@ import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.enums.TipoBeneficio;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.charts.ChartLegend;
+import org.apache.poi.xddf.usermodel.chart.LegendPosition;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,6 @@ public class ExcelExporterService {
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Demandas");
-
 
         Row headerRow = sheet.createRow(1);
 
@@ -233,7 +234,11 @@ public class ExcelExporterService {
                 createCell(dataRow, 20, propostaNula, 0, 0, dataStyle, sheet);
                 createCell(dataRow, 21, propostaNula, 0, 0, dataStyle, sheet);
             } else {
-                createCell(dataRow, 16, null, 0, proposta.getPaybackProposta(), dataStyle, sheet);
+                if (proposta.getPaybackProposta() == null) {
+                    createCell(dataRow, 16, null, 0, 0, dataStyle, sheet);
+                } else {
+                    createCell(dataRow, 16, null, 0, proposta.getPaybackProposta(), dataStyle, sheet);
+                }
                 SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy"); // Defina o formato desejado
                 if (proposta.getPeriodoExecucaoDemandaInicio() == null) {
                     createCell(dataRow, 17, "N/A", 0, 0, dataStyle, sheet);
@@ -249,23 +254,24 @@ public class ExcelExporterService {
                 if (proposta.getCustosExternosDoProjeto() == null) {
                     createCell(dataRow, 19, "N/A", 0, 0, dataStyle, sheet);
                 } else {
-                    createCell(dataRow, 19, null, 0, proposta.getCustosExternosDoProjeto(), dataStyle, sheet);
+                    createCell(dataRow, 19, "R$" + proposta.getCustosExternosDoProjeto(), 0, 0, dataStyle, sheet);
                 }
 
                 if (proposta.getCustosInternosDoProjeto() == null) {
                     createCell(dataRow, 20, "N/A", 0, 0, dataStyle, sheet);
                 } else {
-                    createCell(dataRow, 20, null, 0, proposta.getCustosInternosDoProjeto(), dataStyle, sheet);
+                    createCell(dataRow, 20, "R$" + proposta.getCustosInternosDoProjeto(), 0, 0, dataStyle, sheet);
                 }
 
                 if (demanda.getCustoTotalDemanda() == null) {
                     String custoNulo = "N/A";
                     createCell(dataRow, 21, custoNulo, 0, 0, dataStyle, sheet);
                 } else {
-                    createCell(dataRow, 21, null, 0, demanda.getCustoTotalDemanda(), dataStyle, sheet);
+                    createCell(dataRow, 21, "R$" + proposta.getCustosTotaisDoProjeto(), 0, 0, dataStyle, sheet);
                 }
             }
         }
+
 
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
