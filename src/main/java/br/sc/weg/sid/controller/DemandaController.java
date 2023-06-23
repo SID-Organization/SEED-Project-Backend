@@ -1027,7 +1027,7 @@ public class DemandaController {
             }
             if (filtroDemanda.getCustoDemandaValorFinal() != null || filtroDemanda.getCustoDemandaValorInicial() != null) {
                 FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
-                filtroDemandaDTO.setFilterBy("custoDemanda");
+                filtroDemandaDTO.setFilterBy("custoTotalDemanda");
                 filtroDemandaDTO.setType("beetween");
 
                 if (filtroDemanda.getCustoDemandaValorInicial() != null && filtroDemanda.getCustoDemandaValorFinal() != null) {
