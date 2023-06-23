@@ -892,7 +892,7 @@ public class DemandaController {
                 filtroDemanda.setDepartamentoDemanda((String) value);
             }
             if ("forumDeAprovacaoDemanda".equals(filterBy)) {
-                filtroDemanda.setForumDeAprovacaoDemanda(filterBy);
+                filtroDemanda.setForumDeAprovacaoDemanda((String) value);
             }
             if ("tamanhoDemanda".equals(filterBy)) {
                 filtroDemanda.setTamanhoDemanda((String) value);
