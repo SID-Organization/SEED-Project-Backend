@@ -888,6 +888,7 @@ public class DemandaController {
             } else if ("nomeAnalistaResponsavel".equals(filterBy)) {
                 filtroDemanda.setNomeAnalistaResponsavel((String) value);
             } else if ("codigoPPMDemanda".equals(filterBy)) {
+                assert value != null;
                 Integer codigoPPM = Integer.parseInt(value.toString());
                 filtroDemanda.setCodigoPPMDemanda(codigoPPM);
             } else if ("departamentoDemanda".equals(filterBy)) {
