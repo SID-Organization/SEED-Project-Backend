@@ -907,7 +907,8 @@ public class DemandaController {
 
                 if (value.equals("")) {
                     value = null;
-                } else if (endValue.equals("")) {
+                }
+                if (endValue.equals("")) {
                     endValue = null;
                 }
 
@@ -934,10 +935,10 @@ public class DemandaController {
                 }
             }
             if ("idDemanda".equals(filterBy)) {
-                Integer idDemanda = Integer.parseInt(value.toString());
-                filtroDemanda.setIdDemanda(idDemanda);
-            } else {
-                throw new RuntimeException("Filtro não encontrado!");
+                if (!value.equals("") ) {
+                    Integer idDemanda = Integer.parseInt(value.toString());
+                    filtroDemanda.setIdDemanda(idDemanda);
+                }
             }
         }
 
