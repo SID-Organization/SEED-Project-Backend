@@ -903,7 +903,7 @@ public class DemandaController {
             if ("statusDemanda".equals(filterBy)) {
                 filtroDemanda.setStatusDemanda((String) value);
             }
-            if ("custoDemanda".equals(filterBy)) {
+            if ("custoTotalDemanda".equals(filterBy)) {
 
                 if (value.equals("")) {
                     value = null;
