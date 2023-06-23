@@ -861,16 +861,24 @@ public class DemandaController {
 
     @PostMapping("/filtrar-demanda")
     public ResponseEntity<FiltroDemanda> filtrarDemanda(@RequestBody CadastroFiltroDemandaDTO cadastroFiltroDemandaDTO) {
+
         // Acessar os valores do DTO e inseri-los na classe FiltroDemanda
         FiltroDemanda filtroDemanda = new FiltroDemanda();
 
         filtroDemanda.setUsuario(cadastroFiltroDemandaDTO.getUsuario());
 
         for (FiltroDemandaDTO filtroDTO : cadastroFiltroDemandaDTO.getFiltros()) {
+            if (filtroDTO.getValue() != null && filtroDTO.getValue().equals("")) {
+                filtroDTO.setValue(null);
+            }
+
+            if (filtroDTO.getEndValue() != null && filtroDTO.getEndValue().equals("")) {
+                filtroDTO.setEndValue(null);
+            }
+
             String filterBy = filtroDTO.getFilterBy();
             Object value = filtroDTO.getValue();
             Object endValue = filtroDTO.getEndValue();
-            String type = filtroDTO.getType();
 
             // Identificar o tipo de filtro com base nos campos
             if ("nomeSolicitante".equals(filterBy)) {
@@ -892,12 +900,12 @@ public class DemandaController {
                 filtroDemanda.setTituloDemanda((String) value);
             } else if ("statusDemanda".equals(filterBy)) {
                 filtroDemanda.setStatusDemanda((String) value);
-            } else if ("valorDemanda".equals(filterBy)) {
+            } else if ("custoDemanda".equals(filterBy)) {
                 if (endValue != null) {
-                    filtroDemanda.setValorDemandaFinal(Double.parseDouble(endValue.toString()));
+                    filtroDemanda.setCustoDemandaValorFinal(Double.parseDouble(endValue.toString()));
                 }
                 if (value != null){
-                    filtroDemanda.setValorDemandaInicial(Double.parseDouble(value.toString()));
+                    filtroDemanda.setCustoDemandaValorInicial(Double.parseDouble(value.toString()));
                 }
             } else if ("scoreDemanda".equals(filterBy)) {
                 if (endValue != null) {
@@ -998,20 +1006,20 @@ public class DemandaController {
                 filtroDemandaDTO.setType("text");
                 filtroDemandaDTOList.add(filtroDemandaDTO);
             }
-            if (filtroDemanda.getValorDemandaInicial() != null || filtroDemanda.getValorDemandaFinal() != null) {
+            if (filtroDemanda.getCustoDemandaValorFinal() != null || filtroDemanda.getCustoDemandaValorInicial() != null) {
                 FiltroDemandaDTO filtroDemandaDTO = new FiltroDemandaDTO();
-                filtroDemandaDTO.setFilterBy("valorDemanda");
+                filtroDemandaDTO.setFilterBy("custoDemanda");
                 filtroDemandaDTO.setType("beetween");
 
-                if (filtroDemanda.getValorDemandaInicial() != null && filtroDemanda.getValorDemandaFinal() != null) {
-                    filtroDemandaDTO.setValue(filtroDemanda.getValorDemandaInicial());
-                    filtroDemandaDTO.setEndValue(filtroDemanda.getValorDemandaFinal());
-                } else if (filtroDemanda.getValorDemandaInicial() != null) {
-                    filtroDemandaDTO.setValue(filtroDemanda.getValorDemandaInicial());
+                if (filtroDemanda.getCustoDemandaValorInicial() != null && filtroDemanda.getCustoDemandaValorFinal() != null) {
+                    filtroDemandaDTO.setValue(filtroDemanda.getCustoDemandaValorInicial());
+                    filtroDemandaDTO.setEndValue(filtroDemanda.getCustoDemandaValorFinal());
+                } else if (filtroDemanda.getCustoDemandaValorInicial() != null) {
+                    filtroDemandaDTO.setValue(filtroDemanda.getCustoDemandaValorInicial());
                     filtroDemandaDTO.setEndValue(null);
-                } else if (filtroDemanda.getValorDemandaFinal() != null) {
+                } else if (filtroDemanda.getCustoDemandaValorFinal() != null) {
                     filtroDemandaDTO.setValue(null);
-                    filtroDemandaDTO.setEndValue(filtroDemanda.getValorDemandaFinal());
+                    filtroDemandaDTO.setEndValue(filtroDemanda.getCustoDemandaValorFinal());
                 }
 
                 filtroDemandaDTOList.add(filtroDemandaDTO);
@@ -1024,7 +1032,7 @@ public class DemandaController {
                 if (filtroDemanda.getScoreDemandaValorInicial() != null && filtroDemanda.getScoreDemandaValorFinal() != null) {
                     filtroDemandaDTO.setValue(filtroDemanda.getScoreDemandaValorInicial());
                     filtroDemandaDTO.setEndValue(filtroDemanda.getScoreDemandaValorFinal());
-                } else if (filtroDemanda.getValorDemandaInicial() != null) {
+                } else if (filtroDemanda.getScoreDemandaValorInicial() != null) {
                     filtroDemandaDTO.setValue(filtroDemanda.getScoreDemandaValorInicial());
                     filtroDemandaDTO.setEndValue(null);
                 } else if (filtroDemanda.getScoreDemandaValorFinal() != null) {
@@ -1043,6 +1051,40 @@ public class DemandaController {
         }
 
         return ResponseEntity.ok(cadastroFiltroDemandaDTOList);
+    }
+
+    @DeleteMapping("/deleta-filtro/{idFiltro}")
+    public ResponseEntity<Object> deletarFiltro(@PathVariable("idFiltro") Integer idFiltro) {
+        try {
+            filtroDemandaService.deleteById(idFiltro);
+            return ResponseEntity.ok("Filtro deletado com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar filtro!");
+        }
+    }
+
+    @DeleteMapping("/deleta-filtros/usuario/{numeroCadastroUsuario}")
+    public ResponseEntity<Object> deletarFiltrosUsuario(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
+        try {
+            if (usuarioService.findByNumeroCadastroUsuario(numeroCadastroUsuario).isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado!");
+            }
+            Usuario usuario = usuarioService.findByNumeroCadastroUsuario(numeroCadastroUsuario).get();
+            List<FiltroDemanda> filtros = filtroDemandaService.findAllByUsuario(usuario);
+            if (filtros.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhum filtro para o usuário!");
+            }
+            filtros.forEach(filtro -> {
+                try {
+                    filtroDemandaService.deleteById(filtro.getIdFiltroDemanda());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            return ResponseEntity.ok("Filtros deletados com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar filtros!");
+        }
     }
 
     /**
