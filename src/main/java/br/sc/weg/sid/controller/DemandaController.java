@@ -868,13 +868,8 @@ public class DemandaController {
         filtroDemanda.setUsuario(cadastroFiltroDemandaDTO.getUsuario());
 
         for (FiltroDemandaDTO filtroDTO : cadastroFiltroDemandaDTO.getFiltros()) {
-            if (filtroDTO.getValue() != null && filtroDTO.getValue().equals("")) {
-                filtroDTO.setValue(null);
-            }
 
-            if (filtroDTO.getEndValue() != null && filtroDTO.getEndValue().equals("")) {
-                filtroDTO.setEndValue(null);
-            }
+            System.out.println(filtroDTO.getFilterBy() + " " + filtroDTO.getValue() + " " + filtroDTO.getEndValue());
 
             String filterBy = filtroDTO.getFilterBy();
             Object value = filtroDTO.getValue();
@@ -888,9 +883,10 @@ public class DemandaController {
             } else if ("nomeAnalistaResponsavel".equals(filterBy)) {
                 filtroDemanda.setNomeAnalistaResponsavel((String) value);
             } else if ("codigoPPMDemanda".equals(filterBy)) {
-                assert value != null;
-                Integer codigoPPM = Integer.parseInt(value.toString());
-                filtroDemanda.setCodigoPPMDemanda(codigoPPM);
+                if (value != null && !value.equals("")){
+                    Integer codigoPPM = Integer.parseInt(value.toString());
+                    filtroDemanda.setCodigoPPMDemanda(codigoPPM);
+                }
             } else if ("departamentoDemanda".equals(filterBy)) {
                 filtroDemanda.setDepartamentoDemanda((String) value);
             } else if ("forumDeAprovacaoDemanda".equals(filterBy)) {
@@ -902,17 +898,31 @@ public class DemandaController {
             } else if ("statusDemanda".equals(filterBy)) {
                 filtroDemanda.setStatusDemanda((String) value);
             } else if ("custoDemanda".equals(filterBy)) {
+
+                if (value.equals("")){
+                    value = null;
+                } else if (endValue.equals("")){
+                    endValue = null;
+                }
+
                 if (endValue != null) {
                     filtroDemanda.setCustoDemandaValorFinal(Double.parseDouble(endValue.toString()));
                 }
-                if (value != null){
+                if (value != null) {
                     filtroDemanda.setCustoDemandaValorInicial(Double.parseDouble(value.toString()));
                 }
             } else if ("scoreDemanda".equals(filterBy)) {
+
+                if (value.equals("")){
+                    value = null;
+                } else if (endValue.equals("")){
+                    endValue = null;
+                }
+
                 if (endValue != null) {
                     filtroDemanda.setScoreDemandaValorFinal(Double.parseDouble(endValue.toString()));
                 }
-                if (value != null){
+                if (value != null) {
                     filtroDemanda.setScoreDemandaValorInicial(Double.parseDouble(value.toString()));
                 }
             } else if ("idDemanda".equals(filterBy)) {
