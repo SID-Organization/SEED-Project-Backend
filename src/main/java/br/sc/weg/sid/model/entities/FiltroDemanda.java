@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -59,6 +60,7 @@ public class FiltroDemanda {
 
     @JoinColumn(name = "idUsuario")
     @ManyToOne
+    @JsonIgnore
     private Usuario usuario;
 
 }
