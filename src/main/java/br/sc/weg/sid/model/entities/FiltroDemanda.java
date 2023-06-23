@@ -42,11 +42,11 @@ public class FiltroDemanda {
     @Column(name = "StatusDemanda")
     private String statusDemanda;
 
-    @Column(name = "ValorDemandaInicial")
-    private Double valorDemandaInicial;
+    @Column(name = "CustoDemandaValorInicial")
+    private Double custoDemandaValorInicial;
 
-    @Column(name = "ValorDemandaFinal")
-    private Double valorDemandaFinal;
+    @Column(name = "CustoDemandaValorFinal")
+    private Double custoDemandaValorFinal;
 
     @Column(name = "ScoreDemandaValorInicial")
     private Double scoreDemandaValorInicial;
