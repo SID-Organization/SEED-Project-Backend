@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -1110,7 +1111,7 @@ public class DemandaController {
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
             historicoWorkflow.setAcaoFeitaHistorico("Recusar");
             historicoWorkflow.setIdResponsavel(devolverDemandaDTO.getIdResponsavel());
-            historicoWorkflow.setVersaoHistorico(historicoWorkflow.getVersaoHistorico() + 0.1);
+            historicoWorkflow.setVersaoHistorico(historicoWorkflow.getVersaoHistorico().add(BigDecimal.valueOf(0.1)));
             HistoricoWorkflow historicoWorkflowSalvo = historicoWorkflowService.save(historicoWorkflow);
             motivoRecusa.setIdHistoricoWorkflow(historicoWorkflowSalvo.getIdHistoricoWorkflow());
             demanda.setHistoricoWorkflowUltimaVersao(historicoWorkflowSalvo);

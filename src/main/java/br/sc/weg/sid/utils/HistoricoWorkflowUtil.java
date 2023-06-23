@@ -5,6 +5,9 @@ import br.sc.weg.sid.model.entities.HistoricoWorkflowResumido;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +28,12 @@ public class HistoricoWorkflowUtil {
                 historicoWorkflowResumido.setMotivoDevolucaoHistorico(historicoWorkflow.getMotivoDevolucaoHistorico());
             }
             historicoWorkflowResumido.setStatusWorkflow(historicoWorkflow.getStatusWorkflow().getDescricao());
+            DecimalFormat df = new DecimalFormat("0.0");
+
+            df.setRoundingMode(RoundingMode.CEILING);
+            String format = df.format(historicoWorkflow.getVersaoHistorico());
+            format = format.replace(",", ".");
+            historicoWorkflowResumido.setVersaoHistorico(new BigDecimal(format));
             historicoWorkflowResumidos.add(historicoWorkflowResumido);
         });
         return historicoWorkflowResumidos;

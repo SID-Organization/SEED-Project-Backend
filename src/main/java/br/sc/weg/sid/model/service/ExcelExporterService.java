@@ -5,8 +5,10 @@ import br.sc.weg.sid.model.entities.BusinessUnity;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.model.enums.TipoBeneficio;
+import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.ss.usermodel.charts.ChartLegend;
+import org.apache.poi.xddf.usermodel.chart.LegendPosition;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,15 +19,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
 
 @Service
+@AllArgsConstructor
 public class ExcelExporterService {
 
-    @Autowired
     DemandaService demandaService;
 
-    @Autowired
     PropostaService propostaService;
 
     public void criarTabelaDemandaExcel(HttpServletResponse response, List<Integer> demandasIdList) throws IOException {
@@ -38,7 +38,6 @@ public class ExcelExporterService {
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Demandas");
-
 
         Row headerRow = sheet.createRow(1);
 
@@ -61,23 +60,43 @@ public class ExcelExporterService {
 
         createCell(headerRow, 2, "Titulo", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 3, "Status", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 3, "Solicitante da demanda", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 4, "Tamanho", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 4, "Analista responsável", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 5, "Data de criação", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 5, "Gerente da área", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 6, "Score", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 6, "Gestor de T.I", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 7, "Bu solicitante", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 7, "Status", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 8, "Seção de T.I responsável", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 8, "Tamanho", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 9, "Bu's beneficiadas", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 9, "Data de criação", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 10, "Beneficios potenciais", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 10, "Score", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 11, "Beneficios reais", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 11, "Bu solicitante", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 12, "Seção de T.I responsável", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 13, "Bu's beneficiadas", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 14, "Beneficios potenciais", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 15, "Beneficios reais", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 16, "Payback", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 17, "Data início da execução", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 18, "Data final da execução", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 19, "Custos externos", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 20, "Custos internos", 0, 0, titleStyle, sheet);
+
+        createCell(headerRow, 21, "Custo Total", 0, 0, titleStyle, sheet);
 
         CellStyle dataStyle = workbook.createCellStyle();
         dataStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -96,78 +115,86 @@ public class ExcelExporterService {
                 proposta = propostasList.get(propostasList.size() - 1);
             }
 
-            createCell(headerRow, 12, "Payback", 0, 0, titleStyle, sheet);
-
-            createCell(headerRow, 13, "Data início da execução", 0, 0, titleStyle, sheet);
-
-            createCell(headerRow, 14, "Data final da execução", 0, 0, titleStyle, sheet);
-
-            createCell(headerRow, 15, "Custos externos", 0, 0, titleStyle, sheet);
-
-            createCell(headerRow, 16, "Custos internos", 0, 0, titleStyle, sheet);
-
-            createCell(headerRow, 17, "Custo Total", 0, 0, titleStyle, sheet);
-
             Row dataRow = sheet.createRow(rowNum++);
 
             createCell(dataRow, 1, null, demanda.getIdDemanda(), 0, dataStyle, sheet);
 
             createCell(dataRow, 2, demanda.getTituloDemanda(), 0, 0, dataStyle, sheet);
 
-            createCell(dataRow, 3, demanda.getStatusDemanda().getNome(), 0, 0, dataStyle, sheet);
+            createCell(dataRow, 3, demanda.getSolicitanteDemanda().getNomeUsuario(), 0, 0, dataStyle, sheet);
+
+            if (demanda.getAnalistaResponsavelDemanda() == null) {
+                createCell(dataRow, 4, "N/A", 0, 0, dataStyle, sheet);
+            } else {
+                createCell(dataRow, 4, demanda.getAnalistaResponsavelDemanda().getNomeUsuario(), 0, 0, dataStyle, sheet);
+            }
+
+            if (demanda.getGerenteDaAreaDemanda() == null) {
+                createCell(dataRow, 5, "N/A", 0, 0, dataStyle, sheet);
+            } else {
+                createCell(dataRow, 5, demanda.getGerenteDaAreaDemanda().getNomeUsuario(), 0, 0, dataStyle, sheet);
+            }
+
+            if (demanda.getGestorResponsavelDemanda() == null) {
+                createCell(dataRow, 6, "N/A", 0, 0, dataStyle, sheet);
+            } else {
+                createCell(dataRow, 6, demanda.getGestorResponsavelDemanda().getNomeUsuario(), 0, 0, dataStyle, sheet);
+            }
+
+            createCell(dataRow, 7, demanda.getStatusDemanda().getNome(), 0, 0, dataStyle, sheet);
 
             if (demanda.getTamanhoDemanda() == null) {
                 String tamanhoNulo = "N/A";
-                createCell(dataRow, 4, tamanhoNulo, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 8, tamanhoNulo, 0, 0, dataStyle, sheet);
             } else {
-                createCell(dataRow, 4, demanda.getTamanhoDemanda().getNome(), 0, 0, dataStyle, sheet);
+                createCell(dataRow, 8, demanda.getTamanhoDemanda().getNome(), 0, 0, dataStyle, sheet);
             }
 
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-            createCell(dataRow, 5, formatter.format(demanda.getDataCriacaoDemanda()), 0, 0, dataStyle, sheet);
+            createCell(dataRow, 9, formatter.format(demanda.getDataCriacaoDemanda()), 0, 0, dataStyle, sheet);
 
             if (demanda.getScoreDemanda() == 0) {
                 String scoreNulo = "N/A";
-                createCell(dataRow, 6, scoreNulo, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 10, scoreNulo, 0, 0, dataStyle, sheet);
             } else {
-                createCell(dataRow, 6, null, 0, demanda.getScoreDemanda(), dataStyle, sheet);
+                createCell(dataRow, 10, null, 0, demanda.getScoreDemanda(), dataStyle, sheet);
             }
 
             if (demanda.getBuSolicitanteDemanda() == null) {
                 String buNulo = "N/A";
-                createCell(dataRow, 7, buNulo, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 11, buNulo, 0, 0, dataStyle, sheet);
             } else {
-                createCell(dataRow, 7, demanda.getBuSolicitanteDemanda().getNomeBusinessUnity(), 0, 0, dataStyle, sheet);
+                createCell(dataRow, 11, demanda.getBuSolicitanteDemanda().getNomeBusinessUnity(), 0, 0, dataStyle, sheet);
             }
 
             if (demanda.getSecaoTIResponsavelDemanda() == null) {
                 String secaoNula = "N/A";
-                createCell(dataRow, 8, secaoNula, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 12, secaoNula, 0, 0, dataStyle, sheet);
             } else {
-                createCell(dataRow, 8, demanda.getSecaoTIResponsavelDemanda().getNomeSecaoTIResponsavel(), 0, 0, dataStyle, sheet);
+                createCell(dataRow, 12, demanda.getSecaoTIResponsavelDemanda().getNomeSecaoTIResponsavel(), 0, 0, dataStyle, sheet);
             }
 
             if (demanda.getBusBeneficiadasDemanda().isEmpty()) {
                 String buVazio = "N/A";
-                createCell(dataRow, 9, buVazio, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 13, buVazio, 0, 0, dataStyle, sheet);
             } else {
-                String buBeneficiadas = "";
+                StringBuilder buBeneficiadas = new StringBuilder();
                 for (int i = 0; i < demanda.getBusBeneficiadasDemanda().size(); i++) {
                     BusinessUnity bu = demanda.getBusBeneficiadasDemanda().get(i);
-                    buBeneficiadas += bu.getNomeBusinessUnity();
+                    buBeneficiadas.append(bu.getNomeBusinessUnity());
 
                     if (i < demanda.getBusBeneficiadasDemanda().size() - 1) {
-                        buBeneficiadas += ", ";
+                        buBeneficiadas.append(", ");
                     }
                 }
-                createCell(dataRow, 9, buBeneficiadas, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 13, buBeneficiadas.toString(), 0, 0, dataStyle, sheet);
             }
 
             if (demanda.getBeneficiosDemanda().isEmpty()) {
                 String beneficioVazio = "N/A";
-                createCell(dataRow, 10, beneficioVazio, 0, 0, dataStyle, sheet);
-                createCell(dataRow, 11, beneficioVazio, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 14, beneficioVazio, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 15, beneficioVazio, 0, 0, dataStyle, sheet);
             } else {
 
                 //Quando existe um único benefício e o tipo é qualitativo, seria problemático deixar as células correspondentes vazias.
@@ -194,55 +221,57 @@ public class ExcelExporterService {
                 if (qtdBeneficiosReais > 0) {
                     beneficiosReais = beneficiosReaisFor;
                 }
-                createCell(dataRow, 10, beneficiosPotenciais, 0, 0, dataStyle, sheet);
-                createCell(dataRow, 11, beneficiosReais, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 14, beneficiosPotenciais, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 15, beneficiosReais, 0, 0, dataStyle, sheet);
             }
 
             if (proposta == null) {
                 String propostaNula = "N/A";
-                createCell(dataRow, 12, propostaNula, 0, 0, dataStyle, sheet);
-                createCell(dataRow, 13, propostaNula, 0, 0, dataStyle, sheet);
-                createCell(dataRow, 14, propostaNula, 0, 0, dataStyle, sheet);
-                createCell(dataRow, 15, propostaNula, 0, 0, dataStyle, sheet);
                 createCell(dataRow, 16, propostaNula, 0, 0, dataStyle, sheet);
                 createCell(dataRow, 17, propostaNula, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 18, propostaNula, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 19, propostaNula, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 20, propostaNula, 0, 0, dataStyle, sheet);
+                createCell(dataRow, 21, propostaNula, 0, 0, dataStyle, sheet);
             } else {
-                createCell(dataRow, 12, null, 0, proposta.getPaybackProposta(), dataStyle, sheet);
+                if (proposta.getPaybackProposta() == null) {
+                    createCell(dataRow, 16, null, 0, 0, dataStyle, sheet);
+                } else {
+                    createCell(dataRow, 16, null, 0, proposta.getPaybackProposta(), dataStyle, sheet);
+                }
                 SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy"); // Defina o formato desejado
                 if (proposta.getPeriodoExecucaoDemandaInicio() == null) {
-                    createCell(dataRow, 14, "N/A", 0, 0, dataStyle, sheet);
+                    createCell(dataRow, 17, "N/A", 0, 0, dataStyle, sheet);
                 } else {
-                    createCell(dataRow, 13, formatador.format(proposta.getPeriodoExecucaoDemandaInicio()), 0, 0, dataStyle, sheet);
+                    createCell(dataRow, 17, formatador.format(proposta.getPeriodoExecucaoDemandaInicio()), 0, 0, dataStyle, sheet);
                 }
                 if (proposta.getPeriodoExecucaoDemandaFim() == null) {
-                    createCell(dataRow, 13, "N/A", 0, 0, dataStyle, sheet);
+                    createCell(dataRow, 18, "N/A", 0, 0, dataStyle, sheet);
                 } else {
-                    createCell(dataRow, 14, formatador.format(proposta.getPeriodoExecucaoDemandaFim()), 0, 0, dataStyle, sheet);
+                    createCell(dataRow, 18, formatador.format(proposta.getPeriodoExecucaoDemandaFim()), 0, 0, dataStyle, sheet);
                 }
 
                 if (proposta.getCustosExternosDoProjeto() == null) {
-                    createCell(dataRow, 15, "N/A", 0, 0, dataStyle, sheet);
+                    createCell(dataRow, 19, "N/A", 0, 0, dataStyle, sheet);
                 } else {
-                    createCell(dataRow, 15, null, 0, proposta.getCustosExternosDoProjeto(), dataStyle, sheet);
+                    createCell(dataRow, 19, "R$" + proposta.getCustosExternosDoProjeto(), 0, 0, dataStyle, sheet);
                 }
 
                 if (proposta.getCustosInternosDoProjeto() == null) {
-                    createCell(dataRow, 16, "N/A", 0, 0, dataStyle, sheet);
+                    createCell(dataRow, 20, "N/A", 0, 0, dataStyle, sheet);
                 } else {
-                    createCell(dataRow, 16, null, 0, proposta.getCustosInternosDoProjeto(), dataStyle, sheet);
+                    createCell(dataRow, 20, "R$" + proposta.getCustosInternosDoProjeto(), 0, 0, dataStyle, sheet);
                 }
 
                 if (demanda.getCustoTotalDemanda() == null) {
                     String custoNulo = "N/A";
-                    createCell(dataRow, 17, custoNulo, 0, 0, dataStyle, sheet);
+                    createCell(dataRow, 21, custoNulo, 0, 0, dataStyle, sheet);
                 } else {
-                    createCell(dataRow, 17, null, 0, demanda.getCustoTotalDemanda(), dataStyle, sheet);
+                    createCell(dataRow, 21, "R$" + proposta.getCustosTotaisDoProjeto(), 0, 0, dataStyle, sheet);
                 }
             }
-
-
-
         }
+
 
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
