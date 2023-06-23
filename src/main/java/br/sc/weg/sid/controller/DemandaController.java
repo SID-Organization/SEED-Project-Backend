@@ -923,7 +923,9 @@ public class DemandaController {
 
                 if (value.equals("")) {
                     value = null;
-                } else if (endValue.equals("")) {
+                }
+
+                if (endValue.equals("")) {
                     endValue = null;
                 }
 
