@@ -10,4 +10,5 @@ public class CadastroFiltroDemandaDTO {
     private String nomeFiltro;
     private Usuario usuario;
     private List<FiltroDemandaDTO> filtros;
+    private Integer idFiltroDemanda;
 }
