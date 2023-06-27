@@ -349,11 +349,7 @@ public class ExcelExporterService {
         XDDFNumericalDataSource<Double> realBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
                 new CellRangeAddress(2, 2, 0, demandasList.size() - 1));
 
-        XDDFChartData dataPie = chartPie.createData(ChartTypes.PIE, bottomAxisBar, leftAxisBar);
-        dataPie.setVaryColors(true);
-        dataPie.addSeries(demandTitleBar, realBenefits);
-
-        chartPie.plot(dataPie);
+        generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie, realBenefits);
 
         XSSFDrawing drawingPie2 = demandaChartSheet.createDrawingPatriarch();
         XSSFClientAnchor anchorPie2 = drawingPie.createAnchor(0, 0, 0, 0, lastColumn1Pie, 0, (lastColumn1Pie + 9), 23);
@@ -368,15 +364,33 @@ public class ExcelExporterService {
         XDDFNumericalDataSource<Double> potentialBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
                 new CellRangeAddress(3, 3, 0, demandasList.size() - 1));
 
-        XDDFChartData dataPie2 = chartPie2.createData(ChartTypes.PIE, bottomAxisBar, leftAxisBar);
-        dataPie2.setVaryColors(true);
-        dataPie2.addSeries(demandTitleBar, potentialBenefits);
-        chartPie2.plot(dataPie2);
+        generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie2, potentialBenefits);
 
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         workbook.close();
         outputStream.close();
+    }
+
+    private void generatePieChart(XDDFCategoryAxis bottomAxisBar, XDDFValueAxis leftAxisBar, XDDFDataSource<String> demandTitleBar, XSSFChart chartPie, XDDFNumericalDataSource<Double> benefits) {
+        XDDFChartData dataPie = chartPie.createData(ChartTypes.PIE, bottomAxisBar, leftAxisBar);
+        dataPie.setVaryColors(true);
+        dataPie.addSeries(demandTitleBar, benefits);
+
+        chartPie.plot(dataPie);
+
+        if (!chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).isSetDLbls())
+            chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).addNewDLbls();
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowLegendKey().setVal(false);
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowPercent().setVal(true);
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowVal().setVal(false);
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowCatName().setVal(false);
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowSerName().setVal(false);
     }
 
 
