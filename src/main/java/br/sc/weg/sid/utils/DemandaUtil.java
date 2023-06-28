@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.RoundingMode;
@@ -71,7 +70,9 @@ public class DemandaUtil {
             demandaResumida.setCustoTotalDemanda(demanda.getCustoTotalDemanda());
             demandaResumida.setIdDemanda(demanda.getIdDemanda());
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
-            demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
+            if (demanda.getAnalistaResponsavelDemanda() != null) {
+                demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
+            }
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
             if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA) {
                 demanda.getMotivosRecusaDemanda().forEach(motivoRecusa -> {

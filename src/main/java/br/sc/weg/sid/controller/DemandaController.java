@@ -5,7 +5,6 @@ import br.sc.weg.sid.DTO.filtro.demanda.CadastroFiltroDemandaDTO;
 import br.sc.weg.sid.DTO.filtro.demanda.FiltroDemandaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
-import br.sc.weg.sid.model.exporter.DemandaExcelExporter;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.DemandaUtil;
 import lombok.AllArgsConstructor;
@@ -539,18 +538,18 @@ public class DemandaController {
         String notificacaoHoraData = horarioDataNow.format(formatar) + " - " + horarioDataNow.format(dateFormatter);
 
         if (demandaAtualizada.getStatusDemanda() == StatusDemanda.ABERTA) {
-            Notificacao notificacaoDemandaCriada = new Notificacao();
-            notificacaoDemandaCriada.setTextoNotificacao("uma demanda foi criada! " + demandaAtualizada.getTituloDemanda() + " criada por: " +
-                    demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
-            notificacaoDemandaCriada.setTipoNotificacao("approved");
-            notificacaoDemandaCriada.setResponsavel(demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
-            notificacaoDemandaCriada.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
-            notificacaoDemandaCriada.setUsuario(demandaAtualizada.getAnalistaResponsavelDemanda());
-            notificacaoDemandaCriada.setTempoNotificacao(notificacaoHoraData);
-            notificacaoDemandaCriada.setVisualizada(false);
-            simpMessagingTemplate.convertAndSend("/notificacao-demanda-cadastro/analista/" +
-                    demandaAtualizada.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario(), notificacaoDemandaCriada);
-            notificacaoService.save(notificacaoDemandaCriada);
+//            Notificacao notificacaoDemandaCriada = new Notificacao();
+//            notificacaoDemandaCriada.setTextoNotificacao("uma demanda foi criada! " + demandaAtualizada.getTituloDemanda() + " criada por: " +
+//                    demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
+//            notificacaoDemandaCriada.setTipoNotificacao("approved");
+//            notificacaoDemandaCriada.setResponsavel(demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
+//            notificacaoDemandaCriada.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
+//            notificacaoDemandaCriada.setUsuario(demandaAtualizada.getAnalistaResponsavelDemanda());
+//            notificacaoDemandaCriada.setTempoNotificacao(notificacaoHoraData);
+//            notificacaoDemandaCriada.setVisualizada(false);
+//            simpMessagingTemplate.convertAndSend("/notificacao-demanda-cadastro/analista/" +
+//                    demandaAtualizada.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario(), notificacaoDemandaCriada);
+//            notificacaoService.save(notificacaoDemandaCriada);
         } else {
             Notificacao notificacaoStatus = new Notificacao();
             notificacaoStatus.setTextoNotificacao("a demanda " + demandaAtualizada.getIdDemanda() + " - "
@@ -571,6 +570,7 @@ public class DemandaController {
             CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
             try {
                 historicoWorkflowDTO.setDemandaHistorico(demandaAtualizada);
+                System.out.println("EDIÇÂO: " + edicao);
                 if (edicao == false) {
                     historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
                     historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());
@@ -579,10 +579,11 @@ public class DemandaController {
                     historicoWorkflowDTO.setAcaoFeitaHistoricoAnterior("Enviar");
                 }
                 historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.CLASSIFICACAO_APROVACAO);
-                historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda());
+                historicoWorkflowDTO.setIdResponsavel(null);
                 try {
                     historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflowDTO);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
                 }
             } catch (Exception e) {
@@ -716,6 +717,17 @@ public class DemandaController {
         Double valorScore = demandaUtil.retornaScoreDemandaClassificacao(demanda);
         demanda.setScoreDemanda(valorScore);
         Demanda demandaSalva = demandaService.save(demanda);
+        HistoricoWorkflow ultimoHistoricoWorkflow = demandaSalva.getHistoricoWorkflowUltimaVersao();
+        ultimoHistoricoWorkflow.setIdResponsavel(usuarioService.findById(demandaSalva.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+        historicoWorkflowController.atualizaVersaoWorkflow(ultimoHistoricoWorkflow.getIdHistoricoWorkflow(), ultimoHistoricoWorkflow);
+
+        CadastroHistoricoWorkflowDTO historicoWorkflow = new CadastroHistoricoWorkflowDTO();
+        historicoWorkflow.setTarefaHistoricoWorkflow(TarefaWorkflow.APROVACAO_GERENTE_AREA);
+        historicoWorkflow.setDemandaHistorico(demandaSalva);
+        historicoWorkflow.setAcaoFeitaHistoricoAnterior("Aprovar");
+        historicoWorkflow.setIdResponsavel(usuarioService.findById(demandaSalva.getGerenteDaAreaDemanda().getNumeroCadastroUsuario()).get());
+        historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflow);
+
         gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
         LocalDate localDate = LocalDate.now();
         Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
