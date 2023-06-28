@@ -42,9 +42,12 @@ public class DemandaService {
         return demandaRepository.findByTamanhoDemanda(tamanhoDemanda);
     }
 
-
     public List<Demanda> findByStatusDemanda(StatusDemanda statusDemanda) {
         return demandaRepository.findByStatusDemanda(statusDemanda);
+    }
+
+    public List<Demanda> findByStatusDemandaAndAnalistaResponsavelDemandaIsNull(StatusDemanda statusDemanda) {
+        return demandaRepository.findByStatusDemandaAndAnalistaResponsavelDemandaIsNull(statusDemanda);
     }
 
     public List<Demanda> findByScoreDemanda(Double scoreDemanda) {

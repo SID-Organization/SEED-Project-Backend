@@ -22,6 +22,8 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
     List<Demanda> findByGestorResponsavelDemanda(Usuario gestorResponsavelDemanda);
     List<Demanda> findByStatusDemandaAndSolicitanteDemanda(StatusDemanda statusDemanda, Usuario solicitanteDemanda);
 
+    List<Demanda> findByStatusDemandaAndAnalistaResponsavelDemandaIsNull(StatusDemanda statusDemanda);
+
     List<Demanda> findAllByOrderByPrazoElaboracaoDemandaAsc();
     List<Demanda> findAllByOrderByPrazoElaboracaoDemandaDesc();
 

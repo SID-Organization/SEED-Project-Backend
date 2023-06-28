@@ -781,6 +781,24 @@ public class DemandaController {
         }
     }
 
+    @GetMapping("/demanda-aberta")
+    public ResponseEntity<Object> buscarDemandasAbertaSemAnalista() {
+        try {
+            DemandaUtil demandaUtil = new DemandaUtil();
+
+            List<Demanda> demandaList = demandaService.findByStatusDemandaAndAnalistaResponsavelDemandaIsNull(StatusDemanda.ABERTA);
+
+            if (demandaList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhuma demanda sem analista!");
+            }
+
+            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandaList);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao buscar demandas sem analista: " + e.getMessage());
+        }
+    }
+
     /**
      * Retorna o PDF da demanda com o ID informado.
      *
@@ -949,7 +967,7 @@ public class DemandaController {
                 }
             }
             if ("idDemanda".equals(filterBy)) {
-                if (!value.equals("") ) {
+                if (!value.equals("")) {
                     Integer idDemanda = Integer.parseInt(value.toString());
                     filtroDemanda.setIdDemanda(idDemanda);
                 }
