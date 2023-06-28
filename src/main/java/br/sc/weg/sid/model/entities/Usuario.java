@@ -36,6 +36,8 @@ public class Usuario {
     @Column(name = "BusinessUnity", nullable = false)
     private String businessUnity;
 
+    private boolean tutorialUsuario = true;
+
     @Column(name = "FotoUsuario")
     @Lob
     private byte[] fotoUsuario;
