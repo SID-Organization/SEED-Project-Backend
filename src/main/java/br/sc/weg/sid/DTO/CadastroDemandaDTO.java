@@ -28,8 +28,6 @@ public class CadastroDemandaDTO {
 
     public Usuario solicitanteDemanda;
 
-    public Usuario analistaResponsavelDemanda;
-
     public Usuario gerenteDaAreaDemanda;
 
     public Usuario gestorResponsavelDemanda;

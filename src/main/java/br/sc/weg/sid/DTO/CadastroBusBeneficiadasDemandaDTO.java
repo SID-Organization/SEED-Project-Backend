@@ -2,6 +2,7 @@ package br.sc.weg.sid.DTO;
 
 import br.sc.weg.sid.model.entities.BusinessUnity;
 import br.sc.weg.sid.model.entities.SecaoTIResponsavel;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import lombok.Data;
 
@@ -16,4 +17,6 @@ public class CadastroBusBeneficiadasDemandaDTO {
     private List<BusinessUnity> busBeneficiadasDemanda;
     @NotNull(message = "O campo tamanhoDemanda não pode ser nulo")
     private TamanhoDemanda tamanhoDemanda;
+    @NotNull(message = "O campo analistaResponsavel não pode ser nulo")
+    private Usuario analistaResponsavelDemanda;
 }
