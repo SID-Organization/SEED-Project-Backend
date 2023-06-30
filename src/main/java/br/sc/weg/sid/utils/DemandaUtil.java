@@ -3,10 +3,7 @@ package br.sc.weg.sid.utils;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaSimilarDTO;
 import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
-import br.sc.weg.sid.model.entities.Beneficio;
-import br.sc.weg.sid.model.entities.Demanda;
-import br.sc.weg.sid.model.entities.DemandaResumida;
-import br.sc.weg.sid.model.entities.PdfDemanda;
+import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.service.API.client.CotacaoGET;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,7 +70,18 @@ public class DemandaUtil {
             demandaResumida.setCustoTotalDemanda(demanda.getCustoTotalDemanda());
             demandaResumida.setIdDemanda(demanda.getIdDemanda());
             demandaResumida.setNomeSolicitante(demanda.getSolicitanteDemanda().getNomeUsuario());
-            demandaResumida.setNomeAnalistaResponsavel(demanda.getAnalistaResponsavelDemanda().getNomeUsuario());
+            if (demanda.getAnalistasResponsaveisDemanda() != null) {
+                StringBuilder analistas = new StringBuilder();
+                for (int i = 0; i < demanda.getAnalistasResponsaveisDemanda().size(); i++) {
+                    Usuario analista = demanda.getAnalistasResponsaveisDemanda().get(i);
+                    analistas.append(analista.getNomeUsuario());
+
+                    if (i < demanda.getAnalistasResponsaveisDemanda().size() - 1) {
+                        analistas.append(", ");
+                    }
+                }
+                demandaResumida.setNomesAnalistasResponsaveis(analistas.toString());
+            }
             demandaResumida.setNomeGerenteResponsavelDemanda(demanda.getGerenteDaAreaDemanda().getNomeUsuario());
             if (demanda.getStatusDemanda() == StatusDemanda.CANCELADA) {
                 demanda.getMotivosRecusaDemanda().forEach(motivoRecusa -> {

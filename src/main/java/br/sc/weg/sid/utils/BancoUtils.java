@@ -287,7 +287,6 @@ public class BancoUtils {
             demanda.setDescricaoQualitativoDemanda("sim");
             demanda.setFrequenciaUsoDemanda("Muito usada");
             demanda.setSolicitanteDemanda(solicitante);
-            demanda.setAnalistaResponsavelDemanda(analista);
             demanda.setGerenteDaAreaDemanda(gerente);
             demanda.setGestorResponsavelDemanda(gestorTI);
             demanda.setBeneficiosDemanda(listaBeneficios);

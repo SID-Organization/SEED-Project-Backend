@@ -59,7 +59,7 @@ public class HistoricoWorkflow {
     @JsonIgnore
     private Demanda demandaHistorico;
 
-    @JoinColumn(name = "idUsuario", nullable = false)
+    @JoinColumn(name = "idUsuario")
     @ManyToOne
     private Usuario idResponsavel;
 }

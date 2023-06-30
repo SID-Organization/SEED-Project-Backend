@@ -58,22 +58,24 @@ public class PautaController {
 
             proposta.setPautaProposta(pautas);
             propostaService.save(proposta);
-            Notificacao notificacaoReuniaoPauta = new Notificacao();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            String dataFormatada = formatter.format(pauta.getDataReuniaoPauta());
-            notificacaoReuniaoPauta.setTextoNotificacao("uma reunião para discutir uma pauta foi marcada!");
-            notificacaoReuniaoPauta.setTempoNotificacao(dataFormatada + " às " + pauta.getHorarioInicioPauta() + "h");
-            notificacaoReuniaoPauta.setResponsavel(proposta.getDemandaProposta().getAnalistaResponsavelDemanda().getNomeUsuario().toString());
-            notificacaoReuniaoPauta.setVisualizada(false);
-            notificacaoReuniaoPauta.setTipoNotificacao("approved");
-            notificacaoReuniaoPauta.setLinkNotificacao("/sid/api/pauta/" + pautaSalva.getIdPauta());
-            proposta.getResponsaveisNegocio().forEach(responsavel -> {
-                Notificacao notificacaoReuniaoPautaForEach = new Notificacao();
-                BeanUtils.copyProperties(notificacaoReuniaoPauta, notificacaoReuniaoPautaForEach);
-                notificacaoReuniaoPautaForEach.setUsuario(responsavel);
-                simpMessagingTemplate.convertAndSend("/reuniao-pauta/" + responsavel.getNumeroCadastroUsuario(), notificacaoReuniaoPautaForEach);
-                notificacaoService.save(notificacaoReuniaoPautaForEach);
-            });
+            for (Usuario usuario : proposta.getDemandaProposta().getAnalistasResponsaveisDemanda()) {
+                Notificacao notificacaoReuniaoPauta = new Notificacao();
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                String dataFormatada = formatter.format(pauta.getDataReuniaoPauta());
+                notificacaoReuniaoPauta.setTextoNotificacao("uma reunião para discutir uma pauta foi marcada!");
+                notificacaoReuniaoPauta.setTempoNotificacao(dataFormatada + " às " + pauta.getHorarioInicioPauta() + "h");
+                notificacaoReuniaoPauta.setResponsavel(usuario.getNomeUsuario());
+                notificacaoReuniaoPauta.setVisualizada(false);
+                notificacaoReuniaoPauta.setTipoNotificacao("approved");
+                notificacaoReuniaoPauta.setLinkNotificacao("/sid/api/pauta/" + pautaSalva.getIdPauta());
+                proposta.getResponsaveisNegocio().forEach(responsavel -> {
+                    Notificacao notificacaoReuniaoPautaForEach = new Notificacao();
+                    BeanUtils.copyProperties(notificacaoReuniaoPauta, notificacaoReuniaoPautaForEach);
+                    notificacaoReuniaoPautaForEach.setUsuario(responsavel);
+                    simpMessagingTemplate.convertAndSend("/reuniao-pauta/" + responsavel.getNumeroCadastroUsuario(), notificacaoReuniaoPautaForEach);
+                    notificacaoService.save(notificacaoReuniaoPautaForEach);
+                });
+            }
 
         }
         return ResponseEntity.ok("Pauta cadastrada com sucesso! \n" + pautaSalva);

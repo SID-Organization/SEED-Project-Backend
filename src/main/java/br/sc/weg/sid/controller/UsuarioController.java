@@ -6,7 +6,6 @@ import br.sc.weg.sid.utils.UsuarioUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,6 +98,20 @@ public class UsuarioController {
 
         Usuario usuarioSalvo = usuarioService.save(usuario);
         return ResponseEntity.ok("Usuário atualizado com sucesso! \n" + usuarioSalvo);
+    }
+
+    @PutMapping("/tutorial/{numeroCadastroUsuario}")
+    public ResponseEntity<Object> updateTutorial(
+            @PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario
+    ) {
+        Usuario usuario = usuarioService.findById(numeroCadastroUsuario).get();
+        try {
+            usuario.setTutorialUsuario(false);
+            Usuario usuarioSalvo = usuarioService.save(usuario);
+            return ResponseEntity.ok(usuarioSalvo);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Erro ao atualizar usuário com id: " + numeroCadastroUsuario + "\n Message: " + e.getMessage());
+        }
     }
 
     /**

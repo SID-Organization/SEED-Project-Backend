@@ -4,6 +4,7 @@ package br.sc.weg.sid.model.service;
 import br.sc.weg.sid.model.entities.BusinessUnity;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Proposta;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.enums.TipoBeneficio;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
@@ -61,7 +62,7 @@ public class ExcelExporterService {
 
         createCell(headerRow, 3, "Solicitante da demanda", 0, 0, titleStyle, sheet);
 
-        createCell(headerRow, 4, "Analista responsável", 0, 0, titleStyle, sheet);
+        createCell(headerRow, 4, "Analistas responsáveis", 0, 0, titleStyle, sheet);
 
         createCell(headerRow, 5, "Gerente da área", 0, 0, titleStyle, sheet);
 
@@ -122,10 +123,19 @@ public class ExcelExporterService {
 
             createCell(dataRow, 3, demanda.getSolicitanteDemanda().getNomeUsuario(), 0, 0, dataStyle, sheet);
 
-            if (demanda.getAnalistaResponsavelDemanda() == null) {
+            if (demanda.getAnalistasResponsaveisDemanda() == null) {
                 createCell(dataRow, 4, "N/A", 0, 0, dataStyle, sheet);
             } else {
-                createCell(dataRow, 4, demanda.getAnalistaResponsavelDemanda().getNomeUsuario(), 0, 0, dataStyle, sheet);
+                StringBuilder analistas = new StringBuilder();
+                for (int i = 0; i < demanda.getAnalistasResponsaveisDemanda().size(); i++) {
+                    Usuario analista = demanda.getAnalistasResponsaveisDemanda().get(i);
+                    analistas.append(analista.getNomeUsuario());
+
+                    if (i < demanda.getAnalistasResponsaveisDemanda().size() - 1) {
+                        analistas.append(", ");
+                    }
+                }
+                createCell(dataRow, 4, analistas.toString(), 0, 0, dataStyle, sheet);
             }
 
             if (demanda.getGerenteDaAreaDemanda() == null) {
@@ -349,11 +359,7 @@ public class ExcelExporterService {
         XDDFNumericalDataSource<Double> realBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
                 new CellRangeAddress(2, 2, 0, demandasList.size() - 1));
 
-        XDDFChartData dataPie = chartPie.createData(ChartTypes.PIE, bottomAxisBar, leftAxisBar);
-        dataPie.setVaryColors(true);
-        dataPie.addSeries(demandTitleBar, realBenefits);
-
-        chartPie.plot(dataPie);
+        generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie, realBenefits);
 
         XSSFDrawing drawingPie2 = demandaChartSheet.createDrawingPatriarch();
         XSSFClientAnchor anchorPie2 = drawingPie.createAnchor(0, 0, 0, 0, lastColumn1Pie, 0, (lastColumn1Pie + 9), 23);
@@ -368,15 +374,33 @@ public class ExcelExporterService {
         XDDFNumericalDataSource<Double> potentialBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
                 new CellRangeAddress(3, 3, 0, demandasList.size() - 1));
 
-        XDDFChartData dataPie2 = chartPie2.createData(ChartTypes.PIE, bottomAxisBar, leftAxisBar);
-        dataPie2.setVaryColors(true);
-        dataPie2.addSeries(demandTitleBar, potentialBenefits);
-        chartPie2.plot(dataPie2);
+        generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie2, potentialBenefits);
 
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         workbook.close();
         outputStream.close();
+    }
+
+    private void generatePieChart(XDDFCategoryAxis bottomAxisBar, XDDFValueAxis leftAxisBar, XDDFDataSource<String> demandTitleBar, XSSFChart chartPie, XDDFNumericalDataSource<Double> benefits) {
+        XDDFChartData dataPie = chartPie.createData(ChartTypes.PIE, bottomAxisBar, leftAxisBar);
+        dataPie.setVaryColors(true);
+        dataPie.addSeries(demandTitleBar, benefits);
+
+        chartPie.plot(dataPie);
+
+        if (!chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).isSetDLbls())
+            chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).addNewDLbls();
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowLegendKey().setVal(false);
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowPercent().setVal(true);
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowVal().setVal(false);
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowCatName().setVal(false);
+        chartPie.getCTChart().getPlotArea().getPieChartArray(0).getSerArray(0).getDLbls()
+                .addNewShowSerName().setVal(false);
     }
 
 
