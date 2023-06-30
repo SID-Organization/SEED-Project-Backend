@@ -17,6 +17,6 @@ public class CadastroBusBeneficiadasDemandaDTO {
     private List<BusinessUnity> busBeneficiadasDemanda;
     @NotNull(message = "O campo tamanhoDemanda não pode ser nulo")
     private TamanhoDemanda tamanhoDemanda;
-    @NotNull(message = "O campo analistaResponsavel não pode ser nulo")
-    private Usuario analistaResponsavelDemanda;
+    @NotNull(message = "O campo analistasResponsaveisDemanda não pode ser nulo")
+    private List<Usuario> analistasResponsaveisDemanda;
 }

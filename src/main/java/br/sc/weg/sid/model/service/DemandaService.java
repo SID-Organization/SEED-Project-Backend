@@ -4,6 +4,7 @@ import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.StatusDemanda;
 import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import br.sc.weg.sid.repository.DemandaRepository;
+import br.sc.weg.sid.utils.DemandaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,9 @@ public class DemandaService {
 
     @Autowired
     DemandaRepository demandaRepository;
+
+    @Autowired
+    DemandaUtil demandaUtil;
 
     public List<Demanda> findAll() {
         return demandaRepository.findAll();
@@ -46,8 +50,8 @@ public class DemandaService {
         return demandaRepository.findByStatusDemanda(statusDemanda);
     }
 
-    public List<Demanda> findByStatusDemandaAndAnalistaResponsavelDemandaIsNull(StatusDemanda statusDemanda) {
-        return demandaRepository.findByStatusDemandaAndAnalistaResponsavelDemandaIsNull(statusDemanda);
+    public List<Demanda> findByStatusDemandaAndAnalistasResponsaveisDemandaIsNull(StatusDemanda statusDemanda) {
+        return demandaRepository.findByStatusDemandaAndAnalistasResponsaveisDemandaIsNull(statusDemanda);
     }
 
     public List<Demanda> findByScoreDemanda(Double scoreDemanda) {
@@ -58,8 +62,8 @@ public class DemandaService {
         return demandaRepository.findBySolicitanteDemanda(solicitanteDemanda);
     }
 
-    public List<Demanda> findByAnalistaResponsavelDemanda(Usuario analistaResponsavelDemanda) {
-        return demandaRepository.findByAnalistaResponsavelDemanda(analistaResponsavelDemanda);
+    public List<Demanda> findByAnalistasResponsaveisDemanda(Integer numeroCadastroAnalista) {
+        return demandaRepository.findByAnalistasResponsaveisDemanda(numeroCadastroAnalista);
     }
 
     public List<Demanda> findByGerenteDaAreaDemanda(Usuario gerenteDaAreaDemanda) {
