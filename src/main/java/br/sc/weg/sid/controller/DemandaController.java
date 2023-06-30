@@ -1339,4 +1339,18 @@ public class DemandaController {
         }
     }
 
+    @GetMapping("/filtrar-demanda/similares/{idDemanda}")
+    public ResponseEntity<Object> filtrarDemandasSimilares(@PathVariable("idDemanda") Integer idDemanda) {
+        DemandaUtil demandaUtil = new DemandaUtil();
+        try {
+            Demanda demanda = demandaService.findById(idDemanda).get();
+            List<BuscaDemandaSimilarDTO> demandasSimilares;
+            demandasSimilares = demandaUtil.buscarDemandaSimilares(demanda);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasSimilares);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao filtrar demandas similares: " + e.getMessage());
+        }
+    }
+
 }

@@ -1,5 +1,7 @@
 package br.sc.weg.sid.utils;
 
+import aj.org.objectweb.asm.TypeReference;
+import br.sc.weg.sid.DTO.BuscaDemandaSimilarDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaSimilarDTO;
 import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
@@ -7,6 +9,8 @@ import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.service.API.client.CotacaoGET;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.NoArgsConstructor;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -238,7 +242,7 @@ public class DemandaUtil {
 
         if (demanda.getTamanhoDemanda() != null && demanda.getImportanciaDemanda() != ImportanciaDemanda.BLOCKER) {
             score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / retornaValorClassificacao(demanda)) * retornaValorImportancia(demanda);
-        } else if(demanda.getImportanciaDemanda() != ImportanciaDemanda.BLOCKER) {
+        } else if (demanda.getImportanciaDemanda() != ImportanciaDemanda.BLOCKER) {
             score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / 1000000000) * retornaValorImportancia(demanda);
         } else if (demanda.getTamanhoDemanda() != null) {
             score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / retornaValorClassificacao(demanda)) + retornaValorImportancia(demanda);
@@ -290,6 +294,34 @@ public class DemandaUtil {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public List<BuscaDemandaSimilarDTO> buscarDemandaSimilares(Demanda demanda) {
+        OkHttpClient client = new OkHttpClient();
+
+        String url = "http://localhost:5000/demandas/similar/" + demanda.getIdDemanda();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            assert response.body() != null;
+            String json = response.body().string();
+
+            Gson gson = new Gson();
+            List<BuscaDemandaSimilarDTO> demandasSimilares = gson.fromJson(json, new TypeToken<List<BuscaDemandaSimilarDTO>>() {
+            }.getType());
+
+            System.out.println(json);
+            return demandasSimilares;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
