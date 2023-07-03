@@ -49,4 +49,8 @@ public class UsuarioService {
     public List<Usuario> findAllByDepartamentoUsuario(String departamentoUsuario) {
         return usuarioRepository.findAllByDepartamentoUsuario(departamentoUsuario);
     }
+
+    public List<Usuario> findAllByCargoUsuario(Cargo cargoUsuario) {
+        return usuarioRepository.findAllByCargoUsuario(cargoUsuario);
+    }
 }

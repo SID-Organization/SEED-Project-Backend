@@ -15,4 +15,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     List<Usuario> findByCargoUsuario(Cargo cargoUsuario);
 
     List<Usuario> findAllByDepartamentoUsuario(String departamentoUsuario);
+
+    List<Usuario> findAllByCargoUsuario(Cargo cargoUsuario);
 }

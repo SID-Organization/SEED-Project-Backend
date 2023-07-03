@@ -1,6 +1,7 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.model.entities.Usuario;
+import br.sc.weg.sid.model.enums.Cargo;
 import br.sc.weg.sid.model.service.UsuarioService;
 import br.sc.weg.sid.utils.UsuarioUtil;
 import org.springframework.beans.BeanUtils;
@@ -165,5 +166,13 @@ public class UsuarioController {
             return ResponseEntity.status(404).body("Nenhum usuário encontrado!");
         }
         return ResponseEntity.ok(usuarioService.findAllByDepartamentoUsuario(departamento));
+    }
+
+    @GetMapping("/analistas")
+    public ResponseEntity<Object> findByCargo() {
+        if (usuarioService.findAllByCargoUsuario(Cargo.ANALISTA).isEmpty()) {
+            return ResponseEntity.status(404).body("Nenhum usuário encontrado!");
+        }
+        return ResponseEntity.ok(usuarioService.findAllByCargoUsuario(Cargo.ANALISTA));
     }
 }

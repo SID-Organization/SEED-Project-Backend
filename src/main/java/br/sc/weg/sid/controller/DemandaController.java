@@ -201,6 +201,8 @@ public class DemandaController {
 
             demanda.setScoreDemanda(demandaUtil.retornaScoreDemandaCriacao(demanda));
 
+            demanda.setImportanciaDemanda(ImportanciaDemanda.TRIVIAL);
+
             Demanda demandaSalva = demandaService.save(demanda);
 
             //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
