@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.Usuario;
+import br.sc.weg.sid.model.enums.Cargo;
 import br.sc.weg.sid.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,10 @@ public class UsuarioService {
 
     public Optional<Usuario> findByNumeroCadastroUsuario(Integer numeroCadastroUsuario) {
         return usuarioRepository.findByNumeroCadastroUsuario(numeroCadastroUsuario);
+    }
+
+    public List<Usuario> findByCargoUsuario(Cargo cargoUsuario) {
+        return usuarioRepository.findByCargoUsuario(cargoUsuario);
     }
 
     public List<Usuario> findAllByDepartamentoUsuario(String departamentoUsuario) {
