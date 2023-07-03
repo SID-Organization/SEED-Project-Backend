@@ -3,11 +3,10 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.CadastroAtaDTO;
 import br.sc.weg.sid.DTO.CadastroParecerDGAtaDTO;
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.ParecerComissao;
+import br.sc.weg.sid.model.enums.StatusDemanda;
 import br.sc.weg.sid.model.enums.TipoAta;
-import br.sc.weg.sid.model.service.AtaService;
-import br.sc.weg.sid.model.service.PautaService;
-import br.sc.weg.sid.model.service.PropostaLogService;
-import br.sc.weg.sid.model.service.PropostaService;
+import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.AtaUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @CrossOrigin
@@ -35,6 +33,8 @@ public class AtaController {
     private PropostaService propostaService;
 
     private PropostaLogService propostaLogService;
+
+    private DemandaService demandaService;
 
     /**
      * Cria uma nova ata a partir dos dados fornecidos pelo usuário e salva no banco de dados.
@@ -73,6 +73,9 @@ public class AtaController {
         ata.setAnalistaResponsavelPauta(pautaAta.getAnalistaResponsavelPauta());
         ata.setForumAta(pautaAta.getForumPauta());
         pautaAta.getPropostasPauta().forEach(proposta -> {
+            Demanda demanda = proposta.getDemandaProposta();
+            demanda.setStatusDemanda(StatusDemanda.APROVADA_EM_COMISSAO);
+            demandaService.save(demanda);
             ata.getPropostasLog().forEach(ataPropostaLog -> {
                 if (proposta.getIdProposta().equals(ataPropostaLog.getPropostaPropostaLog().getIdProposta())) {
                     ataPropostaLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
@@ -110,6 +113,15 @@ public class AtaController {
             if (propostaLogService.existsById(cadastroParecerDGAtaDTO.getIdPropostaLog())) {
                 PropostasLog propostasLog = propostaLogService.findById(cadastroParecerDGAtaDTO.getIdPropostaLog()).get();
                 BeanUtils.copyProperties(cadastroParecerDGAtaDTO, propostasLog);
+                if (propostasLog.getParecerDGPropostaLog() == ParecerComissao.APROVADO){
+                    Demanda demanda = demandaService.findById(propostasLog.getIdDemanda()).get();
+                    demanda.setStatusDemanda(StatusDemanda.APROVADA_EM_DG);
+                    demandaService.save(demanda);
+                } else if (propostasLog.getParecerDGPropostaLog() == ParecerComissao.REPROVADO){
+                    Demanda demanda = demandaService.findById(propostasLog.getIdDemanda()).get();
+                    demanda.setStatusDemanda(StatusDemanda.CANCELADA);
+                    demandaService.save(demanda);
+                }
                 propostaLogService.save(propostasLog);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Proposta não encontrada");
