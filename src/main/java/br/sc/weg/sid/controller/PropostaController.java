@@ -328,6 +328,7 @@ public class PropostaController {
             }
             return ResponseEntity.ok(propostasResumidas);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
     }
