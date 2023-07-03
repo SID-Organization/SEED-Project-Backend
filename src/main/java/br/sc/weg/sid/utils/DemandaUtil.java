@@ -1,16 +1,23 @@
 package br.sc.weg.sid.utils;
 
+import aj.org.objectweb.asm.TypeReference;
+import br.sc.weg.sid.DTO.BuscaDemandaSimilarDTO;
 import br.sc.weg.sid.DTO.CadastroDemandaDTO;
+import br.sc.weg.sid.DTO.CadastroDemandaSimilarDTO;
 import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.service.API.client.CotacaoGET;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.NoArgsConstructor;
+import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -235,7 +242,7 @@ public class DemandaUtil {
 
         if (demanda.getTamanhoDemanda() != null && demanda.getImportanciaDemanda() != ImportanciaDemanda.BLOCKER) {
             score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / retornaValorClassificacao(demanda)) * retornaValorImportancia(demanda);
-        } else if(demanda.getImportanciaDemanda() != ImportanciaDemanda.BLOCKER) {
+        } else if (demanda.getImportanciaDemanda() != ImportanciaDemanda.BLOCKER) {
             score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / 1000000000) * retornaValorImportancia(demanda);
         } else if (demanda.getTamanhoDemanda() != null) {
             score = ((((2 * beneficioRealSomado) + (1 * beneficioPotencialSomado) + calcularDiasDesdeCriacao(demanda.getDataCriacaoDemanda()))) / retornaValorClassificacao(demanda)) + retornaValorImportancia(demanda);
@@ -250,5 +257,71 @@ public class DemandaUtil {
         String formattedScoreWithDot = formattedScore.replace(",", ".");
         System.out.println("Importância demanda: " + demanda.getImportanciaDemanda());
         return Double.valueOf(formattedScoreWithDot);
+    }
+
+    public boolean verificaCamposDemandaSimiliar(Demanda demanda) {
+        return demanda.getTituloDemanda() != null && demanda.getPropostaMelhoriaDemanda() != null && demanda.getDescricaoQualitativoDemanda() != null && demanda.getFrequenciaUsoDemanda() != null && demanda.getSituacaoAtualDemanda() != null;
+    }
+
+
+    public boolean cadastraDemandaSimilar(CadastroDemandaSimilarDTO cadastroDemandaSimilarDTO) {
+        OkHttpClient client = new OkHttpClient();
+
+        String url = "http://localhost:5000/demandas";
+
+        MediaType mediaType = MediaType.parse("application/json");
+        //exemplo json: {
+        //    "id_demanda": "24",
+        //    "titulo": "Carro recreativo",
+        //    "proposta_melhoria": "Criar um carro recreativo para que meu filho possa se divertir",
+        //    "descricao_qualitativo": "Meu filho anda reclamando que não tem nada legal para brincar",
+        //    "frequencia_uso_demanda": "Muito alta",
+        //    "situacao_atual_demanda": "Em progresso"
+        //}
+
+        RequestBody body = RequestBody.create(mediaType, "{\"id_demanda\": \"" + cadastroDemandaSimilarDTO.getIdDemanda() + "\",\"titulo\": \"" + cadastroDemandaSimilarDTO.getTituloDemanda() + "\",\"proposta_melhoria\": \"" + cadastroDemandaSimilarDTO.getPropostaMelhoriaDemanda() + "\",\"descricao_qualitativo\": \"" + cadastroDemandaSimilarDTO.getDescricaoQualitativoDemanda() + "\",\"frequencia_uso_demanda\": \"" + cadastroDemandaSimilarDTO.getFrequenciaUsoDemanda() + "\",\"situacao_atual_demanda\": \"" + cadastroDemandaSimilarDTO.getSituacaoAtualDemanda() + "\"}");
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            assert response.body() != null;
+            System.out.println(response.body().string());
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<BuscaDemandaSimilarDTO> buscarDemandaSimilares(Demanda demanda) {
+        OkHttpClient client = new OkHttpClient();
+
+        String url = "http://localhost:5000/demandas/similar/" + demanda.getIdDemanda();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            assert response.body() != null;
+            String json = response.body().string();
+
+            Gson gson = new Gson();
+            List<BuscaDemandaSimilarDTO> demandasSimilares = gson.fromJson(json, new TypeToken<List<BuscaDemandaSimilarDTO>>() {
+            }.getType());
+
+            System.out.println(json);
+            return demandasSimilares;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

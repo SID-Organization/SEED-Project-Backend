@@ -654,6 +654,28 @@ public class DemandaController {
             demanda.setScoreDemanda(demandaUtil.retornaScoreDemandaCriacao(demanda));
         }
         Demanda demandaAtualizada = demandaService.save(demanda);
+
+        //Verificar se a demandaAtualizada possuí todos os campos necessários para ser cadastrada na API Python
+        if (demandaUtil.verificaCamposDemandaSimiliar(demandaAtualizada)) {
+            //Criar CadastroDemandaSimilarDTO para enviar para a API Python
+            CadastroDemandaSimilarDTO cadastroDemandaSimilarDTO = new CadastroDemandaSimilarDTO();
+            cadastroDemandaSimilarDTO.setSituacaoAtualDemanda(demandaAtualizada.getSituacaoAtualDemanda());
+            cadastroDemandaSimilarDTO.setFrequenciaUsoDemanda(demandaAtualizada.getFrequenciaUsoDemanda());
+            cadastroDemandaSimilarDTO.setDescricaoQualitativoDemanda(demandaAtualizada.getDescricaoQualitativoDemanda());
+            cadastroDemandaSimilarDTO.setPropostaMelhoriaDemanda(demandaAtualizada.getPropostaMelhoriaDemanda());
+            cadastroDemandaSimilarDTO.setTituloDemanda(demandaAtualizada.getTituloDemanda());
+            cadastroDemandaSimilarDTO.setIdDemanda(demandaAtualizada.getIdDemanda());
+
+            //Chamar API Python
+            boolean demandaSimilarCadastrada = demandaUtil.cadastraDemandaSimilar(cadastroDemandaSimilarDTO);
+            if (demandaSimilarCadastrada) {
+                System.out.println("Demanda similar cadastrada com sucesso!");
+            } else {
+                System.out.println("Erro ao cadastrar demanda similar!");
+            }
+        }
+
+        //
         if (demanda.getBeneficiosDemanda() != null) {
             demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
         }
@@ -1313,4 +1335,19 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao atualizar analistas da demanda: " + e.getMessage());
         }
     }
+
+    @GetMapping("/filtrar-demanda/similares/{idDemanda}")
+    public ResponseEntity<Object> filtrarDemandasSimilares(@PathVariable("idDemanda") Integer idDemanda) {
+        DemandaUtil demandaUtil = new DemandaUtil();
+        try {
+            Demanda demanda = demandaService.findById(idDemanda).get();
+            List<BuscaDemandaSimilarDTO> demandasSimilares;
+            demandasSimilares = demandaUtil.buscarDemandaSimilares(demanda);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasSimilares);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao filtrar demandas similares: " + e.getMessage());
+        }
+    }
+
 }
