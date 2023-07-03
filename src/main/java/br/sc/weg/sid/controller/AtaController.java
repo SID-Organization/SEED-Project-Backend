@@ -73,9 +73,6 @@ public class AtaController {
         ata.setAnalistaResponsavelPauta(pautaAta.getAnalistaResponsavelPauta());
         ata.setForumAta(pautaAta.getForumPauta());
         pautaAta.getPropostasPauta().forEach(proposta -> {
-            Demanda demanda = proposta.getDemandaProposta();
-            demanda.setStatusDemanda(StatusDemanda.APROVADA_EM_COMISSAO);
-            demandaService.save(demanda);
             ata.getPropostasLog().forEach(ataPropostaLog -> {
                 if (proposta.getIdProposta().equals(ataPropostaLog.getPropostaPropostaLog().getIdProposta())) {
                     ataPropostaLog.setDemandaValorPropostaLog(proposta.getCustosTotaisDoProjeto());
@@ -92,6 +89,16 @@ public class AtaController {
 
                     ataPropostaLog.setDemandaTempoExecucaoPropostaLog(diferencaEmHoras);
                     ataPropostaLog.setPropostaPropostaLog(proposta);
+
+                    if (ataPropostaLog.getParecerComissaoPropostaLog() == ParecerComissao.APROVADO){
+                        Demanda demanda = proposta.getDemandaProposta();
+                        demanda.setStatusDemanda(StatusDemanda.APROVADA_EM_COMISSAO);
+                        demandaService.save(demanda);
+                    } else if (ataPropostaLog.getParecerComissaoPropostaLog() == ParecerComissao.REPROVADO){
+                        Demanda demanda = proposta.getDemandaProposta();
+                        demanda.setStatusDemanda(StatusDemanda.CANCELADA);
+                        demandaService.save(demanda);
+                    }
                 }
             });
         });
