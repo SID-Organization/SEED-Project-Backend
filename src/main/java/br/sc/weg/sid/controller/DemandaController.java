@@ -423,15 +423,18 @@ public class DemandaController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O usuário " + analistaDemanda.getNomeUsuario() + " não é um analista! " +
                         "Ele é um " + analistaDemanda.getCargoUsuario().getNome());
             }
-            List<Demanda> demandas = demandaService.findByAnalistaResponsavelDemanda(analistaDemanda);
+            List<Demanda> demandas = demandaService.findByAnalistasResponsaveisDemanda(numeroCadastroAnalista);
             List<Demanda> demandasFiltradas = new ArrayList<>();
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O analista " + analistaDemanda.getNomeUsuario() + " não possui demandas!");
             }
             for (Demanda demanda : demandas) {
-                if (demanda.getSolicitanteDemanda() != analistaDemanda && demanda.getAnalistaResponsavelDemanda() == analistaDemanda &&
-                        demanda.getStatusDemanda() != StatusDemanda.RASCUNHO) {
-                    demandasFiltradas.add(demanda);
+                if (demanda.getSolicitanteDemanda() != analistaDemanda && demanda.getStatusDemanda() != StatusDemanda.RASCUNHO) {
+                    for (Usuario analista : demanda.getAnalistasResponsaveisDemanda()) {
+                        if (analista == analistaDemanda) {
+                            demandasFiltradas.add(demanda);
+                        }
+                    }
                 }
             }
             DemandaUtil demandaUtil = new DemandaUtil();
@@ -551,18 +554,18 @@ public class DemandaController {
 //                    demandaAtualizada.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario(), notificacaoDemandaCriada);
 //            notificacaoService.save(notificacaoDemandaCriada);
         } else {
-            Notificacao notificacaoStatus = new Notificacao();
-            notificacaoStatus.setTextoNotificacao("a demanda " + demandaAtualizada.getIdDemanda() + " - "
-                    + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome().toLowerCase());
-            atualizaTipoNotificacao(demandaAtualizada, notificacaoStatus);
-            notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());
-            notificacaoStatus.setTempoNotificacao(notificacaoHoraData);
-            notificacaoStatus.setResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda().getNomeUsuario());
-            notificacaoStatus.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
-            notificacaoStatus.setVisualizada(false);
-            simpMessagingTemplate.convertAndSend("/notificacao-usuario-status/" +
-                    demandaAtualizada.getSolicitanteDemanda().getNumeroCadastroUsuario(), notificacaoStatus);
-            notificacaoService.save(notificacaoStatus);
+//            Notificacao notificacaoStatus = new Notificacao();
+//            notificacaoStatus.setTextoNotificacao("a demanda " + demandaAtualizada.getIdDemanda() + " - "
+//                    + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome().toLowerCase());
+//            atualizaTipoNotificacao(demandaAtualizada, notificacaoStatus);
+//            notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());
+//            notificacaoStatus.setTempoNotificacao(notificacaoHoraData);
+//            notificacaoStatus.setResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda().getNomeUsuario());
+//            notificacaoStatus.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
+//            notificacaoStatus.setVisualizada(false);
+//            simpMessagingTemplate.convertAndSend("/notificacao-usuario-status/" +
+//                    demandaAtualizada.getSolicitanteDemanda().getNumeroCadastroUsuario(), notificacaoStatus);
+//            notificacaoService.save(notificacaoStatus);
         }
 
         //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
@@ -642,6 +645,28 @@ public class DemandaController {
             demanda.setScoreDemanda(demandaUtil.retornaScoreDemandaCriacao(demanda));
         }
         Demanda demandaAtualizada = demandaService.save(demanda);
+
+        //Verificar se a demandaAtualizada possuí todos os campos necessários para ser cadastrada na API Python
+        if (demandaUtil.verificaCamposDemandaSimiliar(demandaAtualizada)) {
+            //Criar CadastroDemandaSimilarDTO para enviar para a API Python
+            CadastroDemandaSimilarDTO cadastroDemandaSimilarDTO = new CadastroDemandaSimilarDTO();
+            cadastroDemandaSimilarDTO.setSituacaoAtualDemanda(demandaAtualizada.getSituacaoAtualDemanda());
+            cadastroDemandaSimilarDTO.setFrequenciaUsoDemanda(demandaAtualizada.getFrequenciaUsoDemanda());
+            cadastroDemandaSimilarDTO.setDescricaoQualitativoDemanda(demandaAtualizada.getDescricaoQualitativoDemanda());
+            cadastroDemandaSimilarDTO.setPropostaMelhoriaDemanda(demandaAtualizada.getPropostaMelhoriaDemanda());
+            cadastroDemandaSimilarDTO.setTituloDemanda(demandaAtualizada.getTituloDemanda());
+            cadastroDemandaSimilarDTO.setIdDemanda(demandaAtualizada.getIdDemanda());
+
+            //Chamar API Python
+            boolean demandaSimilarCadastrada = demandaUtil.cadastraDemandaSimilar(cadastroDemandaSimilarDTO);
+            if (demandaSimilarCadastrada) {
+                System.out.println("Demanda similar cadastrada com sucesso!");
+            } else {
+                System.out.println("Erro ao cadastrar demanda similar!");
+            }
+        }
+
+        //
         if (demanda.getBeneficiosDemanda() != null) {
             demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
         }
@@ -689,6 +714,19 @@ public class DemandaController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(demandaAtualizada);
     }
+
+    @PutMapping("/atualiza-analistas-demanda/{idDemanda}")
+    public ResponseEntity<Object> atualizaAnalistasDemanda(@PathVariable("idDemanda") Integer idDemanda, @RequestBody @Valid List<Usuario> analistas) {
+        try {
+            Demanda demanda = demandaService.findById(idDemanda).get();
+            demanda.setAnalistasResponsaveisDemanda(analistas);
+            demandaService.save(demanda);
+            return ResponseEntity.status(HttpStatus.OK).body(demanda);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao atualizar analistas da demanda: " + e.getMessage());
+        }
+    }
+
 
     /**
      * Atualiza as informações de uma demanda adicionando as bus beneficiados, bu solicitante, tamanho da demanda e a secao de ti responsável.
@@ -786,7 +824,7 @@ public class DemandaController {
         try {
             DemandaUtil demandaUtil = new DemandaUtil();
 
-            List<Demanda> demandaList = demandaService.findByStatusDemandaAndAnalistaResponsavelDemandaIsNull(StatusDemanda.ABERTA);
+            List<Demanda> demandaList = demandaService.findByStatusDemandaAndAnalistasResponsaveisDemandaIsNull(StatusDemanda.ABERTA);
 
             if (demandaList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhuma demanda sem analista!");
@@ -1277,6 +1315,42 @@ public class DemandaController {
             demandaService.save(demanda);
         }
         return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");
+    }
+
+    @PutMapping("/atualiza-analistas/{idDemanda}")
+    public ResponseEntity<Object> atualizaAnalistas(@RequestBody List<Usuario> analistasListDTO, @PathVariable("idDemanda") Integer idDemanda) {
+        try {
+            Demanda demanda = demandaService.findById(idDemanda).get();
+            List<Usuario> analistasList = new ArrayList<>();
+            for (Usuario usuario : analistasListDTO) {
+                analistasList.add(usuarioService.findById(usuario.getNumeroCadastroUsuario()).get());
+            }
+            for (Usuario usuario : analistasList) {
+                if (usuario.getCargoUsuario() != Cargo.ANALISTA) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao atualizar analistas da demanda: " + usuario.getNomeUsuario() + " não é um analista!");
+                }
+            }
+            demanda.setAnalistasResponsaveisDemanda(analistasList);
+            demandaService.save(demanda);
+            return ResponseEntity.status(HttpStatus.OK).body("Analistas da demanda atualizados com sucesso!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao atualizar analistas da demanda: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/filtrar-demanda/similares/{idDemanda}")
+    public ResponseEntity<Object> filtrarDemandasSimilares(@PathVariable("idDemanda") Integer idDemanda) {
+        DemandaUtil demandaUtil = new DemandaUtil();
+        try {
+            Demanda demanda = demandaService.findById(idDemanda).get();
+            List<BuscaDemandaSimilarDTO> demandasSimilares;
+            demandasSimilares = demandaUtil.buscarDemandaSimilares(demanda);
+            return ResponseEntity.status(HttpStatus.OK).body(demandasSimilares);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao filtrar demandas similares: " + e.getMessage());
+        }
     }
 
 }

@@ -24,7 +24,7 @@ public class DemandaResumida {
 
     String nomeSolicitante;
 
-    String nomeAnalistaResponsavel;
+    String nomesAnalistasResponsaveis;
 
     String nomeGerenteResponsavelDemanda;
 

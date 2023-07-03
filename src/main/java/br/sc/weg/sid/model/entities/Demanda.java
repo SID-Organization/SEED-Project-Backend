@@ -67,9 +67,11 @@ public class Demanda {
     @Column()
     private Double scoreDemanda;
 
-    @OneToOne()
-    @JoinColumn(name = "analistaResponsavelDemanda")
-    private Usuario analistaResponsavelDemanda;
+    @ManyToMany()
+    @JoinTable(name = "analistaResponsavelDemanda"
+            , joinColumns = @JoinColumn(name = "idDemanda")
+            , inverseJoinColumns = @JoinColumn(name = "numeroCadastroUsuario"))
+    private List<Usuario> analistasResponsaveisDemanda;
 
     @OneToOne()
     @JoinColumn(name = "gerenteDaArea")
