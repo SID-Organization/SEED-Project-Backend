@@ -541,31 +541,40 @@ public class DemandaController {
         String notificacaoHoraData = horarioDataNow.format(formatar) + " - " + horarioDataNow.format(dateFormatter);
 
         if (demandaAtualizada.getStatusDemanda() == StatusDemanda.ABERTA) {
-//            Notificacao notificacaoDemandaCriada = new Notificacao();
-//            notificacaoDemandaCriada.setTextoNotificacao("uma demanda foi criada! " + demandaAtualizada.getTituloDemanda() + " criada por: " +
-//                    demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
-//            notificacaoDemandaCriada.setTipoNotificacao("approved");
-//            notificacaoDemandaCriada.setResponsavel(demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
-//            notificacaoDemandaCriada.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
-//            notificacaoDemandaCriada.setUsuario(demandaAtualizada.getAnalistaResponsavelDemanda());
-//            notificacaoDemandaCriada.setTempoNotificacao(notificacaoHoraData);
-//            notificacaoDemandaCriada.setVisualizada(false);
-//            simpMessagingTemplate.convertAndSend("/notificacao-demanda-cadastro/analista/" +
-//                    demandaAtualizada.getAnalistaResponsavelDemanda().getNumeroCadastroUsuario(), notificacaoDemandaCriada);
-//            notificacaoService.save(notificacaoDemandaCriada);
+            List<Usuario> analistas = usuarioService.findByCargoUsuario(Cargo.ANALISTA);
+            for (Usuario usuario : analistas) {
+                Notificacao notificacaoDemandaCriada = new Notificacao();
+                notificacaoDemandaCriada.setTextoNotificacao("uma demanda foi criada! Título:" + demandaAtualizada.getTituloDemanda() + ", aberta por: " +
+                        demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
+                notificacaoDemandaCriada.setTipoNotificacao("approved");
+                notificacaoDemandaCriada.setResponsavel(demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
+                notificacaoDemandaCriada.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
+                notificacaoDemandaCriada.setUsuario(usuario);
+                notificacaoDemandaCriada.setTempoNotificacao(notificacaoHoraData);
+                notificacaoDemandaCriada.setVisualizada(false);
+                simpMessagingTemplate.convertAndSend("/notificacao-demanda-cadastro/analista/" + usuario.getNumeroCadastroUsuario(), notificacaoDemandaCriada);
+                notificacaoService.save(notificacaoDemandaCriada);
+            }
         } else {
-//            Notificacao notificacaoStatus = new Notificacao();
-//            notificacaoStatus.setTextoNotificacao("a demanda " + demandaAtualizada.getIdDemanda() + " - "
-//                    + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome().toLowerCase());
-//            atualizaTipoNotificacao(demandaAtualizada, notificacaoStatus);
-//            notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());
-//            notificacaoStatus.setTempoNotificacao(notificacaoHoraData);
-//            notificacaoStatus.setResponsavel(demandaAtualizada.getAnalistaResponsavelDemanda().getNomeUsuario());
-//            notificacaoStatus.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
-//            notificacaoStatus.setVisualizada(false);
-//            simpMessagingTemplate.convertAndSend("/notificacao-usuario-status/" +
-//                    demandaAtualizada.getSolicitanteDemanda().getNumeroCadastroUsuario(), notificacaoStatus);
-//            notificacaoService.save(notificacaoStatus);
+            StringBuilder responsaveisNotificacao = new StringBuilder();
+            for (int i = 0; i < demandaAtualizada.getAnalistasResponsaveisDemanda().size(); i++) {
+                responsaveisNotificacao.append(demandaAtualizada.getAnalistasResponsaveisDemanda().get(i).getNomeUsuario());
+                if (i < demandaAtualizada.getAnalistasResponsaveisDemanda().size() - 1) {
+                    responsaveisNotificacao.append(", ");
+                }
+            }
+            Notificacao notificacaoStatus = new Notificacao();
+            notificacaoStatus.setTextoNotificacao("a demanda " + demandaAtualizada.getIdDemanda() + " - "
+                    + demandaAtualizada.getTituloDemanda() + " teve seu status alterado para " + demandaAtualizada.getStatusDemanda().getNome().toLowerCase());
+            atualizaTipoNotificacao(demandaAtualizada, notificacaoStatus);
+            notificacaoStatus.setUsuario(demandaAtualizada.getSolicitanteDemanda());
+            notificacaoStatus.setTempoNotificacao(notificacaoHoraData);
+            notificacaoStatus.setResponsavel(responsaveisNotificacao.toString());
+            notificacaoStatus.setLinkNotificacao("/demandas/" + demandaAtualizada.getIdDemanda());
+            notificacaoStatus.setVisualizada(false);
+            simpMessagingTemplate.convertAndSend("/notificacao-usuario-status/" +
+                    demandaAtualizada.getSolicitanteDemanda().getNumeroCadastroUsuario(), notificacaoStatus);
+            notificacaoService.save(notificacaoStatus);
         }
 
         //Se a demanda tiver em status Aberta(Backlog) um histórico de workflow é criado
@@ -713,18 +722,6 @@ public class DemandaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível gerar o pdf da demanda!" + e.getMessage());
         }
         return ResponseEntity.status(HttpStatus.OK).body(demandaAtualizada);
-    }
-
-    @PutMapping("/atualiza-analistas-demanda/{idDemanda}")
-    public ResponseEntity<Object> atualizaAnalistasDemanda(@PathVariable("idDemanda") Integer idDemanda, @RequestBody @Valid List<Usuario> analistas) {
-        try {
-            Demanda demanda = demandaService.findById(idDemanda).get();
-            demanda.setAnalistasResponsaveisDemanda(analistas);
-            demandaService.save(demanda);
-            return ResponseEntity.status(HttpStatus.OK).body(demanda);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao atualizar analistas da demanda: " + e.getMessage());
-        }
     }
 
 
@@ -1322,12 +1319,20 @@ public class DemandaController {
         try {
             Demanda demanda = demandaService.findById(idDemanda).get();
             List<Usuario> analistasList = new ArrayList<>();
+
             for (Usuario usuario : analistasListDTO) {
-                analistasList.add(usuarioService.findById(usuario.getNumeroCadastroUsuario()).get());
+                try {
+                    analistasList.add(usuarioService.findById(usuario.getNumeroCadastroUsuario()).get());
+                } catch (NoSuchElementException e) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao atualizar analistas da demanda, " +
+                            "o usuário com número de cadastro: " + usuario.getNumeroCadastroUsuario() + " não foi encontrado!");
+                }
             }
+
             for (Usuario usuario : analistasList) {
                 if (usuario.getCargoUsuario() != Cargo.ANALISTA) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao atualizar analistas da demanda: " + usuario.getNomeUsuario() + " não é um analista!");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao atualizar analistas da demanda: " + usuario.getNomeUsuario() +
+                            " não é um analista! Ele é um " + usuario.getCargoUsuario().getNome() + "!");
                 }
             }
             demanda.setAnalistasResponsaveisDemanda(analistasList);
