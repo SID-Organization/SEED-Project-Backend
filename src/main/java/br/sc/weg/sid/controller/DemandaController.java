@@ -1251,9 +1251,7 @@ public class DemandaController {
             DemandaUtil demandaUtil = new DemandaUtil();
             double scoreDemanda = demandaUtil.retornaScoreDemandaImportancia(demanda);
             demanda.setScoreDemanda(scoreDemanda);
-
-            demandaService.save(demanda);
-            return ResponseEntity.status(HttpStatus.OK).body("Importância da demanda alterada com sucesso!");
+            return ResponseEntity.status(HttpStatus.OK).body(demandaService.save(demanda));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao alterar a importância da demanda: " + e.getMessage());
         }
