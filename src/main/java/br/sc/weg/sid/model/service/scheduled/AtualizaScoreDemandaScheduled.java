@@ -21,7 +21,6 @@ public class AtualizaScoreDemandaScheduled {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void atualizarScoreDiariamente() {
-        System.out.println("Atualizando score das demandas diariamente...");
 
         List<Demanda> demandas = demandaService.findAll();
         DemandaUtil demandaUtil = new DemandaUtil();

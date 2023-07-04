@@ -207,8 +207,6 @@ public class GerarPDFDemandaService {
         document.add(actualSituationParagraph);
         htmlWorker.parse(new StringReader(pdfDemanda.getSituacaoAtualDemandaHTML()));
 
-
-        System.out.println("HTML: " + pdfDemanda.getPropostaMelhoriaDemandaHTML());
         document.add(proposalParagraph);
 
         htmlWorker.parse(new StringReader(pdfDemanda.getPropostaMelhoriaDemandaHTML()));

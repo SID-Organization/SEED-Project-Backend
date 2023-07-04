@@ -35,11 +35,6 @@ public class HistoricoWorkflowController {
     @Autowired
     private DemandaService demandaService;
 
-    @GetMapping("/teste")
-    public void teste() {
-        historicoWorkflowService.teste();
-    }
-
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna todos os históricos de workflow cadastrados no banco de dados.
      *
@@ -212,8 +207,6 @@ public class HistoricoWorkflowController {
             if (historicoWorkflowOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado com o id: " + idHistoricoWorkflow);
             }
-            double mumero = 0.9;
-            System.out.println("FKDIOFJPIODAPFJP: " + (mumero + 0.1));
             historicoWorkflow.setVersaoHistorico(historicoWorkflow.getVersaoHistorico().add(BigDecimal.valueOf(0.1)));
             return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflowService.save(historicoWorkflow));
         } catch (Exception e) {

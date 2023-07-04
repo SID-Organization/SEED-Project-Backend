@@ -43,17 +43,13 @@ public class AuthController {
             @RequestBody @Valid UsuarioDTO usuarioDTO,
             HttpServletResponse response
     ) {
-        System.out.println("usuarioDTO.getUsername() = " + usuarioDTO.getUsername() + "..." + usuarioDTO.getSenha());
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(usuarioDTO.getUsername(), usuarioDTO.getSenha());
-        System.out.println("authenticationToken = " + authenticationToken);
         try {
             Authentication authentication = authManager.authenticate(authenticationToken);
-            System.out.println("AUTHEN");
             String token = tokenUtils.gerarToken(authentication);
             Cookie cookie = new Cookie("jwt", token);
             cookie.setPath("/");
             response.addCookie(cookie);
-            System.out.println(cookie.getValue());
             UserJpa user = (UserJpa) authentication.getPrincipal();
             ObjectMapper objectMapper = new ObjectMapper();
             String userJson = URLEncoder.encode(
@@ -62,8 +58,6 @@ public class AuthController {
             Cookie userCookie = new Cookie("user", userJson);
             userCookie.setPath("/");
             response.addCookie(userCookie);
-            System.out.println(user.getAuthorities());
-            System.out.println(cookie.getValue());
             return ResponseEntity.ok().body("Usuário autenticado com sucesso!");
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha inválidos!");
@@ -74,7 +68,6 @@ public class AuthController {
 
     @GetMapping("/success")
     public RedirectView localRedirect() {
-        System.out.println("success");
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl("http://localhost:8081/login");
         return redirectView;
