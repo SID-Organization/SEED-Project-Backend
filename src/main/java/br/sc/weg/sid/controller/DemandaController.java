@@ -755,7 +755,9 @@ public class DemandaController {
         demanda.setScoreDemanda(valorScore);
         Demanda demandaSalva = demandaService.save(demanda);
         HistoricoWorkflow ultimoHistoricoWorkflow = demandaSalva.getHistoricoWorkflowUltimaVersao();
-        ultimoHistoricoWorkflow.setIdResponsavel(usuarioService.findById(demandaSalva.getSolicitanteDemanda().getNumeroCadastroUsuario()).get());
+        ultimoHistoricoWorkflow.setIdResponsavel(usuarioService.findById(
+                cadastroBusBeneficiadasDemandaDTO.getAnalistasResponsaveisDemanda().get(0).getNumeroCadastroUsuario()).get()
+        );
         historicoWorkflowController.atualizaVersaoWorkflow(ultimoHistoricoWorkflow.getIdHistoricoWorkflow(), ultimoHistoricoWorkflow);
 
         CadastroHistoricoWorkflowDTO historicoWorkflow = new CadastroHistoricoWorkflowDTO();
