@@ -281,8 +281,8 @@ public class ExcelExporterService {
             }
         }
 
-        // Variável criada para caso haja somente uma demanda com custo total não seja criada a planilha de gráficos para não ocorrer erros,
-        // pois os gráficos comparam demandas com custo total e seus benefícios
+        // Variable created in case there is only one demand with a total cost, so that the graph spreadsheet
+        // is not created to avoid errors, as the graphs compare demands with total cost and their benefits.
         int qtdDemandasComCustoTotal = 0;
 
         for (int i = 0; i < demandasList.size(); i++) {
@@ -300,6 +300,8 @@ public class ExcelExporterService {
             Row realBenefitChartRow = demandaChartSheet.createRow(2);
             Row potentialBenefitChartRow = demandaChartSheet.createRow(3);
 
+            // Variable create to know the index of the demands with total cost in the list of demands.
+            int demandasCustoTotalIndex = -1;
             for (int i = 0; i < demandasList.size(); i++) {
                 int beneficioReal = 0, beneficioPotencial = 0;
                 for (int beneficioIndex = 0; beneficioIndex < demandasList.get(i).getBeneficiosDemanda().size(); beneficioIndex++) {
@@ -309,9 +311,10 @@ public class ExcelExporterService {
                         beneficioPotencial += demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getValorBeneficio();
                     }
                 }
+
                 // Create a cell and put a value in it.
                 if (demandasList.get(i).getCustoTotalDemanda() != null) {
-                    qtdDemandasComCustoTotal++;
+                    demandasCustoTotalIndex++;
                     createCell(row, i, demandasList.get(i).getTituloDemanda(), 0, 0, titleStyle, demandaChartSheet);
                     createCell(dataChartRow, i, null, 0, demandasList.get(i).getCustoTotalDemanda(), dataStyle, demandaChartSheet);
                     if (beneficioReal > 0) {
@@ -341,10 +344,10 @@ public class ExcelExporterService {
             leftAxisBar.setTitle("Custos");
 
             XDDFDataSource<String> demandTitleBar = XDDFDataSourcesFactory.fromStringCellRange(demandaChartSheet,
-                    new CellRangeAddress(0, 0, 0, demandasList.size() - 1));
+                    new CellRangeAddress(0, 0, 0, demandasCustoTotalIndex));
 
             XDDFNumericalDataSource<Double> demandTotalCoastBar = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
-                    new CellRangeAddress(1, 1, 0, demandasList.size() - 1));
+                    new CellRangeAddress(1, 1, 0, demandasCustoTotalIndex));
 
             XDDFChartData dataBar = chartBar.createData(ChartTypes.BAR, bottomAxisBar, leftAxisBar);
             XDDFChartData.Series series1Bar = dataBar.addSeries(demandTitleBar, demandTotalCoastBar);
@@ -369,7 +372,7 @@ public class ExcelExporterService {
             legendPie.setPosition(LegendPosition.TOP_RIGHT);
 
             XDDFNumericalDataSource<Double> realBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
-                    new CellRangeAddress(2, 2, 0, demandasList.size() - 1));
+                    new CellRangeAddress(2, 2, 0, demandasCustoTotalIndex));
 
             generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie, realBenefits);
 
@@ -384,7 +387,7 @@ public class ExcelExporterService {
             legendPie2.setPosition(LegendPosition.TOP_RIGHT);
 
             XDDFNumericalDataSource<Double> potentialBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
-                    new CellRangeAddress(3, 3, 0, demandasList.size() - 1));
+                    new CellRangeAddress(3, 3, 0, demandasCustoTotalIndex));
 
             generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie2, potentialBenefits);
         }
