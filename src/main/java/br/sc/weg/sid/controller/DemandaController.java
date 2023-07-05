@@ -974,10 +974,10 @@ public class DemandaController {
             }
             if ("custoTotalDemanda".equals(filterBy)) {
 
-                if (value.equals("")) {
+                if (value == null || value.equals("")) {
                     value = null;
                 }
-                if (endValue.equals("")) {
+                if (endValue == null || endValue.equals("")) {
                     endValue = null;
                 }
 
@@ -990,11 +990,11 @@ public class DemandaController {
             }
             if ("scoreDemanda".equals(filterBy)) {
 
-                if (value.equals("")) {
+                if (value == null || value.equals("")) {
                     value = null;
                 }
 
-                if (endValue.equals("")) {
+                if (endValue == null || endValue.equals("")) {
                     endValue = null;
                 }
 
@@ -1006,7 +1006,7 @@ public class DemandaController {
                 }
             }
             if ("idDemanda".equals(filterBy)) {
-                if (!value.equals("")) {
+                if (value != null && !value.equals("")) {
                     Integer idDemanda = Integer.parseInt(value.toString());
                     filtroDemanda.setIdDemanda(idDemanda);
                 }
