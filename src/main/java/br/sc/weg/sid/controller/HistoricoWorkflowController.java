@@ -1,19 +1,16 @@
 package br.sc.weg.sid.controller;
 
 import br.sc.weg.sid.DTO.CadastroHistoricoWorkflowDTO;
-import br.sc.weg.sid.model.entities.Demanda;
-import br.sc.weg.sid.model.entities.HistoricoWorkflow;
-import br.sc.weg.sid.model.entities.HistoricoWorkflowResumido;
-import br.sc.weg.sid.model.entities.Usuario;
+import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.StatusWorkflow;
 import br.sc.weg.sid.model.enums.TarefaWorkflow;
 import br.sc.weg.sid.model.service.DemandaService;
 import br.sc.weg.sid.model.service.HistoricoWorkflowService;
+import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.HistoricoWorkflowUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -34,6 +31,9 @@ public class HistoricoWorkflowController {
 
     @Autowired
     private DemandaService demandaService;
+
+    @Autowired
+    private PropostaService propostaService;
 
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna todos os históricos de workflow cadastrados no banco de dados.
@@ -71,12 +71,12 @@ public class HistoricoWorkflowController {
     ) {
         HistoricoWorkflow historicoWorkflow = new HistoricoWorkflow();
         BeanUtils.copyProperties(historicoWorkflowDTO, historicoWorkflow);
+        Demanda demanda = demandaService.findById(historicoWorkflow.getDemandaHistorico().getIdDemanda()).get();
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
             historicoWorkflow.setAcaoFeitaHistorico("Enviar");
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
             historicoWorkflow.setVersaoHistorico(BigDecimal.valueOf(0.1));
         } else {
-            Demanda demanda = demandaService.findById(historicoWorkflow.getDemandaHistorico().getIdDemanda()).get();
             HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
             atualizaStatusWorkflow(historicoWorkflowAnterior.getIdHistoricoWorkflow(), historicoWorkflowAnterior);
             if (historicoWorkflowAnterior.getTarefaHistoricoWorkflow() != TarefaWorkflow.PREENCHER_DEMANDA) {
@@ -84,6 +84,7 @@ public class HistoricoWorkflowController {
                 historicoWorkflowService.save(historicoWorkflowAnterior);
             }
             historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
+            setPdf(historicoWorkflow, demanda);
             if (historicoWorkflow.equals(historicoWorkflowAnterior)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Não houveram alterações!");
             }
@@ -169,6 +170,36 @@ public class HistoricoWorkflowController {
         }
     }
 
+    @GetMapping("/pdf-historico/{tipo}/{idHistoricoWorkflow}")
+    public ResponseEntity<Object> buscarPdfHistorico(@PathVariable("tipo") String tipo, @PathVariable("idHistoricoWorkflow") Integer idHistoricoWorkflow) {
+        try {
+            if (historicoWorkflowService.existsById(idHistoricoWorkflow)) {
+                HistoricoWorkflow historicoWorkflow = historicoWorkflowService.findById(idHistoricoWorkflow).get();
+                byte[] pdfBytes;
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDisposition(ContentDisposition.builder("inline").filename("historico-" +
+                        historicoWorkflow.getTarefaHistoricoWorkflow().getNome().toLowerCase() + ".pdf").build());
+
+                if (tipo.equals("demanda")) {
+                    pdfBytes = historicoWorkflow.getPdfHistoricoWorkflowDemanda();
+                } else if (tipo.equals("proposta")) {
+                    pdfBytes = historicoWorkflow.getPdfHistoricoWorkflowProposta();
+                } else {
+                    return ResponseEntity.badRequest().body("ERROR: Tipo de PDF inválido!");
+                }
+
+                return ResponseEntity.ok().headers(headers).body(pdfBytes);
+            } else {
+                return ResponseEntity.badRequest().body("ERROR 0007: O histórico inserido não existe! ID HISTÓRICO: " + idHistoricoWorkflow);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.badRequest().body("ERROR 0005: Erro ao buscar pdf do histórico de id: " + idHistoricoWorkflow + "!");
+    }
+
 
     /**
      * Esta função é um mapeamento de requisição HTTP GET que retorna um histórico de workflow cadastrado no banco de dados de acordo com o status.
@@ -208,9 +239,22 @@ public class HistoricoWorkflowController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum histórico de workflow encontrado com o id: " + idHistoricoWorkflow);
             }
             historicoWorkflow.setVersaoHistorico(historicoWorkflow.getVersaoHistorico().add(BigDecimal.valueOf(0.1)));
+            Demanda demanda = demandaService.findById(historicoWorkflow.getDemandaHistorico().getIdDemanda()).get();
+            setPdf(historicoWorkflow, demanda);
             return ResponseEntity.status(HttpStatus.OK).body(historicoWorkflowService.save(historicoWorkflow));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao atualizar versão do histórico de workflow: " + e.getMessage());
+        }
+    }
+
+    private void setPdf(HistoricoWorkflow historicoWorkflow, Demanda demanda) {
+        historicoWorkflow.setPdfHistoricoWorkflowDemanda(demanda.getPdfDemanda());
+        List<Proposta> propostasList = propostaService.findByDemandaProposta(demanda);
+        if (!propostasList.isEmpty()) {
+            Proposta proposta = propostasList.get(propostasList.size() - 1);
+            if (proposta.getPdfProposta() != null) {
+                historicoWorkflow.setPdfHistoricoWorkflowProposta(proposta.getPdfProposta());
+            }
         }
     }
 

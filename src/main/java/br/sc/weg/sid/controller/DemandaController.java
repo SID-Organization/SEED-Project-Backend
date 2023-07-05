@@ -546,7 +546,7 @@ public class DemandaController {
             List<Usuario> analistas = usuarioService.findByCargoUsuario(Cargo.ANALISTA);
             for (Usuario usuario : analistas) {
                 Notificacao notificacaoDemandaCriada = new Notificacao();
-                notificacaoDemandaCriada.setTextoNotificacao("uma demanda foi criada! Título:" + demandaAtualizada.getTituloDemanda() + ", aberta por: " +
+                notificacaoDemandaCriada.setTextoNotificacao("uma demanda foi criada! Título: " + demandaAtualizada.getTituloDemanda() + ", aberta por: " +
                         demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
                 notificacaoDemandaCriada.setTipoNotificacao("approved");
                 notificacaoDemandaCriada.setResponsavel(demandaAtualizada.getSolicitanteDemanda().getNomeUsuario());
@@ -792,6 +792,12 @@ public class DemandaController {
         historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
                 demanda.getHistoricoWorkflowUltimaVersao());
         gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
+
+        List<HistoricoWorkflow> historicoWorkflowList = historicoWorkflowService.findByDemandaHistorico(demandaSalva);
+        historicoWorkflowList.get(0).setPdfHistoricoWorkflowDemanda(demandaSalva.getPdfDemanda());
+        historicoWorkflowService.save(historicoWorkflowList.get(0));
+        historicoWorkflowList.get(1).setPdfHistoricoWorkflowDemanda(demandaSalva.getPdfDemanda());
+        historicoWorkflowService.save(historicoWorkflowList.get(1));
         return ResponseEntity.status(HttpStatus.OK).body(demandaSalva);
     }
 

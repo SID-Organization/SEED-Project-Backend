@@ -35,9 +35,11 @@ public class HistoricoWorkflow {
     @Column(name = "TarefaHistoricoWorkflow", nullable = false)
     private TarefaWorkflow tarefaHistoricoWorkflow;
 
-    @Column(name = "PdfHistorico")
     @Lob
-    private byte[] pdfHistorico;
+    private byte[] pdfHistoricoWorkflowDemanda;
+
+    @Lob
+    private byte[] pdfHistoricoWorkflowProposta;
 
     @Column(name = "MotivoDevolucaoHistorico")
     private String motivoDevolucaoHistorico;
