@@ -1,9 +1,10 @@
 package br.sc.weg.sid.model.service;
 
-import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.HistoricoWorkflow;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.enums.StatusWorkflow;
 import br.sc.weg.sid.repository.HistoricoWorkflowRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +16,6 @@ public class HistoricoWorkflowService {
 
     @Autowired
     private HistoricoWorkflowRepository historicoWorkflowRepository;
-
-    public void teste() {
-        HistoricoWorkflow historicoWorkflow = historicoWorkflowRepository.findById(1).get();
-        HistoricoWorkflow historicoWorkflow2 = new HistoricoWorkflow();
-
-        BeanUtils.copyProperties(historicoWorkflow, historicoWorkflow2);
-
-//        historicoWorkflow2.setVersaoHistorico(2.0);
-
-        System.out.println(historicoWorkflow.equals(historicoWorkflow2));
-
-
-    }
 
     public List<HistoricoWorkflow> findAll() {
         return historicoWorkflowRepository.findAll();

@@ -584,7 +584,6 @@ public class DemandaController {
             CadastroHistoricoWorkflowDTO historicoWorkflowDTO = new CadastroHistoricoWorkflowDTO();
             try {
                 historicoWorkflowDTO.setDemandaHistorico(demandaAtualizada);
-                System.out.println("EDIÇÂO: " + edicao);
                 if (edicao == false) {
                     historicoWorkflowDTO.setTarefaHistoricoWorkflow(TarefaWorkflow.PREENCHER_DEMANDA);
                     historicoWorkflowDTO.setIdResponsavel(demandaAtualizada.getSolicitanteDemanda());

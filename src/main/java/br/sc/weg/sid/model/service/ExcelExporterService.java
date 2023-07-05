@@ -281,100 +281,116 @@ public class ExcelExporterService {
             }
         }
 
-        XSSFSheet demandaChartSheet = (XSSFSheet) workbook.createSheet("Gráficos das demandas");
-
-        // Create a row and put some cells in it. Rows are 0 based.
-        Row row = demandaChartSheet.createRow((short) 0);
-        Row dataChartRow = demandaChartSheet.createRow(1);
-        Row realBenefitChartRow = demandaChartSheet.createRow(2);
-        Row potentialBenefitChartRow = demandaChartSheet.createRow(3);
+        // Variable created in case there is only one demand with a total cost, so that the graph spreadsheet
+        // is not created to avoid errors, as the graphs compare demands with total cost and their benefits.
+        int qtdDemandasComCustoTotal = 0;
 
         for (int i = 0; i < demandasList.size(); i++) {
-            int beneficioReal =0, beneficioPotencial = 0;
-            for (int beneficioIndex = 0; beneficioIndex < demandasList.get(i).getBeneficiosDemanda().size(); beneficioIndex++){
-                if (demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getTipoBeneficio() == TipoBeneficio.REAL){
-                    beneficioReal += demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getValorBeneficio();
-                } else if (demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getTipoBeneficio() == TipoBeneficio.POTENCIAL){
-                    beneficioPotencial += demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getValorBeneficio();
-                }
-            }
-            // Create a cell and put a value in it.
             if (demandasList.get(i).getCustoTotalDemanda() != null) {
-                createCell(row, i, demandasList.get(i).getTituloDemanda(), 0, 0, titleStyle, demandaChartSheet);
-                createCell(dataChartRow, i, null, 0, demandasList.get(i).getCustoTotalDemanda(), dataStyle, demandaChartSheet);
-                if (beneficioReal > 0){
-                    createCell(realBenefitChartRow, i, null, 0, beneficioReal, dataStyle, demandaChartSheet);
-                }
-                if (beneficioPotencial > 0){
-                    createCell(potentialBenefitChartRow, i, null, 0, beneficioPotencial, dataStyle, demandaChartSheet);
-                }
+                qtdDemandasComCustoTotal++;
             }
         }
 
-        int column2 = demandasList.size() * 2;
+        if (qtdDemandasComCustoTotal > 1) {
+            XSSFSheet demandaChartSheet = (XSSFSheet) workbook.createSheet("Gráficos das demandas");
 
-        XSSFDrawing drawingBar = demandaChartSheet.createDrawingPatriarch();
-        XSSFClientAnchor anchorBar = drawingBar.createAnchor(0, 0, 0, 0, 0, 0, column2, 23);
+            // Create a row and put some cells in it. Rows are 0 based.
+            Row row = demandaChartSheet.createRow((short) 0);
+            Row dataChartRow = demandaChartSheet.createRow(1);
+            Row realBenefitChartRow = demandaChartSheet.createRow(2);
+            Row potentialBenefitChartRow = demandaChartSheet.createRow(3);
 
-        XSSFChart chartBar = drawingBar.createChart(anchorBar);
-        chartBar.setTitleText("Comparação de custo para cada demanda!");
-        chartBar.setTitleOverlay(false);
+            // Variable create to know the index of the demands with total cost in the list of demands.
+            int demandasCustoTotalIndex = -1;
+            for (int i = 0; i < demandasList.size(); i++) {
+                int beneficioReal = 0, beneficioPotencial = 0;
+                for (int beneficioIndex = 0; beneficioIndex < demandasList.get(i).getBeneficiosDemanda().size(); beneficioIndex++) {
+                    if (demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getTipoBeneficio() == TipoBeneficio.REAL) {
+                        beneficioReal += demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getValorBeneficio();
+                    } else if (demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getTipoBeneficio() == TipoBeneficio.POTENCIAL) {
+                        beneficioPotencial += demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getValorBeneficio();
+                    }
+                }
 
-        XDDFChartLegend legendBar = chartBar.getOrAddLegend();
-        legendBar.setPosition(LegendPosition.TOP_RIGHT);
+                // Create a cell and put a value in it.
+                if (demandasList.get(i).getCustoTotalDemanda() != null) {
+                    demandasCustoTotalIndex++;
+                    createCell(row, i, demandasList.get(i).getTituloDemanda(), 0, 0, titleStyle, demandaChartSheet);
+                    createCell(dataChartRow, i, null, 0, demandasList.get(i).getCustoTotalDemanda(), dataStyle, demandaChartSheet);
+                    if (beneficioReal > 0) {
+                        createCell(realBenefitChartRow, i, null, 0, beneficioReal, dataStyle, demandaChartSheet);
+                    }
+                    if (beneficioPotencial > 0) {
+                        createCell(potentialBenefitChartRow, i, null, 0, beneficioPotencial, dataStyle, demandaChartSheet);
+                    }
+                }
+            }
 
-        XDDFCategoryAxis bottomAxisBar = chartBar.createCategoryAxis(AxisPosition.BOTTOM);
-        bottomAxisBar.setTitle("Titulos das demandas");
-        XDDFValueAxis leftAxisBar = chartBar.createValueAxis(AxisPosition.LEFT);
-        leftAxisBar.setTitle("Custos");
+            int column2 = demandasList.size() * 2;
 
-        XDDFDataSource<String> demandTitleBar = XDDFDataSourcesFactory.fromStringCellRange(demandaChartSheet,
-                new CellRangeAddress(0, 0, 0, demandasList.size() - 1));
+            XSSFDrawing drawingBar = demandaChartSheet.createDrawingPatriarch();
+            XSSFClientAnchor anchorBar = drawingBar.createAnchor(0, 0, 0, 0, 0, 0, column2, 23);
 
-        XDDFNumericalDataSource<Double> demandTotalCoastBar = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
-                new CellRangeAddress(1, 1, 0, demandasList.size() - 1));
+            XSSFChart chartBar = drawingBar.createChart(anchorBar);
+            chartBar.setTitleText("Comparação de custo para cada demanda!");
+            chartBar.setTitleOverlay(false);
 
-        XDDFChartData dataBar = chartBar.createData(ChartTypes.BAR, bottomAxisBar, leftAxisBar);
-        XDDFChartData.Series series1Bar = dataBar.addSeries(demandTitleBar, demandTotalCoastBar);
-        series1Bar.setTitle("Demands", null);
-        dataBar.setVaryColors(true);
-        chartBar.plot(dataBar);
+            XDDFChartLegend legendBar = chartBar.getOrAddLegend();
+            legendBar.setPosition(LegendPosition.TOP_RIGHT);
 
-        XDDFBarChartData barData = (XDDFBarChartData) dataBar;
-        barData.setBarDirection(BarDirection.COL);
+            XDDFCategoryAxis bottomAxisBar = chartBar.createCategoryAxis(AxisPosition.BOTTOM);
+            bottomAxisBar.setTitle("Titulos das demandas");
+            XDDFValueAxis leftAxisBar = chartBar.createValueAxis(AxisPosition.LEFT);
+            leftAxisBar.setTitle("Custos");
 
-        int column1Pie = column2;
-        int lastColumn1Pie = column1Pie + 9;
+            XDDFDataSource<String> demandTitleBar = XDDFDataSourcesFactory.fromStringCellRange(demandaChartSheet,
+                    new CellRangeAddress(0, 0, 0, demandasCustoTotalIndex));
 
-        XSSFDrawing drawingPie = demandaChartSheet.createDrawingPatriarch();
-        XSSFClientAnchor anchorPie = drawingPie.createAnchor(0, 0, 0, 0, column1Pie, 0, lastColumn1Pie, 23);
+            XDDFNumericalDataSource<Double> demandTotalCoastBar = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
+                    new CellRangeAddress(1, 1, 0, demandasCustoTotalIndex));
 
-        XSSFChart chartPie = drawingPie.createChart(anchorPie);
-        chartPie.setTitleText("Benefícios reais");
-        chartPie.setTitleOverlay(false);
+            XDDFChartData dataBar = chartBar.createData(ChartTypes.BAR, bottomAxisBar, leftAxisBar);
+            XDDFChartData.Series series1Bar = dataBar.addSeries(demandTitleBar, demandTotalCoastBar);
+            series1Bar.setTitle("Demands", null);
+            dataBar.setVaryColors(true);
+            chartBar.plot(dataBar);
 
-        XDDFChartLegend legendPie = chartPie.getOrAddLegend();
-        legendPie.setPosition(LegendPosition.TOP_RIGHT);
+            XDDFBarChartData barData = (XDDFBarChartData) dataBar;
+            barData.setBarDirection(BarDirection.COL);
 
-        XDDFNumericalDataSource<Double> realBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
-                new CellRangeAddress(2, 2, 0, demandasList.size() - 1));
+            int column1Pie = column2;
+            int lastColumn1Pie = column1Pie + 9;
 
-        generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie, realBenefits);
+            XSSFDrawing drawingPie = demandaChartSheet.createDrawingPatriarch();
+            XSSFClientAnchor anchorPie = drawingPie.createAnchor(0, 0, 0, 0, column1Pie, 0, lastColumn1Pie, 23);
 
-        XSSFDrawing drawingPie2 = demandaChartSheet.createDrawingPatriarch();
-        XSSFClientAnchor anchorPie2 = drawingPie.createAnchor(0, 0, 0, 0, lastColumn1Pie, 0, (lastColumn1Pie + 9), 23);
+            XSSFChart chartPie = drawingPie.createChart(anchorPie);
+            chartPie.setTitleText("Benefícios reais");
+            chartPie.setTitleOverlay(false);
 
-        XSSFChart chartPie2 = drawingPie2.createChart(anchorPie2);
-        chartPie2.setTitleText("Benefícios potenciais");
-        chartPie2.setTitleOverlay(false);
+            XDDFChartLegend legendPie = chartPie.getOrAddLegend();
+            legendPie.setPosition(LegendPosition.TOP_RIGHT);
 
-        XDDFChartLegend legendPie2 = chartPie2.getOrAddLegend();
-        legendPie2.setPosition(LegendPosition.TOP_RIGHT);
+            XDDFNumericalDataSource<Double> realBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
+                    new CellRangeAddress(2, 2, 0, demandasCustoTotalIndex));
 
-        XDDFNumericalDataSource<Double> potentialBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
-                new CellRangeAddress(3, 3, 0, demandasList.size() - 1));
+            generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie, realBenefits);
 
-        generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie2, potentialBenefits);
+            XSSFDrawing drawingPie2 = demandaChartSheet.createDrawingPatriarch();
+            XSSFClientAnchor anchorPie2 = drawingPie.createAnchor(0, 0, 0, 0, lastColumn1Pie, 0, (lastColumn1Pie + 9), 23);
+
+            XSSFChart chartPie2 = drawingPie2.createChart(anchorPie2);
+            chartPie2.setTitleText("Benefícios potenciais");
+            chartPie2.setTitleOverlay(false);
+
+            XDDFChartLegend legendPie2 = chartPie2.getOrAddLegend();
+            legendPie2.setPosition(LegendPosition.TOP_RIGHT);
+
+            XDDFNumericalDataSource<Double> potentialBenefits = XDDFDataSourcesFactory.fromNumericCellRange(demandaChartSheet,
+                    new CellRangeAddress(3, 3, 0, demandasCustoTotalIndex));
+
+            generatePieChart(bottomAxisBar, leftAxisBar, demandTitleBar, chartPie2, potentialBenefits);
+        }
 
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
