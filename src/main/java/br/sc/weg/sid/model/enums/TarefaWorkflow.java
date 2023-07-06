@@ -8,7 +8,9 @@ public enum TarefaWorkflow {
     ELABORACAO_PROPOSTA("Elaboração da Proposta"),
     APROVACAO_COMISSAO("Aprovação Comissão"),
     APROVACAO_DG("Aprovação DG"),
-    EXECUCAO_PROPOSTA("Execução da Proposta");
+    EXECUCAO_PROPOSTA("Execução da Proposta"),
+    EM_SUPORTE("Em Suporte"),
+    PROPOSTA_CONCLUIDA("Proposta Concluída");
 
 
     String nome;

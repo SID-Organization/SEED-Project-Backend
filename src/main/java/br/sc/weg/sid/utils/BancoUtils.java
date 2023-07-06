@@ -280,34 +280,34 @@ public class BancoUtils {
         }
 
         if (listaDemanda.isEmpty()) {
-            Demanda demanda = new Demanda();
-            demanda.setTituloDemanda("Sala de brinquedos");
-            demanda.setPropostaMelhoriaDemanda("Criar uma sala de brinquedos");
-            demanda.setSituacaoAtualDemanda("Brinquedo é bom!");
-            demanda.setDescricaoQualitativoDemanda("sim");
-            demanda.setFrequenciaUsoDemanda("Muito usada");
-            demanda.setSolicitanteDemanda(solicitante);
-            demanda.setGerenteDaAreaDemanda(gerente);
-            demanda.setGestorResponsavelDemanda(gestorTI);
-            demanda.setBeneficiosDemanda(listaBeneficios);
-            demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
-            demanda.setImportanciaDemanda(ImportanciaDemanda.TRIVIAL);
-            demanda = demandaRepository.save(demanda);
-
-            Map<String, String> requestBody = new HashMap<>();
-            requestBody.put("statusDemanda", "ABERTA");
-            demandaController.atualizarStatusDemanda(demanda.getIdDemanda(), requestBody);
+//            Demanda demanda = new Demanda();
+//            demanda.setTituloDemanda("Sala de brinquedos");
+//            demanda.setPropostaMelhoriaDemanda("Criar uma sala de brinquedos");
+//            demanda.setSituacaoAtualDemanda("Brinquedo é bom!");
+//            demanda.setDescricaoQualitativoDemanda("sim");
+//            demanda.setFrequenciaUsoDemanda("Muito usada");
+//            demanda.setSolicitanteDemanda(solicitante);
+//            demanda.setGerenteDaAreaDemanda(gerente);
+//            demanda.setGestorResponsavelDemanda(gestorTI);
+//            demanda.setBeneficiosDemanda(listaBeneficios);
+//            demanda.setStatusDemanda(StatusDemanda.RASCUNHO);
+//            demanda.setImportanciaDemanda(ImportanciaDemanda.TRIVIAL);
+//            demanda = demandaRepository.save(demanda);
+//
+//            Map<String, String> requestBody = new HashMap<>();
+//            requestBody.put("statusDemanda", "ABERTA");
+//            demandaController.atualizarStatusDemanda(demanda.getIdDemanda(), requestBody);
         }
 
         if(listaCentroCusto.isEmpty()){
             CentroCusto centroCusto = new CentroCusto();
             centroCusto.setNomeCentroCusto("Depto Sistemas de Engenharia");
-            centroCusto.setNumeroCentroCusto("90100341");
+            centroCusto.setNumeroCentroCusto("35200341");
             centroCustoRepository.save(centroCusto);
 
             CentroCusto centroCusto2 = new CentroCusto();
             centroCusto2.setNomeCentroCusto("Depto Sistemas de Fundição");
-            centroCusto2.setNumeroCentroCusto("90100341");
+            centroCusto2.setNumeroCentroCusto("99704341");
             centroCustoRepository.save(centroCusto2);
         }
     }
