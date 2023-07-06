@@ -72,12 +72,17 @@ public class HistoricoWorkflowController {
         HistoricoWorkflow historicoWorkflow = new HistoricoWorkflow();
         BeanUtils.copyProperties(historicoWorkflowDTO, historicoWorkflow);
         Demanda demanda = demandaService.findById(historicoWorkflow.getDemandaHistorico().getIdDemanda()).get();
+        HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
         if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
             historicoWorkflow.setAcaoFeitaHistorico("Enviar");
             historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
             historicoWorkflow.setVersaoHistorico(BigDecimal.valueOf(0.1));
+        } else if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PROPOSTA_CONCLUIDA) {
+            atualizaStatusWorkflow(historicoWorkflowAnterior.getIdHistoricoWorkflow(), historicoWorkflowAnterior);
+            historicoWorkflow.setAcaoFeitaHistorico("Enviar");
+            historicoWorkflow.setStatusWorkflow(StatusWorkflow.CONCLUIDO);
+            historicoWorkflow.setVersaoHistorico(historicoWorkflowAnterior.getVersaoHistorico());
         } else {
-            HistoricoWorkflow historicoWorkflowAnterior = demanda.getHistoricoWorkflowUltimaVersao();
             atualizaStatusWorkflow(historicoWorkflowAnterior.getIdHistoricoWorkflow(), historicoWorkflowAnterior);
             if (historicoWorkflowAnterior.getTarefaHistoricoWorkflow() != TarefaWorkflow.PREENCHER_DEMANDA) {
                 historicoWorkflowAnterior.setAcaoFeitaHistorico(historicoWorkflowDTO.getAcaoFeitaHistoricoAnterior());
@@ -95,7 +100,8 @@ public class HistoricoWorkflowController {
 
         historicoWorkflow.setRecebimentoHistorico(dataRecebimento);
         //Workflow's com status Preencher demanda não tem prazo de conclusão
-        if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA) {
+        if (historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PREENCHER_DEMANDA ||
+                historicoWorkflow.getTarefaHistoricoWorkflow() == TarefaWorkflow.PROPOSTA_CONCLUIDA) {
             Date dataConclusao = Date.from(localDate.atZone(ZoneId.systemDefault()).toInstant());
             historicoWorkflow.setConclusaoHistorico(dataConclusao);
         } else {
