@@ -7,8 +7,8 @@ import br.sc.weg.sid.model.enums.StatusDemanda;
 import br.sc.weg.sid.model.enums.TipoBeneficio;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.PropostaUtil;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,27 +21,24 @@ import java.util.Optional;
 @RestController
 @CrossOrigin
 @RequestMapping("/sid/api/proposta")
+@AllArgsConstructor
 public class PropostaController {
-    @Autowired
+
     private PropostaService propostaService;
 
-    @Autowired
     private DemandaService demandaService;
 
-    @Autowired
     private PdfPropostaService pdfPropostaService;
 
-    @Autowired
     private GerarPDFPropostaController gerarPDFPropostaController;
 
-    @Autowired
     private TabelaCustoLinhaService tabelaCustoLinhaService;
 
-    @Autowired
     private CentroCustoTabelaCustoService centroCustoTabelaCustoService;
 
-    @Autowired
     private TabelaCustoService tabelaCustoService;
+
+    private HistoricoWorkflowService historicoWorkflowService;
 
     /**
      * Esta função é um mapeamento de requisição HTTP POST para cadastrar uma nova proposta.
@@ -208,6 +205,14 @@ public class PropostaController {
                     e.printStackTrace();
                     return ResponseEntity.badRequest().body("ERROR 0009: Erro ao gerar PDF!" + "\nMessage: " + e.getMessage());
                 }
+
+                List<HistoricoWorkflow> historicoWorkflowList = historicoWorkflowService.findByDemandaHistorico(propostaSalva.getDemandaProposta());
+
+                HistoricoWorkflow historicoWorkflow = historicoWorkflowList.get(historicoWorkflowList.size() - 1);
+                historicoWorkflow.setPdfHistoricoWorkflowDemanda(propostaSalva.getDemandaProposta().getPdfDemanda());
+                historicoWorkflow.setPdfHistoricoWorkflowProposta(propostaSalva.getPdfProposta());
+                historicoWorkflowService.save(historicoWorkflow);
+
                 return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
             } catch (Exception e) {
                 return ResponseEntity.badRequest().body("ERROR 0007: Erro ao salvar proposta!" + "\nMessage: " + e.getMessage());

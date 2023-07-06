@@ -3,6 +3,7 @@ package br.sc.weg.sid.model.service;
 import br.sc.weg.sid.model.entities.Beneficio;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.PdfDemanda;
+import br.sc.weg.sid.model.entities.Usuario;
 import br.sc.weg.sid.model.enums.TipoBeneficio;
 import com.lowagie.text.*;
 import com.lowagie.text.html.simpleparser.HTMLWorker;
@@ -23,6 +24,8 @@ public class GerarPDFDemandaService {
     DemandaService demandaService;
 
     PdfDemandaService pdfDemandaService;
+
+    UsuarioService usuarioService;
 
     public byte[] export(Integer idDemanda) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -75,7 +78,8 @@ public class GerarPDFDemandaService {
 
         Paragraph requesterParagraph = new Paragraph("Solicitante: ", fontTitle);
         requesterParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-        Paragraph requesterNameParagraph = new Paragraph(demanda.getSolicitanteDemanda().getNomeUsuario() + " - " + demanda.getSolicitanteDemanda().getDepartamentoUsuario().getNomeBusinessUnity(), textFont);
+        Usuario solicitante = usuarioService.findById(demanda.getSolicitanteDemanda().getNumeroCadastroUsuario()).get();
+        Paragraph requesterNameParagraph = new Paragraph(solicitante.getNomeUsuario() + " - " + solicitante.getDepartamentoUsuario().getNomeBusinessUnity(), textFont);
         requesterNameParagraph.setAlignment(Paragraph.ALIGN_LEFT);
         requesterNameParagraph.setIndentationLeft(30);
 

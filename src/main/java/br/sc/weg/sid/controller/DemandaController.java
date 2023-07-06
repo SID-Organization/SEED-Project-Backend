@@ -680,10 +680,6 @@ public class DemandaController {
         if (demanda.getBeneficiosDemanda() != null) {
             demanda.getBeneficiosDemanda().forEach(beneficio -> beneficio.setDemandaBeneficio(demandaAtualizada));
         }
-        if (atualizaVersaoWorkflow != null) {
-            historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
-                    demanda.getHistoricoWorkflowUltimaVersao());
-        }
         //essa variável tem como objetivo buscar a data do dia atual para ser inserida no arquivo de demanda
         LocalDate localDate = LocalDate.now();
         Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -711,6 +707,11 @@ public class DemandaController {
             PdfDemanda pdfDemanda = demandaUtil.convertPdfDtoToModel(cadastroPdfDemandaDTO);
             pdfDemanda.setDemanda(demandaAtualizada);
             pdfDemandaService.save(pdfDemanda);
+            if (atualizaVersaoWorkflow != null) {
+                gerarPDFDemandaController.generatePDF(demandaAtualizada.getIdDemanda());
+                historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
+                        demanda.getHistoricoWorkflowUltimaVersao());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possível cadastrar o pdf da demanda!" + e.getMessage());
@@ -753,6 +754,7 @@ public class DemandaController {
         Double valorScore = demandaUtil.retornaScoreDemandaClassificacao(demanda);
         demanda.setScoreDemanda(valorScore);
         Demanda demandaSalva = demandaService.save(demanda);
+        gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
         HistoricoWorkflow ultimoHistoricoWorkflow = demandaSalva.getHistoricoWorkflowUltimaVersao();
         ultimoHistoricoWorkflow.setIdResponsavel(usuarioService.findById(
                 cadastroBusBeneficiadasDemandaDTO.getAnalistasResponsaveisDemanda().get(0).getNumeroCadastroUsuario()).get()
@@ -766,7 +768,6 @@ public class DemandaController {
         historicoWorkflow.setIdResponsavel(usuarioService.findById(demandaSalva.getGerenteDaAreaDemanda().getNumeroCadastroUsuario()).get());
         historicoWorkflowController.cadastroHistoricoWorkflow(historicoWorkflow);
 
-        gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
         LocalDate localDate = LocalDate.now();
         Date dataRegistroArquivo = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         ArquivoDemanda arquivoDemandaSalvo = new ArquivoDemanda();
@@ -789,15 +790,6 @@ public class DemandaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
             }
         }
-        historicoWorkflowController.atualizaVersaoWorkflow(demanda.getHistoricoWorkflowUltimaVersao().getIdHistoricoWorkflow(),
-                demanda.getHistoricoWorkflowUltimaVersao());
-        gerarPDFDemandaController.generatePDF(demandaSalva.getIdDemanda());
-
-        List<HistoricoWorkflow> historicoWorkflowList = historicoWorkflowService.findByDemandaHistorico(demandaSalva);
-        historicoWorkflowList.get(0).setPdfHistoricoWorkflowDemanda(demandaSalva.getPdfDemanda());
-        historicoWorkflowService.save(historicoWorkflowList.get(0));
-        historicoWorkflowList.get(1).setPdfHistoricoWorkflowDemanda(demandaSalva.getPdfDemanda());
-        historicoWorkflowService.save(historicoWorkflowList.get(1));
         return ResponseEntity.status(HttpStatus.OK).body(demandaSalva);
     }
 
