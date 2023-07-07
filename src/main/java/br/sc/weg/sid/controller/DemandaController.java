@@ -371,6 +371,28 @@ public class DemandaController {
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
+    @GetMapping("/score-ascendente")
+    public ResponseEntity<Object> findByScoreAscendente() {
+        DemandaUtil demandaUtil = new DemandaUtil();
+        List<Demanda> demandas = demandaService.findAllByOrderByScoreDemandaAsc();
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada!");
+        }
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
+    }
+
+    @GetMapping("/score-descendente")
+    public ResponseEntity<Object> findByScoreDescendente() {
+        DemandaUtil demandaUtil = new DemandaUtil();
+        List<Demanda> demandas = demandaService.findAllByOrderByScoreDemandaDesc();
+        if (demandas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada!");
+        }
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
+    }
+
 
     /**
      * Retorna uma lista de demandas resumidas de acordo com o título da demanda fornecido.

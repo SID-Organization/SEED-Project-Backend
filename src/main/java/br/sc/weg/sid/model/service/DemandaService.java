@@ -28,8 +28,6 @@ public class DemandaService {
         return demandaRepository.save(entity);
     }
 
-
-
     public Optional<Demanda> findById(Integer integer) {
         return demandaRepository.findById(integer);
     }
@@ -56,6 +54,14 @@ public class DemandaService {
 
     public List<Demanda> findByScoreDemanda(Double scoreDemanda) {
         return demandaRepository.findByScoreDemanda(scoreDemanda);
+    }
+
+    public List<Demanda> findAllByOrderByScoreDemandaDesc() {
+        return demandaRepository.findAllByOrderByScoreDemandaDesc();
+    }
+
+    public List<Demanda> findAllByOrderByScoreDemandaAsc() {
+        return demandaRepository.findAllByOrderByScoreDemandaAsc();
     }
 
     public List<Demanda> findBySolicitanteDemanda(Usuario solicitanteDemanda) {
