@@ -3,6 +3,7 @@ package br.sc.weg.sid.repository;
 import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Proposta;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,5 +15,9 @@ public interface PropostaRepository extends JpaRepository<Proposta, Integer> {
     List<Proposta> findByDemandaProposta(Demanda idDemanda);
 
     List<Proposta> findAllByPaybackProposta(Double paybackProposta);
+
+    //SELECT proposta.* FROM proposta INNER JOIN demanda ON proposta.demanda_proposta = demanda.id_demanda INNER JOIN analista_responsavel_demanda ard ON demanda.id_demanda = ard.id_demanda WHERE demanda.status_demanda = 'PROPOSTA_EM_ELABORACAO';
+    @Query(value = "SELECT proposta.* FROM proposta INNER JOIN demanda ON proposta.demanda_proposta = demanda.id_demanda INNER JOIN analista_responsavel_demanda ard ON demanda.id_demanda = ard.id_demanda AND ard.numero_cadastro_usuario = ?1 WHERE demanda.status_demanda = 'PROPOSTA_EM_ELABORACAO'", nativeQuery = true)
+    List<Proposta> findAllPropostasEmElaboracaoByAnalista(Integer idAnalista);
 
 }

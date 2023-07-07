@@ -3,6 +3,7 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.enums.Cargo;
 import br.sc.weg.sid.model.enums.StatusDemanda;
 import br.sc.weg.sid.model.enums.TipoBeneficio;
 import br.sc.weg.sid.model.service.*;
@@ -39,6 +40,8 @@ public class PropostaController {
     private TabelaCustoService tabelaCustoService;
 
     private HistoricoWorkflowService historicoWorkflowService;
+
+    private UsuarioService usuarioService;
 
     /**
      * Esta função é um mapeamento de requisição HTTP POST para cadastrar uma nova proposta.
@@ -188,14 +191,14 @@ public class PropostaController {
                     }
                 }
 
-                if (proposta.getCustosTotaisDoProjeto() > 0 && proposta.getCustosTotaisDoProjeto() != null){
+                if (proposta.getCustosTotaisDoProjeto() > 0 && proposta.getCustosTotaisDoProjeto() != null) {
                     double payback = proposta.getCustosTotaisDoProjeto() / somaValorBeneficios;
                     proposta.setPaybackProposta(payback);
                 }
-                    Proposta propostaSalva = propostaService.save(proposta);
-                    Demanda demanda = demandaService.findById(propostaSalva.getDemandaProposta().getIdDemanda()).get();
-                    demanda.setCustoTotalDemanda(propostaSalva.getCustosTotaisDoProjeto());
-                    demandaService.save(demanda);
+                Proposta propostaSalva = propostaService.save(proposta);
+                Demanda demanda = demandaService.findById(propostaSalva.getDemandaProposta().getIdDemanda()).get();
+                demanda.setCustoTotalDemanda(propostaSalva.getCustosTotaisDoProjeto());
+                demandaService.save(demanda);
                 try {
                     PdfProposta pdfProposta = propostaUtil.convertJsonToModel(pdfPropostaForm);
                     pdfProposta.setProposta(propostaSalva);
@@ -357,6 +360,29 @@ public class PropostaController {
             return ResponseEntity.ok(propostasResumidas);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/proposta-elaboracao/{numeroCadastroUsuario}")
+    ResponseEntity<Object> listarPropostaElaboracaoByAnalista(@PathVariable("numeroCadastroUsuario") Integer numeroCadastroUsuario) {
+        Optional<Usuario> usuario = usuarioService.findByNumeroCadastroUsuario(numeroCadastroUsuario);
+        if (usuario.isPresent()) {
+            if (usuario.get().getCargoUsuario() == Cargo.ANALISTA) {
+                try {
+                    List<Proposta> propostaList = propostaService.findAllPropostasEmElaboracaoByAnalista(usuario.get().getNumeroCadastroUsuario());
+                    List<PropostaResumida> propostasResumidas = PropostaUtil.converterPropostaParaPropostaResumida(propostaList);
+                    if (propostasResumidas.isEmpty()) {
+                        return ResponseEntity.badRequest().body("ERROR 0004: Não existem propostas cadastradas!");
+                    }
+                    return ResponseEntity.ok(propostasResumidas);
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
+                }
+            } else {
+                return ResponseEntity.badRequest().body("ERROR 0005: Usuário não é um analista!");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("ERROR 0006: Usuário não encontrado!");
         }
     }
 

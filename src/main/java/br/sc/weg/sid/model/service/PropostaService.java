@@ -4,6 +4,7 @@ import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.repository.PropostaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,5 +48,7 @@ public class PropostaService {
         return propostaRepository.findAllByPaybackProposta(paybackProposta);
     }
 
-
+    public List<Proposta> findAllPropostasEmElaboracaoByAnalista(Integer idAnalista) {
+        return propostaRepository.findAllPropostasEmElaboracaoByAnalista(idAnalista);
+    }
 }
