@@ -277,7 +277,7 @@ public class DemandaController {
      * <p>
      * Se ocorrer algum erro ao buscar as demandas, retorna uma mensagem de erro indicando o problema.
      */
-    @GetMapping("/statusDemanda/{statusDemanda}")
+    @GetMapping("/status-demanda/{statusDemanda}")
     public ResponseEntity<Object> findByStatus(@PathVariable("statusDemanda") StatusDemanda statusDemanda) {
         try {
             List<Demanda> demandas = demandaService.findByStatusDemanda(statusDemanda);
@@ -307,8 +307,9 @@ public class DemandaController {
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O solicitante " + solicitanteDemanda.getNomeUsuario() + " não possui demandas!");
             }
+            List<Demanda> demandasOrdenadasScore = demandaService.orderByScoreDemandaDesc(demandas);
             DemandaUtil demandaUtil = new DemandaUtil();
-            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasOrdenadasScore);
             return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             e.printStackTrace();
@@ -370,29 +371,6 @@ public class DemandaController {
         List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
-
-    @GetMapping("/score-ascendente")
-    public ResponseEntity<Object> findByScoreAscendente() {
-        DemandaUtil demandaUtil = new DemandaUtil();
-        List<Demanda> demandas = demandaService.findAllByOrderByScoreDemandaAsc();
-        if (demandas.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada!");
-        }
-        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
-    }
-
-    @GetMapping("/score-descendente")
-    public ResponseEntity<Object> findByScoreDescendente() {
-        DemandaUtil demandaUtil = new DemandaUtil();
-        List<Demanda> demandas = demandaService.findAllByOrderByScoreDemandaDesc();
-        if (demandas.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma demanda encontrada!");
-        }
-        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
-        return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
-    }
-
 
     /**
      * Retorna uma lista de demandas resumidas de acordo com o título da demanda fornecido.
@@ -461,8 +439,10 @@ public class DemandaController {
                     }
                 }
             }
+            List<Demanda> demandasOrdenadas = demandaService.orderByScoreDemandaDesc(demandas);
+
             DemandaUtil demandaUtil = new DemandaUtil();
-            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasFiltradas);
+            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasOrdenadas);
             return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -490,8 +470,10 @@ public class DemandaController {
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O gerente " + gerenteDaAreaDemanda.getNomeUsuario() + " não possui demandas!");
             }
+            List<Demanda> demandasOrdenadas = demandaService.orderByScoreDemandaDesc(demandas);
+
             DemandaUtil demandaUtil = new DemandaUtil();
-            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasOrdenadas);
             return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum usuário com o número de cadastro: " + numeroCadastroGerente + " foi encontrado!");
@@ -519,8 +501,11 @@ public class DemandaController {
             if (demandas.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O gestor " + gestorDeTiDemanda.getNomeUsuario() + " não possui demandas!");
             }
+
+            List<Demanda> demandasOrdenadas = demandaService.orderByScoreDemandaDesc(demandas);
+
             DemandaUtil demandaUtil = new DemandaUtil();
-            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandas);
+            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasOrdenadas);
             return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -845,12 +830,13 @@ public class DemandaController {
             DemandaUtil demandaUtil = new DemandaUtil();
 
             List<Demanda> demandaList = demandaService.findByStatusDemandaAndAnalistasResponsaveisDemandaIsNull(StatusDemanda.ABERTA);
-
             if (demandaList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhuma demanda sem analista!");
             }
 
-            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandaList);
+            List<Demanda> demandasOrdenadas = demandaService.orderByScoreDemandaDesc(demandaList);
+
+            List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasOrdenadas);
             return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao buscar demandas sem analista: " + e.getMessage());

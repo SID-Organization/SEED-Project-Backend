@@ -56,8 +56,8 @@ public class DemandaService {
         return demandaRepository.findByScoreDemanda(scoreDemanda);
     }
 
-    public List<Demanda> findAllByOrderByScoreDemandaDesc() {
-        return demandaRepository.findAllByOrderByScoreDemandaDesc();
+    public List<Demanda> orderByScoreDemandaDesc(List<Demanda> demandas) {
+        return demandaRepository.orderByScoreDemandaDesc(demandas);
     }
 
     public List<Demanda> findAllByOrderByScoreDemandaAsc() {

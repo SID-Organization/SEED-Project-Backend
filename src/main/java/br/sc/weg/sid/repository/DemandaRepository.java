@@ -32,7 +32,9 @@ public interface DemandaRepository extends JpaRepository<Demanda, Integer> {
     List<Demanda> findAllByOrderByPrazoElaboracaoDemandaDesc();
 
     List<Demanda> findAllByOrderByScoreDemandaAsc();
-    List<Demanda> findAllByOrderByScoreDemandaDesc();
+
+    @Query("SELECT d FROM Demanda d WHERE d IN :demandas ORDER BY d.scoreDemanda DESC")
+    List<Demanda> orderByScoreDemandaDesc(List<Demanda> demandas);
 
     List<Demanda> findAllByStatusDemandaIsAndSolicitanteDemandaNumeroCadastroUsuarioIs(StatusDemanda statusDemanda, Integer solicitanteDemanda_numeroCadastroUsuario);
 }
