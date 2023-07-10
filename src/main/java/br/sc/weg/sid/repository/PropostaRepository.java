@@ -31,7 +31,6 @@ public interface PropostaRepository extends JpaRepository<Proposta, Integer> {
             "AND d.statusDemanda = 'APROVADA_EM_DG'")
     List<Proposta> findPropostasAprovadasByForum(Forum forumPauta);
 
-
     @Query("SELECT p FROM Proposta p " +
             "JOIN p.demandaProposta d " +
             "JOIN p.forumPauta fp " +
