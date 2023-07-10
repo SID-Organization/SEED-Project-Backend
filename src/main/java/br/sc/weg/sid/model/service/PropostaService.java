@@ -48,6 +48,9 @@ public class PropostaService {
         return propostaRepository.findAllByPaybackProposta(paybackProposta);
     }
 
+    public List<Proposta> findAllPropostasEmElaboracaoByAnalista(Integer idAnalista) {
+        return propostaRepository.findAllPropostasEmElaboracaoByAnalista(idAnalista);
+    }
     public List<Proposta> findAllByForumPauta(Forum forumPauta) {
         return propostaRepository.findAllByForumPauta(forumPauta);
     }
