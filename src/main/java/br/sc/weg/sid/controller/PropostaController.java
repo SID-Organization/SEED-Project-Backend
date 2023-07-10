@@ -1,5 +1,6 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.BuscaDemandasForumDTO;
 import br.sc.weg.sid.DTO.CadastroPropostaDTO;
 import br.sc.weg.sid.DTO.UpdatePropostaDTO;
 import br.sc.weg.sid.model.entities.*;
@@ -8,12 +9,14 @@ import br.sc.weg.sid.model.enums.TipoBeneficio;
 import br.sc.weg.sid.model.service.*;
 import br.sc.weg.sid.utils.PropostaUtil;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +40,8 @@ public class PropostaController {
     private CentroCustoTabelaCustoService centroCustoTabelaCustoService;
 
     private TabelaCustoService tabelaCustoService;
+
+    private ForumService forumService;
 
     private HistoricoWorkflowService historicoWorkflowService;
 
@@ -188,9 +193,9 @@ public class PropostaController {
                     }
                 }
 
-                if (proposta.getCustosTotaisDoProjeto() > 0 && proposta.getCustosTotaisDoProjeto() != null){
-                    double payback = proposta.getCustosTotaisDoProjeto() / somaValorBeneficios;
-                    proposta.setPaybackProposta(payback);
+                if (proposta.getCustosTotaisDoProjeto() > 0 && proposta.getCustosTotaisDoProjeto() != null && somaValorBeneficios > 0) {
+                    BigDecimal payback = BigDecimal.valueOf(proposta.getCustosTotaisDoProjeto() / somaValorBeneficios);
+                    proposta.setPaybackProposta(payback.doubleValue());
                 }
                     Proposta propostaSalva = propostaService.save(proposta);
                     Demanda demanda = demandaService.findById(propostaSalva.getDemandaProposta().getIdDemanda()).get();
@@ -215,6 +220,7 @@ public class PropostaController {
 
                 return ResponseEntity.status(HttpStatus.CREATED).body(propostaSalva);
             } catch (Exception e) {
+                e.printStackTrace();
                 return ResponseEntity.badRequest().body("ERROR 0007: Erro ao salvar proposta!" + "\nMessage: " + e.getMessage());
             }
         } catch (Exception e) {
@@ -241,6 +247,58 @@ public class PropostaController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
         }
+    }
+
+    /**
+     * Esta função é um método HTTP GET que retorna uma lista de um DTO de todas as propostas aprovadas por um determinado fórum.
+     *
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com a lista de propostas cadastradas no banco de dados.
+     * Caso não existam propostas cadastradas, retorna um objeto ResponseEntity com uma mensagem de bad request.
+     */
+    @GetMapping("/propostas-aprovadas-forum/{idForum}")
+    ResponseEntity<Object> listarPropostasAprovadasForum(@PathVariable("idForum") Integer idForum) {
+        try {
+            Forum forum = forumService.findById(idForum).get();
+            List<Proposta>  propostasAprovadasByForum = propostaService.findPropostasAprovadasByForum(forum);
+            if (propostasAprovadasByForum.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERROR 0004: Não existem propostas aprovadas!");
+            }
+            return criaBuscaDemandasDTO(propostasAprovadasByForum);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Esta função é um método HTTP GET que retorna uma lista de um DTO de todas as propostas reprovadas por um determinado fórum.
+     *
+     * @return ResponseEntity<Object> - Retorna um objeto ResponseEntity com a lista de propostas cadastradas no banco de dados.
+     * Caso não existam propostas cadastradas, retorna um objeto ResponseEntity com uma mensagem de bad request.
+     */
+    @GetMapping("/propostas-reprovadas-forum/{idForum}")
+    ResponseEntity<Object> listarPropostasReprovadasForum(@PathVariable("idForum") Integer idForum) {
+        try {
+            Forum forum = forumService.findById(idForum).get();
+            List<Proposta>  propostasReprovadasByForum = propostaService.findPropostasReprovadasByForum(forum);
+            if (propostasReprovadasByForum.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERROR 0004: Não existem propostas reprovadas!");
+            }
+            return criaBuscaDemandasDTO(propostasReprovadasByForum);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("ERROR 0003: Erro ao listar propostas!" + "\nMessage: " + e.getMessage());
+        }
+    }
+
+    @NotNull
+    private ResponseEntity<Object> criaBuscaDemandasDTO(List<Proposta> count) {
+        List<BuscaDemandasForumDTO> propostasObject = new ArrayList<>();
+        for(Proposta proposta : count){
+            BuscaDemandasForumDTO buscaDemandasForumDTO = new BuscaDemandasForumDTO();
+            buscaDemandasForumDTO.setDemandaTitulo(proposta.getDemandaProposta().getTituloDemanda());
+            buscaDemandasForumDTO.setDemandaDataCriacao(proposta.getDemandaProposta().getHistoricoWorkflowUltimaVersao().getRecebimentoHistorico());
+            propostasObject.add(buscaDemandasForumDTO);
+        }
+        return ResponseEntity.ok(propostasObject);
     }
 
     /**

@@ -1,6 +1,7 @@
 package br.sc.weg.sid.model.service;
 
 import br.sc.weg.sid.model.entities.Demanda;
+import br.sc.weg.sid.model.entities.Forum;
 import br.sc.weg.sid.model.entities.Proposta;
 import br.sc.weg.sid.repository.PropostaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,16 @@ public class PropostaService {
         return propostaRepository.findAllByPaybackProposta(paybackProposta);
     }
 
+    public List<Proposta> findAllByForumPauta(Forum forumPauta) {
+        return propostaRepository.findAllByForumPauta(forumPauta);
+    }
+
+    public List<Proposta> findPropostasAprovadasByForum(Forum forumPauta) {
+        return propostaRepository.findPropostasAprovadasByForum(forumPauta);
+    }
+
+    public List<Proposta> findPropostasReprovadasByForum(Forum forumPauta) {
+        return propostaRepository.findPropostasReprovadasByForum(forumPauta);
+    }
 
 }

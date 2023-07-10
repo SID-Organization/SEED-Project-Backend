@@ -83,8 +83,9 @@ public class DemandaController {
                 demandasFiltradas.add(demanda);
             }
         }
+        List<Demanda> demandasOrdenadas = demandaService.orderByScoreDemandaDesc(demandasFiltradas);
         DemandaUtil demandaUtil = new DemandaUtil();
-        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasFiltradas);
+        List<DemandaResumida> demandasResumidas = demandaUtil.resumirDemanda(demandasOrdenadas);
         return ResponseEntity.status(HttpStatus.OK).body(demandasResumidas);
     }
 
@@ -645,14 +646,14 @@ public class DemandaController {
             @RequestParam(value = "arquivosDemanda", required = false) MultipartFile[] additionalFiles,
             @RequestParam(value = "atualizaVersaoWorkflow", required = false) @Valid String atualizaVersaoWorkflow
     ) {
-        DemandaUtil demandaUtil = new DemandaUtil();
-        Demanda demandaExiste = demandaService.findById(idDemanda).get();
-        CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
-        CadastroPdfDemandaDTO cadastroPdfDemandaDTO = demandaUtil.convertToPdfDto(pdfDemandaJson);
         if (!demandaService.existsById(idDemanda)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Não foi encontrado a demanda com o id " + idDemanda);
         }
+        DemandaUtil demandaUtil = new DemandaUtil();
+        Demanda demandaExiste = demandaService.findById(idDemanda).get();
+        CadastroDemandaDTO cadastroDemandaDTO = demandaUtil.convertToDto(demandaJson);
+        CadastroPdfDemandaDTO cadastroPdfDemandaDTO = demandaUtil.convertToPdfDto(pdfDemandaJson);
         Demanda demanda = demandaExiste;
         BeanUtils.copyProperties(cadastroDemandaDTO, demanda);
         if (demanda.getTamanhoDemanda() != null) {

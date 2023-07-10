@@ -32,6 +32,11 @@ public class Proposta {
     @Column(name = "DescricaoProposta", columnDefinition = "TEXT")
     private String escopoProposta;
 
+    @ManyToOne
+    @JsonIgnoreProperties({"analistaResponsavelForum", "usuariosForum"})
+    @JoinColumn(name = "IdForum")
+    private Forum forumPauta;
+
     @Lob
     @Column(name = "NaoFazParteDoEscopoProposta", columnDefinition = "TEXT")
     private String naoFazParteDoEscopoProposta;
@@ -96,7 +101,6 @@ public class Proposta {
     private List<TabelaCusto> tabelaCusto;
 
     @JoinColumn(name = "demandaProposta", referencedColumnName = "IdDemanda")
-
     @ManyToOne(optional = false)
     private Demanda demandaProposta;
 

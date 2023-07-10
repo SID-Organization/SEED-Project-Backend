@@ -57,6 +57,7 @@ public class PautaController {
             pautas.add(pautaSalva);
 
             proposta.setPautaProposta(pautas);
+            proposta.setForumPauta(pautaSalva.getForumPauta());
             propostaService.save(proposta);
             for (Usuario usuario : proposta.getDemandaProposta().getAnalistasResponsaveisDemanda()) {
                 Notificacao notificacaoReuniaoPauta = new Notificacao();
