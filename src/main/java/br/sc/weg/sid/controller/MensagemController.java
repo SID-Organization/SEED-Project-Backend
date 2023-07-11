@@ -41,15 +41,19 @@ public class MensagemController {
     public ResponseEntity<Object> receiveMessage(@RequestBody MensagemDTO mensagemDTO) {
         Mensagem mensagem = new Mensagem();
         BeanUtils.copyProperties(mensagemDTO, mensagem);
-        String values = mensagemDTO.getArquivoMensagem().toString();
-        Gson gson = new Gson();
-        HashMap map = gson.fromJson(values, HashMap.class);
-        byte[] arquivo = new byte[map.size()];
+        if(mensagemDTO.getArquivoMensagem() == null) {
+            mensagem.setArquivoMensagem(null);
+        }else{
+            String values = mensagemDTO.getArquivoMensagem().toString();
+            Gson gson = new Gson();
+            HashMap map = gson.fromJson(values, HashMap.class);
+            byte[] arquivo = new byte[map.size()];
 
-        for (int i = 0; i < map.size(); i++) {
-            arquivo[i] = ((Double) map.get(String.valueOf(i))).byteValue();
+            for (int i = 0; i < map.size(); i++) {
+                arquivo[i] = ((Double) map.get(String.valueOf(i))).byteValue();
+            }
+            mensagem.setArquivoMensagem(arquivo);
         }
-        mensagem.setArquivoMensagem(arquivo);
         // /demanda/{idDemanda}/{idChat}
         Chat chat = chatService.findById(mensagemDTO.getIdChat().getIdChat()).get();
         simpMessagingTemplate.convertAndSendToUser( /*id da demanda*/ chat.getIdDemanda().getIdDemanda().toString(), /*id do chat*/ mensagem.getIdChat().getIdChat().toString(), mensagem);
