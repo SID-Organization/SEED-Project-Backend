@@ -303,25 +303,24 @@ public class ExcelExporterService {
             // Variable create to know the index of the demands with total cost in the list of demands.
             int demandasCustoTotalIndex = -1;
             for (int i = 0; i < demandasList.size(); i++) {
-                int beneficioReal = 0, beneficioPotencial = 0;
-                for (int beneficioIndex = 0; beneficioIndex < demandasList.get(i).getBeneficiosDemanda().size(); beneficioIndex++) {
-                    if (demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getTipoBeneficio() == TipoBeneficio.REAL) {
-                        beneficioReal += demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getValorBeneficio();
-                    } else if (demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getTipoBeneficio() == TipoBeneficio.POTENCIAL) {
-                        beneficioPotencial += demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getValorBeneficio();
-                    }
-                }
-
-                // Create a cell and put a value in it.
                 if (demandasList.get(i).getCustoTotalDemanda() != null) {
+                    int beneficioReal = 0, beneficioPotencial = 0;
+                    for (int beneficioIndex = 0; beneficioIndex < demandasList.get(i).getBeneficiosDemanda().size(); beneficioIndex++) {
+                        if (demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getTipoBeneficio() == TipoBeneficio.REAL) {
+                            beneficioReal += demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getValorBeneficio();
+                        } else if (demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getTipoBeneficio() == TipoBeneficio.POTENCIAL) {
+                            beneficioPotencial += demandasList.get(i).getBeneficiosDemanda().get(beneficioIndex).getValorBeneficio();
+                        }
+                    }
+                    // Create a cell and put a value in it.
                     demandasCustoTotalIndex++;
-                    createCell(row, i, demandasList.get(i).getTituloDemanda(), 0, 0, titleStyle, demandaChartSheet);
-                    createCell(dataChartRow, i, null, 0, demandasList.get(i).getCustoTotalDemanda(), dataStyle, demandaChartSheet);
+                    createCell(row, demandasCustoTotalIndex, demandasList.get(i).getTituloDemanda(), 0, 0, titleStyle, demandaChartSheet);
+                    createCell(dataChartRow, demandasCustoTotalIndex, null, 0, demandasList.get(i).getCustoTotalDemanda(), dataStyle, demandaChartSheet);
                     if (beneficioReal > 0) {
-                        createCell(realBenefitChartRow, i, null, 0, beneficioReal, dataStyle, demandaChartSheet);
+                        createCell(realBenefitChartRow, demandasCustoTotalIndex, null, 0, beneficioReal, dataStyle, demandaChartSheet);
                     }
                     if (beneficioPotencial > 0) {
-                        createCell(potentialBenefitChartRow, i, null, 0, beneficioPotencial, dataStyle, demandaChartSheet);
+                        createCell(potentialBenefitChartRow, demandasCustoTotalIndex, null, 0, beneficioPotencial, dataStyle, demandaChartSheet);
                     }
                 }
             }
