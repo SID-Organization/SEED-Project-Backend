@@ -5,8 +5,6 @@ import br.sc.weg.sid.model.entities.ChatResumido;
 import br.sc.weg.sid.model.entities.Mensagem;
 import br.sc.weg.sid.model.entities.MensagemResumida;
 import br.sc.weg.sid.model.service.MensagemService;
-import com.itextpdf.text.html.simpleparser.HTMLWorker;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,20 +33,22 @@ public class ChatUtil {
                 }
 
                 Integer idMensagem = 0;
-                for (Mensagem mensagem : mensagens) {
-                    if (mensagem.getArquivoMensagem() != null) {
-                        mensagem.setTextoMensagem("Arquivo");
+                if (mensagens != null) {
+                    for (Mensagem mensagem : mensagens) {
+                        if (mensagem.getArquivoMensagem() != null) {
+                            mensagem.setTextoMensagem("Arquivo");
+                        }
+                        if (mensagem.getIdMensagem() > idMensagem) {
+                            idMensagem = mensagem.getIdMensagem();
+                        }
                     }
-                    if (mensagem.getIdMensagem() > idMensagem) {
-                        idMensagem = mensagem.getIdMensagem();
-                    }
-                }
 
-                for (Mensagem mensagem : mensagens) {
-                    if (mensagem.getIdMensagem() == idMensagem) {
-                        chatResumido.setUltimaMensagem(mensagem.getTextoMensagem());
-                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                        chatResumido.setDataUltimaMensagem(sdf.format(mensagem.getDataMensagem()));
+                    for (Mensagem mensagem : mensagens) {
+                        if (mensagem.getIdMensagem() == idMensagem) {
+                            chatResumido.setUltimaMensagem(mensagem.getTextoMensagem());
+                            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                            chatResumido.setDataUltimaMensagem(sdf.format(mensagem.getDataMensagem()));
+                        }
                     }
                 }
                 chatResumidoList.add(chatResumido);

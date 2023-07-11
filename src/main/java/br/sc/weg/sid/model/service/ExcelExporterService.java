@@ -325,7 +325,7 @@ public class ExcelExporterService {
                 }
             }
 
-            int column2 = demandasList.size() * 2;
+            int column2 = demandasList.size();
 
             XSSFDrawing drawingBar = demandaChartSheet.createDrawingPatriarch();
             XSSFClientAnchor anchorBar = drawingBar.createAnchor(0, 0, 0, 0, 0, 0, column2, 23);
