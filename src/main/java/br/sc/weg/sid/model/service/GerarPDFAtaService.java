@@ -70,14 +70,14 @@ public class GerarPDFAtaService {
         Font fontFirstTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, fontFirstTitleColor);
 
         Color fontProposalTitleColor = Color.decode("#4472c4");
-        Font fontProposalTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, fontProposalTitleColor);
+        Font fontProposalTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, fontProposalTitleColor);
 
-        Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
-        Font textFont = new Font(Font.HELVETICA, 10);
+        Font fontSubTitle = new Font(Font.HELVETICA, 12, Font.BOLD);
 
 
-        Paragraph paragraph = new Paragraph("ATA REUNIÃO COMISSÃO PROCESSOS DE VENDAS E DESENVOLVIMENTO DE PRODUTO\n", fontFirstTitle);
+        Paragraph paragraph = new Paragraph("ATA " +  ata.getForumAta().getComissaoForum().getNomeComissao().toUpperCase() + "\n", fontFirstTitle);
         paragraph.setAlignment(Paragraph.ALIGN_CENTER);
+        paragraph.setSpacingBefore(3);
 
         PdfPTable table = new PdfPTable(2);
         Font tableFontBold = new Font(Font.TIMES_ROMAN, 10, Font.BOLD);
@@ -157,14 +157,14 @@ public class GerarPDFAtaService {
             Paragraph titleDemandParagraph = new Paragraph(numeroProposta + ".    " + tituloCaixaAltaDemanda + " – " + demanda.getIdDemanda(), fontProposalTitle);
             titleDemandParagraph.setSpacingBefore(8);
 
-            Phrase proposalPhrase = new Phrase("Objetivo: ", titleFont);
-            Chunk objetivoChunk = new Chunk(demanda.getPropostaMelhoriaDemanda(), textFont);
+            Phrase proposalPhrase = new Phrase("Objetivo: ", fontSubTitle);
+            Chunk objetivoChunk = new Chunk(demanda.getPropostaMelhoriaDemanda());
             proposalPhrase.add(objetivoChunk);
             Paragraph proposalParagraph = new Paragraph(proposalPhrase);
             proposalParagraph.setSpacingBefore(8);
             proposalParagraph.setSpacingAfter(5);
 
-            Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", titleFont);
+            Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", fontSubTitle);
             projectScopeParagraph.setSpacingBefore(8);
 
             HTMLWorker htmlWorker = new HTMLWorker(document);
@@ -173,7 +173,7 @@ public class GerarPDFAtaService {
 
             Paragraph noPartOfScopeProjectParagraph;
             if (!pdfProposta.getNaoFazParteDoEscopoPropostaHTML().isEmpty()) {
-                noPartOfScopeProjectParagraph = new Paragraph("Não faz parte do escopo do projeto:", titleFont);
+                noPartOfScopeProjectParagraph = new Paragraph("Não faz parte do escopo do projeto:", fontSubTitle);
                 projectScopeParagraph.setSpacingBefore(8);
             } else {
                 noPartOfScopeProjectParagraph = new Paragraph();
@@ -181,7 +181,7 @@ public class GerarPDFAtaService {
 
             String projectNotInScopeParagraphTextHTML = pdfProposta.getEscopoPropostaHTML();
 
-            Paragraph projectCoverageParagraph = new Paragraph("Abrangência do Projeto:", titleFont);
+            Paragraph projectCoverageParagraph = new Paragraph("Abrangência do Projeto:", fontSubTitle);
             projectCoverageParagraph.setSpacingBefore(8);
 
             String projectCoverageParagraphTextHTML = pdfProposta.getAbrangenciaProjetoPropostaHTML();
@@ -199,16 +199,16 @@ public class GerarPDFAtaService {
             }
             Paragraph expectedResultsParagraph = null;
             if (expectedResultsQualitativeParagraphTextHTML != null) {
-                expectedResultsParagraph = new Paragraph("Resultados Esperados (Qualitativos):", titleFont);
+                expectedResultsParagraph = new Paragraph("Resultados Esperados (Qualitativos):", fontSubTitle);
                 expectedResultsParagraph.setSpacingBefore(8);
             }
 
-            Paragraph expectedResultsPotentialParagraph = new Paragraph("Benefícios potenciais:", titleFont);
+            Paragraph expectedResultsPotentialParagraph = new Paragraph("Benefícios potenciais:", fontSubTitle);
             expectedResultsPotentialParagraph.setSpacingBefore(8);
 
             PdfPTable tableExpenses = new PdfPTable(4);
-            Font tableFontBold2 = new Font(Font.COURIER, 9, Font.BOLD);
-            Font tableFont2 = new Font(Font.COURIER, 9);
+            Font tableFontBold2 = new Font(Font.HELVETICA, 10, Font.BOLD);
+            Font tableFont2 = new Font(Font.HELVETICA, 10);
             tableExpenses.setSpacingBefore(8);
             tableExpenses.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
             tableExpenses.setWidths(new int[]{18, 8, 8, 10});
@@ -310,8 +310,8 @@ public class GerarPDFAtaService {
             celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableExpenses.addCell(celulaTabelExpenses);
 
-            Phrase totalExpensePhrase = new Phrase("Total Despesas (Desembolso): ", textFont);
-            Chunk totalExpenseChunk = new Chunk("R$ " + totalValueHours, textFont);
+            Phrase totalExpensePhrase = new Phrase("Total Despesas (Desembolso): ");
+            Chunk totalExpenseChunk = new Chunk("R$ " + totalValueHours);
             totalExpensePhrase.add(totalExpenseChunk);
             Paragraph totalExpenseParagraph = new Paragraph(totalExpensePhrase);
 
@@ -420,8 +420,8 @@ public class GerarPDFAtaService {
             celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
             tableInternResources.addCell(celulaTableInternResources);
 
-            Phrase totalExpenseInternResourcesPhrase = new Phrase("Total Despesas - Recursos Internos: ", textFont);
-            Chunk totalExpenseInternResourcesChunk = new Chunk("R$ " + totalValueHours, textFont);
+            Phrase totalExpenseInternResourcesPhrase = new Phrase("Total Despesas - Recursos Internos: ");
+            Chunk totalExpenseInternResourcesChunk = new Chunk("R$ " + totalValueHours);
             totalExpenseInternResourcesPhrase.add(totalExpenseInternResourcesChunk);
             Paragraph totalExpenseInternResourcesParagraph = new Paragraph(totalExpenseInternResourcesPhrase);
 
@@ -432,33 +432,33 @@ public class GerarPDFAtaService {
             tableInternResources.addCell(celulaTableInternResources);
 
 
-            Phrase totalCostPhrase = new Phrase("Custo Total do Projeto: ", titleFont);
-            Chunk totalCostChunk = new Chunk("R$ " + totalValueProject, textFont);
+            Phrase totalCostPhrase = new Phrase("Custo Total do Projeto: ", fontSubTitle);
+            Chunk totalCostChunk = new Chunk("R$ " + totalValueProject);
             totalCostPhrase.add(totalCostChunk);
             Paragraph totalCostParagraph = new Paragraph(totalCostPhrase);
 
             String dataInicioFormatada = formatarData.format(pdfProposta.getProposta().getPeriodoExecucaoFimProposta());
             String dataFimFormatada = formatarData.format(pdfProposta.getProposta().getPeriodoExecucaoFimProposta());
 
-            Phrase executionPeriodPhrase = new Phrase("Período de execução: ", titleFont);
+            Phrase executionPeriodPhrase = new Phrase("Período de execução: ", fontSubTitle);
             Phrase executionPeriodPhraseText = new Phrase(dataInicioFormatada + " à " +
-                    dataFimFormatada, textFont);
+                    dataFimFormatada);
             Paragraph executionPeriodParagraph = new Paragraph();
             executionPeriodParagraph.add(executionPeriodPhrase);
             executionPeriodParagraph.add(executionPeriodPhraseText);
             executionPeriodParagraph.setSpacingBefore(8);
 
-            Phrase paybackPhrase = new Phrase("Payback: ", titleFont);
+            Phrase paybackPhrase = new Phrase("Payback: ", fontSubTitle);
             DecimalFormat df = new DecimalFormat("#.00");
-            Phrase paybackPhraseText = new Phrase(df.format(pdfProposta.getProposta().getPaybackProposta()), textFont);
+            Phrase paybackPhraseText = new Phrase(df.format(pdfProposta.getProposta().getPaybackProposta()));
             Paragraph paybackParagraph = new Paragraph();
             paybackParagraph.add(paybackPhrase);
             paybackParagraph.add(paybackPhraseText);
             paybackParagraph.setSpacingBefore(8);
 
-            Phrase businessResponsable = new Phrase("Responsável Negócio: ", titleFont);
+            Phrase businessResponsable = new Phrase("Responsável Negócio: ", fontSubTitle);
             Phrase responsablePhraseText = new Phrase(proposta.getNomeResponsavelNegocio() + " - "
-                    + proposta.getAreaResponsavelNegocio(), textFont);
+                    + proposta.getAreaResponsavelNegocio());
             Paragraph businessResponsableParagraph = new Paragraph();
             businessResponsableParagraph.add(businessResponsable);
             businessResponsableParagraph.add(responsablePhraseText);
@@ -468,14 +468,14 @@ public class GerarPDFAtaService {
             commissionOpinionText.setStyle(Font.UNDERLINE);
 
             Phrase commissionOpinionPhrase = new Phrase("PARECER COMISSÃO", commissionOpinionText);
-            Phrase commissionOpinionPhraseText = new Phrase(": " + propostaLog.getParecerComissaoPropostaLog().toString(), titleFont);
+            Phrase commissionOpinionPhraseText = new Phrase(": " + propostaLog.getParecerComissaoPropostaLog().toString(), fontSubTitle);
             Paragraph commissionOpinionParagraph = new Paragraph();
             commissionOpinionParagraph.add(commissionOpinionPhrase);
             commissionOpinionParagraph.add(commissionOpinionPhraseText);
             commissionOpinionParagraph.setSpacingBefore(10);
 
-            Phrase considerationOpinionPhrase = new Phrase("Considerações: ", titleFont);
-            Phrase considerationOpinionPhraseText = new Phrase(": " + propostaLog.getConsideracoesPropostaLog(), textFont);
+            Phrase considerationOpinionPhrase = new Phrase("Considerações: ", fontSubTitle);
+            Phrase considerationOpinionPhraseText = new Phrase(propostaLog.getConsideracoesPropostaLog());
             Paragraph considerationOpinionParagraph = new Paragraph();
             considerationOpinionParagraph.add(considerationOpinionPhrase);
             considerationOpinionParagraph.add(considerationOpinionPhraseText);
@@ -486,12 +486,12 @@ public class GerarPDFAtaService {
             Paragraph considerationDGOpinionParagraph = new Paragraph();
             if (propostaLog.getParecerDGPropostaLog() != null) {
                 Phrase dgOpinionPhrase = new Phrase("PARECER DG", commissionOpinionText);
-                Phrase dgOpinionPhraseText = new Phrase(": " + propostaLog.getParecerDGPropostaLog().toString(), titleFont);
+                Phrase dgOpinionPhraseText = new Phrase(": " + propostaLog.getParecerDGPropostaLog().toString(), fontSubTitle);
                 dgOpinionParagraph.add(dgOpinionPhrase);
                 dgOpinionParagraph.add(dgOpinionPhraseText);
                 dgOpinionParagraph.setSpacingBefore(15);
-                Phrase considerationDGOpinionPhrase = new Phrase("Considerações: ", titleFont);
-                Phrase considerationDGOpinionPhraseText = new Phrase(": " + propostaLog.getConsideracoesParecerDGPropostaLog(), textFont);
+                Phrase considerationDGOpinionPhrase = new Phrase("Considerações: ", fontSubTitle);
+                Phrase considerationDGOpinionPhraseText = new Phrase(propostaLog.getConsideracoesParecerDGPropostaLog());
                 considerationDGOpinionParagraph.add(considerationDGOpinionPhrase);
                 considerationDGOpinionParagraph.add(considerationDGOpinionPhraseText);
                 considerationDGOpinionParagraph.setSpacingBefore(4);

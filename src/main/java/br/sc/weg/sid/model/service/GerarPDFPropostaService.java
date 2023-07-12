@@ -69,9 +69,8 @@ public class GerarPDFPropostaService {
 
         document.open();
 
-        Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11);
-        Font textFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
-
+        Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+        Font fontSubTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
         Paragraph paragraph = new Paragraph("PROPOSTA PARA COMITÊ/COMISSÃO DE PROCESSOS\n", fontTitle);
         paragraph.setAlignment(Paragraph.ALIGN_CENTER);
@@ -88,31 +87,31 @@ public class GerarPDFPropostaService {
 
         String tituloCaixaAltaDemanda = demanda.getTituloDemanda().toUpperCase();
 
-        Paragraph titleDemandParagraph = new Paragraph(tituloCaixaAltaDemanda + " – " + demanda.getIdDemanda(), fontTitle);
+        Paragraph titleDemandParagraph = new Paragraph(tituloCaixaAltaDemanda, fontSubTitle);
         List listTitle = new List(List.ORDERED);
         listTitle.add(new ListItem(titleDemandParagraph));
 
-        Phrase requesterPhrase = new Phrase("Solicitante: ", fontTitle);
+        Phrase requesterPhrase = new Phrase("Solicitante: ", fontSubTitle);
         Chunk solicitanteChunk = new Chunk(demanda.getSolicitanteDemanda().getNomeUsuario() + " - " +
-                demanda.getSolicitanteDemanda().getDepartamentoUsuario().getNomeBusinessUnity(), textFont);
+                demanda.getSolicitanteDemanda().getDepartamentoUsuario().getNomeBusinessUnity());
         requesterPhrase.add(solicitanteChunk);
         Paragraph requesterParagraph = new Paragraph(requesterPhrase);
         requesterParagraph.setSpacingBefore(8);
 
-        Phrase proposalPhrase = new Phrase("Objetivo: ", fontTitle);
-        Chunk objetivoChunk = new Chunk(demanda.getPropostaMelhoriaDemanda(), textFont);
+        Phrase proposalPhrase = new Phrase("Objetivo: ", fontSubTitle);
+        Chunk objetivoChunk = new Chunk(demanda.getPropostaMelhoriaDemanda());
         proposalPhrase.add(objetivoChunk);
         Paragraph proposalParagraph = new Paragraph(proposalPhrase);
         proposalParagraph.setSpacingBefore(8);
         proposalParagraph.setSpacingAfter(5);
 
-        Paragraph actualSituationParagraph = new Paragraph("Situação Atual - Problema a ser tratado/ resolvido:", fontTitle);
+        Paragraph actualSituationParagraph = new Paragraph("Situação Atual - Problema a ser tratado/ resolvido:", fontSubTitle);
         actualSituationParagraph.setSpacingBefore(8);
 
-        Paragraph actualSituationParagraphText = new Paragraph(demanda.getSituacaoAtualDemanda(), textFont);
+        Paragraph actualSituationParagraphText = new Paragraph(demanda.getSituacaoAtualDemanda());
         actualSituationParagraphText.setSpacingAfter(5);
 
-        Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", fontTitle);
+        Paragraph projectScopeParagraph = new Paragraph("Escopo do Projeto:", fontSubTitle);
         projectScopeParagraph.setSpacingBefore(8);
 
         HTMLWorker htmlWorker = new HTMLWorker(document);
@@ -121,7 +120,7 @@ public class GerarPDFPropostaService {
 
         Paragraph noPartOfScopeProjectParagraph;
         if (!pdfProposta.getNaoFazParteDoEscopoPropostaHTML().isEmpty()) {
-            noPartOfScopeProjectParagraph = new Paragraph("Não faz parte do escopo do projeto:", fontTitle);
+            noPartOfScopeProjectParagraph = new Paragraph("Não faz parte do escopo do projeto:", fontSubTitle);
             projectScopeParagraph.setSpacingBefore(8);
         } else {
             noPartOfScopeProjectParagraph = new Paragraph();
@@ -129,18 +128,18 @@ public class GerarPDFPropostaService {
 
         String projectNotInScopeParagraphTextHTML = pdfProposta.getEscopoPropostaHTML();
 
-        Paragraph evaluatedAlternativesParagraph = new Paragraph("Alternativas Avaliadas:", fontTitle);
+        Paragraph evaluatedAlternativesParagraph = new Paragraph("Alternativas Avaliadas:", fontSubTitle);
         evaluatedAlternativesParagraph.setSpacingBefore(13);
 
 
         String evaluatedAlternativesParagraphTextHTML = pdfProposta.getAlternativasAvaliadasPropostaHTML();
 
-        Paragraph projectCoverageParagraph = new Paragraph("Abrangência do Projeto:", fontTitle);
+        Paragraph projectCoverageParagraph = new Paragraph("Abrangência do Projeto:", fontSubTitle);
         projectCoverageParagraph.setSpacingBefore(8);
 
         String projectCoverageParagraphTextHTML = pdfProposta.getAbrangenciaProjetoPropostaHTML();
 
-        Paragraph mainRisksParagraph = new Paragraph("Riscos Principais/Plano de Mitigação:", fontTitle);
+        Paragraph mainRisksParagraph = new Paragraph("Riscos Principais/Plano de Mitigação:", fontSubTitle);
         mainRisksParagraph.setSpacingBefore(8);
 
         String mainRisksParagraphTextHTML = pdfProposta.getPlanoMitigacaoPropostaHTML();
@@ -158,16 +157,16 @@ public class GerarPDFPropostaService {
         }
         Paragraph expectedResultsParagraph = null;
         if (expectedResultsQualitativeParagraphTextHTML != null) {
-            expectedResultsParagraph = new Paragraph("Resultados Esperados (Qualitativos):", fontTitle);
+            expectedResultsParagraph = new Paragraph("Resultados Esperados (Qualitativos):", fontSubTitle);
             expectedResultsParagraph.setSpacingBefore(8);
         }
 
-        Paragraph expectedResultsPotentialParagraph = new Paragraph("Resultados Esperados (Ganhos potenciais):", fontTitle);
+        Paragraph expectedResultsPotentialParagraph = new Paragraph("Resultados Esperados (Ganhos potenciais):", fontSubTitle);
         expectedResultsPotentialParagraph.setSpacingBefore(8);
 
         PdfPTable tableExpenses = new PdfPTable(5);
-        Font tableFontBold = new Font(Font.COURIER, 9, Font.BOLD);
-        Font tableFont = new Font(Font.COURIER, 9);
+        Font tableFontBold = new Font(Font.HELVETICA, 10, Font.BOLD);
+        Font tableFont = new Font(Font.HELVETICA, 10);
         tableExpenses.setSpacingBefore(8);
         tableExpenses.setHorizontalAlignment(Paragraph.ALIGN_LEFT);
         tableExpenses.setWidths(new int[]{18, 8, 8, 8, 10});
@@ -283,8 +282,8 @@ public class GerarPDFPropostaService {
         celulaTabelExpenses.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableExpenses.addCell(celulaTabelExpenses);
 
-        Phrase totalExpensePhrase = new Phrase("Total Despesas (Desembolso): ", textFont);
-        Chunk totalExpenseChunk = new Chunk("R$ " + totalValueHours, textFont);
+        Phrase totalExpensePhrase = new Phrase("Total Despesas (Desembolso): ");
+        Chunk totalExpenseChunk = new Chunk("R$ " + totalValueHours);
         totalExpensePhrase.add(totalExpenseChunk);
         Paragraph totalExpenseParagraph = new Paragraph(totalExpensePhrase);
 
@@ -406,8 +405,8 @@ public class GerarPDFPropostaService {
         celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableInternResources.addCell(celulaTableInternResources);
 
-        Phrase totalExpenseInternResourcesPhrase = new Phrase("Total Despesas - Recursos Internos: ", textFont);
-        Chunk totalExpenseInternResourcesChunk = new Chunk("R$ " + totalValueHours, textFont);
+        Phrase totalExpenseInternResourcesPhrase = new Phrase("Total Despesas - Recursos Internos: ");
+        Chunk totalExpenseInternResourcesChunk = new Chunk("R$ " + totalValueHours);
         totalExpenseInternResourcesPhrase.add(totalExpenseInternResourcesChunk);
         Paragraph totalExpenseInternResourcesParagraph = new Paragraph(totalExpenseInternResourcesPhrase);
 
@@ -417,8 +416,8 @@ public class GerarPDFPropostaService {
         celulaTableInternResources.setHorizontalAlignment(Paragraph.ALIGN_CENTER);
         tableInternResources.addCell(celulaTableInternResources);
 
-        Phrase totalCostPhrase = new Phrase("Custo Total do Projeto: ", fontTitle);
-        Chunk totalCostChunk = new Chunk("R$ " + totalValueProject, textFont);
+        Phrase totalCostPhrase = new Phrase("Custo Total do Projeto: ", fontSubTitle);
+        Chunk totalCostChunk = new Chunk("R$ " + totalValueProject);
         totalCostPhrase.add(totalCostChunk);
         Paragraph totalCostParagraph = new Paragraph(totalCostPhrase);
 
@@ -426,16 +425,16 @@ public class GerarPDFPropostaService {
         String dataInicioFormatada = formatarData.format(pdfProposta.getProposta().getPeriodoExecucaoFimProposta());
         String dataFimFormatada = formatarData.format(pdfProposta.getProposta().getPeriodoExecucaoFimProposta());
 
-        Phrase executionPeriodPhrase = new Phrase("Período de execução: ", fontTitle);
+        Phrase executionPeriodPhrase = new Phrase("Período de execução: ", fontSubTitle);
         Chunk executionPeriodChunk = new Chunk(dataInicioFormatada + " à " +
-                dataFimFormatada, textFont);
+                dataFimFormatada);
         executionPeriodPhrase.add(executionPeriodChunk);
         Paragraph executionPeriodParagraph = new Paragraph(executionPeriodPhrase);
         executionPeriodParagraph.setSpacingBefore(8);
 
-        Phrase paybackPhrase = new Phrase("Payback: ", fontTitle);
+        Phrase paybackPhrase = new Phrase("Payback: ", fontSubTitle);
         DecimalFormat df = new DecimalFormat("#.00");
-        Chunk paybackChunk = new Chunk(df.format(pdfProposta.getProposta().getPaybackProposta()), textFont);
+        Chunk paybackChunk = new Chunk(df.format(pdfProposta.getProposta().getPaybackProposta()));
         paybackPhrase.add(paybackChunk);
         Paragraph paybackParagraph = new Paragraph(paybackPhrase);
         paybackParagraph.setSpacingBefore(8);
