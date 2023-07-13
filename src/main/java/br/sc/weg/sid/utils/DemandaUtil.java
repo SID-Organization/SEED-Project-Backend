@@ -8,6 +8,7 @@ import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.service.API.client.CotacaoGET;
+import br.sc.weg.sid.model.service.DemandaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -323,5 +324,55 @@ public class DemandaUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Integer retornaQuantidadeStatus(StatusDemanda statusDemanda, DemandaService demandaService) {
+        if (statusDemanda == StatusDemanda.CLASSIFICADO_PELO_ANALISTA) {
+            return demandaService.findDemandasClassificadasPeloAnalista().size();
+        }
+        if (statusDemanda == StatusDemanda.ABERTA) {
+            return demandaService.findDemandasAbertas().size();
+        }
+        if (statusDemanda == StatusDemanda.EM_EDICAO) {
+            return demandaService.findDemandasEmEdicao().size();
+        }
+        if (statusDemanda == StatusDemanda.APROVADO_PELO_GERENTE_DA_AREA) {
+            return demandaService.findDemandasAprovadasPeloGerenteDaArea().size();
+        }
+        if (statusDemanda == StatusDemanda.PROPOSTA_EM_ELABORACAO) {
+            return demandaService.findDemandasPropostaEmElaboracao().size();
+        }
+        if (statusDemanda == StatusDemanda.PROPOSTA_PRONTA) {
+            return demandaService.findDemandasPropostaPronta().size();
+        }
+        if (statusDemanda == StatusDemanda.EM_PAUTA) {
+            return demandaService.findDemandasEmPauta().size();
+        }
+        if (statusDemanda == StatusDemanda.APROVADA_EM_COMISSAO) {
+            return demandaService.findDemandasAprovadasEmComissao().size();
+        }
+        if (statusDemanda == StatusDemanda.APROVADA_EM_DG) {
+            return demandaService.findDemandasAprovadasEmDG().size();
+        }
+        if (statusDemanda == StatusDemanda.PROPOSTA_EM_EXECUCAO) {
+            return demandaService.findDemandasPropostaEmExecucao().size();
+        }
+        if (statusDemanda == StatusDemanda.BUSINESS_CASE) {
+            return demandaService.findDemandasBusinessCase().size();
+        }
+        if (statusDemanda == StatusDemanda.PROPOSTA_EM_SUPORTE) {
+            return demandaService.findDemandasPropostaEmSuporte().size();
+        }
+        if (statusDemanda == StatusDemanda.PROPOSTA_FINALIZADA) {
+            return demandaService.findDemandasPropostaFinalizada().size();
+        }
+        if (statusDemanda == StatusDemanda.CANCELADA) {
+            return demandaService.findDemandasCanceladas().size();
+        }
+        if (statusDemanda == StatusDemanda.RASCUNHO) {
+            return demandaService.findDemandasRascunho().size();
+        }
+
+        return -1;
     }
 }

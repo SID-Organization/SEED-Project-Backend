@@ -6,6 +6,7 @@ import br.sc.weg.sid.model.enums.TamanhoDemanda;
 import br.sc.weg.sid.repository.DemandaRepository;
 import br.sc.weg.sid.utils.DemandaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -100,6 +101,66 @@ public class DemandaService {
 
     public List<Demanda> findByStatusDemandaAndSolicitanteDemanda(StatusDemanda statusDemanda, Usuario solicitanteDemanda) {
         return demandaRepository.findByStatusDemandaAndSolicitanteDemanda(statusDemanda, solicitanteDemanda);
+    }
+
+    public List<Demanda> findDemandasAprovadasEmDG() {
+        return demandaRepository.findDemandasAprovadasEmDG();
+    }
+
+    public List<Demanda> findDemandasCanceladas() {
+        return demandaRepository.findDemandasCanceladas();
+    }
+
+    public List<Demanda> findDemandasAprovadasEmComissao() {
+        return demandaRepository.findDemandasAprovadasEmComissao();
+    }
+
+    public List<Demanda> findDemandasAprovadasPeloGerenteDaArea() {
+        return demandaRepository.findDemandasAprovadasPeloGerenteDaArea();
+    }
+
+    public List<Demanda> findDemandasEmEdicao() {
+        return demandaRepository.findDemandasEmEdicao();
+    }
+
+    public List<Demanda> findDemandasEmPauta() {
+        return demandaRepository.findDemandasEmPauta();
+    }
+
+    public List<Demanda> findDemandasPropostaEmElaboracao() {
+        return demandaRepository.findDemandasPropostaEmElaboracao();
+    }
+
+    public List<Demanda> findDemandasPropostaEmExecucao() {
+        return demandaRepository.findDemandasPropostaEmExecucao();
+    }
+
+    public List<Demanda> findDemandasPropostaEmSuporte() {
+        return demandaRepository.findDemandasPropostaEmSuporte();
+    }
+
+    public List<Demanda> findDemandasPropostaFinalizada() {
+        return demandaRepository.findDemandasPropostaFinalizada();
+    }
+
+    public List<Demanda> findDemandasRascunho() {
+        return demandaRepository.findDemandasRascunho();
+    }
+
+    public List<Demanda> findDemandasClassificadasPeloAnalista() {
+        return demandaRepository.findDemandasClassificadasPeloAnalista();
+    }
+
+    public List<Demanda> findDemandasAbertas() {
+        return demandaRepository.findDemandasAbertas();
+    }
+
+    public List<Demanda> findDemandasBusinessCase() {
+        return demandaRepository.findDemandasBusinessCase();
+    }
+
+    public List<Demanda> findDemandasPropostaPronta() {
+        return demandaRepository.findDemandasPropostaPronta();
     }
 
     //    public void updateBusBeneficiadasDemanda(Integer idDemanda, Integer idBusBeneficiadasDemanda) {
