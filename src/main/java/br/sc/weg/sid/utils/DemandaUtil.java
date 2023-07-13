@@ -1,14 +1,12 @@
 package br.sc.weg.sid.utils;
 
 import aj.org.objectweb.asm.TypeReference;
-import br.sc.weg.sid.DTO.BuscaDemandaSimilarDTO;
-import br.sc.weg.sid.DTO.CadastroDemandaDTO;
-import br.sc.weg.sid.DTO.CadastroDemandaSimilarDTO;
-import br.sc.weg.sid.DTO.CadastroPdfDemandaDTO;
+import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
 import br.sc.weg.sid.model.service.API.client.CotacaoGET;
 import br.sc.weg.sid.model.service.DemandaService;
+import br.sc.weg.sid.model.service.HistoricoStatusDemandaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,9 +22,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @NoArgsConstructor
 @Service
@@ -326,7 +322,7 @@ public class DemandaUtil {
         }
     }
 
-    public Integer retornaQuantidadeStatus(StatusDemanda statusDemanda, DemandaService demandaService) {
+    public Integer retornaQuantidadeStatusAtual(StatusDemanda statusDemanda, DemandaService demandaService) {
         if (statusDemanda == StatusDemanda.CLASSIFICADO_PELO_ANALISTA) {
             return demandaService.findDemandasClassificadasPeloAnalista().size();
         }
@@ -374,5 +370,78 @@ public class DemandaUtil {
         }
 
         return -1;
+    }
+
+    public List<RetornoHistoricoStatusDemandaDTO> retornaQuantidadeStatusDemanda(HistoricoStatusDemandaService historicoStatusDemandaService) {
+        List<HistoricoStatusDemanda> historicoStatusDemandas = historicoStatusDemandaService.findAll();
+        List<RetornoHistoricoStatusDemandaDTO> retornoHistoricoStatusDemandaDTOS = new ArrayList<>();
+
+        // Mapear os status para seus respectivos DTOs
+        Map<StatusDemanda, RetornoHistoricoStatusDemandaDTO> statusMap = new HashMap<>();
+        statusMap.put(StatusDemanda.ABERTA, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.EM_EDICAO, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.APROVADO_PELO_GERENTE_DA_AREA, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.PROPOSTA_EM_ELABORACAO, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.PROPOSTA_PRONTA, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.EM_PAUTA, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.APROVADA_EM_COMISSAO, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.APROVADA_EM_DG, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.PROPOSTA_EM_EXECUCAO, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.BUSINESS_CASE, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.PROPOSTA_EM_SUPORTE, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.PROPOSTA_FINALIZADA, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.CANCELADA, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.RASCUNHO, new RetornoHistoricoStatusDemandaDTO());
+        statusMap.put(StatusDemanda.CLASSIFICADO_PELO_ANALISTA, new RetornoHistoricoStatusDemandaDTO());
+
+        // Percorrer os registros de HistoricoStatusDemanda e contabilizar as quantidades
+        for (HistoricoStatusDemanda historicoStatusDemanda : historicoStatusDemandas) {
+            RetornoHistoricoStatusDemandaDTO retornoHistoricoStatusDemandaDTO = statusMap.get(historicoStatusDemanda.getStatusDemanda());
+            if (retornoHistoricoStatusDemandaDTO != null) {
+                if (retornoHistoricoStatusDemandaDTO.getDados() == null) {
+                    retornoHistoricoStatusDemandaDTO.setDados(new ArrayList<>());
+                }
+                String monthYear = getMonthYear(historicoStatusDemanda.getDataAlteracaoStatusDemanda());
+                RetornoHistoricoStatusDemandaPayloadDTO payloadDTO = findPayloadByData(retornoHistoricoStatusDemandaDTO.getDados(), monthYear);
+                if (payloadDTO == null) {
+                    payloadDTO = new RetornoHistoricoStatusDemandaPayloadDTO();
+                    payloadDTO.setData(monthYear);
+                    payloadDTO.setQuantidade(1);
+                    retornoHistoricoStatusDemandaDTO.getDados().add(payloadDTO);
+                } else {
+                    payloadDTO.setQuantidade(payloadDTO.getQuantidade() + 1);
+                }
+            }
+        }
+
+        // Gerar a lista final de RetornoHistoricoStatusDemandaDTO
+        for (StatusDemanda status : statusMap.keySet()) {
+            RetornoHistoricoStatusDemandaDTO dto = statusMap.get(status);
+            if (dto.getDados() != null && !dto.getDados().isEmpty()) {
+                dto.setStatus(status);
+                retornoHistoricoStatusDemandaDTOS.add(dto);
+            }
+        }
+
+        return retornoHistoricoStatusDemandaDTOS;
+    }
+
+    // Função auxiliar para obter o mês e o ano a partir de uma data
+    private String getMonthYear(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
+        return String.format("%02d/%04d", month, year);
+    }
+
+    // Função auxiliar para encontrar o RetornoHistoricoStatusDemandaPayloadDTO pelo mês e ano
+    private RetornoHistoricoStatusDemandaPayloadDTO findPayloadByData(List<RetornoHistoricoStatusDemandaPayloadDTO> payloads, String monthYear) {
+        for (RetornoHistoricoStatusDemandaPayloadDTO payload : payloads) {
+            if (payload.getData().equals(monthYear)) {
+                return payload;
+            }
+        }
+        return null;
     }
 }

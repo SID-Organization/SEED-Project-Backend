@@ -62,6 +62,8 @@ public class DemandaController {
 
     FiltroDemandaService filtroDemandaService;
 
+    HistoricoStatusDemandaService historicoStatusDemandaService;
+
     /**
      * Retorna uma lista de demandas resumidas.
      * <p>
@@ -611,6 +613,12 @@ public class DemandaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar histórico de workflow: " + e.getMessage());
             }
         }
+        HistoricoStatusDemanda historicoStatusDemanda = new HistoricoStatusDemanda();
+        historicoStatusDemanda.setDemanda(demanda);
+        historicoStatusDemanda.setStatusDemanda(demanda.getStatusDemanda());
+        Date dataAlteracaoStatusDemanda = new Date();
+        historicoStatusDemanda.setDataAlteracaoStatusDemanda(dataAlteracaoStatusDemanda);
+        historicoStatusDemandaService.save(historicoStatusDemanda);
         return ResponseEntity.status(HttpStatus.OK).body(demanda);
     }
 
@@ -1367,14 +1375,25 @@ public class DemandaController {
         }
     }
 
-    @GetMapping("/quantidade/status/{statusDemanda}")
-    public ResponseEntity<Object> retornaQuantidadeStatus(@PathVariable("statusDemanda") StatusDemanda statusDemanda) {
+    @GetMapping("/quantidade/status/atual/{statusDemanda}")
+    public ResponseEntity<Object> retornaQuantidadeStatusAtual(@PathVariable("statusDemanda") StatusDemanda statusDemanda) {
         DemandaUtil util = new DemandaUtil();
-        Integer quantidade = util.retornaQuantidadeStatus(statusDemanda, demandaService);
+        Integer quantidade = util.retornaQuantidadeStatusAtual(statusDemanda, demandaService);
         if (quantidade == -1) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao retornar quantidade de demandas com status: " + statusDemanda.getNome());
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(quantidade);
+        }
+    }
+
+    @GetMapping("/quantidade/status")
+    public ResponseEntity<Object> retornaQuantidadeStatus() {
+        DemandaUtil util = new DemandaUtil();
+        List<RetornoHistoricoStatusDemandaDTO> retornoHistoricoStatusDemandaDTOList = util.retornaQuantidadeStatusDemanda(historicoStatusDemandaService);
+        if (retornoHistoricoStatusDemandaDTOList == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao retornar quantidade de demandas por status");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(retornoHistoricoStatusDemandaDTOList);
         }
     }
 
