@@ -1,5 +1,6 @@
 package br.sc.weg.sid.controller;
 
+import br.sc.weg.sid.DTO.AtualizaPautaDTO;
 import br.sc.weg.sid.DTO.CadastroPautaDTO;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.service.NotificacaoService;
@@ -8,7 +9,9 @@ import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.PautaUtil;
 import br.sc.weg.sid.utils.PropostaUtil;
 import lombok.AllArgsConstructor;
+import okhttp3.Response;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -157,6 +161,24 @@ public class PautaController {
             return ResponseEntity.ok("Pauta deletada com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao deletar pauta: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/atualiza-pauta/{id}")
+    public ResponseEntity<Object> atualizaPautaAnalista(@PathVariable Integer id, @RequestBody AtualizaPautaDTO atualizaPautaDTO) {
+        try {
+            Optional<Pauta> pautaOptional = pautaService.findById(id);
+            Pauta pauta;
+            if (pautaOptional.isPresent()) {
+                pauta = pautaOptional.get();
+            } else {
+                return ResponseEntity.badRequest().body("Pauta com id informado não existe!");
+            }
+            BeanUtils.copyProperties(atualizaPautaDTO, pauta);
+            pautaService.save(pauta);
+            return ResponseEntity.ok("Pauta atualizada com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao atualizar pauta: " + e.getMessage());
         }
     }
 
