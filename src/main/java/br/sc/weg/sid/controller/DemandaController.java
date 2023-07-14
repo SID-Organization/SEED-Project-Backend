@@ -806,14 +806,12 @@ public class DemandaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao salvar arquivos: " + e.getMessage());
             }
         }
-        if (demanda.getStatusDemanda() != demandaSalva.getStatusDemanda()) {
-            HistoricoStatusDemanda historicoStatusDemanda = new HistoricoStatusDemanda();
-            historicoStatusDemanda.setDemanda(demandaSalva);
-            historicoStatusDemanda.setStatusDemanda(demandaSalva.getStatusDemanda());
-            historicoStatusDemanda.setDataAlteracaoStatusDemanda(dataRegistroArquivo);
-            historicoStatusDemandaService.save(historicoStatusDemanda);
-            System.out.println("Historico status demanda salvo com sucesso!");
-        }
+        HistoricoStatusDemanda historicoStatusDemanda = new HistoricoStatusDemanda();
+        historicoStatusDemanda.setDemanda(demandaSalva);
+        historicoStatusDemanda.setStatusDemanda(demandaSalva.getStatusDemanda());
+        historicoStatusDemanda.setDataAlteracaoStatusDemanda(dataRegistroArquivo);
+        historicoStatusDemandaService.save(historicoStatusDemanda);
+        System.out.println("Historico status demanda salvo com sucesso!");
         return ResponseEntity.status(HttpStatus.OK).body(demandaSalva);
     }
 
