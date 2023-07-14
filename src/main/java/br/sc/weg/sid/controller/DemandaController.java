@@ -1332,6 +1332,11 @@ public class DemandaController {
             DemandaUtil demandaUtil = new DemandaUtil();
             double scoreDemanda = demandaUtil.retornaScoreDemandaCriacao(demanda);
             demanda.setScoreDemanda(scoreDemanda);
+            HistoricoStatusDemanda historicoStatusDemanda = new HistoricoStatusDemanda();
+            historicoStatusDemanda.setStatusDemanda(demanda.getStatusDemanda());
+            historicoStatusDemanda.setDemanda(demanda);
+            historicoStatusDemanda.setDataAlteracaoStatusDemanda(new Date());
+            historicoStatusDemandaService.save(historicoStatusDemanda);
             demandaService.save(demanda);
         }
         return ResponseEntity.status(HttpStatus.OK).body("Demanda devolvida com sucesso!");
