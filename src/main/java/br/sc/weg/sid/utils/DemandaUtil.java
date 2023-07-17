@@ -1,6 +1,5 @@
 package br.sc.weg.sid.utils;
 
-import aj.org.objectweb.asm.TypeReference;
 import br.sc.weg.sid.DTO.*;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
@@ -316,6 +315,34 @@ public class DemandaUtil {
 
             System.out.println(json);
             return demandasSimilares;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<PreverDemandaDTO> preverDemanda() {
+        OkHttpClient client = new OkHttpClient();
+
+        String url = "http://localhost:5000/demandas/prever";
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            assert response.body() != null;
+            String json = response.body().string();
+
+            Gson gson = new Gson();
+            List<PreverDemandaDTO> previsaoDemanda = gson.fromJson(json, new TypeToken<List<PreverDemandaDTO>>() {
+            }.getType());
+
+            System.out.println(json);
+            return previsaoDemanda;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

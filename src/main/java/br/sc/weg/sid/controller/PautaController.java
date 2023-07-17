@@ -56,7 +56,6 @@ public class PautaController {
     public ResponseEntity<Object> cadastroPauta(@RequestBody @Valid CadastroPautaDTO cadastroPautaDTO) throws MessagingException {
         Pauta pauta = new Pauta();
         // Adicionar 1 dia a data de reunião da pauta
-        System.out.println("DATA REUNIÃO: " + cadastroPautaDTO.getDataReuniaoPauta());
         LocalDate data = cadastroPautaDTO.getDataReuniaoPauta().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         // Verifica se o dia adicionado ultrapassa o último dia do mês
@@ -70,7 +69,6 @@ public class PautaController {
         Date date = Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant());
         cadastroPautaDTO.setDataReuniaoPauta(date);
         BeanUtils.copyProperties(cadastroPautaDTO, pauta);
-        System.out.println("DATA REUNIÃO2: " + pauta.getDataReuniaoPauta());
         Pauta pautaSalva = pautaService.save(pauta);
         List<Proposta> propostas = pautaSalva.getPropostasPauta();
         List<Proposta> propostasEncontradas = new ArrayList<>();

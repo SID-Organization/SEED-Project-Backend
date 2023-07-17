@@ -198,6 +198,7 @@ public class PropostaController {
 
                 if (proposta.getCustosTotaisDoProjeto() > 0 && proposta.getCustosTotaisDoProjeto() != null && somaValorBeneficios > 0) {
                     BigDecimal payback = BigDecimal.valueOf(proposta.getCustosTotaisDoProjeto() / somaValorBeneficios);
+                    System.out.println("PAYBACK: " + payback);
                     proposta.setPaybackProposta(payback.doubleValue());
                 }
                 Proposta propostaSalva = propostaService.save(proposta);

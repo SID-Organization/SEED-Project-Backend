@@ -743,6 +743,18 @@ public class DemandaController {
     }
 
 
+    @GetMapping("/prever-demandas")
+    public ResponseEntity<Object> preverDemandas() {
+        DemandaUtil demandaUtil = new DemandaUtil();
+        try {
+            List<PreverDemandaDTO> previsaoDemandas = demandaUtil.preverDemanda();
+            return ResponseEntity.status(HttpStatus.OK).body(previsaoDemandas);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao filtrar demandas similares: " + e.getMessage());
+        }
+    }
+
     /**
      * Atualiza as informações de uma demanda adicionando as bus beneficiados, bu solicitante, tamanho da demanda e a secao de ti responsável.
      *
