@@ -3,6 +3,7 @@ package br.sc.weg.sid.utils;
 import br.sc.weg.sid.controller.DemandaController;
 import br.sc.weg.sid.model.entities.*;
 import br.sc.weg.sid.model.enums.*;
+import br.sc.weg.sid.model.service.HistoricoStatusDemandaService;
 import br.sc.weg.sid.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -37,7 +38,11 @@ public class BancoUtils {
     @Autowired
     private ForumRepository forumRepository;
 
-    @Autowired CentroCustoRepository centroCustoRepository;
+    @Autowired
+    private CentroCustoRepository centroCustoRepository;
+
+    @Autowired
+    private HistoricoStatusDemandaService historicoStatusDemandaService;
 
     @Autowired
     private DemandaController demandaController;
@@ -297,6 +302,17 @@ public class BancoUtils {
 //            Map<String, String> requestBody = new HashMap<>();
 //            requestBody.put("statusDemanda", "ABERTA");
 //            demandaController.atualizarStatusDemanda(demanda.getIdDemanda(), requestBody);
+        } else{
+            for(Demanda demanda : listaDemanda){
+                if (historicoStatusDemandaService.findByDemanda(demanda).isEmpty()){
+                    HistoricoStatusDemanda historicoStatusDemanda = new HistoricoStatusDemanda();
+                    historicoStatusDemanda.setDemanda(demanda);
+                    historicoStatusDemanda.setStatusDemanda(demanda.getStatusDemanda());
+                    Date dataAlteracaoStatusDemanda = new Date();
+                    historicoStatusDemanda.setDataAlteracaoStatusDemanda(dataAlteracaoStatusDemanda);
+                    historicoStatusDemandaService.save(historicoStatusDemanda);
+                }
+            }
         }
 
         if(listaCentroCusto.isEmpty()){

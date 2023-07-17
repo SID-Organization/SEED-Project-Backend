@@ -1,5 +1,6 @@
 package br.sc.weg.sid.model.service;
 
+import br.sc.weg.sid.model.entities.Demanda;
 import br.sc.weg.sid.model.entities.HistoricoStatusDemanda;
 import br.sc.weg.sid.repository.HistoricoStatusDemandaRepository;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,10 @@ public class HistoricoStatusDemandaService {
 
     public Optional<HistoricoStatusDemanda> findById(Integer integer) {
         return historicoStatusDemandaRepository.findById(integer);
+    }
+
+    public List<HistoricoStatusDemanda> findByDemanda(Demanda demanda) {
+        return historicoStatusDemandaRepository.findByDemanda(demanda);
     }
 
     public boolean existsById(Integer integer) {
