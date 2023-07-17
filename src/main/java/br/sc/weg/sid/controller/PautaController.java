@@ -3,24 +3,25 @@ package br.sc.weg.sid.controller;
 import br.sc.weg.sid.DTO.AtualizaPautaDTO;
 import br.sc.weg.sid.DTO.CadastroPautaDTO;
 import br.sc.weg.sid.model.entities.*;
+import br.sc.weg.sid.model.service.EmailService;
 import br.sc.weg.sid.model.service.NotificacaoService;
 import br.sc.weg.sid.model.service.PautaService;
 import br.sc.weg.sid.model.service.PropostaService;
 import br.sc.weg.sid.utils.PautaUtil;
 import br.sc.weg.sid.utils.PropostaUtil;
 import lombok.AllArgsConstructor;
-import okhttp3.Response;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @CrossOrigin
@@ -36,6 +37,8 @@ public class PautaController {
 
     NotificacaoService notificacaoService;
 
+    EmailService emailService;
+
 
     /**
      * Esta função é um mapeamento de requisição HTTP POST que cadastra uma pauta no banco de dados.
@@ -47,7 +50,7 @@ public class PautaController {
      * @throws Exception - Retorna uma mensagem de erro caso não seja possível encontrar uma pauta cadastrada no banco de dados com o id informado.
      */
     @PostMapping
-    public ResponseEntity<Object> cadastroPauta(@RequestBody @Valid CadastroPautaDTO cadastroPautaDTO) {
+    public ResponseEntity<Object> cadastroPauta(@RequestBody @Valid CadastroPautaDTO cadastroPautaDTO) throws MessagingException {
         Pauta pauta = new Pauta();
         BeanUtils.copyProperties(cadastroPautaDTO, pauta);
         Pauta pautaSalva = pautaService.save(pauta);
@@ -63,25 +66,35 @@ public class PautaController {
             proposta.setPautaProposta(pautas);
             proposta.setForumPauta(pautaSalva.getForumPauta());
             propostaService.save(proposta);
-            for (Usuario usuario : proposta.getDemandaProposta().getAnalistasResponsaveisDemanda()) {
-                Notificacao notificacaoReuniaoPauta = new Notificacao();
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                String dataFormatada = formatter.format(pauta.getDataReuniaoPauta());
-                notificacaoReuniaoPauta.setTextoNotificacao("uma reunião para discutir uma pauta foi marcada!");
-                notificacaoReuniaoPauta.setTempoNotificacao(dataFormatada + " às " + pauta.getHorarioInicioPauta() + "h");
-                notificacaoReuniaoPauta.setResponsavel(usuario.getNomeUsuario());
-                notificacaoReuniaoPauta.setVisualizada(false);
-                notificacaoReuniaoPauta.setTipoNotificacao("approved");
-                notificacaoReuniaoPauta.setLinkNotificacao("/sid/api/pauta/" + pautaSalva.getIdPauta());
-                proposta.getResponsaveisNegocio().forEach(responsavel -> {
-                    Notificacao notificacaoReuniaoPautaForEach = new Notificacao();
-                    BeanUtils.copyProperties(notificacaoReuniaoPauta, notificacaoReuniaoPautaForEach);
-                    notificacaoReuniaoPautaForEach.setUsuario(responsavel);
-                    simpMessagingTemplate.convertAndSend("/reuniao-pauta/" + responsavel.getNumeroCadastroUsuario(), notificacaoReuniaoPautaForEach);
-                    notificacaoService.save(notificacaoReuniaoPautaForEach);
-                });
-            }
-
+            CompletableFuture.runAsync(() -> {
+                try {
+                    SimpleDateFormat formatterEmail = new SimpleDateFormat("dd/MM/yyyy");
+                    String dataFormatadaEmail = formatterEmail.format(pauta.getDataReuniaoPauta());
+                    String conteudoEmail = emailService.getContentMail(proposta.getDemandaProposta().getSolicitanteDemanda().getNomeUsuario(), dataFormatadaEmail);
+                    emailService.sendEmail("Reunião de Pauta", "gu.zapella@gmail.com", conteudoEmail);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println(e);
+                }
+                for (Usuario usuario : proposta.getDemandaProposta().getAnalistasResponsaveisDemanda()) {
+                    Notificacao notificacaoReuniaoPauta = new Notificacao();
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String dataFormatada = formatter.format(pauta.getDataReuniaoPauta());
+                    notificacaoReuniaoPauta.setTextoNotificacao("uma reunião para discutir uma pauta foi marcada!");
+                    notificacaoReuniaoPauta.setTempoNotificacao(dataFormatada + " às " + pauta.getHorarioInicioPauta() + "h");
+                    notificacaoReuniaoPauta.setResponsavel(usuario.getNomeUsuario());
+                    notificacaoReuniaoPauta.setVisualizada(false);
+                    notificacaoReuniaoPauta.setTipoNotificacao("approved");
+                    notificacaoReuniaoPauta.setLinkNotificacao("/sid/api/pauta/" + pautaSalva.getIdPauta());
+                    proposta.getResponsaveisNegocio().forEach(responsavel -> {
+                        Notificacao notificacaoReuniaoPautaForEach = new Notificacao();
+                        BeanUtils.copyProperties(notificacaoReuniaoPauta, notificacaoReuniaoPautaForEach);
+                        notificacaoReuniaoPautaForEach.setUsuario(responsavel);
+                        simpMessagingTemplate.convertAndSend("/reuniao-pauta/" + responsavel.getNumeroCadastroUsuario(), notificacaoReuniaoPautaForEach);
+                        notificacaoService.save(notificacaoReuniaoPautaForEach);
+                    });
+                }
+            });
         }
         return ResponseEntity.ok("Pauta cadastrada com sucesso! \n" + pautaSalva);
     }

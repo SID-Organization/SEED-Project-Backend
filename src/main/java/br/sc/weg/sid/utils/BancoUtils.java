@@ -325,6 +325,11 @@ public class BancoUtils {
             centroCusto2.setNomeCentroCusto("Depto Sistemas de Fundição");
             centroCusto2.setNumeroCentroCusto("99704341");
             centroCustoRepository.save(centroCusto2);
+
+            CentroCusto centroCusto3 = new CentroCusto();
+            centroCusto2.setNomeCentroCusto("Depto Sistemas de Calderaria");
+            centroCusto2.setNumeroCentroCusto("21304341");
+            centroCustoRepository.save(centroCusto3);
         }
     }
 }
