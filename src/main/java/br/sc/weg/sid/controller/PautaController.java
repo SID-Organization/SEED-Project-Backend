@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -52,7 +55,22 @@ public class PautaController {
     @PostMapping
     public ResponseEntity<Object> cadastroPauta(@RequestBody @Valid CadastroPautaDTO cadastroPautaDTO) throws MessagingException {
         Pauta pauta = new Pauta();
+        // Adicionar 1 dia a data de reunião da pauta
+        System.out.println("DATA REUNIÃO: " + cadastroPautaDTO.getDataReuniaoPauta());
+        LocalDate data = cadastroPautaDTO.getDataReuniaoPauta().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Verifica se o dia adicionado ultrapassa o último dia do mês
+        if (data.getDayOfMonth() + 1 > data.lengthOfMonth()) {
+            // Se sim, ajusta para o último dia do mês
+            data = data.withDayOfMonth(data.lengthOfMonth());
+        } else {
+            // Caso contrário, adiciona um dia normalmente
+            data = data.plusDays(1);
+        }
+        Date date = Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        cadastroPautaDTO.setDataReuniaoPauta(date);
         BeanUtils.copyProperties(cadastroPautaDTO, pauta);
+        System.out.println("DATA REUNIÃO2: " + pauta.getDataReuniaoPauta());
         Pauta pautaSalva = pautaService.save(pauta);
         List<Proposta> propostas = pautaSalva.getPropostasPauta();
         List<Proposta> propostasEncontradas = new ArrayList<>();
